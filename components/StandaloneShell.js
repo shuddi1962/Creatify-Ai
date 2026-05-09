@@ -310,11 +310,10 @@ export default function StandaloneShell() {
           padding: '0 16px', zIndex: 40, position: 'relative'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <button onClick={() => setMobileDrawerOpen(true)}
-              className="lg:hidden"
+            <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <Icons.Menu size={20} />
+              <Icons.ChevronLeft size={20} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
             </button>
             <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
               <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -379,25 +378,11 @@ export default function StandaloneShell() {
             borderRight: '1px solid rgba(255,255,255,0.07)',
             display: 'flex', flexDirection: 'column',
             gap: 4,
-            padding: '8px 0',
+            paddingTop: 8, paddingBottom: 8,
             overflow: 'visible', zIndex: 50,
             transition: 'width 200ms ease'
           }}
         >
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{
-              width: '100%', padding: '12px 0', border: 'none',
-              cursor: 'pointer', background: 'transparent', color: '#6B7280',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'color 150ms ease', marginBottom: 8
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6B7280'}
-          >
-            <Icons.ChevronLeft size={20} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
-          </button>
-
           {SIDEBAR_ITEMS.map((item, idx) => {
             const id = item.label === 'Library' ? 'media' : item.label === 'Schedule' ? 'schedule' : item.label.toLowerCase();
             const isActive = activeTab === id;
