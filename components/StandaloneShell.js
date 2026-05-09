@@ -51,14 +51,16 @@ export default function StandaloneShell() {
     return 'image';
   };
   
-  const [apiKey, setApiKey] = useState(null);
+  const [apiKey, setApiKey] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem(STORAGE_KEY) || null;
+    return null;
+  });
   const [activeTab, setActiveTab] = useState(getInitialTab());
   
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [hasMounted, setHasMounted] = useState(false);
 
   // Drag and Drop State
   const [isDragging, setIsDragging] = useState(false);
@@ -115,15 +117,11 @@ export default function StandaloneShell() {
   }, []);
 
   useEffect(() => {
-    setHasMounted(true);
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      setApiKey(stored);
-      fetchBalance(stored);
-      // Sync cookie immediately on mount to establish identity for background requests
-      document.cookie = `muapi_key=${stored}; path=/; max-age=31536000; SameSite=Lax`;
+    if (apiKey) {
+      fetchBalance(apiKey);
+      document.cookie = `muapi_key=${apiKey}; path=/; max-age=31536000; SameSite=Lax`;
     }
-  }, [fetchBalance]);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleKeySave = useCallback((key) => {
     localStorage.setItem(STORAGE_KEY, key);
@@ -208,12 +206,6 @@ export default function StandaloneShell() {
     setDroppedFiles(null);
   }, []);
 
-  if (!hasMounted) return (
-    <div className="min-h-screen bg-[#050505] flex items-center justify-center">
-      <div className="animate-spin text-[#d9ff00] text-3xl">◌</div>
-    </div>
-  );
-
   return (
     <div 
       className="h-screen bg-[#030303] flex flex-col overflow-hidden text-white relative"
@@ -249,7 +241,7 @@ export default function StandaloneShell() {
                 <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
             </div>
-            <span className="text-sm font-bold tracking-tight hidden sm:block">OpenGenerativeAI</span>
+            <span className="text-sm font-bold tracking-tight hidden sm:block">Creatify AI</span>
           </div>
 
           {/* Center: Navigation */}
