@@ -377,7 +377,8 @@ export default function StandaloneShell() {
             background: '#111111',
             borderRight: '1px solid rgba(255,255,255,0.07)',
             display: 'flex', flexDirection: 'column',
-            paddingTop: 8, paddingBottom: 8,
+            justifyContent: 'space-evenly',
+            padding: '4px 0',
             overflow: 'visible', zIndex: 50
           }}
         >
@@ -398,8 +399,8 @@ export default function StandaloneShell() {
                   onClick={() => handleTabChange(id)}
                   style={{
                     width: '100%', display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', gap: 6,
-                    padding: '10px 0', border: 'none', cursor: 'pointer',
+                    alignItems: 'center', gap: 4,
+                    padding: '4px 0', border: 'none', cursor: 'pointer',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent', position: 'relative',
                     transition: 'background 150ms ease'
                   }}
