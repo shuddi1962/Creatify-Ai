@@ -235,6 +235,7 @@ export default function StandaloneShell() {
       >
         <button
           onClick={() => handleTabChange(id)}
+          className={`${!isActive ? 'top-nav-btn' : ''}`}
           style={{
             padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
             fontSize: 13, fontWeight: isActive ? 600 : 500,
@@ -242,8 +243,6 @@ export default function StandaloneShell() {
             background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
             transition: 'all 150ms ease', whiteSpace: 'nowrap'
           }}
-          onMouseEnter={e => { if (!isActive) e.target.style.color = '#e5e7eb'; }}
-          onMouseLeave={e => { if (!isActive) e.target.style.color = '#9CA3AF'; }}
         >
           {item.label}
         </button>
@@ -307,7 +306,7 @@ export default function StandaloneShell() {
           background: '#111111',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 16px', zIndex: 40
+          padding: '0 16px', zIndex: 40, position: 'relative'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <button onClick={() => setMobileDrawerOpen(true)}
@@ -379,7 +378,7 @@ export default function StandaloneShell() {
             borderRight: '1px solid rgba(255,255,255,0.07)',
             display: 'flex', flexDirection: 'column',
             paddingTop: 8, paddingBottom: 8,
-            overflowY: 'auto', overflowX: 'hidden'
+            overflow: 'visible', zIndex: 50
           }}
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
@@ -401,11 +400,11 @@ export default function StandaloneShell() {
                     width: '100%', display: 'flex', flexDirection: 'column',
                     alignItems: 'center', gap: 3,
                     padding: '8px 0', border: 'none', cursor: 'pointer',
-                    background: 'transparent', position: 'relative',
+                    background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent', position: 'relative',
                     transition: 'background 150ms ease'
                   }}
-                  onMouseEnterCapture={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-                  onMouseLeaveCapture={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
+                  onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+                  onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
                 >
                   <div style={{
                     position: 'relative',
@@ -521,7 +520,7 @@ export default function StandaloneShell() {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto" style={{ background: '#050505' }}>
+        <main className="flex-1 overflow-y-auto scrollbar-main" style={{ background: '#050505' }}>
           {renderContent()}
         </main>
       </div>

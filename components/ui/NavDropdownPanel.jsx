@@ -11,7 +11,7 @@ export function NavDropdownPanel({ children, style }) {
       padding: 16,
       minWidth: 680,
       boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
-      zIndex: 1000,
+      zIndex: 9999,
       animation: 'dropFade 180ms ease forwards',
       ...style,
     }}>

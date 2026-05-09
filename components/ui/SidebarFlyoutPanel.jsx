@@ -18,7 +18,7 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
       padding: 16,
       width: 520,
       boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
-      zIndex: 2000,
+      zIndex: 9999,
       animation: 'flyoutFade 180ms ease forwards',
       ...style,
     }}>
