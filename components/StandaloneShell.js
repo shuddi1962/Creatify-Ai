@@ -269,7 +269,7 @@ export default function StandaloneShell() {
   };
 
   return (
-    <div className="h-screen bg-black flex flex-col text-white relative"
+    <div className="h-screen bg-black flex flex-col text-white relative overflow-y-auto no-scrollbar"
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
@@ -297,7 +297,7 @@ export default function StandaloneShell() {
           background: '#111111',
           borderBottom: '1px solid rgba(255,255,255,0.06)',
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 16px', zIndex: 40, position: 'relative'
+          padding: '0 16px', zIndex: 40, position: 'sticky', top: 0
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -514,7 +514,7 @@ export default function StandaloneShell() {
           </div>
         )}
 
-        <main className="flex-1" style={{ background: '#050505', overflow: 'hidden' }}>
+        <main className="flex-1" style={{ background: '#050505' }}>
           {renderContent()}
         </main>
       </div>
