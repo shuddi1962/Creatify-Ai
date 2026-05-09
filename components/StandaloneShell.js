@@ -195,16 +195,17 @@ export default function StandaloneShell() {
     const el = iconRefs.current[index];
     if (el) {
       const rect = el.getBoundingClientRect();
-      const panelHeight = 500;
-      const spaceBelow = window.innerHeight - rect.top;
-      const top = spaceBelow < panelHeight ? Math.max(window.innerHeight - panelHeight - 20, 8) : Math.max(rect.top - 10, 8);
+      const itemCount = (item.flyout.left?.length || 0) + (item.flyout.right?.length || 0);
+      const estimatedHeight = itemCount * 56 + 110;
+      const maxTop = Math.max(8, window.innerHeight - estimatedHeight - 16);
+      const top = Math.min(Math.max(rect.top - 10, 8), maxTop);
       setFlyoutStyle({ top });
     }
     setFlyoutItem(item.label);
   };
 
   const handleSidebarLeave = () => {
-    flyoutCloseTimer.current = setTimeout(() => setFlyoutItem(null), 150);
+    flyoutCloseTimer.current = setTimeout(() => setFlyoutItem(null), 200);
   };
 
   const renderContent = () => {
@@ -438,7 +439,7 @@ export default function StandaloneShell() {
                       right={item.flyout.right.map((r, i) => (
                         <NavMenuItem key={i} icon={r.icon} name={r.name} description={r.description} badge={r.badge} onClick={() => handleSubNavClick(r.href)} />
                       ))}
-                      style={{ top: flyoutStyle.top, left: sidebarCollapsed ? 64 : 164 }}
+                      style={{ top: flyoutStyle.top, left: sidebarCollapsed ? 60 : 160 }}
                     />
                   </div>
                 )}
