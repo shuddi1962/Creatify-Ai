@@ -1,15 +1,19 @@
 import { getModelById, getVideoModelById, getI2IModelById, getI2VModelById, getV2VModelById, getLipSyncModelById } from './models.js';
+import { getAPIKey as getStorageKey } from './storage.js';
 
 export class MuapiClient {
     constructor() {
-        // Ideally user provides this in settings
         this.baseUrl = import.meta.env.DEV ? '' : 'https://api.muapi.ai';
     }
 
-    getKey() {
-        const key = window.__MUAPI_KEY__ || localStorage.getItem('muapi_key');
-        if (!key) throw new Error('API Key missing. Please set it in Settings.');
-        return key;
+    async getKey() {
+        const winKey = window.__MUAPI_KEY__;
+        if (winKey) return winKey;
+        const stored = await getStorageKey();
+        if (stored) return stored;
+        const local = localStorage.getItem('muapi_key');
+        if (local) return local;
+        throw new Error('API Key missing. Please set it in Settings.');
     }
 
     /**
@@ -25,7 +29,7 @@ export class MuapiClient {
      * @param {string} [params.image_url] - If present, treats as Image-to-Image
      */
     async generateImage(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
 
         // Resolve endpoint from model definition
         const modelInfo = getModelById(params.model);
@@ -169,7 +173,7 @@ export class MuapiClient {
     }
 
     async generateVideo(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
 
         const modelInfo = getVideoModelById(params.model);
         const endpoint = modelInfo?.endpoint || params.model;
@@ -237,7 +241,7 @@ export class MuapiClient {
      * @param {string} [params.resolution]
      */
     async generateI2I(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
         const modelInfo = getI2IModelById(params.model);
         const endpoint = modelInfo?.endpoint || params.model;
         const url = `${this.baseUrl}/api/v1/${endpoint}`;
@@ -307,7 +311,7 @@ export class MuapiClient {
      * @param {string} [params.quality]
      */
     async generateI2V(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
         const modelInfo = getI2VModelById(params.model);
         const endpoint = modelInfo?.endpoint || params.model;
         const url = `${this.baseUrl}/api/v1/${endpoint}`;
@@ -379,7 +383,7 @@ export class MuapiClient {
      * @returns {Promise<string>} The hosted URL of the uploaded file
      */
     async uploadFile(file) {
-        const key = this.getKey();
+        const key = await this.getKey();
         const url = `${this.baseUrl}/api/v1/upload_file`;
 
         const formData = new FormData();
@@ -417,7 +421,7 @@ export class MuapiClient {
      * @param {string} [params.prompt] - Motion description (motion-control models)
      */
     async processV2V(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
         const modelInfo = getV2VModelById(params.model);
         const endpoint = modelInfo?.endpoint || params.model;
         const url = `${this.baseUrl}/api/v1/${endpoint}`;
@@ -479,7 +483,7 @@ export class MuapiClient {
      * @param {Function} [params.onRequestId] - Called when request_id is received
      */
     async processLipSync(params) {
-        const key = this.getKey();
+        const key = await this.getKey();
         const modelInfo = getLipSyncModelById(params.model);
         const endpoint = modelInfo?.endpoint || params.model;
         const url = `${this.baseUrl}/api/v1/${endpoint}`;

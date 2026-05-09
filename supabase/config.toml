@@ -1,0 +1,18 @@
+[auth]
+enabled = true
+site_url = "http://localhost:3000"
+additional_redirect_urls = ["https://creatify-ai.vercel.app"]
+jwt_expiry = 3600
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "storage", "graphql_public"]
+
+[db]
+port = 54322
+major_version = 17
+
+[storage]
+enabled = true
+file_size_limit = 52428800
