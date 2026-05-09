@@ -11,6 +11,19 @@ const tools = [
   { id: 'apps', label: 'Explore Apps', desc: 'One-click apps for viral effects, face swap, angles, and more.' },
 ];
 
+const stats = [
+  { value: '200+', label: 'AI Models' },
+  { value: '8', label: 'Creative Studios' },
+  { value: '100%', label: 'Free & Open Source' },
+  { value: '1', label: 'API Key Needed' },
+];
+
+const steps = [
+  { num: '01', title: 'Get an API Key', desc: 'Sign up at Muapi.ai, add credits, and copy your API key.' },
+  { num: '02', title: 'Paste in Settings', desc: 'Open Creatify AI, go to Settings, and paste your key.' },
+  { num: '03', title: 'Start Creating', desc: 'Choose a studio, enter a prompt, and generate in seconds.' },
+];
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#050505] text-white">
@@ -18,6 +31,7 @@ export default function Home() {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#d9ff00]/5 via-transparent to-transparent pointer-events-none" />
         <div className="absolute top-[-20%] left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-[#d9ff00]/3 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-[-10%] right-[-10%] w-[400px] h-[400px] bg-[#d9ff00]/5 rounded-full blur-[100px] pointer-events-none" />
         <div className="relative max-w-6xl mx-auto px-6 pt-32 pb-24 md:pt-40 md:pb-32">
           <div className="flex flex-col items-center text-center">
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-medium text-white/50 mb-8">
@@ -57,6 +71,18 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats */}
+      <section className="max-w-6xl mx-auto px-6 pb-24">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {stats.map((stat, i) => (
+            <div key={i} className="text-center p-6 rounded-2xl border border-white/[0.04] bg-white/[0.02]">
+              <div className="text-3xl md:text-4xl font-black text-[#d9ff00] mb-1">{stat.value}</div>
+              <div className="text-sm text-white/40">{stat.label}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Tools Grid */}
       <section className="max-w-6xl mx-auto px-6 pb-32">
         <div className="text-center mb-16">
@@ -68,14 +94,14 @@ export default function Home() {
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {tools.map((tool) => (
+          {tools.map((tool, i) => (
             <Link
               key={tool.id}
               href={`/studio/${tool.id}`}
-              className="group relative p-6 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all duration-300"
+              className="group relative p-6 rounded-2xl border border-white/[0.04] bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 hover:scale-[1.02] transition-all duration-300"
             >
               <div className="flex flex-col gap-3">
-                <div className="w-10 h-10 rounded-xl bg-[#d9ff00]/10 flex items-center justify-center group-hover:bg-[#d9ff00]/20 transition-colors">
+                <div className="w-10 h-10 rounded-xl bg-[#d9ff00]/10 flex items-center justify-center group-hover:bg-[#d9ff00]/20 group-hover:scale-110 transition-all duration-300">
                   <div className="w-5 h-5 rounded-[4px] bg-[#d9ff00] opacity-80" />
                 </div>
                 <div>
@@ -87,12 +113,33 @@ export default function Home() {
                   </p>
                 </div>
               </div>
-              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-all duration-300 -translate-x-1 group-hover:translate-x-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d9ff00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </div>
             </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="max-w-6xl mx-auto px-6 pb-32">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            How it works
+          </h2>
+          <p className="text-white/40 text-base max-w-xl mx-auto">
+            Get started in three simple steps.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {steps.map((step) => (
+            <div key={step.num} className="relative p-8 rounded-2xl border border-white/[0.04] bg-white/[0.02]">
+              <div className="text-5xl font-black text-white/5 mb-4">{step.num}</div>
+              <h3 className="text-lg font-bold text-white mb-2">{step.title}</h3>
+              <p className="text-sm text-white/40 leading-relaxed">{step.desc}</p>
+            </div>
           ))}
         </div>
       </section>
@@ -138,6 +185,25 @@ export default function Home() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* CTA */}
+      <section className="max-w-6xl mx-auto px-6 pb-32 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          Ready to create?
+        </h2>
+        <p className="text-white/40 text-base mb-8">
+          No sign-up required. Just paste your API key and go.
+        </p>
+        <Link
+          href="/studio"
+          className="inline-flex items-center gap-2 px-10 py-4 rounded-full bg-[#d9ff00] text-black font-bold text-sm hover:bg-[#e5ff33] hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg shadow-[#d9ff00]/10"
+        >
+          Launch Studio
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M5 12h14M12 5l7 7-7 7" />
+          </svg>
+        </Link>
       </section>
 
       {/* Footer */}

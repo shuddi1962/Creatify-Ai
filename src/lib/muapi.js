@@ -3,7 +3,9 @@ import { getAPIKey as getStorageKey } from './storage.js';
 
 export class MuapiClient {
     constructor() {
-        this.baseUrl = import.meta.env.DEV ? '' : 'https://api.muapi.ai';
+        let isDev = false
+        try { isDev = import.meta.env.DEV } catch { isDev = process.env.NODE_ENV === 'development' }
+        this.baseUrl = isDev ? '' : 'https://api.muapi.ai';
     }
 
     async getKey() {

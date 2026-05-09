@@ -1,7 +1,13 @@
 import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+let supabaseUrl, supabaseAnonKey
+try {
+  supabaseUrl = import.meta.env.VITE_SUPABASE_URL
+  supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+} catch {
+  supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+  supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+}
 
 if (!supabaseUrl || !supabaseAnonKey) {
   console.warn('[Supabase] Missing env vars. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (Vite) or NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY (Next.js)')

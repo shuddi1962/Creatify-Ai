@@ -5,6 +5,10 @@ import { useParams, useRouter } from 'next/navigation';
 import { ImageStudio, VideoStudio, LipSyncStudio, CinemaStudio, MarketingStudio, WorkflowStudio, AgentStudio, AppsStudio, getUserBalance } from 'studio';
 import axios from 'axios';
 import ApiKeyModal from './ApiKeyModal';
+import AuthModal from './AuthModal';
+import { useAuth } from '../src/lib/AuthProvider';
+import { resetStorageMode, saveAPIKey } from '../src/lib/storage';
+import toast, { Toaster } from 'react-hot-toast';
 
 const TABS = [
   { id: 'image',   label: 'Image Studio' },
@@ -57,9 +61,12 @@ export default function StandaloneShell() {
   });
   const [activeTab, setActiveTab] = useState(getInitialTab());
   
+  const { user, loading: authLoading, signOut } = useAuth();
+
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
 
   // Drag and Drop State
@@ -214,6 +221,14 @@ export default function StandaloneShell() {
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
     >
+      <Toaster
+        position="top-center"
+        toastOptions={{
+          style: { background: '#0a0a0a', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', fontSize: '13px' },
+          success: { iconTheme: { primary: '#d9ff00', secondary: '#000' } },
+        }}
+      />
+
       {/* Drag Overlay */}
       {isDragging && (
         <div className="fixed inset-0 z-[100] bg-[#d9ff00]/10 backdrop-blur-md border-4 border-dashed border-[#d9ff00]/50 flex items-center justify-center pointer-events-none transition-all duration-300">
@@ -265,27 +280,56 @@ export default function StandaloneShell() {
           </nav>
 
           {/* Right: Actions */}
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3 bg-white/5 px-3 py-1.5 rounded-full border border-white/5 transition-colors">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
               <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <div className="flex flex-col">
-                <span className="text-xs font-bold text-white/90">
-                  ${balance !== null ? `${balance}` : '---'}
-                </span>
-              </div>
+              <span className="text-xs font-bold text-white/90">
+                ${balance !== null ? `${balance}` : '---'}
+              </span>
             </div>
 
-            <button
-              onClick={() => setShowSettings(true)}
-              title="Settings — API key, local models, preferences"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-[13px] font-bold text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 transition-colors"
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="3" />
-                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-              </svg>
-              <span>Settings</span>
-            </button>
+            {user ? (
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 rounded-full bg-[#d9ff00]/20 border border-[#d9ff00]/30 flex items-center justify-center">
+                  <span className="text-[11px] font-bold text-[#d9ff00]">
+                    {user.email?.charAt(0).toUpperCase() || 'U'}
+                  </span>
+                </div>
+                <button
+                  onClick={() => setShowSettings(true)}
+                  title="Settings"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-[13px] font-bold text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 transition-colors"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                  <span>Settings</span>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setShowAuthModal(true)}
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#d9ff00] text-black text-[13px] font-bold hover:bg-[#d9ff00]/80 transition-colors"
+                >
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13 12H3" />
+                  </svg>
+                  Sign In
+                </button>
+                <button
+                  onClick={() => setShowSettings(true)}
+                  title="Settings"
+                  className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-[13px] font-bold text-white/80 hover:text-white hover:bg-white/10 hover:border-white/20 transition-colors"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  </svg>
+                </button>
+              </div>
+            )}
           </div>
         </header>
       )}
@@ -302,6 +346,14 @@ export default function StandaloneShell() {
         {activeTab === 'apps' && <AppsStudio apiKey={apiKey} />}
       </div>
 
+      {/* Auth Modal */}
+      {showAuthModal && (
+        <AuthModal onClose={() => {
+          setShowAuthModal(false);
+          resetStorageMode();
+        }} />
+      )}
+
       {/* API Key Modal */}
       {showApiKeyModal && (
         <ApiKeyModal onSave={(key) => { handleKeySave(key); setShowApiKeyModal(false); }} />
@@ -311,44 +363,100 @@ export default function StandaloneShell() {
       {showSettings && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
           <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl">
-            <h2 className="text-white font-bold text-lg mb-2">Settings</h2>
-            <p className="text-white/40 text-[13px] mb-8">
-              Manage your AI studio preferences and authentication.
-            </p>
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-white font-bold text-lg">Settings</h2>
+              <button onClick={() => setShowSettings(false)} className="text-white/30 hover:text-white/60 transition-colors">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
             
-            <div className="space-y-4 mb-8">
-                <div className="bg-white/5 border border-white/[0.03] rounded-md p-4">
+            <div className="space-y-4 mb-6">
+              {/* Account Section */}
+              <div className="bg-white/5 border border-white/[0.03] rounded-lg p-4">
                 <label className="block text-xs font-bold text-white/30 mb-2">
-                   Active API Key
+                  Account
                 </label>
-                <div className="text-[13px] font-mono text-white/80">
+                {user ? (
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#d9ff00]/20 border border-[#d9ff00]/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-[#d9ff00]">
+                        {user.email?.charAt(0).toUpperCase() || 'U'}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[13px] font-medium text-white/90 truncate">{user.email}</div>
+                      <div className="text-[11px] text-white/30">Signed in</div>
+                    </div>
+                    <button
+                      onClick={async () => {
+                        await signOut();
+                        resetStorageMode();
+                        handleKeyChange();
+                        setShowSettings(false);
+                      }}
+                      className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-between">
+                    <span className="text-[13px] text-white/50">Not signed in</span>
+                    <button
+                      onClick={() => { setShowSettings(false); setShowAuthModal(true); }}
+                      className="text-xs text-[#d9ff00] font-medium hover:text-[#d9ff00]/80 transition-colors"
+                    >
+                      Sign In
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* API Key Section */}
+              <div className="bg-white/5 border border-white/[0.03] rounded-lg p-4">
+                <label className="block text-xs font-bold text-white/30 mb-2">
+                  Muapi API Key
+                </label>
+                <div className="text-[13px] font-mono text-white/80 mb-3">
                   {apiKey ? apiKey.slice(0, 8) + '••••••••••••••••' : 'Not set'}
                 </div>
+                <div className="flex gap-2">
+                  {apiKey ? (
+                    <>
+                      {user && (
+                        <button
+                          onClick={async () => {
+                            try {
+                              await saveAPIKey(apiKey);
+                              toast?.success?.('API key saved to your account');
+                            } catch (e) {
+                              console.error('Failed to save API key:', e);
+                            }
+                          }}
+                          className="flex-1 h-9 rounded-md bg-white/5 text-white/70 hover:bg-white/10 text-[11px] font-semibold transition-all border border-white/5"
+                        >
+                          Save to Account
+                        </button>
+                      )}
+                      <button
+                        onClick={handleKeyChange}
+                        className="flex-1 h-9 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[11px] font-semibold transition-all"
+                      >
+                        Remove Key
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      onClick={() => { setShowSettings(false); setShowApiKeyModal(true); }}
+                      className="flex-1 h-9 rounded-md bg-[#d9ff00] text-black hover:bg-[#d9ff00]/80 text-xs font-semibold transition-all"
+                    >
+                      Set API Key
+                    </button>
+                  )}
+                </div>
               </div>
-            </div>
-
-            <div className="flex gap-3">
-              {apiKey ? (
-                <button
-                  onClick={handleKeyChange}
-                  className="flex-1 h-10 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-all"
-                >
-                  Change Key
-                </button>
-              ) : (
-                <button
-                  onClick={() => { setShowSettings(false); setShowApiKeyModal(true); }}
-                  className="flex-1 h-10 rounded-md bg-[#d9ff00] text-black hover:bg-[#d9ff00]/80 text-xs font-semibold transition-all"
-                >
-                  Set API Key
-                </button>
-              )}
-              <button
-                onClick={() => setShowSettings(false)}
-                className="flex-1 h-10 rounded-md bg-white/5 text-white/80 hover:bg-white/10 text-xs font-semibold transition-all border border-white/5"
-              >
-                Close
-              </button>
             </div>
           </div>
         </div>

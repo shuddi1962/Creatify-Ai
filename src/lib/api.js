@@ -1,8 +1,15 @@
 import { supabase, getSession } from './supabase.js'
 import { muapi } from './muapi.js'
 
-const EDGE_FUNCTIONS_URL = import.meta.env.VITE_SUPABASE_URL
-  ? `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`
+let viteSupabaseUrl
+try {
+  viteSupabaseUrl = import.meta.env.VITE_SUPABASE_URL
+} catch {
+  viteSupabaseUrl = null
+}
+
+const EDGE_FUNCTIONS_URL = viteSupabaseUrl
+  ? `${viteSupabaseUrl}/functions/v1`
   : (process.env.NEXT_PUBLIC_SUPABASE_URL
     ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1`
     : null)
