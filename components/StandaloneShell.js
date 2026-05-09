@@ -268,16 +268,6 @@ export default function StandaloneShell() {
     );
   };
 
-  const sidebarIcon = (name) => {
-    const iconMap = {
-      Home: Icons.Home, Copy: Icons.Copy, TrendingUp: Icons.TrendingUp,
-      UserCircle: Icons.UserCircle, GitMerge: Icons.GitMerge, Bot: Icons.Bot,
-      Grid: Icons.Grid, Folder: Icons.Folder, Calendar: Icons.Calendar,
-      Settings: Icons.Settings
-    };
-    return iconMap[name] || Icons.HelpCircle;
-  };
-
   return (
     <div className="h-screen bg-black flex flex-col text-white relative"
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
@@ -386,7 +376,7 @@ export default function StandaloneShell() {
           {SIDEBAR_ITEMS.map((item, idx) => {
             const id = item.label === 'Library' ? 'media' : item.label === 'Schedule' ? 'schedule' : item.label.toLowerCase();
             const isActive = activeTab === id;
-            const IconComp = sidebarIcon(item.icon.name || 'HelpCircle');
+            const IconComp = item.icon;
             const showFlyout = flyoutItem === item.label && item.flyout;
 
             return (
@@ -501,7 +491,7 @@ export default function StandaloneShell() {
                 <div style={{ fontSize: 10, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Tools</div>
                 {SIDEBAR_ITEMS.map(item => {
                   const id = item.label === 'Library' ? 'media' : item.label === 'Schedule' ? 'schedule' : item.label.toLowerCase();
-                  const IconComp = sidebarIcon(item.icon.name || 'HelpCircle');
+            const IconComp = item.icon;
                   const displayLabel = item.label === 'Library' ? 'Media Library' : item.label === 'Schedule' ? 'Schedule & Publish' : item.label;
                   return (
                     <button key={id} onClick={() => handleTabChange(id)}
