@@ -5,6 +5,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
+*::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
 
 body {
   background: #050505;
@@ -33,18 +35,7 @@ body {
   border: 1px solid var(--glass-border);
 }
 
-.custom-scrollbar::-webkit-scrollbar { width: 4px; }
-.custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
 
-.scrollbar-main::-webkit-scrollbar { width: 6px; }
-.scrollbar-main::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-main::-webkit-scrollbar-thumb { background: #1a1a1a; border-radius: 3px; border: 1px solid rgba(255,255,255,0.06); }
-.scrollbar-main::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
-.scrollbar-main { scrollbar-width: thin; scrollbar-color: #1a1a1a transparent; }
-
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 .top-nav-btn:hover {
   color: #e5e7eb !important;
