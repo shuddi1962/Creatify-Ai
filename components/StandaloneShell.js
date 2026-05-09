@@ -520,7 +520,7 @@ export default function StandaloneShell() {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto no-scrollbar" style={{ background: '#050505' }}>
+        <main className="flex-1" style={{ background: '#050505', overflow: 'hidden' }}>
           {renderContent()}
         </main>
       </div>
