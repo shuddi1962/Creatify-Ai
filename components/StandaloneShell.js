@@ -436,7 +436,7 @@ export default function StandaloneShell() {
                       right={item.flyout.right.map((r, i) => (
                         <NavMenuItem key={i} icon={r.icon} name={r.name} description={r.description} badge={r.badge} onClick={() => handleSubNavClick(r.href)} />
                       ))}
-                      style={{ top: flyoutStyle.top }}
+                      style={{ top: flyoutStyle.top, left: sidebarCollapsed ? 64 : 164 }}
                     />
                   </div>
                 )}

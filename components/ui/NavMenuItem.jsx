@@ -42,9 +42,6 @@ export function NavMenuItem({ icon: Icon, name, description, badge, onClick }) {
           color: '#ffffff',
           lineHeight: 1.2,
           marginBottom: 2,
-          whiteSpace: 'nowrap',
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
         }}>
           {name}
         </div>
@@ -52,10 +49,6 @@ export function NavMenuItem({ icon: Icon, name, description, badge, onClick }) {
           fontSize: 10,
           color: '#6B7280',
           lineHeight: 1.35,
-          overflow: 'hidden',
-          display: '-webkit-box',
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: 'vertical',
         }}>
           {description}
         </div>
