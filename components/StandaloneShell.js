@@ -398,8 +398,8 @@ export default function StandaloneShell() {
                   onClick={() => handleTabChange(id)}
                   style={{
                     width: '100%', display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', gap: 3,
-                    padding: '8px 0', border: 'none', cursor: 'pointer',
+                    alignItems: 'center', gap: 2,
+                    padding: '6px 0', border: 'none', cursor: 'pointer',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent', position: 'relative',
                     transition: 'background 150ms ease'
                   }}
@@ -408,23 +408,23 @@ export default function StandaloneShell() {
                 >
                   <div style={{
                     position: 'relative',
-                    width: 48, height: 48, borderRadius: 12,
+                    width: 40, height: 40, borderRadius: 10,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
                     color: isActive ? '#A78BFA' : '#6B7280',
                     transition: 'background 150ms ease, color 150ms ease'
                   }}>
-                    <IconComp size={22} />
+                    <IconComp size={18} />
                   </div>
                   <span style={{
-                    fontSize: 9, fontWeight: 500,
+                    fontSize: 8, fontWeight: 500,
                     color: isActive ? '#A78BFA' : '#6B7280',
                     lineHeight: 1.2,
                     transition: 'color 150ms ease'
                   }}>{item.label}</span>
                 </button>
                 {isActive && (
-                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 28, background: '#7C3AED', borderRadius: '0 3px 3px 0' }} />
+                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 22, background: '#7C3AED', borderRadius: '0 3px 3px 0' }} />
                 )}
 
                 {showFlyout && (
