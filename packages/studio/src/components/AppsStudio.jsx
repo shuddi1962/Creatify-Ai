@@ -129,10 +129,22 @@ const dummyAppsData = [
   { thumbnail: "https://cdn.muapi.ai/apps/Lumea_Residence.webp", name: "Lumea Residence", description: "Smart home property management and tenant portal.", icon: FaHome, category: "Real Estate" }
 ];
 
-export default function AppsStudio({ apiKey }) {
+const CATEGORY_TABS = [
+  { id: 'all', label: 'All Apps' },
+  { id: 'vfx', label: 'VFX & Effects' },
+  { id: 'face', label: 'Face & Character' },
+  { id: 'style', label: 'Style & Color' },
+  { id: 'product', label: 'Product & Fashion' },
+  { id: 'social', label: 'Meme & Social' },
+  { id: 'favorites', label: 'Favorites' },
+  { id: 'new', label: 'New This Week' },
+];
+
+export default function AppsStudio({ apiKey, activeCategory: initialCategory = 'all' }) {
   const [selectedApp, setSelectedApp] = useState(null);
   const [isRequesting, setIsRequesting] = useState(false);
   const [requestedApps, setRequestedApps] = useState([]);
+  const [activeCategory, setActiveCategory] = useState(initialCategory);
 
   useEffect(() => {
     if (apiKey) {
@@ -309,8 +321,27 @@ export default function AppsStudio({ apiKey }) {
           ))}
         </div>
 
+        {/* Category Filter */}
+        <div className="w-full pt-8">
+          <div className="flex gap-2 mb-6 flex-wrap">
+            {CATEGORY_TABS.map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveCategory(tab.id)}
+                className={`px-4 py-2 rounded-lg text-xs font-medium transition-all ${
+                  activeCategory === tab.id
+                    ? 'bg-[#d9ff00]/20 text-[#d9ff00] border border-[#d9ff00]/30'
+                    : 'text-[#9CA3AF] hover:text-[#F9FAFB] border border-transparent'
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Apps Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full pt-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 w-full">
           {templateApps.map((app, index) => renderAppCard(app, false, index))}
           {dummyAppsData.map((app, index) => renderAppCard(app, true, index + templateApps.length))}
         </div>

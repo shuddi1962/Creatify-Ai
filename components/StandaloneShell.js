@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
-import { ImageStudio, VideoStudio, LipSyncStudio, CinemaStudio, MarketingStudio, WorkflowStudio, AgentStudio, AppsStudio, getUserBalance } from 'studio';
+import { ImageStudio, VideoStudio, LipSyncStudio, CinemaStudio, MarketingStudio, WorkflowStudio, AgentStudio, AppsStudio, McpCliStudio, getUserBalance } from 'studio';
 import axios from 'axios';
 import ApiKeyModal from './ApiKeyModal';
 import AuthModal from './AuthModal';
@@ -208,6 +208,8 @@ export default function StandaloneShell() {
     flyoutCloseTimer.current = setTimeout(() => setFlyoutItem(null), 200);
   };
 
+  const subTab = slug[1] || null;
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home': return <HomeContent onTabChange={handleTabChange} />;
@@ -217,14 +219,19 @@ export default function StandaloneShell() {
       case 'cinema': return <CinemaStudio apiKey={apiKey} />;
       case 'marketing': return <MarketingStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
       case 'workflows': return <WorkflowStudio apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
-      case 'agents': return <AgentStudio apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
-      case 'apps': return <AppsStudio apiKey={apiKey} />;
-      case 'audio': return <AudioStudio />;
-      case 'bulk': return <BulkGenerateStudio />;
-      case 'ideas': return <ContentIdeasStudio />;
-      case 'characters': return <CharactersWorldsStudio />;
-      case 'media': return <MediaLibraryStudio />;
-      case 'schedule': return <SchedulePublishStudio />;
+      case 'agents': {
+        if (slug.includes('mcp') || slug.includes('cli')) {
+          return <McpCliStudio apiKey={apiKey} />;
+        }
+        return <AgentStudio apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
+      }
+      case 'apps': return <AppsStudio apiKey={apiKey} activeCategory={subTab || 'all'} />;
+      case 'audio': return <AudioStudio initialTab={subTab} />;
+      case 'bulk': return <BulkGenerateStudio initialTab={subTab} />;
+      case 'ideas': return <ContentIdeasStudio initialTab={subTab} />;
+      case 'characters': return <CharactersWorldsStudio initialTab={slug[1] === 'worlds' && slug[2] === 'create' ? 'worlds-create' : subTab} />;
+      case 'media': return <MediaLibraryStudio initialTab={subTab} />;
+      case 'schedule': return <SchedulePublishStudio initialTab={subTab} />;
       default: return <HomeContent onTabChange={handleTabChange} />;
     }
   };
