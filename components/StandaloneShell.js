@@ -431,8 +431,7 @@ export default function StandaloneShell() {
                         pathname === sub.path ? 'text-[#7C3AED] bg-[#7C3AED]/10' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
                       }`}
                     >
-                      <div className="font-medium">{sub.label}</div>
-                      {sub.desc && <div className="text-[10px] text-white/40 mt-0.5 leading-tight">{sub.desc}</div>}
+                      {sub.label}
                     </button>
                   ))}
                 </div>
