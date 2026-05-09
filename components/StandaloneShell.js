@@ -89,6 +89,7 @@ export default function StandaloneShell() {
   const [hoveredTopNav, setHoveredTopNav] = useState(null);
   const topNavTimeoutRef = useRef(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -373,13 +374,14 @@ export default function StandaloneShell() {
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
         <aside className="hidden lg:flex"
           style={{
-            width: 60, flexShrink: 0,
+            width: sidebarCollapsed ? 60 : 160, flexShrink: 0,
             background: '#111111',
             borderRight: '1px solid rgba(255,255,255,0.07)',
             display: 'flex', flexDirection: 'column',
-            gap: 8,
+            gap: 4,
             padding: '8px 0',
-            overflow: 'visible', zIndex: 50
+            overflow: 'visible', zIndex: 50,
+            transition: 'width 200ms ease'
           }}
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
@@ -398,11 +400,11 @@ export default function StandaloneShell() {
                 <button
                   onClick={() => handleTabChange(id)}
                   style={{
-                    width: '100%', display: 'flex', flexDirection: 'column',
-                    alignItems: 'center', gap: 6,
-                    padding: '10px 0', border: 'none', cursor: 'pointer',
+                    width: '100%', display: 'flex', flexDirection: sidebarCollapsed ? 'column' : 'row',
+                    alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: sidebarCollapsed ? 6 : 10,
+                    padding: sidebarCollapsed ? '10px 0' : '8px 12px', border: 'none', cursor: 'pointer',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent', position: 'relative',
-                    transition: 'background 150ms ease'
+                    transition: 'all 150ms ease'
                   }}
                   onMouseEnter={e => { if (!isActive) e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
                   onMouseLeave={e => { if (!isActive) e.currentTarget.style.background = 'transparent'; }}
@@ -413,6 +415,7 @@ export default function StandaloneShell() {
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
                     color: '#ffffff',
+                    flexShrink: 0,
                     transition: 'background 150ms ease, color 150ms ease'
                   }}>
                     <IconComp size={26} />
@@ -421,6 +424,7 @@ export default function StandaloneShell() {
                     fontSize: 11, fontWeight: 600,
                     color: '#ffffff',
                     lineHeight: 1.2,
+                    whiteSpace: 'nowrap',
                     transition: 'color 150ms ease'
                   }}>{item.label}</span>
                 </button>
@@ -450,6 +454,20 @@ export default function StandaloneShell() {
               </div>
             );
           })}
+
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            style={{
+              marginTop: 'auto', width: '100%', padding: '10px 0', border: 'none',
+              cursor: 'pointer', background: 'transparent', color: '#6B7280',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'color 150ms ease'
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+            onMouseLeave={e => e.currentTarget.style.color = '#6B7280'}
+          >
+            <Icons.ChevronLeft size={18} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
+          </button>
         </aside>
 
         {mobileDrawerOpen && (
