@@ -9,14 +9,15 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
     padding: '0 4px',
   }
   return (
-    <div style={{
+    <div className="flyout-scrollbar" style={{
       position: 'fixed',
-      left: 64,
       background: '#1C1C1C',
       border: '1px solid rgba(255,255,255,0.1)',
       borderRadius: 14,
       padding: 16,
-      width: 600,
+      width: 620,
+      maxHeight: 'calc(100vh - 120px)',
+      overflowY: 'auto',
       boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
       zIndex: 9999,
       animation: 'flyoutFade 180ms ease forwards',
@@ -37,14 +38,14 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
         {title}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <div>
           <div style={colHeaderStyle}>{leftLabel || 'Discover'}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>{left}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>{left}</div>
         </div>
         <div>
           <div style={colHeaderStyle}>{rightLabel || 'Create'}</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 1 }}>{right}</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>{right}</div>
         </div>
       </div>
     </div>
