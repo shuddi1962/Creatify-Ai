@@ -311,9 +311,9 @@ export default function StandaloneShell() {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             >
-              <Icons.ChevronLeft size={20} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
+              <Icons.PanelLeft size={20} />
             </button>
             <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
               <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
