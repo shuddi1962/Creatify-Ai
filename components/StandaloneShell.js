@@ -89,7 +89,7 @@ export default function StandaloneShell() {
   const [hoveredTopNav, setHoveredTopNav] = useState(null);
   const topNavTimeoutRef = useRef(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -384,6 +384,20 @@ export default function StandaloneShell() {
             transition: 'width 200ms ease'
           }}
         >
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            style={{
+              width: '100%', padding: '12px 0', border: 'none',
+              cursor: 'pointer', background: 'transparent', color: '#6B7280',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              transition: 'color 150ms ease', marginBottom: 8
+            }}
+            onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
+            onMouseLeave={e => e.currentTarget.style.color = '#6B7280'}
+          >
+            <Icons.ChevronLeft size={20} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
+          </button>
+
           {SIDEBAR_ITEMS.map((item, idx) => {
             const id = item.label === 'Library' ? 'media' : item.label === 'Schedule' ? 'schedule' : item.label.toLowerCase();
             const isActive = activeTab === id;
@@ -454,20 +468,6 @@ export default function StandaloneShell() {
               </div>
             );
           })}
-
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{
-              marginTop: 'auto', width: '100%', padding: '10px 0', border: 'none',
-              cursor: 'pointer', background: 'transparent', color: '#6B7280',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              transition: 'color 150ms ease'
-            }}
-            onMouseEnter={e => e.currentTarget.style.color = '#ffffff'}
-            onMouseLeave={e => e.currentTarget.style.color = '#6B7280'}
-          >
-            <Icons.ChevronLeft size={18} style={{ transform: sidebarCollapsed ? 'rotate(180deg)' : 'rotate(0deg)', transition: 'transform 200ms ease' }} />
-          </button>
         </aside>
 
         {mobileDrawerOpen && (
