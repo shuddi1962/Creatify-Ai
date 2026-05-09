@@ -411,14 +411,14 @@ export default function StandaloneShell() {
                     width: 54, height: 54, borderRadius: 14,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
-                    color: isActive ? '#A78BFA' : '#6B7280',
+                    color: '#ffffff',
                     transition: 'background 150ms ease, color 150ms ease'
                   }}>
                     <IconComp size={26} />
                   </div>
                   <span style={{
                     fontSize: 11, fontWeight: 600,
-                    color: isActive ? '#A78BFA' : '#6B7280',
+                    color: '#ffffff',
                     lineHeight: 1.2,
                     transition: 'color 150ms ease'
                   }}>{item.label}</span>
