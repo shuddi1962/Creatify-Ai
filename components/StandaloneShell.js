@@ -92,73 +92,73 @@ const TOP_NAV_ITEMS = [
 const SIDEBAR_NAV_ITEMS = [
   { id: 'bulk', label: 'Bulk Generate', icon: 'layers',
     subItems: [
-      { id: 'image', label: 'Bulk Image', path: '/studio/bulk/image' },
-      { id: 'video', label: 'Bulk Video', path: '/studio/bulk/video' },
-      { id: 'lipsync', label: 'Bulk Lip Sync', path: '/studio/bulk/lipsync' },
-      { id: 'voiceover', label: 'Bulk Voiceover', path: '/studio/bulk/voiceover' },
-      { id: 'queue', label: 'Job Queue', path: '/studio/bulk/queue' },
+      { id: 'image', label: 'Bulk Image', path: '/studio/bulk/image', desc: 'Generate multiple images at once from CSV data' },
+      { id: 'video', label: 'Bulk Video', path: '/studio/bulk/video', desc: 'Batch video generation from CSV uploads' },
+      { id: 'lipsync', label: 'Bulk Lip Sync', path: '/studio/bulk/lipsync', desc: 'Process multiple lip-sync videos in batch' },
+      { id: 'voiceover', label: 'Bulk Voiceover', path: '/studio/bulk/voiceover', desc: 'Generate voiceovers in bulk from scripts' },
+      { id: 'queue', label: 'Job Queue', path: '/studio/bulk/queue', desc: 'Track and manage your bulk generation jobs' },
     ] },
   { id: 'ideas', label: 'Content Ideas', icon: 'trending',
     subItems: [
-      { id: 'trending', label: 'Trending Now', path: '/studio/ideas/trending' },
-      { id: 'saved', label: 'My Saved Ideas', path: '/studio/ideas/saved' },
-      { id: 'calendar', label: 'Content Calendar', path: '/studio/ideas/calendar' },
-      { id: 'hooks', label: 'Hook Generator', path: '/studio/ideas/hooks' },
-      { id: 'scripts', label: 'Script Generator', path: '/studio/ideas/scripts' },
-      { id: 'competitor', label: 'Competitor Analyzer', path: '/studio/ideas/competitor' },
-      { id: 'thumbnails', label: 'Thumbnail Generator', path: '/studio/ideas/thumbnails' },
+      { id: 'trending', label: 'Trending Now', path: '/studio/ideas/trending', desc: 'Discover what is trending across platforms' },
+      { id: 'saved', label: 'My Saved Ideas', path: '/studio/ideas/saved', desc: 'Access your saved content ideas' },
+      { id: 'calendar', label: 'Content Calendar', path: '/studio/ideas/calendar', desc: 'Plan and schedule your content' },
+      { id: 'hooks', label: 'Hook Generator', path: '/studio/ideas/hooks', desc: 'Generate viral hooks for any niche' },
+      { id: 'scripts', label: 'Script Generator', path: '/studio/ideas/scripts', desc: 'AI-powered script writing tool' },
+      { id: 'competitor', label: 'Competitor Analyzer', path: '/studio/ideas/competitor', desc: 'Analyze competitor content strategies' },
+      { id: 'thumbnails', label: 'Thumbnail Generator', path: '/studio/ideas/thumbnails', desc: 'Create eye-catching thumbnails' },
     ] },
   { id: 'characters', label: 'Characters & Worlds', icon: 'user',
     subItems: [
-      { id: 'mine', label: 'My Characters', path: '/studio/characters/mine' },
-      { id: 'library', label: 'Character Library', path: '/studio/characters/library' },
-      { id: 'create', label: 'Create Character', path: '/studio/characters/create' },
-      { id: 'worlds', label: 'My Worlds', path: '/studio/characters/worlds' },
-      { id: 'worlds-create', label: 'Create World', path: '/studio/characters/worlds/create' },
+      { id: 'mine', label: 'My Characters', path: '/studio/characters/mine', desc: 'Your created AI characters' },
+      { id: 'library', label: 'Character Library', path: '/studio/characters/library', desc: 'Browse pre-made character templates' },
+      { id: 'create', label: 'Create Character', path: '/studio/characters/create', desc: 'Design a new AI character' },
+      { id: 'worlds', label: 'My Worlds', path: '/studio/characters/worlds', desc: 'Your created virtual worlds' },
+      { id: 'worlds-create', label: 'Create World', path: '/studio/characters/worlds/create', desc: 'Build a new virtual world' },
     ] },
   { id: 'workflows', label: 'Workflows', icon: 'layout',
     subItems: [
-      { id: 'canvas', label: 'Visual Builder (Canvas)', path: '/studio/workflows/canvas' },
-      { id: 'templates', label: 'Templates Library', path: '/studio/workflows/templates' },
-      { id: 'mine', label: 'My Workflows', path: '/studio/workflows/mine' },
-      { id: 'community', label: 'Community Workflows', path: '/studio/workflows/community' },
-      { id: 'moodboard', label: 'Moodboard', path: '/studio/workflows/moodboard' },
-      { id: 'scheduled', label: 'Scheduled Runs', path: '/studio/workflows/scheduled' },
+      { id: 'canvas', label: 'Visual Builder (Canvas)', path: '/studio/workflows/canvas', desc: 'Drag-and-drop workflow builder' },
+      { id: 'templates', label: 'Templates Library', path: '/studio/workflows/templates', desc: 'Pre-built workflow templates' },
+      { id: 'mine', label: 'My Workflows', path: '/studio/workflows/mine', desc: 'Your saved workflows' },
+      { id: 'community', label: 'Community Workflows', path: '/studio/workflows/community', desc: 'Community-shared workflows' },
+      { id: 'moodboard', label: 'Moodboard', path: '/studio/workflows/moodboard', desc: 'Visual inspiration board' },
+      { id: 'scheduled', label: 'Scheduled Runs', path: '/studio/workflows/scheduled', desc: 'Automated workflow scheduling' },
     ] },
   { id: 'agents', label: 'Agents', icon: 'bot',
     subItems: [
-      { id: 'mine', label: 'My Agents', path: '/studio/agents/mine' },
-      { id: 'templates', label: 'Agent Templates', path: '/studio/agents/templates' },
-      { id: 'mcp', label: 'MCP Server Connect', path: '/studio/agents/mcp' },
-      { id: 'cli', label: 'CLI Tool', path: '/studio/agents/cli' },
-      { id: 'logs', label: 'Agent Logs', path: '/studio/agents/logs' },
+      { id: 'mine', label: 'My Agents', path: '/studio/agents/mine', desc: 'Your AI agent configurations' },
+      { id: 'templates', label: 'Agent Templates', path: '/studio/agents/templates', desc: 'Pre-built agent templates' },
+      { id: 'mcp', label: 'MCP Server Connect', path: '/studio/agents/mcp', desc: 'Connect external MCP servers' },
+      { id: 'cli', label: 'CLI Tool', path: '/studio/agents/cli', desc: 'Command-line agent interface' },
+      { id: 'logs', label: 'Agent Logs', path: '/studio/agents/logs', desc: 'View agent execution logs' },
     ] },
   { id: 'apps', label: 'Explore Apps', icon: 'grid',
     subItems: [
-      { id: 'all', label: 'All Apps', path: '/studio/apps/all' },
-      { id: 'vfx', label: 'VFX & Effects', path: '/studio/apps/vfx' },
-      { id: 'face', label: 'Face & Character', path: '/studio/apps/face' },
-      { id: 'style', label: 'Style & Color', path: '/studio/apps/style' },
-      { id: 'product', label: 'Product & Fashion', path: '/studio/apps/product' },
-      { id: 'social', label: 'Meme & Social', path: '/studio/apps/social' },
-      { id: 'favorites', label: 'Favorites', path: '/studio/apps/favorites' },
-      { id: 'new', label: 'New This Week', path: '/studio/apps/new' },
+      { id: 'all', label: 'All Apps', path: '/studio/apps/all', desc: 'Browse all available apps' },
+      { id: 'vfx', label: 'VFX & Effects', path: '/studio/apps/vfx', desc: 'Visual effects applications' },
+      { id: 'face', label: 'Face & Character', path: '/studio/apps/face', desc: 'Face and character tools' },
+      { id: 'style', label: 'Style & Color', path: '/studio/apps/style', desc: 'Style transfer and color tools' },
+      { id: 'product', label: 'Product & Fashion', path: '/studio/apps/product', desc: 'Product and fashion apps' },
+      { id: 'social', label: 'Meme & Social', path: '/studio/apps/social', desc: 'Meme and social media tools' },
+      { id: 'favorites', label: 'Favorites', path: '/studio/apps/favorites', desc: 'Your favorite apps' },
+      { id: 'new', label: 'New This Week', path: '/studio/apps/new', desc: 'Latest app additions' },
     ] },
   { id: 'media', label: 'Media Library', icon: 'folder',
     subItems: [
-      { id: 'all', label: 'All Assets', path: '/studio/media/all' },
-      { id: 'images', label: 'Images', path: '/studio/media/images' },
-      { id: 'videos', label: 'Videos', path: '/studio/media/videos' },
-      { id: 'audio', label: 'Audio', path: '/studio/media/audio' },
-      { id: 'projects', label: 'Projects', path: '/studio/media/projects' },
-      { id: 'storage', label: 'Connected Storage', path: '/studio/media/storage' },
+      { id: 'all', label: 'All Assets', path: '/studio/media/all', desc: 'View all your media assets' },
+      { id: 'images', label: 'Images', path: '/studio/media/images', desc: 'Browse your image assets' },
+      { id: 'videos', label: 'Videos', path: '/studio/media/videos', desc: 'Browse your video assets' },
+      { id: 'audio', label: 'Audio', path: '/studio/media/audio', desc: 'Browse your audio files' },
+      { id: 'projects', label: 'Projects', path: '/studio/media/projects', desc: 'View your project files' },
+      { id: 'storage', label: 'Connected Storage', path: '/studio/media/storage', desc: 'Manage external storage connections' },
     ] },
   { id: 'schedule', label: 'Schedule & Publish', icon: 'calendar',
     subItems: [
-      { id: 'calendar', label: 'Calendar View', path: '/studio/schedule/calendar' },
-      { id: 'connect', label: 'Connect Accounts', path: '/studio/schedule/connect' },
-      { id: 'posts', label: 'Scheduled Posts', path: '/studio/schedule/posts' },
-      { id: 'analytics', label: 'Post Analytics', path: '/studio/schedule/analytics' },
+      { id: 'calendar', label: 'Calendar View', path: '/studio/schedule/calendar', desc: 'Visual content calendar' },
+      { id: 'connect', label: 'Connect Accounts', path: '/studio/schedule/connect', desc: 'Link your social accounts' },
+      { id: 'posts', label: 'Scheduled Posts', path: '/studio/schedule/posts', desc: 'Manage scheduled posts' },
+      { id: 'analytics', label: 'Post Analytics', path: '/studio/schedule/analytics', desc: 'Track post performance' },
     ] },
 ];
 
@@ -228,14 +228,12 @@ export default function StandaloneShell() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [expandedNav, setExpandedNav] = useState(() => {
-    const initial = getInitialTab();
-    return initial !== 'home' ? initial : null;
-  });
   const [isDragging, setIsDragging] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState(null);
   const [hoveredNav, setHoveredNav] = useState(null);
   const hoverTimeoutRef = useRef(null);
+  const [hoveredSidebar, setHoveredSidebar] = useState(null);
+  const sidebarHoverTimeoutRef = useRef(null);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -250,7 +248,6 @@ export default function StandaloneShell() {
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
-    setExpandedNav(tabId === 'home' ? null : tabId);
     setMobileMenuOpen(false);
     router.push(`/studio/${tabId}`);
   };
@@ -260,8 +257,15 @@ export default function StandaloneShell() {
     router.push(path);
   };
 
-  const toggleExpanded = (id) => {
-    setExpandedNav(expandedNav === id ? null : id);
+  const handleSidebarHover = (id) => {
+    if (sidebarHoverTimeoutRef.current) clearTimeout(sidebarHoverTimeoutRef.current);
+    setHoveredSidebar(id);
+  };
+
+  const handleSidebarLeave = () => {
+    sidebarHoverTimeoutRef.current = setTimeout(() => {
+      setHoveredSidebar(null);
+    }, 150);
   };
 
   const handleNavHover = (id) => {
@@ -389,14 +393,13 @@ export default function StandaloneShell() {
 
         {SIDEBAR_NAV_ITEMS.map((item) => {
           const isActive = activeTab === item.id;
-          const isExpanded = expandedNav === item.id;
           return (
-            <div key={item.id} className="mb-0.5">
+            <div key={item.id} className="relative mb-0.5"
+              onMouseEnter={() => handleSidebarHover(item.id)}
+              onMouseLeave={handleSidebarLeave}
+            >
               <button
-                onClick={() => {
-                  handleTabChange(item.id);
-                  toggleExpanded(item.id);
-                }}
+                onClick={() => handleTabChange(item.id)}
                 className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                   isActive ? 'bg-[#7C3AED]/15 text-[#7C3AED]' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
                 }`}
@@ -407,24 +410,29 @@ export default function StandaloneShell() {
                 </div>
                 {item.subItems.length > 0 && (
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    className={`flex-shrink-0 transition-transform ${isExpanded ? 'rotate-90' : ''}`}
+                    className={`flex-shrink-0 transition-transform ${hoveredSidebar === item.id ? 'rotate-180' : ''}`}
                   >
-                    <polyline points="9 18 15 12 9 6"/>
+                    <polyline points="6 9 12 15 18 9"/>
                   </svg>
                 )}
               </button>
 
-              {isExpanded && (
-                <div className="ml-2 mt-0.5 space-y-0.5 border-l border-white/10 pl-2">
+              {hoveredSidebar === item.id && item.subItems.length > 0 && (
+                <div
+                  onMouseEnter={() => { if (sidebarHoverTimeoutRef.current) clearTimeout(sidebarHoverTimeoutRef.current); setHoveredSidebar(item.id); }}
+                  onMouseLeave={handleSidebarLeave}
+                  className="absolute left-full top-0 ml-1 min-w-[240px] bg-[rgba(17,24,39,0.98)] border border-white/10 rounded-lg shadow-2xl backdrop-blur-xl p-1.5 z-50"
+                >
                   {item.subItems.map((sub) => (
                     <button
                       key={sub.id}
-                      onClick={() => handleSubNavClick(sub.path)}
-                      className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-all ${
+                      onClick={() => { handleSubNavClick(sub.path); setHoveredSidebar(null); }}
+                      className={`w-full text-left px-3 py-2 rounded-md text-xs transition-all ${
                         pathname === sub.path ? 'text-[#7C3AED] bg-[#7C3AED]/10' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
                       }`}
                     >
-                      {sub.label}
+                      <div className="font-medium">{sub.label}</div>
+                      {sub.desc && <div className="text-[10px] text-white/40 mt-0.5 leading-tight">{sub.desc}</div>}
                     </button>
                   ))}
                 </div>
