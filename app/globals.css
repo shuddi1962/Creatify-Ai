@@ -10,11 +10,11 @@
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
 /* Visible thin scrollbar for dropdown panels */
-.flyout-scrollbar::-webkit-scrollbar { width: 5px; }
-.flyout-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.03); }
-.flyout-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
-.flyout-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.4); }
-.flyout-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.3) transparent; }
+.flyout-scrollbar::-webkit-scrollbar { width: 6px; }
+.flyout-scrollbar::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); }
+.flyout-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.4); border-radius: 3px; border: 1px solid rgba(0,0,0,0.2); }
+.flyout-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.55); }
+.flyout-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.4) transparent; }
 
 body {
   background: #050505;
