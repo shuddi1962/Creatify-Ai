@@ -16,179 +16,319 @@ import SchedulePublishStudio from './SchedulePublishStudio';
 import { useAuth } from '../src/lib/AuthProvider';
 import { resetStorageMode, saveAPIKey } from '../src/lib/storage';
 import toast, { Toaster } from 'react-hot-toast';
-
-const TOP_NAV_ITEMS = [
-  { id: 'image', label: 'Image Studio', icon: 'image',
-    subItems: [
-      { id: 'text-to-image', label: 'Text to Image', path: '/studio/image/text-to-image' },
-      { id: 'image-to-image', label: 'Image to Image', path: '/studio/image/image-to-image' },
-      { id: 'inpaint', label: 'Inpaint & Edit', path: '/studio/image/inpaint' },
-      { id: 'outpaint', label: 'Outpaint / Expand', path: '/studio/image/outpaint' },
-      { id: 'upscale', label: 'Upscale Image', path: '/studio/image/upscale' },
-      { id: 'remove-bg', label: 'Remove Background', path: '/studio/image/remove-bg' },
-      { id: 'multi-view', label: 'Multi-View (9 angles)', path: '/studio/image/multi-view' },
-      { id: 'camera-angle', label: 'Camera Angle Control', path: '/studio/image/camera-angle' },
-      { id: 'product-placement', label: 'Product Placement', path: '/studio/image/product-placement' },
-      { id: 'fashion', label: 'Fashion Generator', path: '/studio/image/fashion' },
-      { id: 'headshot', label: 'AI Headshot', path: '/studio/image/headshot' },
-      { id: 'meme', label: 'Meme Generator', path: '/studio/image/meme' },
-      { id: 'style-transfer', label: 'Style Transfer', path: '/studio/image/style-transfer' },
-      { id: 'image-to-3d', label: 'Image to 3D', path: '/studio/image/image-to-3d' },
-    ] },
-  { id: 'video', label: 'Video Studio', icon: 'video',
-    subItems: [
-      { id: 'text-to-video', label: 'Text to Video', path: '/studio/video/text-to-video' },
-      { id: 'image-to-video', label: 'Image to Video', path: '/studio/video/image-to-video' },
-      { id: 'smart-shot', label: 'Smart Shot', path: '/studio/video/smart-shot' },
-      { id: 'motion-sync', label: 'Motion Sync', path: '/studio/video/motion-sync' },
-      { id: 'edit', label: 'Edit Video', path: '/studio/video/edit' },
-      { id: 'extend', label: 'Extend Video', path: '/studio/video/extend' },
-      { id: 'restyle', label: 'Restyle Video', path: '/studio/video/restyle' },
-      { id: 'replace-character', label: 'Replace Character', path: '/studio/video/replace-character' },
-      { id: 'upscale', label: 'Video Upscale', path: '/studio/video/upscale' },
-      { id: 'sound-effects', label: 'Add Sound Effects', path: '/studio/video/sound-effects' },
-      { id: 'mixed-media', label: 'Mixed Media', path: '/studio/video/mixed-media' },
-      { id: 'camera-motion', label: 'Camera Motion Presets', path: '/studio/video/camera-motion' },
-    ] },
-  { id: 'lipsync', label: 'Lip Sync', icon: 'mic',
-    subItems: [
-      { id: 'portrait', label: 'Portrait + Audio', path: '/studio/lipsync/portrait' },
-      { id: 'video', label: 'Video + Audio', path: '/studio/lipsync/video' },
-      { id: 'bulk', label: 'Bulk Lip Sync', path: '/studio/lipsync/bulk' },
-      { id: 'avatar', label: 'Talking Avatar', path: '/studio/lipsync/avatar' },
-      { id: 'dubbing', label: 'Multi-language Dubbing', path: '/studio/lipsync/dubbing' },
-    ] },
-  { id: 'audio', label: 'Audio Studio', icon: 'music',
-    subItems: [
-      { id: 'voiceover', label: 'Text to Voiceover', path: '/studio/audio/voiceover' },
-      { id: 'voice-clone', label: 'Voice Cloning', path: '/studio/audio/voice-clone' },
-      { id: 'music', label: 'Text to Music', path: '/studio/audio/music' },
-      { id: 'sfx', label: 'Sound Effects', path: '/studio/audio/sfx' },
-      { id: 'subtitles', label: 'Audio to Subtitles', path: '/studio/audio/subtitles' },
-      { id: 'asmr', label: 'ASMR Generator', path: '/studio/audio/asmr' },
-      { id: 'background-music', label: 'Background Music', path: '/studio/audio/background-music' },
-    ] },
-  { id: 'cinema', label: 'Cinema Studio', icon: 'film',
-    subItems: [
-      { id: 'generate', label: 'Cinematic Generator', path: '/studio/cinema/generate' },
-      { id: 'vfx', label: 'VFX Presets Library', path: '/studio/cinema/vfx' },
-      { id: 'color-grading', label: 'Color Grading', path: '/studio/cinema/color-grading' },
-      { id: 'storyboard', label: 'Storyboard Builder', path: '/studio/cinema/storyboard' },
-      { id: 'scene', label: 'Scene Composition', path: '/studio/cinema/scene' },
-      { id: 'genres', label: 'Genre Presets', path: '/studio/cinema/genres' },
-    ] },
-  { id: 'marketing', label: 'Marketing Studio', icon: 'briefcase',
-    subItems: [
-      { id: 'ugc', label: 'UGC Ad Generator', path: '/studio/marketing/ugc' },
-      { id: 'product-url', label: 'Product URL to Ad', path: '/studio/marketing/product-url' },
-      { id: 'brand-kit', label: 'Brand Kit Manager', path: '/studio/marketing/brand-kit' },
-      { id: 'formatter', label: 'Platform Formatter', path: '/studio/marketing/formatter' },
-      { id: 'hooks', label: 'Hook Generator', path: '/studio/marketing/hooks' },
-      { id: 'batch', label: 'Batch Ad Generator', path: '/studio/marketing/batch' },
-      { id: 'stories', label: 'Story Ad Builder', path: '/studio/marketing/stories' },
-    ] },
-];
-
-const SIDEBAR_NAV_ITEMS = [
-  { id: 'bulk', label: 'Bulk Generate', icon: 'layers',
-    subItems: [
-      { id: 'image', label: 'Bulk Image', path: '/studio/bulk/image', desc: 'Generate multiple images at once from CSV data' },
-      { id: 'video', label: 'Bulk Video', path: '/studio/bulk/video', desc: 'Batch video generation from CSV uploads' },
-      { id: 'lipsync', label: 'Bulk Lip Sync', path: '/studio/bulk/lipsync', desc: 'Process multiple lip-sync videos in batch' },
-      { id: 'voiceover', label: 'Bulk Voiceover', path: '/studio/bulk/voiceover', desc: 'Generate voiceovers in bulk from scripts' },
-      { id: 'queue', label: 'Job Queue', path: '/studio/bulk/queue', desc: 'Track and manage your bulk generation jobs' },
-    ] },
-  { id: 'ideas', label: 'Content Ideas', icon: 'trending',
-    subItems: [
-      { id: 'trending', label: 'Trending Now', path: '/studio/ideas/trending', desc: 'Discover what is trending across platforms' },
-      { id: 'saved', label: 'My Saved Ideas', path: '/studio/ideas/saved', desc: 'Access your saved content ideas' },
-      { id: 'calendar', label: 'Content Calendar', path: '/studio/ideas/calendar', desc: 'Plan and schedule your content' },
-      { id: 'hooks', label: 'Hook Generator', path: '/studio/ideas/hooks', desc: 'Generate viral hooks for any niche' },
-      { id: 'scripts', label: 'Script Generator', path: '/studio/ideas/scripts', desc: 'AI-powered script writing tool' },
-      { id: 'competitor', label: 'Competitor Analyzer', path: '/studio/ideas/competitor', desc: 'Analyze competitor content strategies' },
-      { id: 'thumbnails', label: 'Thumbnail Generator', path: '/studio/ideas/thumbnails', desc: 'Create eye-catching thumbnails' },
-    ] },
-  { id: 'characters', label: 'Characters & Worlds', icon: 'user',
-    subItems: [
-      { id: 'mine', label: 'My Characters', path: '/studio/characters/mine', desc: 'Your created AI characters' },
-      { id: 'library', label: 'Character Library', path: '/studio/characters/library', desc: 'Browse pre-made character templates' },
-      { id: 'create', label: 'Create Character', path: '/studio/characters/create', desc: 'Design a new AI character' },
-      { id: 'worlds', label: 'My Worlds', path: '/studio/characters/worlds', desc: 'Your created virtual worlds' },
-      { id: 'worlds-create', label: 'Create World', path: '/studio/characters/worlds/create', desc: 'Build a new virtual world' },
-    ] },
-  { id: 'workflows', label: 'Workflows', icon: 'layout',
-    subItems: [
-      { id: 'canvas', label: 'Visual Builder (Canvas)', path: '/studio/workflows/canvas', desc: 'Drag-and-drop workflow builder' },
-      { id: 'templates', label: 'Templates Library', path: '/studio/workflows/templates', desc: 'Pre-built workflow templates' },
-      { id: 'mine', label: 'My Workflows', path: '/studio/workflows/mine', desc: 'Your saved workflows' },
-      { id: 'community', label: 'Community Workflows', path: '/studio/workflows/community', desc: 'Community-shared workflows' },
-      { id: 'moodboard', label: 'Moodboard', path: '/studio/workflows/moodboard', desc: 'Visual inspiration board' },
-      { id: 'scheduled', label: 'Scheduled Runs', path: '/studio/workflows/scheduled', desc: 'Automated workflow scheduling' },
-    ] },
-  { id: 'agents', label: 'Agents', icon: 'bot',
-    subItems: [
-      { id: 'mine', label: 'My Agents', path: '/studio/agents/mine', desc: 'Your AI agent configurations' },
-      { id: 'templates', label: 'Agent Templates', path: '/studio/agents/templates', desc: 'Pre-built agent templates' },
-      { id: 'mcp', label: 'MCP Server Connect', path: '/studio/agents/mcp', desc: 'Connect external MCP servers' },
-      { id: 'cli', label: 'CLI Tool', path: '/studio/agents/cli', desc: 'Command-line agent interface' },
-      { id: 'logs', label: 'Agent Logs', path: '/studio/agents/logs', desc: 'View agent execution logs' },
-    ] },
-  { id: 'apps', label: 'Explore Apps', icon: 'grid',
-    subItems: [
-      { id: 'all', label: 'All Apps', path: '/studio/apps/all', desc: 'Browse all available apps' },
-      { id: 'vfx', label: 'VFX & Effects', path: '/studio/apps/vfx', desc: 'Visual effects applications' },
-      { id: 'face', label: 'Face & Character', path: '/studio/apps/face', desc: 'Face and character tools' },
-      { id: 'style', label: 'Style & Color', path: '/studio/apps/style', desc: 'Style transfer and color tools' },
-      { id: 'product', label: 'Product & Fashion', path: '/studio/apps/product', desc: 'Product and fashion apps' },
-      { id: 'social', label: 'Meme & Social', path: '/studio/apps/social', desc: 'Meme and social media tools' },
-      { id: 'favorites', label: 'Favorites', path: '/studio/apps/favorites', desc: 'Your favorite apps' },
-      { id: 'new', label: 'New This Week', path: '/studio/apps/new', desc: 'Latest app additions' },
-    ] },
-  { id: 'media', label: 'Media Library', icon: 'folder',
-    subItems: [
-      { id: 'all', label: 'All Assets', path: '/studio/media/all', desc: 'View all your media assets' },
-      { id: 'images', label: 'Images', path: '/studio/media/images', desc: 'Browse your image assets' },
-      { id: 'videos', label: 'Videos', path: '/studio/media/videos', desc: 'Browse your video assets' },
-      { id: 'audio', label: 'Audio', path: '/studio/media/audio', desc: 'Browse your audio files' },
-      { id: 'projects', label: 'Projects', path: '/studio/media/projects', desc: 'View your project files' },
-      { id: 'storage', label: 'Connected Storage', path: '/studio/media/storage', desc: 'Manage external storage connections' },
-    ] },
-  { id: 'schedule', label: 'Schedule & Publish', icon: 'calendar',
-    subItems: [
-      { id: 'calendar', label: 'Calendar View', path: '/studio/schedule/calendar', desc: 'Visual content calendar' },
-      { id: 'connect', label: 'Connect Accounts', path: '/studio/schedule/connect', desc: 'Link your social accounts' },
-      { id: 'posts', label: 'Scheduled Posts', path: '/studio/schedule/posts', desc: 'Manage scheduled posts' },
-      { id: 'analytics', label: 'Post Analytics', path: '/studio/schedule/analytics', desc: 'Track post performance' },
-    ] },
-];
-
-const ALL_NAV_ITEMS = [...TOP_NAV_ITEMS, ...SIDEBAR_NAV_ITEMS];
-
-function NavIcon({ name, size = 18 }) {
-  const p = { width: size, height: size, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: '2', strokeLinecap: 'round', strokeLinejoin: 'round' };
-  const icons = {
-    image: <svg {...p}><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>,
-    video: <svg {...p}><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>,
-    mic: <svg {...p}><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>,
-    music: <svg {...p}><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>,
-    film: <svg {...p}><rect x="2" y="2" width="20" height="20" rx="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/></svg>,
-    briefcase: <svg {...p}><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>,
-    layers: <svg {...p}><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>,
-    trending: <svg {...p}><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>,
-    user: <svg {...p}><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>,
-    layout: <svg {...p}><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>,
-    bot: <svg {...p}><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M9 14h.01"/><path d="M15 14h.01"/></svg>,
-    grid: <svg {...p}><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>,
-    folder: <svg {...p}><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>,
-    calendar: <svg {...p}><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>,
-    home: <svg {...p}><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>,
-    settings: <svg {...p}><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>,
-    'plus-circle': <svg {...p}><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>,
-  };
-  return icons[name] || <svg {...p}><circle cx="12" cy="12" r="10"/></svg>;
-}
+import { NavBadge } from './ui/NavBadge';
+import { NavCard } from './ui/NavCard';
+import { NavDropdown } from './ui/NavDropdown';
+import { SidebarFlyout } from './ui/SidebarFlyout';
+import { SidebarIcon } from './ui/SidebarIcon';
+import * as Icons from 'lucide-react';
 
 const STORAGE_KEY = 'muapi_key';
+
+const sectionHeader = (title) => (
+  <div style={{ fontSize: 11, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '8px 12px 4px' }}>{title}</div>
+);
+
+const navCard = (Icon, label, desc, badge, onClick) => (
+  <NavCard key={label} icon={Icon} label={label} description={desc} badge={badge} onClick={onClick} />
+);
+
+const col = (title, items) => (
+  <div>
+    {sectionHeader(title)}
+    {items}
+  </div>
+);
+
+const T = (name) => Icons[name] || Icons.HelpCircle;
+
+function makeItem(iconName, label, path, desc, badge) {
+  return { icon: T(iconName), label, path, desc, badge };
+}
+
+const TOP_NAV_DATA = [
+  {
+    id: 'image', label: 'Image Studio', path: '/studio/image',
+    features: [
+      makeItem('Image', 'Create Image', '/studio/image/text-to-image', 'Generate AI images'),
+      makeItem('Camera', 'Cinematic Cameras', '/studio/image/camera-angle', 'Image generation with camera controls', 'TOP'),
+      makeItem('LayoutGrid', 'Multi-View', '/studio/image/multi-view', '9 camera angles from one image', 'NEW'),
+      makeItem('Wand', 'Inpaint & Edit', '/studio/image/inpaint', 'Brush to edit any region'),
+      makeItem('Maximize', 'Outpaint / Expand', '/studio/image/outpaint', 'Expand image borders with AI'),
+      makeItem('ArrowUpCircle', 'Upscale Image', '/studio/image/upscale', '2x, 4x, 8x AI upscaling'),
+      makeItem('Scissors', 'Remove Background', '/studio/image/remove-bg', 'Clean BG removal in one click'),
+      makeItem('Shirt', 'Fashion Generator', '/studio/image/fashion', 'Outfit on model, any style', 'NEW'),
+      makeItem('User', 'AI Headshot', '/studio/image/headshot', 'Professional headshots in seconds'),
+      makeItem('Smile', 'Meme Generator', '/studio/image/meme', 'AI memes from prompts'),
+      makeItem('Layers', 'Style Transfer', '/studio/image/style-transfer', 'Apply any style to your image'),
+      makeItem('Box', 'Image to 3D', '/studio/image/image-to-3d', 'Generate 3D from any image', 'NEW'),
+      makeItem('Sun', 'Relight', '/studio/image/relight', 'Adjust lighting position and color'),
+      makeItem('Star', 'Product Placement', '/studio/image/product-placement', 'Place product in any scene'),
+    ],
+    models: [
+      makeItem('Sparkles', 'Higgsfield Soul 2.0', '/studio/image/text-to-image?model=soul', 'Next gen ultra-realistic fashion', 'NEW'),
+      makeItem('Film', 'Higgsfield Soul Cinema', '/studio/image/text-to-image?model=soul-cinema', 'Cinematic Film-Grade Aesthetic', 'NEW'),
+      makeItem('Cpu', 'GPT Image 2', '/studio/image/text-to-image?model=gpt-image-2', '4K images with near-perfect text', 'NEW'),
+      makeItem('Zap', 'Nano Banana 2', '/studio/image/text-to-image?model=nano-banana-2', 'Pro quality at Flash speed'),
+      makeItem('Crown', 'Nano Banana Pro', '/studio/image/text-to-image?model=nano-banana-pro', 'Best 4K image model ever', 'TOP'),
+      makeItem('BarChart', 'Seedream 5.0', '/studio/image/text-to-image?model=seedream', 'Intelligent visual reasoning'),
+      makeItem('Settings', 'GPT Image 1.5', '/studio/image/text-to-image?model=gpt-image-1-5', 'True-color precision rendering'),
+      makeItem('Globe', 'Grok Imagine', '/studio/image/text-to-image?model=grok', 'xAI image generation'),
+      makeItem('Layers', 'Flux Kontext', '/studio/image/text-to-image?model=flux', 'Reference-faithful editing'),
+      makeItem('Image', 'Midjourney v7', '/studio/image/text-to-image?model=midjourney', 'Artistic quality benchmark', 'TOP'),
+      makeItem('Cpu', 'Ideogram v3', '/studio/image/text-to-image?model=ideogram', 'Best text-in-image model'),
+      makeItem('Zap', 'SDXL', '/studio/image/text-to-image?model=sdxl', 'Classic open-source powerhouse'),
+    ],
+  },
+  {
+    id: 'video', label: 'Video Studio', path: '/studio/video',
+    features: [
+      makeItem('Video', 'Text to Video', '/studio/video/text-to-video', 'Generate video from any prompt'),
+      makeItem('Image', 'Image to Video', '/studio/video/image-to-video', 'Animate any image into video'),
+      makeItem('Film', 'Smart Shot', '/studio/video/smart-shot', 'Prompt to storyboard to cinematic video', 'NEW'),
+      makeItem('Activity', 'Motion Sync', '/studio/video/motion-sync', 'Sync motion from reference video'),
+      makeItem('Edit', 'Edit Video', '/studio/video/edit', 'Inpaint and redo video regions'),
+      makeItem('PlayerTrackNext', 'Extend Video', '/studio/video/extend', 'Add more seconds to any video'),
+      makeItem('Palette', 'Restyle Video', '/studio/video/restyle', 'Apply visual style to video'),
+      makeItem('UserX', 'Replace Character', '/studio/video/replace-character', 'Swap characters in video', 'NEW'),
+      makeItem('ArrowUp', 'Video Upscale', '/studio/video/upscale', 'Enhance video to HD/4K'),
+      makeItem('Volume2', 'Add Sound Effects', '/studio/video/sound-effects', 'AI audio layered on video'),
+      makeItem('Layers', 'Mixed Media', '/studio/video/mixed-media', 'Layer real footage + AI'),
+      makeItem('Camera', 'Camera Motion Presets', '/studio/video/camera-motion', 'Zoom, pan, orbit, dolly'),
+    ],
+    models: [
+      makeItem('Crown', 'Seedance 2.0', '/studio/video/text-to-video?model=seedance', 'ByteDance flagship video model', 'TOP'),
+      makeItem('Sparkles', 'Kling 3.0', '/studio/video/text-to-video?model=kling', 'Best motion quality model', 'TOP'),
+      makeItem('Cpu', 'Sora 2', '/studio/video/text-to-video?model=sora', "OpenAI's cinematic video model", 'NEW'),
+      makeItem('Globe', 'Veo 3.1', '/studio/video/text-to-video?model=veo', "Google's highest quality video", 'NEW'),
+      makeItem('Zap', 'WAN 2.6', '/studio/video/text-to-video?model=wan', 'Fast open-source video gen'),
+      makeItem('Film', 'MiniMax Hailuo 02', '/studio/video/text-to-video?model=hailuo', 'Full HD multi-aspect video'),
+      makeItem('Activity', 'Runway Gen-3', '/studio/video/text-to-video?model=runway', 'Creative film-quality model'),
+      makeItem('Layers', 'Hunyuan Video', '/studio/video/text-to-video?model=hunyuan', 'Tencent cinematic model'),
+      makeItem('Star', 'Grok Imagine T2V', '/studio/video/text-to-video?model=grok-t2v', 'xAI video generation', 'NEW'),
+      makeItem('Video', 'Midjourney I2V', '/studio/video/image-to-video?model=midjourney-i2v', 'Animate Midjourney images'),
+    ],
+  },
+  {
+    id: 'lipsync', label: 'Lip Sync', path: '/studio/lipsync',
+    features: [
+      makeItem('Mic', 'Portrait + Audio', '/studio/lipsync/portrait', 'Animate portrait with any audio'),
+      makeItem('Video', 'Video + Audio', '/studio/lipsync/video', 'Sync lips on existing video'),
+      makeItem('Users', 'Bulk Lip Sync', '/studio/lipsync/bulk', '1 character x 100 audio files', 'NEW'),
+      makeItem('UserCircle', 'Talking Avatar', '/studio/lipsync/avatar', 'Build persistent talking avatar'),
+      makeItem('Globe', 'Multi-language Dubbing', '/studio/lipsync/dubbing', 'Dub videos in any language', 'NEW'),
+    ],
+    models: [
+      makeItem('Zap', 'Infinite Talk', '/studio/lipsync/portrait?model=infinite-talk', 'Portrait image to talking video', 'TOP'),
+      makeItem('Cpu', 'LTX 2.3 Lipsync', '/studio/lipsync/video?model=ltx', 'HD lipsync up to 1080p'),
+      makeItem('Film', 'LTX 2 19B', '/studio/lipsync/video?model=ltx-19b', 'Largest LTX lipsync model'),
+      makeItem('Activity', 'Wan 2.2 Speech', '/studio/lipsync/portrait?model=wan-speech', 'Speech-driven video generation'),
+      makeItem('Layers', 'Sync Lipsync', '/studio/lipsync/bulk?model=sync', 'Frame-perfect sync engine'),
+      makeItem('Settings', 'LatentSync', '/studio/lipsync/video?model=latentsync', 'Open-source lipsync'),
+      makeItem('Star', 'Veed Lipsync', '/studio/lipsync/portrait?model=veed', 'Studio-quality lipsync'),
+      makeItem('Sparkles', 'Creatify Lipsync', '/studio/lipsync/avatar?model=creatify', 'Built-in lipsync model'),
+    ],
+  },
+  {
+    id: 'audio', label: 'Audio Studio', path: '/studio/audio',
+    features: [
+      makeItem('Mic', 'Text to Voiceover', '/studio/audio/voiceover', '100+ voices, multilingual'),
+      makeItem('Waveform', 'Voice Cloning', '/studio/audio/voice-clone', 'Clone any voice from 10s sample', 'NEW'),
+      makeItem('Music', 'Text to Music', '/studio/audio/music', 'Genre, mood, BPM controls'),
+      makeItem('Volume2', 'Sound Effects', '/studio/audio/sfx', 'AI sound effects generator'),
+      makeItem('Subtitles', 'Audio to Subtitles', '/studio/audio/subtitles', 'Auto-transcription to text'),
+      makeItem('Headphones', 'ASMR Generator', '/studio/audio/asmr', 'Soothing AI audio', 'NEW'),
+      makeItem('Film', 'Background Music', '/studio/audio/background-music', 'Auto-score for your videos'),
+    ],
+    models: [
+      makeItem('Crown', 'ElevenLabs', '/studio/audio/voiceover?model=elevenlabs', 'Best TTS voice quality', 'TOP'),
+      makeItem('Sparkles', 'OpenAI TTS', '/studio/audio/voiceover?model=openai', 'Natural voice synthesis'),
+      makeItem('Cpu', 'Suno', '/studio/audio/music?model=suno', 'AI music generation', 'NEW'),
+      makeItem('Music', 'Udio', '/studio/audio/music?model=udio', 'Full track music AI'),
+      makeItem('Zap', 'Muapi Voice', '/studio/audio/voiceover?model=muapi', 'Fast multilingual TTS'),
+    ],
+  },
+  {
+    id: 'cinema', label: 'Cinema Studio', path: '/studio/cinema',
+    features: [
+      makeItem('Film', 'Cinematic Generator', '/studio/cinema/generate', 'Full cinematic video gen'),
+      makeItem('Sparkles', 'VFX Presets', '/studio/cinema/vfx', '200+ one-click visual effects', 'NEW'),
+      makeItem('Palette', 'Color Grading', '/studio/cinema/color-grading', 'Pro color grading presets'),
+      makeItem('Layout', 'Storyboard Builder', '/studio/cinema/storyboard', 'Visual scene planning'),
+      makeItem('Crop', 'Scene Composition', '/studio/cinema/scene', 'Director-level scene control'),
+      makeItem('Clapperboard', 'Genre Presets', '/studio/cinema/genres', 'Action, horror, romance, sci-fi'),
+      makeItem('Camera', 'Camera Controls', '/studio/cinema/camera-controls', 'Lens, focal, aperture, DoF', 'TOP'),
+    ],
+    models: [
+      makeItem('Crown', 'Kling 3.0 Cinema', '/studio/cinema/generate?model=kling-cinema', 'Cinematic motion model', 'TOP'),
+      makeItem('Sparkles', 'Sora 2', '/studio/cinema/generate?model=sora', "OpenAI's cinematic model", 'NEW'),
+      makeItem('Cpu', 'Veo 3.1', '/studio/cinema/generate?model=veo', "Google's film-grade model", 'NEW'),
+      makeItem('Film', 'Seedance Pro', '/studio/cinema/generate?model=seedance-pro', 'Pro cinematic generation'),
+      makeItem('Activity', 'Runway Gen-3', '/studio/cinema/generate?model=runway', 'Hollywood-quality output'),
+    ],
+  },
+  {
+    id: 'marketing', label: 'Marketing Studio', path: '/studio/marketing',
+    features: [
+      makeItem('ShoppingBag', 'UGC Ad Generator', '/studio/marketing/ugc', 'Scroll-stopping UGC-style ads', 'TOP'),
+      makeItem('Link', 'Product URL to Ad', '/studio/marketing/product-url', 'Paste URL to auto ad videos', 'NEW'),
+      makeItem('Palette', 'Brand Kit', '/studio/marketing/brand-kit', 'Upload logo, colors, fonts once'),
+      makeItem('Monitor', 'Platform Formatter', '/studio/marketing/formatter', '9:16, 1:1, 16:9, 4:5 auto'),
+      makeItem('Zap', 'Hook Generator', '/studio/marketing/hooks', '20 viral opening hooks per click'),
+      makeItem('Copy', 'Batch Ad Generator', '/studio/marketing/batch', '10 ad variants at once', 'NEW'),
+      makeItem('Play', 'Story Ad Builder', '/studio/marketing/stories', 'Short-form story ads'),
+      makeItem('Package', 'Product Demo', '/studio/marketing/product-demo', 'Showcase product in motion'),
+    ],
+    models: [
+      makeItem('Crown', 'Kling 3.0', '/studio/marketing/batch?model=kling', 'Best motion for ads', 'TOP'),
+      makeItem('Sparkles', 'Seedance 2.0', '/studio/marketing/batch?model=seedance', 'Fast, high quality for ads'),
+      makeItem('Cpu', 'GPT Image 2', '/studio/marketing/ugc?model=gpt-image-2', 'Product images in 4K'),
+      makeItem('Film', 'Runway Gen-3', '/studio/marketing/batch?model=runway', 'Cinematic product videos'),
+      makeItem('Zap', 'Nano Banana Pro', '/studio/marketing/batch?model=nano-banana-pro', 'Ultra-fast product images', 'TOP'),
+    ],
+  },
+];
+
+const SIDEBAR_DATA = [
+  { id: 'home', icon: 'Home', label: 'Home', path: '/studio/home' },
+  {
+    id: 'bulk', icon: 'Copy', label: 'Bulk', path: '/studio/bulk',
+    leftTitle: 'Generate Types', leftItems: [
+      makeItem('Image', 'Bulk Image', '/studio/bulk/image', 'CSV to 500 images at once'),
+      makeItem('Video', 'Bulk Video', '/studio/bulk/video', 'CSV to 500 videos at once'),
+      makeItem('Mic', 'Bulk Lip Sync', '/studio/bulk/lipsync', '1 character x 100 audio files', 'NEW'),
+      makeItem('Mic', 'Bulk Voiceover', '/studio/bulk/voiceover', 'CSV scripts to batch audio'),
+    ],
+    rightTitle: 'Manage', rightItems: [
+      makeItem('List', 'Job Queue', '/studio/bulk/queue', 'Live progress per job'),
+      makeItem('Download', 'Download ZIP', '/studio/bulk/queue', 'Export all outputs at once'),
+      makeItem('Bell', 'Webhooks', '/studio/bulk/queue', 'Notify on batch completion', 'NEW'),
+      makeItem('Cloud', 'Push to Drive', '/studio/bulk/queue', 'Auto-send to Google Drive'),
+    ],
+  },
+  {
+    id: 'ideas', icon: 'TrendingUp', label: 'Ideas', path: '/studio/ideas',
+    leftTitle: 'Discover', leftItems: [
+      makeItem('TrendingUp', 'Trending Now', '/studio/ideas/trending', 'Top 20 trends updated daily', 'TOP'),
+      makeItem('Globe', 'By Region', '/studio/ideas/trending', 'Filter trends by country'),
+      makeItem('Hash', 'By Platform', '/studio/ideas/trending', 'TikTok, IG, YouTube, LinkedIn'),
+      makeItem('Bookmark', 'Saved Ideas', '/studio/ideas/saved', 'Your saved content ideas'),
+      makeItem('Calendar', 'Content Calendar', '/studio/ideas/calendar', 'Schedule your content plan'),
+    ],
+    rightTitle: 'Create', rightItems: [
+      makeItem('FileText', 'Script Generator', '/studio/ideas/scripts', 'AI writes full video scripts', 'NEW'),
+      makeItem('Layout', 'Storyboard Pipeline', '/studio/ideas/scripts', 'Script to storyboard to bulk video', 'NEW'),
+      makeItem('Zap', 'Hook Generator', '/studio/ideas/hooks', '20 viral hooks per niche'),
+      makeItem('Search', 'Competitor Analyzer', '/studio/ideas/competitor', 'Reverse-engineer what works'),
+      makeItem('Image', 'Thumbnail Generator', '/studio/ideas/thumbnails', '5 thumbnail variants per idea'),
+    ],
+  },
+  {
+    id: 'characters', icon: 'UserCircle', label: 'Characters', path: '/studio/characters',
+    leftTitle: 'Characters', leftItems: [
+      makeItem('UserPlus', 'Create Character', '/studio/characters/create', 'Build a reusable Soul ID character'),
+      makeItem('Users', 'My Characters', '/studio/characters/mine', 'Your saved character library'),
+      makeItem('UserX', 'Character Swap', '/studio/characters/mine', 'Swap character in any video'),
+      makeItem('Users', 'Multi-character Scene', '/studio/characters/mine', 'Multiple characters in one scene', 'NEW'),
+    ],
+    rightTitle: 'Worlds', rightItems: [
+      makeItem('Globe', 'Create World', '/studio/characters/worlds/create', 'Save a scene/location preset'),
+      makeItem('Map', 'My Worlds', '/studio/characters/worlds', 'Your saved world presets'),
+      makeItem('Sun', 'Lighting Presets', '/studio/characters/worlds', 'Golden hour, studio, night'),
+      makeItem('Film', 'Scene Templates', '/studio/characters/worlds', 'Pre-built world templates'),
+    ],
+  },
+  {
+    id: 'workflows', icon: 'GitMerge', label: 'Workflows', path: '/studio/workflows',
+    leftTitle: 'Build', leftItems: [
+      makeItem('Layout', 'Canvas', '/studio/workflows/canvas', 'Infinite visual workflow builder', 'NEW'),
+      makeItem('GitMerge', 'Node Builder', '/studio/workflows/canvas', 'Drag-drop AI node pipeline'),
+      makeItem('Save', 'My Workflows', '/studio/workflows/mine', 'Saved and pinned workflows'),
+      makeItem('LayoutTemplate', 'Templates', '/studio/workflows/templates', 'Pre-built workflow templates'),
+    ],
+    rightTitle: 'Run & Share', rightItems: [
+      makeItem('Users', 'Community', '/studio/workflows/community', 'Browse community workflows'),
+      makeItem('Play', 'Playground', '/studio/workflows/canvas', 'Run any workflow interactively'),
+      makeItem('Calendar', 'Scheduled Runs', '/studio/workflows/scheduled', 'Auto-run on a schedule'),
+      makeItem('Share', 'Share Workflow', '/studio/workflows/mine', 'Share your pipeline publicly'),
+    ],
+  },
+  {
+    id: 'agents', icon: 'Bot', label: 'Agents', path: '/studio/agents',
+    leftTitle: 'My Agents', leftItems: [
+      makeItem('PlusCircle', 'Create Agent', '/studio/agents/mine', 'Build a custom AI agent'),
+      makeItem('Bot', 'My Agents', '/studio/agents/mine', 'Manage your agents'),
+      makeItem('LayoutTemplate', 'Agent Templates', '/studio/agents/templates', 'Start from a template'),
+      makeItem('Activity', 'Agent Logs', '/studio/agents/logs', 'View run history and errors'),
+    ],
+    rightTitle: 'Integrate', rightItems: [
+      makeItem('Server', 'MCP Server', '/studio/agents/mcp', 'Connect to Claude, OpenAI agents', 'NEW'),
+      makeItem('Terminal', 'CLI Tool', '/studio/agents/cli', 'Terminal-based batch generation'),
+      makeItem('Code', 'API Access', '/studio/agents/cli', 'REST API for all generation endpoints'),
+      makeItem('Webhook', 'Webhooks', '/studio/agents/mcp', 'Trigger from external systems'),
+    ],
+  },
+  {
+    id: 'apps', icon: 'Grid', label: 'Apps', path: '/studio/apps',
+    leftTitle: 'Categories', leftItems: [
+      makeItem('Sparkles', 'All Apps', '/studio/apps/all', '150+ one-click creative apps'),
+      makeItem('Flame', 'VFX & Effects', '/studio/apps/vfx', 'Explosion, fire, raven, werewolf', 'TOP'),
+      makeItem('User', 'Face & Character', '/studio/apps/face', 'Face swap, headshot, skin enhance'),
+      makeItem('Palette', 'Style & Color', '/studio/apps/style', 'Color grading, art styles'),
+      makeItem('ShoppingBag', 'Product & Fashion', '/studio/apps/product', 'Fashion, product placement'),
+      makeItem('Hash', 'Meme & Social', '/studio/apps/social', 'Meme maker, sticker, match cut'),
+      makeItem('Star', 'Favorites', '/studio/apps/favorites', 'Your pinned apps'),
+      makeItem('BadgeCheck', 'New This Week', '/studio/apps/new', 'Latest added apps', 'NEW'),
+    ],
+    rightTitle: 'Top Apps', rightItems: [
+      makeItem('UserX', 'Face Swap', '/studio/apps/all?app=face-swap', 'Swap faces on image or video', 'TOP'),
+      makeItem('Camera', 'Angles 2.0', '/studio/apps/all?app=angles', '9 angle shots from one image'),
+      makeItem('Sun', 'Skin Enhancer', '/studio/apps/all?app=skin', 'AI skin retouching'),
+      makeItem('Film', 'Match Cut', '/studio/apps/all?app=match-cut', 'Viral transition effect', 'NEW'),
+      makeItem('Smile', 'Sticker Generator', '/studio/apps/all?app=sticker', 'Create custom stickers'),
+      makeItem('Zap', 'Viral Effects Pack', '/studio/apps/all?app=viral', '80 trending one-click VFX', 'TOP'),
+    ],
+  },
+  {
+    id: 'media', icon: 'Folder', label: 'Library', path: '/studio/media',
+    leftTitle: 'Browse', leftItems: [
+      makeItem('Grid', 'All Assets', '/studio/media/all', 'Search all your creations'),
+      makeItem('Image', 'Images', '/studio/media/images', 'All generated images'),
+      makeItem('Video', 'Videos', '/studio/media/videos', 'All generated videos'),
+      makeItem('Mic', 'Audio', '/studio/media/audio', 'All generated audio'),
+      makeItem('Folder', 'Projects', '/studio/media/projects', 'Organized project folders'),
+    ],
+    rightTitle: 'Storage', rightItems: [
+      makeItem('HardDrive', 'Storage Quota', '/studio/media/storage', 'Check and manage usage'),
+      makeItem('Cloud', 'Google Drive', '/studio/media/storage', 'Connect and sync'),
+      makeItem('Cloud', 'Dropbox', '/studio/media/storage', 'Connect and sync'),
+      makeItem('Download', 'Bulk Download', '/studio/media/all', 'Download selected as ZIP'),
+    ],
+  },
+  {
+    id: 'schedule', icon: 'Calendar', label: 'Schedule', path: '/studio/schedule',
+    leftTitle: 'Plan', leftItems: [
+      makeItem('Calendar', 'Calendar View', '/studio/schedule/calendar', 'Drag-and-drop content calendar'),
+      makeItem('Clock', 'Scheduled Posts', '/studio/schedule/posts', 'View upcoming scheduled posts'),
+      makeItem('PlusCircle', 'New Post', '/studio/schedule/calendar', 'Schedule a new post'),
+    ],
+    rightTitle: 'Connect & Analyze', rightItems: [
+      makeItem('Share', 'Connect Accounts', '/studio/schedule/connect', 'TikTok, IG, YouTube, LinkedIn'),
+      makeItem('Hash', 'Caption Generator', '/studio/schedule/calendar', 'AI captions and hashtags'),
+      makeItem('BarChart', 'Post Analytics', '/studio/schedule/analytics', 'Views, reach, engagement'),
+      makeItem('Monitor', 'Platform Formatter', '/studio/schedule/calendar', 'Auto-resize for each platform'),
+    ],
+  },
+  { id: 'settings', icon: 'Settings', label: 'Settings', path: '/studio/settings' },
+];
+
+const MOBILE_TABS = [
+  { id: 'home', icon: 'Home', label: 'Home' },
+  { id: 'ideas', icon: 'TrendingUp', label: 'Ideas' },
+  { id: 'bulk', icon: 'Copy', label: 'Bulk' },
+  { id: 'apps', icon: 'Grid', label: 'Apps' },
+  { id: '__menu', icon: 'Menu', label: 'Menu' },
+];
 
 export default function StandaloneShell() {
   const params = useParams();
@@ -197,6 +337,9 @@ export default function StandaloneShell() {
   const slug = params?.slug || [];
   const idFromParams = params?.id;
   const tabFromParams = params?.tab;
+  const sidebarRef = useRef(null);
+  const [sidebarItemPositions, setSidebarItemPositions] = useState({});
+  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
 
   const getWorkflowInfo = useCallback(() => {
     if (idFromParams) return { id: idFromParams, tab: tabFromParams || null };
@@ -212,7 +355,8 @@ export default function StandaloneShell() {
     if (slug.includes('agents')) return 'agents';
     if (slug.includes('apps')) return 'apps';
     const firstSegment = slug[0];
-    if (firstSegment && ALL_NAV_ITEMS.find(t => t.id === firstSegment)) return firstSegment;
+    const allItems = [...TOP_NAV_DATA, ...SIDEBAR_DATA];
+    if (firstSegment && allItems.find(t => t.id === firstSegment)) return firstSegment;
     return 'home';
   };
 
@@ -227,13 +371,12 @@ export default function StandaloneShell() {
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState(null);
-  const [hoveredNav, setHoveredNav] = useState(null);
-  const hoverTimeoutRef = useRef(null);
+  const [hoveredTopNav, setHoveredTopNav] = useState(null);
+  const topNavTimeoutRef = useRef(null);
   const [hoveredSidebar, setHoveredSidebar] = useState(null);
-  const sidebarHoverTimeoutRef = useRef(null);
+  const sidebarTimeoutRef = useRef(null);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -242,41 +385,23 @@ export default function StandaloneShell() {
     else if (slug.includes('apps')) setActiveTab('apps');
     else {
       const firstSegment = slug[0];
-      if (firstSegment && ALL_NAV_ITEMS.find(t => t.id === firstSegment)) setActiveTab(firstSegment);
+      const allItems = [...TOP_NAV_DATA, ...SIDEBAR_DATA];
+      if (firstSegment && allItems.find(t => t.id === firstSegment)) setActiveTab(firstSegment);
     }
   }, [slug, getWorkflowInfo]);
 
   const handleTabChange = (tabId) => {
     setActiveTab(tabId);
-    setMobileMenuOpen(false);
-    router.push(`/studio/${tabId}`);
+    setMobileDrawerOpen(false);
+    const item = [...TOP_NAV_DATA, ...SIDEBAR_DATA].find(t => t.id === tabId);
+    router.push(item?.path || `/studio/${tabId}`);
   };
 
   const handleSubNavClick = (path) => {
-    setMobileMenuOpen(false);
+    setMobileDrawerOpen(false);
+    setHoveredTopNav(null);
+    setHoveredSidebar(null);
     router.push(path);
-  };
-
-  const handleSidebarHover = (id) => {
-    if (sidebarHoverTimeoutRef.current) clearTimeout(sidebarHoverTimeoutRef.current);
-    setHoveredSidebar(id);
-  };
-
-  const handleSidebarLeave = () => {
-    sidebarHoverTimeoutRef.current = setTimeout(() => {
-      setHoveredSidebar(null);
-    }, 150);
-  };
-
-  const handleNavHover = (id) => {
-    if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
-    setHoveredNav(id);
-  };
-
-  const handleNavLeave = () => {
-    hoverTimeoutRef.current = setTimeout(() => {
-      setHoveredNav(null);
-    }, 150);
   };
 
   useEffect(() => {
@@ -343,6 +468,21 @@ export default function StandaloneShell() {
   const handleDragLeave = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false); }, []);
   const handleDrop = useCallback((e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); const files = Array.from(e.dataTransfer.files); if (files.length > 0) setDroppedFiles(files); }, []);
 
+  const topNavHoverEnter = (id) => {
+    if (topNavTimeoutRef.current) clearTimeout(topNavTimeoutRef.current);
+    setHoveredTopNav(id);
+  };
+  const topNavHoverLeave = () => {
+    topNavTimeoutRef.current = setTimeout(() => setHoveredTopNav(null), 150);
+  };
+  const sidebarHoverEnter = (id) => {
+    if (sidebarTimeoutRef.current) clearTimeout(sidebarTimeoutRef.current);
+    setHoveredSidebar(id);
+  };
+  const sidebarHoverLeave = () => {
+    sidebarTimeoutRef.current = setTimeout(() => setHoveredSidebar(null), 150);
+  };
+
   const renderContent = () => {
     switch (activeTab) {
       case 'home': return <HomeContent onTabChange={handleTabChange} />;
@@ -364,97 +504,94 @@ export default function StandaloneShell() {
     }
   };
 
-  const renderSidebar = (isMobile = false) => (
-    <div className={`flex flex-col h-full ${isMobile ? '' : ''}`}>
-      {isMobile && (
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#7C3AED] rounded-lg flex items-center justify-center">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-            </div>
-            <span className="text-sm font-bold text-[#F9FAFB]">Creatify AI</span>
-          </div>
-          <button onClick={() => setMobileMenuOpen(false)} className="w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-          </button>
+  const activeTopNavItem = TOP_NAV_DATA.find(t => t.id === activeTab);
+  const activeSidebarItem = SIDEBAR_DATA.find(t => t.id === activeTab);
+
+  const topNavBtn = (item) => (
+    <div key={item.id} className="relative"
+      onMouseEnter={() => topNavHoverEnter(item.id)}
+      onMouseLeave={topNavHoverLeave}
+    >
+      <button
+        onClick={() => handleTabChange(item.id)}
+        style={{
+          padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
+          fontSize: 13, fontWeight: activeTab === item.id ? 600 : 500,
+          color: activeTab === item.id ? '#ffffff' : '#9CA3AF',
+          background: activeTab === item.id ? 'rgba(124,58,237,0.15)' : 'transparent',
+          transition: 'all 150ms ease', whiteSpace: 'nowrap'
+        }}
+        onMouseEnter={e => { if (activeTab !== item.id) e.target.style.color = '#e5e7eb'; }}
+        onMouseLeave={e => { if (activeTab !== item.id) e.target.style.color = '#9CA3AF'; }}
+      >
+        {item.label}
+      </button>
+      {hoveredTopNav === item.id && (
+        <div
+          onMouseEnter={() => { if (topNavTimeoutRef.current) clearTimeout(topNavTimeoutRef.current); setHoveredTopNav(item.id); }}
+          onMouseLeave={topNavHoverLeave}
+        >
+          <NavDropdown
+            isOpen={true}
+            leftItems={item.features}
+            rightItems={item.models}
+            onItemClick={(i) => handleSubNavClick(i.path)}
+          />
         </div>
       )}
-
-      <div className="flex-1 overflow-y-auto custom-scrollbar py-2 px-2">
-        <button
-          onClick={() => handleTabChange('home')}
-          className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all mb-0.5 ${
-            activeTab === 'home' ? 'bg-[#7C3AED]/15 text-[#7C3AED]' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
-          }`}
-        >
-          <NavIcon name="home" />
-          <span>Home</span>
-        </button>
-
-        {SIDEBAR_NAV_ITEMS.map((item) => {
-          const isActive = activeTab === item.id;
-          return (
-            <div key={item.id} className="relative mb-0.5"
-              onMouseEnter={() => handleSidebarHover(item.id)}
-              onMouseLeave={handleSidebarLeave}
-            >
-              <button
-                onClick={() => handleTabChange(item.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
-                  isActive ? 'bg-[#7C3AED]/15 text-[#7C3AED]' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
-                }`}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <span className="flex-shrink-0"><NavIcon name={item.icon} /></span>
-                  <span className="truncate">{item.label}</span>
-                </div>
-                {item.subItems.length > 0 && (
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                    className={`flex-shrink-0 transition-transform ${hoveredSidebar === item.id ? 'rotate-180' : ''}`}
-                  >
-                    <polyline points="6 9 12 15 18 9"/>
-                  </svg>
-                )}
-              </button>
-
-              {hoveredSidebar === item.id && item.subItems.length > 0 && (
-                <div
-                  onMouseEnter={() => { if (sidebarHoverTimeoutRef.current) clearTimeout(sidebarHoverTimeoutRef.current); setHoveredSidebar(item.id); }}
-                  onMouseLeave={handleSidebarLeave}
-                  className="absolute left-full top-0 ml-1 min-w-[240px] bg-[rgba(17,24,39,0.98)] border border-white/10 rounded-lg shadow-2xl backdrop-blur-xl p-1.5 z-50"
-                >
-                  {item.subItems.map((sub) => (
-                    <button
-                      key={sub.id}
-                      onClick={() => { handleSubNavClick(sub.path); setHoveredSidebar(null); }}
-                      className={`w-full text-left px-3 py-2 rounded-md text-xs transition-all ${
-                        pathname === sub.path ? 'text-[#7C3AED] bg-[#7C3AED]/10' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
-                      }`}
-                    >
-                      {sub.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-
-      <div className="p-2 border-t border-white/10">
-        <button
-          onClick={() => setShowSettings(true)}
-          className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB] transition-all"
-        >
-          <NavIcon name="settings" />
-          <span>Settings</span>
-        </button>
-      </div>
     </div>
   );
 
+  const sidebarItem = (item, idx) => {
+    const isActive = activeTab === item.id;
+    const showFlyout = hoveredSidebar === item.id && item.leftItems;
+    const iconComp = T(item.icon);
+
+    const handleMouseEnter = () => {
+      if (item.leftItems) {
+        sidebarHoverEnter(item.id);
+      }
+    };
+
+    return (
+      <div key={item.id} style={{ position: 'relative' }}>
+        <SidebarIcon
+          icon={iconComp}
+          label={item.label}
+          badge={item.badge}
+          isActive={isActive}
+          onClick={() => {
+            if (item.id === 'home' || item.id === 'settings') handleTabChange(item.id);
+            else handleTabChange(item.id);
+          }}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={sidebarHoverLeave}
+        />
+        {isActive && (
+          <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 28, background: '#7C3AED', borderRadius: '0 3px 3px 0' }} />
+        )}
+        {showFlyout && (
+          <div
+            onMouseEnter={() => { if (sidebarTimeoutRef.current) clearTimeout(sidebarTimeoutRef.current); setHoveredSidebar(item.id); }}
+            onMouseLeave={sidebarHoverLeave}
+          >
+            <SidebarFlyout
+              isOpen={true}
+              leftItems={item.leftItems}
+              rightItems={item.rightItems}
+              leftTitle={item.leftTitle}
+              rightTitle={item.rightTitle}
+              onItemClick={(i) => handleSubNavClick(i.path)}
+              topOffset={idx * 64 + 80}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
-    <div className="h-screen bg-[#0A0F1E] flex flex-col text-white relative"
+    <div className="h-screen bg-black flex flex-col text-white relative"
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
@@ -477,98 +614,68 @@ export default function StandaloneShell() {
       )}
 
       {isHeaderVisible && (
-        <header className="flex-shrink-0 h-14 border-b border-white/[0.03] flex items-center justify-between px-4 bg-[#0D1321]/80 backdrop-blur-md z-40">
-          <div className="flex items-center gap-2">
-            <button onClick={() => setMobileMenuOpen(true)} className="lg:hidden w-8 h-8 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        <header style={{
+          flexShrink: 0, height: 56,
+          background: '#111111',
+          borderBottom: '1px solid rgba(255,255,255,0.06)',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 16px', zIndex: 40
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <button onClick={() => setMobileDrawerOpen(true)}
+              className="lg:hidden"
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            >
+              <Icons.Menu size={20} />
             </button>
-            <div onClick={() => handleTabChange('home')} className="flex items-center gap-2 cursor-pointer">
-              <div className="w-8 h-8 bg-[#7C3AED] rounded-lg flex items-center justify-center">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
+              <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
               </div>
-              <span className="text-sm font-bold tracking-tight hidden sm:block text-[#F9FAFB]">Creatify AI</span>
+              <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
             </div>
 
-            <nav className="hidden lg:flex items-center gap-1 ml-2">
-              {TOP_NAV_ITEMS.map((item) => {
-                const isActive = activeTab === item.id;
-                return (
-                  <div key={item.id} className="relative"
-                    onMouseEnter={() => handleNavHover(item.id)}
-                    onMouseLeave={handleNavLeave}
-                  >
-                    <button
-                      onClick={() => { handleTabChange(item.id); setHoveredNav(null); }}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-bold transition-all whitespace-nowrap ${
-                        isActive ? 'bg-[#7C3AED]/15 text-[#7C3AED]' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
-                      }`}
-                    >
-                      <NavIcon name={item.icon} size={14} />
-                      <span>{item.label}</span>
-                      {item.subItems.length > 0 && (
-                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
-                          className={`transition-transform ${hoveredNav === item.id ? 'rotate-180' : ''}`}
-                        >
-                          <polyline points="6 9 12 15 18 9"/>
-                        </svg>
-                      )}
-                    </button>
-
-                    {hoveredNav === item.id && item.subItems.length > 0 && (
-                      <div
-                        onMouseEnter={() => { if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current); setHoveredNav(item.id); }}
-                        onMouseLeave={handleNavLeave}
-                        className="absolute top-full left-0 mt-1 min-w-[220px] bg-[rgba(17,24,39,0.98)] border border-white/10 rounded-lg shadow-2xl backdrop-blur-xl p-1.5 z-50"
-                      >
-                        {item.subItems.map((sub) => (
-                          <button
-                            key={sub.id}
-                            onClick={() => { handleSubNavClick(sub.path); setHoveredNav(null); }}
-                            className={`w-full text-left px-3 py-2 rounded-md text-xs transition-all ${
-                              pathname === sub.path ? 'text-[#7C3AED] bg-[#7C3AED]/10' : 'text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB]'
-                            }`}
-                          >
-                            {sub.label}
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+              {TOP_NAV_DATA.map(topNavBtn)}
             </nav>
           </div>
 
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-white/5 px-3 py-1.5 rounded-full border border-white/5">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-xs font-bold text-[#F9FAFB]">${balance !== null ? `${balance}` : '---'}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.05)', padding: '4px 12px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.05)' }}>
+              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e' }} />
+              <span style={{ fontSize: 12, fontWeight: 700, color: '#F9FAFB' }}>${balance !== null ? `${balance}` : '---'}</span>
             </div>
 
             {user ? (
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center">
-                  <span className="text-[11px] font-bold text-[#7C3AED]">{user.email?.charAt(0).toUpperCase() || 'U'}</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#A78BFA' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                 </div>
                 <button onClick={() => setShowSettings(true)} title="Settings"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-[13px] font-bold text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-white/10 transition-colors"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', cursor: 'pointer', color: '#9CA3AF', fontSize: 12, fontWeight: 600, transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.target.style.color = '#F9FAFB'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                  onMouseLeave={e => { e.target.style.color = '#9CA3AF'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <Icons.Settings size={14} />
                   <span className="hidden sm:inline">Settings</span>
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                 <button onClick={() => setShowAuthModal(true)}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md bg-[#7C3AED] text-white text-[13px] font-bold hover:bg-[#6D28D9] transition-colors"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#7C3AED', color: '#fff', fontSize: 12, fontWeight: 700, transition: 'background 150ms ease' }}
+                  onMouseEnter={e => e.target.style.background = '#6D28D9'}
+                  onMouseLeave={e => e.target.style.background = '#7C3AED'}
                 >
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4M10 17l5-5-5-5M13 12H3"/></svg>
+                  <Icons.LogIn size={14} />
                   Sign In
                 </button>
                 <button onClick={() => setShowSettings(true)} title="Settings"
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/10 bg-white/5 text-[13px] font-bold text-[#9CA3AF] hover:text-[#F9FAFB] hover:bg-white/10 transition-colors"
+                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', cursor: 'pointer', color: '#9CA3AF', fontSize: 12, fontWeight: 600, transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.target.style.color = '#F9FAFB'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
+                  onMouseLeave={e => { e.target.style.color = '#9CA3AF'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
                 >
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  <Icons.Settings size={14} />
                 </button>
               </div>
             )}
@@ -576,21 +683,87 @@ export default function StandaloneShell() {
         </header>
       )}
 
-      <div className="flex-1 min-h-0 flex">
-        <aside className="hidden lg:flex flex-col w-[260px] bg-[#0D1321] border-r border-white/10 flex-shrink-0">
-          {renderSidebar(false)}
+      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+        <aside className="hidden lg:flex" ref={sidebarRef}
+          style={{
+            width: 60, flexShrink: 0,
+            background: '#111111',
+            borderRight: '1px solid rgba(255,255,255,0.07)',
+            display: 'flex', flexDirection: 'column',
+            paddingTop: 8, paddingBottom: 8,
+            overflowY: 'auto', overflowX: 'hidden'
+          }}
+        >
+          {SIDEBAR_DATA.map((item, idx) => sidebarItem(item, idx))}
         </aside>
 
-        {mobileMenuOpen && (
+        {mobileDrawerOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">
-            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)} />
-            <div className="absolute left-0 top-0 bottom-0 w-[85vw] max-w-sm bg-[#0D1321] border-r border-white/10 overflow-y-auto">
-              {renderSidebar(true)}
+            <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileDrawerOpen(false)} />
+            <div style={{
+              position: 'absolute', left: 0, top: 0, bottom: 0, width: '85vw', maxWidth: 320,
+              background: '#111111', borderRight: '1px solid rgba(255,255,255,0.07)',
+              overflowY: 'auto', padding: 16
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                  <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                  </div>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
+                </div>
+                <button onClick={() => setMobileDrawerOpen(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <Icons.X size={18} />
+                </button>
+              </div>
+
+              <div style={{ fontSize: 10, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Studios</div>
+              {TOP_NAV_DATA.map(item => {
+                const iconMap = { lipsync: 'Mic', image: 'Image', video: 'Video', audio: 'Music', cinema: 'Film' };
+                const IconComp = T(iconMap[item.id] || 'Briefcase');
+                return (
+                <button key={item.id} onClick={() => handleTabChange(item.id)}
+                  style={{
+                    width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                    background: activeTab === item.id ? 'rgba(124,58,237,0.15)' : 'transparent',
+                    color: activeTab === item.id ? '#A78BFA' : '#9CA3AF',
+                    fontSize: 13, fontWeight: 500, textAlign: 'left',
+                    transition: 'all 150ms ease', marginBottom: 2
+                  }}
+                >
+                  <IconComp size={18} />
+                  <span>{item.label}</span>
+                </button>
+                );
+              })}
+
+              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '12px 0', paddingTop: 12 }}>
+                <div style={{ fontSize: 10, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Tools</div>
+                {SIDEBAR_DATA.map(item => {
+                  const IconComp = T(item.icon);
+                  return (
+                  <button key={item.id} onClick={() => handleTabChange(item.id)}
+                    style={{
+                      width: '100%', display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
+                      background: activeTab === item.id ? 'rgba(124,58,237,0.15)' : 'transparent',
+                      color: activeTab === item.id ? '#A78BFA' : '#9CA3AF',
+                      fontSize: 13, fontWeight: 500, textAlign: 'left',
+                      transition: 'all 150ms ease', marginBottom: 2
+                    }}
+                  >
+                    <IconComp size={18} />
+                    <span>{item.label === 'Library' ? 'Media Library' : item.label === 'Schedule' ? 'Schedule & Publish' : item.label}</span>
+                  </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 overflow-y-auto" style={{ background: '#050505' }}>
           {renderContent()}
         </main>
       </div>
@@ -604,7 +777,7 @@ export default function StandaloneShell() {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-[#F9FAFB] font-bold text-lg">Settings</h2>
               <button onClick={() => setShowSettings(false)} className="text-[#9CA3AF] hover:text-[#F9FAFB] transition-colors">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                <Icons.X size={18} />
               </button>
             </div>
             <div className="space-y-4 mb-6">
@@ -655,6 +828,17 @@ export default function StandaloneShell() {
           </div>
         </div>
       )}
+
+      <style>{`
+        @keyframes navDropdownIn {
+          from { opacity: 0; transform: translateY(-8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes sidebarFlyoutIn {
+          from { opacity: 0; transform: translateX(-8px); }
+          to { opacity: 1; transform: translateX(0); }
+        }
+      `}</style>
     </div>
   );
 }
