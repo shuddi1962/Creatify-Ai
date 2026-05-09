@@ -3,13 +3,19 @@
 import { useState } from 'react';
 import { useAuth } from '../src/lib/AuthProvider';
 
+const providers = [
+  { id: 'google', label: 'Google', icon: 'G' },
+  { id: 'github', label: 'GitHub', icon: 'GH' },
+];
+
 export default function AuthModal({ onClose }) {
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, signInWithOAuth, user } = useAuth();
   const [mode, setMode] = useState('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState(null);
   const [success, setSuccess] = useState(null);
 
   if (user) {
@@ -43,6 +49,17 @@ export default function AuthModal({ onClose }) {
     }
   };
 
+  const handleOAuth = async (provider) => {
+    setError(null);
+    setOauthLoading(provider);
+    try {
+      await signInWithOAuth(provider);
+    } catch (err) {
+      setError(err.message || `Failed to sign in with ${provider}`);
+      setOauthLoading(null);
+    }
+  };
+
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
       <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl">
@@ -68,6 +85,37 @@ export default function AuthModal({ onClose }) {
             {success}
           </div>
         )}
+
+        {/* Social Login Buttons */}
+        <div className="flex flex-col gap-2 mb-6">
+          {providers.map((p) => (
+            <button
+              key={p.id}
+              onClick={() => handleOAuth(p.id)}
+              disabled={oauthLoading !== null}
+              className="flex items-center justify-center gap-3 h-11 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium disabled:opacity-50 transition-all"
+            >
+              {oauthLoading === p.id ? (
+                <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+                </svg>
+              ) : (
+                <span className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center text-[10px] font-bold">
+                  {p.icon}
+                </span>
+              )}
+              {p.label}
+            </button>
+          ))}
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="flex-1 h-px bg-white/10" />
+          <span className="text-xs text-white/30">or continue with email</span>
+          <div className="flex-1 h-px bg-white/10" />
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

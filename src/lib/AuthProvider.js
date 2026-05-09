@@ -9,6 +9,7 @@ const AuthContext = createContext({
   loading: true,
   signIn: async () => {},
   signUp: async () => {},
+  signInWithOAuth: async () => {},
   signOut: async () => {},
 });
 
@@ -45,13 +46,24 @@ export function AuthProvider({ children }) {
     return data;
   };
 
+  const signInWithOAuth = async (provider) => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider,
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+    if (error) throw error;
+    return data;
+  };
+
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) throw error;
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signUp, signInWithOAuth, signOut }}>
       {children}
     </AuthContext.Provider>
   );
