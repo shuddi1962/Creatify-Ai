@@ -43,6 +43,9 @@ body {
 .scrollbar-main::-webkit-scrollbar-thumb:hover { background: #2a2a2a; }
 .scrollbar-main { scrollbar-width: thin; scrollbar-color: #1a1a1a transparent; }
 
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
 .top-nav-btn:hover {
   color: #e5e7eb !important;
 }
