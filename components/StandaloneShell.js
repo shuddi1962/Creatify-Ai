@@ -56,6 +56,7 @@ export default function StandaloneShell() {
   
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [hasMounted, setHasMounted] = useState(false);
 
@@ -213,10 +214,6 @@ export default function StandaloneShell() {
     </div>
   );
 
-  if (!apiKey) {
-    return <ApiKeyModal onSave={handleKeySave} />;
-  }
-
   return (
     <div 
       className="h-screen bg-[#030303] flex flex-col overflow-hidden text-white relative"
@@ -313,6 +310,11 @@ export default function StandaloneShell() {
         {activeTab === 'apps' && <AppsStudio apiKey={apiKey} />}
       </div>
 
+      {/* API Key Modal */}
+      {showApiKeyModal && (
+        <ApiKeyModal onSave={(key) => { handleKeySave(key); setShowApiKeyModal(false); }} />
+      )}
+
       {/* Settings Modal */}
       {showSettings && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
@@ -323,23 +325,32 @@ export default function StandaloneShell() {
             </p>
             
             <div className="space-y-4 mb-8">
-              <div className="bg-white/5 border border-white/[0.03] rounded-md p-4">
+                <div className="bg-white/5 border border-white/[0.03] rounded-md p-4">
                 <label className="block text-xs font-bold text-white/30 mb-2">
                    Active API Key
                 </label>
                 <div className="text-[13px] font-mono text-white/80">
-                  {apiKey.slice(0, 8)}••••••••••••••••
+                  {apiKey ? apiKey.slice(0, 8) + '••••••••••••••••' : 'Not set'}
                 </div>
               </div>
             </div>
 
             <div className="flex gap-3">
-              <button
-                onClick={handleKeyChange}
-                className="flex-1 h-10 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-all"
-              >
-                Change Key
-              </button>
+              {apiKey ? (
+                <button
+                  onClick={handleKeyChange}
+                  className="flex-1 h-10 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-xs font-semibold transition-all"
+                >
+                  Change Key
+                </button>
+              ) : (
+                <button
+                  onClick={() => { setShowSettings(false); setShowApiKeyModal(true); }}
+                  className="flex-1 h-10 rounded-md bg-[#d9ff00] text-black hover:bg-[#d9ff00]/80 text-xs font-semibold transition-all"
+                >
+                  Set API Key
+                </button>
+              )}
               <button
                 onClick={() => setShowSettings(false)}
                 className="flex-1 h-10 rounded-md bg-white/5 text-white/80 hover:bg-white/10 text-xs font-semibold transition-all border border-white/5"
