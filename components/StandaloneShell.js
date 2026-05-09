@@ -6,11 +6,13 @@ import { ImageStudio, VideoStudio, LipSyncStudio, CinemaStudio, MarketingStudio,
 import axios from 'axios';
 import ApiKeyModal from './ApiKeyModal';
 import AuthModal from './AuthModal';
+import HomeContent from './HomeContent';
 import { useAuth } from '../src/lib/AuthProvider';
 import { resetStorageMode, saveAPIKey } from '../src/lib/storage';
 import toast, { Toaster } from 'react-hot-toast';
 
 const TABS = [
+  { id: 'home',    label: 'Home' },
   { id: 'image',   label: 'Image Studio' },
   { id: 'video',   label: 'Video Studio' },
   { id: 'lipsync', label: 'Lip Sync' },
@@ -45,14 +47,14 @@ export default function StandaloneShell() {
 
   const { id: urlWorkflowId } = getWorkflowInfo();
 
-  // Initialize activeTab from URL slug/params or default to 'image'
+  // Initialize activeTab from URL slug/params or default to 'home'
   const getInitialTab = () => {
     if (idFromParams || slug.includes('workflow')) return 'workflows';
     if (slug.includes('agents')) return 'agents';
     if (slug.includes('apps')) return 'apps';
     const firstSegment = slug[0];
     if (firstSegment && TABS.find(t => t.id === firstSegment)) return firstSegment;
-    return 'image';
+    return 'home';
   };
   
   const [apiKey, setApiKey] = useState(() => {
@@ -336,6 +338,7 @@ export default function StandaloneShell() {
 
       {/* Studio Content */}
       <div className="flex-1 min-h-0 relative overflow-hidden">
+        {activeTab === 'home'    && <HomeContent onTabChange={handleTabChange} />}
         {activeTab === 'image'   && <ImageStudio   apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={handleFilesHandled} />}
         {activeTab === 'video'   && <VideoStudio   apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={handleFilesHandled} />}
         {activeTab === 'lipsync' && <LipSyncStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={handleFilesHandled} />}
