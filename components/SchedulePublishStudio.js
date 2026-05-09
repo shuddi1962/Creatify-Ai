@@ -241,8 +241,55 @@ export default function SchedulePublishStudio({ initialTab }) {
           {activeTab === 'captions' && renderCaptionGenerator()}
           {activeTab === 'format' && renderPlatformFormatter()}
           {activeTab === 'analytics' && (
-            <div className="flex items-center justify-center py-16">
-              <p className="text-[#9CA3AF] text-sm">Coming soon</p>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                {[
+                  { label: 'Total Posts', value: '24', change: '+12%' },
+                  { label: 'Total Reach', value: '45.2K', change: '+28%' },
+                  { label: 'Engagement Rate', value: '8.3%', change: '+2.1%' },
+                  { label: 'Followers', value: '1,234', change: '+156' },
+                ].map((stat, i) => (
+                  <div key={i} className="p-4 rounded-xl bg-white/[0.03] border border-white/5">
+                    <div className="text-xs text-[#9CA3AF] mb-1">{stat.label}</div>
+                    <div className="text-2xl font-bold text-[#F9FAFB]">{stat.value}</div>
+                    <div className="text-xs text-green-400">{stat.change}</div>
+                  </div>
+                ))}
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-[#F9FAFB] mb-4">Performance Over Time</h4>
+                <div className="h-48 rounded-xl bg-white/[0.03] border border-white/5 flex items-center justify-center">
+                  <div className="flex items-end gap-2 h-32">
+                    {[65, 45, 80, 55, 90, 70, 85, 60, 75, 95, 80, 88].map((h, i) => (
+                      <div key={i} className="w-6 rounded-t-lg bg-gradient-to-t from-[#7C3AED] to-[#06B6D4]" style={{ height: `${h}%` }} />
+                    ))}
+                  </div>
+                </div>
+                <div className="flex justify-between mt-2 text-xs text-[#9CA3AF]">
+                  <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span>
+                </div>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-[#F9FAFB] mb-4">Top Performing Posts</h4>
+                <div className="space-y-2">
+                  {[
+                    { title: 'Product Launch Reel', platform: 'Instagram', views: '12.5K', engagement: '9.2%' },
+                    { title: 'Behind the Scenes', platform: 'TikTok', views: '8.3K', engagement: '11.4%' },
+                    { title: 'Tutorial Video', platform: 'YouTube', views: '15.2K', engagement: '7.8%' },
+                  ].map((post, i) => (
+                    <div key={i} className="flex items-center justify-between p-3 rounded-lg bg-white/[0.03] border border-white/5">
+                      <div className="flex-1">
+                        <div className="text-sm font-medium text-[#F9FAFB]">{post.title}</div>
+                        <div className="text-xs text-[#9CA3AF]">{post.platform}</div>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm font-medium text-[#F9FAFB]">{post.views}</div>
+                        <div className="text-xs text-green-400">{post.engagement}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>

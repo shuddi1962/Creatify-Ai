@@ -184,8 +184,24 @@ export default function CharactersWorldsStudio({ initialTab }) {
             </div>
           )}
           {activeTab === 'library' && (
-            <div className="flex items-center justify-center py-16">
-              <p className="text-[#9CA3AF] text-sm">Character template library coming soon</p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { name: 'Business Professional', type: 'Corporate', style: 'Formal' },
+                { name: 'Tech Influencer', type: 'Creator', style: 'Modern' },
+                { name: 'Fitness Coach', type: 'Trainer', style: 'Athletic' },
+                { name: 'Chef Master', type: 'Culinary', style: 'Creative' },
+                { name: 'Doctor Expert', type: 'Medical', style: 'Clinical' },
+                { name: 'Travel Vlogger', type: 'Creator', style: 'Adventure' },
+              ].map((c, i) => (
+                <div key={i} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-[#7C3AED]/30 transition-all cursor-pointer">
+                  <div className="w-full aspect-square rounded-lg bg-gradient-to-br from-[#7C3AED]/20 to-[#06B6D4]/20 mb-3 flex items-center justify-center">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                  </div>
+                  <h4 className="text-sm font-medium text-[#F9FAFB]">{c.name}</h4>
+                  <p className="text-xs text-[#9CA3AF]">{c.type} • {c.style}</p>
+                  <button className="mt-2 w-full py-1.5 rounded-lg bg-[#7C3AED]/20 text-[#7C3AED] text-xs font-medium hover:bg-[#7C3AED]/30 transition-all">Use Template</button>
+                </div>
+              ))}
             </div>
           )}
           {activeTab === 'create' && (
@@ -204,13 +220,64 @@ export default function CharactersWorldsStudio({ initialTab }) {
           {activeTab === 'swap' && renderCharacterSwap()}
           {activeTab === 'multi' && renderMultiScene()}
           {activeTab === 'worlds' && (
-            <div className="flex items-center justify-center py-16">
-              <p className="text-[#9CA3AF] text-sm">Worlds feature coming soon</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {[
+                { name: 'Urban Apartment', type: 'Interior', style: 'Modern' },
+                { name: 'Beach Sunset', type: 'Nature', style: 'Serene' },
+                { name: 'Mountain Retreat', type: 'Nature', style: 'Rustic' },
+                { name: 'Cyberpunk City', type: 'Sci-Fi', style: 'Futuristic' },
+                { name: 'Coffee Shop', type: 'Interior', style: 'Cozy' },
+                { name: 'Desert Oasis', type: 'Nature', style: 'Vibrant' },
+              ].map((w, i) => (
+                <div key={i} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-[#7C3AED]/30 transition-all cursor-pointer">
+                  <div className="w-full aspect-video rounded-lg bg-gradient-to-br from-[#06B6D4]/20 to-[#7C3AED]/20 mb-3 flex items-center justify-center">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#06B6D4" strokeWidth="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                  </div>
+                  <h4 className="text-sm font-medium text-[#F9FAFB]">{w.name}</h4>
+                  <p className="text-xs text-[#9CA3AF]">{w.type} • {w.style}</p>
+                  <button className="mt-2 w-full py-1.5 rounded-lg bg-[#06B6D4]/20 text-[#06B6D4] text-xs font-medium hover:bg-[#06B6D4]/30 transition-all">Select World</button>
+                </div>
+              ))}
             </div>
           )}
           {activeTab === 'worlds-create' && (
-            <div className="flex items-center justify-center py-16">
-              <p className="text-[#9CA3AF] text-sm">Worlds feature coming soon</p>
+            <div className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-xs font-medium text-[#9CA3AF] mb-1.5">World Name</label>
+                  <input type="text" placeholder="e.g., Cyberpunk City, Beach Sunset" className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-[#F9FAFB] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#7C3AED]" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#9CA3AF] mb-1.5">Environment Type</label>
+                  <select className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-[#F9FAFB] text-sm focus:outline-none focus:border-[#7C3AED]">
+                    <option className="bg-[#0D1321]">Interior</option>
+                    <option className="bg-[#0D1321]">Nature</option>
+                    <option className="bg-[#0D1321]">Urban</option>
+                    <option className="bg-[#0D1321]">Sci-Fi</option>
+                    <option className="bg-[#0D1321]">Abstract</option>
+                  </select>
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[#9CA3AF] mb-1.5">Description</label>
+                <textarea rows={3} placeholder="Describe the environment, lighting, mood..." className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-[#F9FAFB] text-sm placeholder-[#6B7280] focus:outline-none focus:border-[#7C3AED] resize-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[#9CA3AF] mb-1.5">Lighting Style</label>
+                <div className="flex flex-wrap gap-2">
+                  {['Golden Hour', 'Studio', 'Night', 'Neon', 'Natural', 'Dramatic'].map(s => (
+                    <button key={s} className="px-3 py-1.5 rounded-full text-xs border border-white/10 text-[#9CA3AF] hover:bg-white/5 hover:text-[#F9FAFB] transition-all">{s}</button>
+                  ))}
+                </div>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-[#9CA3AF] mb-1.5">Reference Images (Optional)</label>
+                <div className="border-2 border-dashed border-white/10 rounded-xl p-6 text-center hover:border-[#7C3AED]/30 transition-all cursor-pointer">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#9CA3AF" strokeWidth="1.5" className="mx-auto mb-2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                  <p className="text-xs text-[#9CA3AF]">Drag images here or click to upload</p>
+                </div>
+              </div>
+              <button className="px-6 py-2.5 rounded-lg bg-[#7C3AED] text-white text-sm font-bold hover:bg-[#6D28D9] transition-all">Create World</button>
             </div>
           )}
           {activeTab === 'lighting' && renderLightingPresets()}

@@ -13,6 +13,7 @@ import AudioStudio from './AudioStudio';
 import CharactersWorldsStudio from './CharactersWorldsStudio';
 import MediaLibraryStudio from './MediaLibraryStudio';
 import SchedulePublishStudio from './SchedulePublishStudio';
+import SettingsStudio from './SettingsStudio';
 import { useAuth } from '../src/lib/AuthProvider';
 import { resetStorageMode, saveAPIKey } from '../src/lib/storage';
 import toast, { Toaster } from 'react-hot-toast';
@@ -232,6 +233,7 @@ export default function StandaloneShell() {
       case 'characters': return <CharactersWorldsStudio initialTab={slug[1] === 'worlds' && slug[2] === 'create' ? 'worlds-create' : subTab} />;
       case 'media': return <MediaLibraryStudio initialTab={subTab} />;
       case 'schedule': return <SchedulePublishStudio initialTab={subTab} />;
+      case 'settings': return <SettingsStudio />;
       default: return <HomeContent onTabChange={handleTabChange} />;
     }
   };
