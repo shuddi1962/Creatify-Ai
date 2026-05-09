@@ -195,7 +195,7 @@ export default function StandaloneShell() {
     const el = iconRefs.current[index];
     if (el) {
       const rect = el.getBoundingClientRect();
-      const top = Math.min(Math.max(rect.top, 8), window.innerHeight - 400);
+      const top = Math.max(rect.top - 10, 8);
       setFlyoutStyle({ top });
     }
     setFlyoutItem(item.label);
