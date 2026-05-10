@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CARDS = [
-  { label: 'IMAGE STUDIO', name: 'Create stunning visuals with 14+ tools', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950' },
-  { label: 'VIDEO STUDIO', name: 'Animate anything \u2014 text, image, motion', href: '/studio/video/text-to-video', gradient: 'from-blue-950 to-indigo-950' },
-  { label: 'CONTENT IDEAS', name: 'Trending topics for any niche, any region', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950' },
-  { label: 'BULK GENERATE', name: '500 images or videos from one CSV upload', href: '/studio/bulk/image', gradient: 'from-amber-950 to-orange-950' },
-  { label: 'MARKETING STUDIO', name: 'UGC ads, hooks, and product demos at scale', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-pink-950' },
+  { label: 'IMAGE STUDIO', name: 'Create stunning visuals with 14+ tools', href: '/studio/image/text-to-image', img: 'https://picsum.photos/seed/spotlight-image/640/360' },
+  { label: 'VIDEO STUDIO', name: 'Animate anything \u2014 text, image, motion', href: '/studio/video/text-to-video', img: 'https://picsum.photos/seed/spotlight-video/640/360' },
+  { label: 'CONTENT IDEAS', name: 'Trending topics for any niche, any region', href: '/studio/ideas', img: 'https://picsum.photos/seed/spotlight-ideas/640/360' },
+  { label: 'BULK GENERATE', name: '500 images or videos from one CSV upload', href: '/studio/bulk/image', img: 'https://picsum.photos/seed/spotlight-bulk/640/360' },
+  { label: 'MARKETING STUDIO', name: 'UGC ads, hooks, and product demos at scale', href: '/studio/marketing/ugc', img: 'https://picsum.photos/seed/spotlight-marketing/640/360' },
 ];
 
 export default function SpotlightRow() {
@@ -30,10 +30,10 @@ export default function SpotlightRow() {
             href={card.href}
             className="relative w-[320px] h-[180px] rounded-2xl overflow-hidden flex-shrink-0 cursor-pointer border border-white/[0.08] bg-[#141414] transition-all duration-200 hover:border-white/20 hover:-translate-y-0.5 group"
           >
-            <div className={`absolute inset-0 bg-gradient-to-br ${card.gradient}`} />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/10 to-transparent" />
+            <img src={card.img} alt={card.label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
             <div className="absolute bottom-0 left-0 right-0 p-4">
-              <p className="text-[9px] font-semibold text-[#888] tracking-[0.1em] uppercase mb-1">{card.label}</p>
+              <p className="text-[9px] font-semibold text-[#00C896] tracking-[0.1em] uppercase mb-1">{card.label}</p>
               <p className="text-[13px] font-semibold text-white leading-tight">{card.name}</p>
             </div>
           </Link>

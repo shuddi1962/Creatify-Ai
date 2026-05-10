@@ -9,6 +9,7 @@ import { getUserBalance } from 'studio';
 import toast, { Toaster } from 'react-hot-toast';
 import ApiKeyModal from './ApiKeyModal';
 import AuthModal from './AuthModal';
+import StudioFooter from './StudioFooter';
 import { NavMenuItem } from './ui/NavMenuItem';
 import { NavDropdownPanel } from './ui/NavDropdownPanel';
 import { NavPanelColumns } from './ui/NavPanelColumns';
@@ -181,13 +182,13 @@ export default function StudioShell({ children }) {
     >
       <Toaster position="top-center" toastOptions={{
         style: { background: 'rgba(17, 24, 39, 0.95)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', fontSize: '13px' },
-        success: { iconTheme: { primary: '#7C3AED', secondary: '#fff' } },
+        success: { iconTheme: { primary: '#00C896', secondary: '#fff' } },
       }} />
 
       {isDragging && (
-        <div className="fixed inset-0 z-[100] bg-[#7C3AED]/10 backdrop-blur-md border-4 border-dashed border-[#7C3AED]/50 flex items-center justify-center pointer-events-none">
+        <div className="fixed inset-0 z-[100] bg-[#00C896]/10 backdrop-blur-md border-4 border-dashed border-[#00C896]/50 flex items-center justify-center pointer-events-none">
           <div className="bg-[rgba(17,24,39,0.95)] p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center gap-4 scale-110 animate-pulse">
-            <div className="w-20 h-20 bg-[#7C3AED] rounded-2xl flex items-center justify-center">
+            <div className="w-20 h-20 bg-[#00C896] rounded-2xl flex items-center justify-center">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
             </div>
             <div className="flex flex-col items-center">
@@ -212,7 +213,7 @@ export default function StudioShell({ children }) {
             <Icons.PanelLeft size={20} />
           </button>
           <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
-            <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, background: '#00C896', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
             <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
@@ -246,9 +247,10 @@ export default function StudioShell({ children }) {
           ) : (
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <button onClick={() => setShowAuthModal(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#7C3AED', color: '#fff', fontSize: 12, fontWeight: 700, transition: 'background 150ms ease' }}
+                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#00C896', color: '#fff', fontSize: 12, fontWeight: 700, transition: 'background 150ms ease' }}
                 onMouseEnter={e => e.target.style.background = '#6D28D9'}
-                onMouseLeave={e => e.target.style.background = '#7C3AED'}
+                onMouseLeave={e => e.target.style.background = '#00C896'}
+                onMouseDown={e => e.target.style.background = '#00997a'}
               >
                 <Icons.LogIn size={14} />
                 Sign In
@@ -324,7 +326,7 @@ export default function StudioShell({ children }) {
                   }}>{item.label}</span>
                 </Link>
                 {isActive && (
-                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: '#7C3AED', borderRadius: '0 3px 3px 0' }} />
+                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: '#00C896', borderRadius: '0 3px 3px 0' }} />
                 )}
 
                 {showFlyout && (
@@ -361,7 +363,7 @@ export default function StudioShell({ children }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 32, height: 32, background: '#00C896', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   </div>
                   <span style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
@@ -427,6 +429,8 @@ export default function StudioShell({ children }) {
         </main>
       </div>
 
+      <StudioFooter />
+
       {showAuthModal && <AuthModal onClose={() => { setShowAuthModal(false); resetStorageMode(); }} />}
       {showApiKeyModal && <ApiKeyModal onSave={(key) => { handleKeySave(key); setShowApiKeyModal(false); }} />}
 
@@ -444,8 +448,8 @@ export default function StudioShell({ children }) {
                 <label className="block text-xs font-bold text-[#9CA3AF] mb-2">Account</label>
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 border border-[#7C3AED]/30 flex items-center justify-center flex-shrink-0">
-                      <span className="text-xs font-bold text-[#7C3AED]">{user.email?.charAt(0).toUpperCase() || 'U'}</span>
+                    <div className="w-8 h-8 rounded-full bg-[#00C896]/20 border border-[#00C896]/30 flex items-center justify-center flex-shrink-0">
+                      <span className="text-xs font-bold text-[#00C896]">{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[13px] font-medium text-[#F9FAFB] truncate">{user.email}</div>
@@ -458,7 +462,7 @@ export default function StudioShell({ children }) {
                   <div className="flex items-center justify-between">
                     <span className="text-[13px] text-[#9CA3AF]">Not signed in</span>
                     <button onClick={() => { setShowSettings(false); setShowAuthModal(true); }}
-                      className="text-xs text-[#7C3AED] font-medium hover:text-[#7C3AED]/80 transition-colors">Sign In</button>
+                      className="text-xs text-[#00C896] font-medium hover:text-[#00C896]/80 transition-colors">Sign In</button>
                   </div>
                 )}
               </div>
@@ -479,7 +483,7 @@ export default function StudioShell({ children }) {
                     </>
                   ) : (
                     <button onClick={() => { setShowSettings(false); setShowApiKeyModal(true); }}
-                      className="flex-1 h-9 rounded-md bg-[#7C3AED] text-white hover:bg-[#6D28D9] text-xs font-semibold transition-all">Set API Key</button>
+                      className="flex-1 h-9 rounded-md bg-[#00C896] text-white hover:bg-[#6D28D9] text-xs font-semibold transition-all">Set API Key</button>
                   )}
                 </div>
               </div>

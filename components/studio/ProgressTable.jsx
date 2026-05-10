@@ -18,7 +18,7 @@ export default function ProgressTable({ items, onCancel, onRetry, onDelete }) {
             key={t}
             onClick={() => setFilter(t)}
             className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-              filter === t ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] hover:bg-[#222]'
+              filter === t ? 'bg-[#00C896] text-white' : 'bg-[#1a1a1a] text-[#888] hover:bg-[#222]'
             }`}
           >
             {t} {t !== 'All' && <span className="ml-1 text-[10px]">{items.filter(i => i.status === t.toLowerCase()).length}</span>}
@@ -44,7 +44,7 @@ export default function ProgressTable({ items, onCancel, onRetry, onDelete }) {
               </div>
               <div className="mt-2 h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-[#7C3AED] rounded-full transition-all"
+                  className="h-full bg-[#00C896] rounded-full transition-all"
                   style={{ width: `${item.progress || 0}%` }}
                 />
               </div>
@@ -52,7 +52,7 @@ export default function ProgressTable({ items, onCancel, onRetry, onDelete }) {
             </div>
             <div className="flex items-center gap-2">
               {item.status === 'failed' && onRetry && (
-                <button onClick={() => onRetry(item.id)} className="px-3 py-1.5 rounded-lg bg-[#7C3AED]/20 text-[#7C3AED] text-xs font-semibold hover:bg-[#7C3AED]/30">Retry</button>
+                <button onClick={() => onRetry(item.id)} className="px-3 py-1.5 rounded-lg bg-[#00C896]/20 text-[#00C896] text-xs font-semibold hover:bg-[#00C896]/30">Retry</button>
               )}
               {item.status === 'running' && onCancel && (
                 <button onClick={() => onCancel(item.id)} className="px-3 py-1.5 rounded-lg bg-red-500/20 text-red-400 text-xs font-semibold hover:bg-red-500/30">Cancel</button>

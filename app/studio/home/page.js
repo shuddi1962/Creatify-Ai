@@ -112,32 +112,38 @@ export default function HomePage() {
           >
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1 flex flex-col gap-3">
-                <div className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-fashion/400/600" alt="AI Fashion" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Boom</span>
-                </div>
-                <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Fashion</span>
+                </Link>
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-portrait/400/300" alt="AI Portrait" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Sit Better</span>
-                </div>
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Portrait</span>
+                </Link>
               </div>
               <div className="col-span-2 grid grid-cols-2 gap-3">
-                <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-landscape/400/400" alt="AI Landscape" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Marco Valdez</span>
-                </div>
-                <div className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Landscape</span>
+                </Link>
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-abstract/400/600" alt="AI Abstract" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Ceramics</span>
-                </div>
-                <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Abstract</span>
+                </Link>
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-product/400/300" alt="AI Product" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">AKAI</span>
-                </div>
-                <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Product</span>
+                </Link>
+                <Link href="/studio/image/text-to-image" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src="https://picsum.photos/seed/ai-architecture/400/400" alt="AI Architecture" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Magazine Cover</span>
-                </div>
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Architecture</span>
+                </Link>
               </div>
             </div>
           </FeatureBlock>
@@ -168,11 +174,31 @@ export default function HomePage() {
             }
           >
             <div className="grid grid-cols-5 gap-3">
-              <div className="col-span-2 row-span-2 bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
-              <div className="col-span-3 bg-[#1a1a1a] rounded-xl aspect-[16/9] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
-              <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
-              <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
-              <div className="bg-[#1a1a1a] rounded-xl aspect-[3/2] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+              <Link href="/studio/marketing/ugc" className="col-span-2 row-span-2 rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <img src="https://picsum.photos/seed/ad-creative/400/600" alt="Ad Creative" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] text-white/60">UGC Ad</span>
+              </Link>
+              <Link href="/studio/marketing/ugc" className="col-span-3 rounded-xl aspect-[16/9] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <img src="https://picsum.photos/seed/ad-video/600/338" alt="Ad Video" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Video Ad</span>
+              </Link>
+              <Link href="/studio/marketing/brand-kit" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <img src="https://picsum.photos/seed/brand-kit/400/300" alt="Brand Kit" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Brand Kit</span>
+              </Link>
+              <Link href="/studio/marketing/hooks" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <img src="https://picsum.photos/seed/hook-generator/400/400" alt="Hook Generator" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Hooks</span>
+              </Link>
+              <Link href="/studio/marketing/demo" className="rounded-xl aspect-[3/2] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                <img src="https://picsum.photos/seed/product-demo/400/267" alt="Product Demo" className="absolute inset-0 w-full h-full object-cover" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Demo</span>
+              </Link>
             </div>
           </FeatureBlock>
         </section>
@@ -193,18 +219,23 @@ export default function HomePage() {
             ]}
           >
             <div className="grid grid-cols-4 gap-3">
-              {[0, 1, 2].map((i) => (
-                <div key={i} className="bg-[#1a1a1a] rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+              {[
+                'https://picsum.photos/seed/video-cinematic/400/225',
+                'https://picsum.photos/seed/video-nature/400/225',
+                'https://picsum.photos/seed/video-action/400/225',
+              ].map((src, i) => (
+                <Link key={i} href="/studio/video/text-to-video" className="rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <img src={src} alt="Video" className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
-                      <div className="w-0 h-0 border-l-[8px] border-l-white/50 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent ml-0.5" />
+                    <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm">
+                      <div className="w-0 h-0 border-l-[8px] border-l-white border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent ml-0.5" />
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
-              <div className="bg-[#1a1a1a] rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02] flex items-center justify-center">
+              <Link href="/studio/video/text-to-video" className="rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02] flex items-center justify-center bg-[#1a1a1a]">
                 <span className="text-[12px] text-white/40 font-medium">View all &rarr;</span>
-              </div>
+              </Link>
             </div>
           </FeatureBlock>
         </section>
@@ -309,18 +340,24 @@ export default function HomePage() {
             buttons={[{ text: 'Explore All Presets \u2192', variant: 'secondary', href: '/studio/cinema/vfx' }]}
           >
             <div className="relative h-[200px] flex items-center justify-center">
-              <div
-                className="absolute w-[130px] h-[170px] bg-[#1a1a1a] rounded-xl border border-white/[0.05] transition-all duration-200 hover:scale-[1.03]"
+              <Link href="/studio/cinema/vfx"
+                className="absolute w-[130px] h-[170px] rounded-xl border border-white/[0.05] overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'rotate(-6deg) translateX(-15px)' }}
-              />
-              <div
-                className="relative w-[150px] h-[190px] bg-[#1a1a1a] rounded-xl border border-white/[0.08] z-10 transition-all duration-200 hover:scale-[1.03]"
+              >
+                <img src="https://picsum.photos/seed/cinema-vfx1/260/340" alt="VFX" className="w-full h-full object-cover" />
+              </Link>
+              <Link href="/studio/cinema/vfx"
+                className="relative w-[150px] h-[190px] rounded-xl border border-white/[0.08] z-10 overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'scale(1.05)' }}
-              />
-              <div
-                className="absolute w-[130px] h-[170px] bg-[#1a1a1a] rounded-xl border border-white/[0.05] transition-all duration-200 hover:scale-[1.03]"
+              >
+                <img src="https://picsum.photos/seed/cinema-vfx2/300/380" alt="VFX" className="w-full h-full object-cover" />
+              </Link>
+              <Link href="/studio/cinema/vfx"
+                className="absolute w-[130px] h-[170px] rounded-xl border border-white/[0.05] overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'rotate(6deg) translateX(15px)' }}
-              />
+              >
+                <img src="https://picsum.photos/seed/cinema-vfx3/260/340" alt="VFX" className="w-full h-full object-cover" />
+              </Link>
             </div>
           </FeatureBlock>
         </section>
@@ -338,16 +375,23 @@ export default function HomePage() {
             buttons={[{ text: 'Try Characters \u2192', variant: 'primary', href: '/studio/characters/create' }]}
           >
             <div className="grid grid-cols-2 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <div
+              {[
+                { src: 'https://picsum.photos/seed/character-urban/400/600', label: 'Urban style' },
+                { src: 'https://picsum.photos/seed/character-fantasy/400/600', label: 'Fantasy world' },
+                { src: 'https://picsum.photos/seed/character-beach/400/600', label: 'Beach day' },
+                { src: 'https://picsum.photos/seed/character-cyberpunk/400/600', label: 'Cyberpunk' },
+              ].map((item, i) => (
+                <Link
                   key={i}
-                  className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
+                  href="/studio/characters/create"
+                  className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
                 >
+                  <img src={item.src} alt={item.label} className="absolute inset-0 w-full h-full object-cover" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute bottom-2 left-2 text-[9px] text-white/40 font-medium">
-                    {['Urban style', 'Fantasy world', 'Beach day', 'Cyberpunk'][i - 1]}
+                    {item.label}
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           </FeatureBlock>

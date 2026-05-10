@@ -15,7 +15,7 @@ export default function StudioHero({ icon: Icon, badge, title, subtitle }) {
           </div>
         </div>
         {badge && (
-          <span className="mt-2 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-[#7C3AED]/20 text-[#7C3AED] rounded-sm">
+          <span className="mt-2 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase bg-[#00C896]/20 text-[#00C896] rounded-sm">
             {badge}
           </span>
         )}

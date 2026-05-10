@@ -86,7 +86,7 @@ export default function AppCard({ app, isFavorite, onToggleFavorite }) {
           <span
             style={{
               position: 'absolute', top: 10, right: 10,
-              background: app.badge === 'TOP' ? '#CCFF00' : '#7C3AED',
+              background: app.badge === 'TOP' ? '#CCFF00' : '#00C896',
               color: app.badge === 'TOP' ? '#000' : '#fff',
               fontSize: 9, fontWeight: 700,
               padding: '2px 6px', borderRadius: 4,
