@@ -251,7 +251,22 @@ export default function StudioShell({ children }) {
           </div>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+          <Link href="/studio/pricing"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 5,
+              padding: '6px 12px', borderRadius: 6,
+              cursor: 'pointer',
+              color: '#9CA3AF', fontSize: 12, fontWeight: 600,
+              textDecoration: 'none',
+              transition: 'all 150ms ease',
+            }}
+            onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+          >
+            <Icons.CreditCard size={14} />
+            Pricing
+          </Link>
           <Link href="/studio/pricing"
             style={{
               display: 'flex', alignItems: 'center', gap: 6,
