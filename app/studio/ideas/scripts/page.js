@@ -61,7 +61,7 @@ export default function ScriptsPage() {
   const SCRIPT_SECTIONS = [
     { key: 'hook', label: 'HOOK', color: '#CCFF00' },
     { key: 'intro', label: 'INTRO', color: '#7C3AED' },
-    { key: 'main', label: 'MAIN CONTENT', color: '#06B6D4' },
+    { key: 'main', label: 'MAIN CONTENT', color: '#7C3AED' },
     { key: 'cta', label: 'CTA', color: '#F59E0B' },
     { key: 'outro', label: 'OUTRO', color: '#10B981' },
   ];

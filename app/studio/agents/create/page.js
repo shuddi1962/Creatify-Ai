@@ -124,7 +124,7 @@ export default function CreateAgentPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   {triggers.map(t => <span key={t} className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">Trigger: {t}</span>)}
-                  {actions.map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-[#06B6D4]/20 text-[#06B6D4] rounded">Action: {a}</span>)}
+                  {actions.map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">Action: {a}</span>)}
                   {outputs.map(o => <span key={o} className="text-[10px] px-2 py-0.5 bg-[#10B981]/20 text-[#10B981] rounded">Output: {o}</span>)}
                 </div>
               </div>

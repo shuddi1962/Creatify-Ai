@@ -8,7 +8,7 @@ import StudioHero from '@/components/studio/StudioHero';
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 
-const STATUS_COLORS = { Idea: '#7C3AED', Script: '#06B6D4', Generated: '#10B981', Scheduled: '#F59E0B', Published: '#22C55E' };
+const STATUS_COLORS = { Idea: '#7C3AED', Script: '#7C3AED', Generated: '#10B981', Scheduled: '#F59E0B', Published: '#22C55E' };
 
 const SAMPLE_CALENDAR = {
   '2026-05-12': [{ id: 1, title: 'Morning routine', platform: 'TikTok', status: 'Generated' }],

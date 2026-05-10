@@ -124,7 +124,7 @@ export default function CompetitorPage() {
                   <p className="text-[#555] text-xs">Engagement</p>
                 </div>
                 <div className="bg-[#0a0a0a] rounded-xl p-4 text-center">
-                  <p className="text-[#06B6D4] text-xl font-bold">{results.topPosts.length}</p>
+                  <p className="text-[#7C3AED] text-xl font-bold">{results.topPosts.length}</p>
                   <p className="text-[#555] text-xs">Posts Analyzed</p>
                 </div>
               </div>

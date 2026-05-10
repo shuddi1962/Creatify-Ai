@@ -17,7 +17,7 @@ export default function MarketingBrandKitPage() {
   const [brandName, setBrandName] = useState('');
   const [tagline, setTagline] = useState('');
   const [primary, setPrimary] = useState('#7C3AED');
-  const [secondary, setSecondary] = useState('#06B6D4');
+  const [secondary, setSecondary] = useState('#7C3AED');
   const [accent, setAccent] = useState('#CCFF00');
   const [background, setBackground] = useState('#000000');
   const [primaryFont, setPrimaryFont] = useState('Inter');

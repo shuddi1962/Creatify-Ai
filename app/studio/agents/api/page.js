@@ -48,7 +48,7 @@ export default function APIPage() {
                 <div className="bg-[#0a0a0a] rounded-xl p-4 mb-4">
                   <p className="text-[10px] text-[#444] uppercase mb-2">Your API Key</p>
                   <div className="flex items-center gap-2">
-                    <code className="flex-1 text-[#06B6D4] text-sm font-mono">{showKey ? apiKey : '•'.repeat(32)}</code>
+                    <code className="flex-1 text-[#7C3AED] text-sm font-mono">{showKey ? apiKey : '•'.repeat(32)}</code>
                     <button onClick={() => setShowKey(!showKey)} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white">{showKey ? <EyeOff size={14} /> : <Eye size={14} />}</button>
                     <button onClick={() => handleCopy(apiKey)} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white"><Copy size={14} /></button>
                     <button onClick={() => { setApiKey(`sk-creatify-${Date.now()}`); toast.success('Key regenerated!'); }} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white"><RefreshCw size={14} /></button>

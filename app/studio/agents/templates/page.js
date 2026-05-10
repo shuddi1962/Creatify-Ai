@@ -41,7 +41,7 @@ export default function AgentTemplatesPage() {
               </div>
               <div className="flex flex-wrap gap-1 mb-3 mt-2">
                 <span className="text-[10px] px-2 py-0.5 bg-[#1a1a1a] text-[#555] rounded">{t.trigger}</span>
-                {t.actions.map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-[#06B6D4]/20 text-[#06B6D4] rounded">{a}</span>)}
+                {t.actions.map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{a}</span>)}
               </div>
               <button onClick={() => toast.success(`Template "${t.name}" loaded!`)} className="w-full px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-lg hover:bg-[#B8FF00] flex items-center justify-center gap-1 transition-all"><Zap size={12} /> Use Template</button>
             </div>

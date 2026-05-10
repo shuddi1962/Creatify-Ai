@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Grid, Search, Heart, Sparkles, Zap } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
+import AppCard from '@/components/studio/AppCard';
 
 const CATEGORIES = ['All', 'VFX', 'Face & Character', 'Style', 'Product', 'Meme & Social', 'New'];
 const SORTS = ['Popular', 'Newest', 'A-Z'];
@@ -28,51 +29,117 @@ export default function AllAppsPage() {
   const [category, setCategory] = useState('All');
   const [sort, setSort] = useState('Popular');
 
-  const toggleFav = (id) => setApps(apps.map(a => a.id === id ? { ...a, favorite: !a.favorite } : a));
+  const toggleFav = (idOrName) => {
+    setApps(apps.map(a => {
+      const match = a.id === idOrName || a.name === idOrName;
+      return match ? { ...a, favorite: !a.favorite } : a;
+    }));
+  };
+
+  const filteredApps = apps
+    .filter(a => category === 'All' || a.category === category || (category === 'New' && a.badge === 'NEW'))
+    .filter(a => !search || a.name.toLowerCase().includes(search.toLowerCase()) || a.desc.toLowerCase().includes(search.toLowerCase()));
+
+  const sortedApps = [...filteredApps].sort((a, b) => {
+    if (sort === 'Newest') return (b.id || 0) - (a.id || 0);
+    if (sort === 'A-Z') return a.name.localeCompare(b.name);
+    return (a.favorite === b.favorite) ? 0 : a.favorite ? -1 : 1;
+  });
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <div className="min-h-screen pb-12" style={{ background: '#000000' }}>
       <Toaster position="top-center" />
       <StudioHero icon={Grid} title="EXPLORE APPS" subtitle="150+ one-click creative apps for every creative use case" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex flex-col sm:flex-row gap-3 mb-6">
-          <div className="flex-1 relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search apps..." className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+        {/* Search + Sort */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
+          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 400 }}>
+              <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#444' }} />
+              <input
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Search apps..."
+                style={{
+                  width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)',
+                  borderRadius: 10, padding: '10px 14px 10px 38px',
+                  color: '#fff', fontSize: 14, outline: 'none',
+                }}
+              />
+            </div>
+            <div style={{ display: 'flex', gap: 6 }}>
+              {SORTS.map(s => (
+                <button key={s} onClick={() => setSort(s)}
+                  style={{
+                    padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
+                    border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
+                    transition: 'all 150ms',
+                    background: sort === s ? '#CCFF00' : '#111',
+                    color: sort === s ? '#000' : '#6B7280',
+                  }}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-2 flex-wrap">
-            {SORTS.map(s => (
-              <button key={s} onClick={() => setSort(s)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${sort === s ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{s}</button>
+
+          {/* Category Tabs */}
+          <div style={{
+            display: 'flex', gap: 4, flexWrap: 'wrap', overflowX: 'auto',
+            background: '#111', borderRadius: 100, padding: 4, width: 'fit-content',
+          }}>
+            {CATEGORIES.map(c => (
+              <button key={c} onClick={() => setCategory(c)}
+                style={{
+                  padding: '8px 16px', fontSize: 13, whiteSpace: 'nowrap',
+                  borderRadius: 100, border: 'none', cursor: 'pointer',
+                  transition: 'all 150ms',
+                  background: category === c ? '#CCFF00' : 'transparent',
+                  color: category === c ? '#000' : '#6B7280',
+                  fontWeight: category === c ? 700 : 400,
+                }}
+                onMouseEnter={(e) => { if (category !== c) e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={(e) => { if (category !== c) e.currentTarget.style.color = '#6B7280'; }}
+              >
+                {c}
+              </button>
             ))}
           </div>
         </div>
 
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {CATEGORIES.map(c => (
-            <button key={c} onClick={() => setCategory(c)} className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${category === c ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{c}</button>
+        {/* Apps Grid */}
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
+          gap: 16,
+          paddingBottom: 40,
+        }}>
+          {sortedApps.map(app => (
+            <AppCard
+              key={app.id}
+              app={app}
+              isFavorite={app.favorite}
+              onToggleFavorite={toggleFav}
+            />
           ))}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8">
-          {apps.filter(a => category === 'All' || a.category === category).filter(a => !search || a.name.toLowerCase().includes(search.toLowerCase())).map(app => (
-            <div key={app.id} className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden group cursor-pointer">
-              <div className="relative">
-                <img src={app.url} className="w-full aspect-video object-cover group-hover:scale-105 transition-transform duration-300" alt="" />
-                <button onClick={(e) => { e.stopPropagation(); toggleFav(app.id); }} className="absolute top-2 right-2 w-8 h-8 bg-black/50 rounded-full flex items-center justify-center text-white hover:text-[#CCFF00]"><Heart size={14} fill={app.favorite ? '#CCFF00' : 'none'} /></button>
-                {app.badge && (
-                  <span className={`absolute top-2 left-2 text-[10px] font-bold px-2 py-0.5 rounded ${app.badge === 'TOP' ? 'bg-[#CCFF00] text-black' : 'bg-[#7C3AED] text-white'}`}>{app.badge}</span>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="text-white font-semibold mb-1">{app.name}</h3>
-                <p className="text-[#555] text-xs mb-3">{app.desc}</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#444]">{app.credits} credits</span>
-                  <button onClick={() => toast.success(`Opening ${app.name}...`)} className="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-lg hover:bg-[#B8FF00] transition-all">Use App</button>
-                </div>
-              </div>
-            </div>
-          ))}
+        {sortedApps.length === 0 && (
+          <div style={{ textAlign: 'center', padding: '60px 0', color: '#6B7280' }}>
+            <p style={{ fontSize: 14 }}>No apps found.</p>
+          </div>
+        )}
+
+        {/* Muapi Ecosystem Footer */}
+        <div style={{
+          textAlign: 'center', padding: '24px 0 16px',
+          borderTop: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          <p style={{ fontSize: 12, color: '#444' }}>
+            Muapi Ecosystem — More templates coming soon
+          </p>
         </div>
       </div>
     </div>

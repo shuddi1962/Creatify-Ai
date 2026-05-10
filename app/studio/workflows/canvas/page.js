@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 
 const NODE_CATEGORIES = ['Input', 'Generate Image', 'Generate Video', 'Audio', 'Transform', 'Output', 'Logic', 'Data'];
 const SAMPLE_NODES = [
-  { id: 'n1', x: 80, y: 120, type: 'Input', label: 'Text Input', color: '#06B6D4' },
+  { id: 'n1', x: 80, y: 120, type: 'Input', label: 'Text Input', color: '#7C3AED' },
   { id: 'n2', x: 350, y: 100, type: 'Generate Image', label: 'Flux Model', color: '#7C3AED' },
   { id: 'n3', x: 620, y: 100, type: 'Transform', label: 'Upscale', color: '#F59E0B' },
   { id: 'n4', x: 350, y: 280, type: 'Generate Video', label: 'Seedance', color: '#10B981' },

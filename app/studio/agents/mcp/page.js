@@ -55,7 +55,7 @@ export default function MCPPage() {
           <div className="mt-4 bg-[#0a0a0a] rounded-xl p-4">
             <p className="text-[10px] font-semibold text-[#444] uppercase tracking-widest mb-2">Connection String</p>
             <div className="flex items-center gap-2">
-              <code className="flex-1 text-[#06B6D4] text-xs font-mono break-all">{serverUrl ? `${serverUrl} --auth ${authToken.slice(0, 8)}...` : 'Configure above to generate connection string'}</code>
+              <code className="flex-1 text-[#7C3AED] text-xs font-mono break-all">{serverUrl ? `${serverUrl} --auth ${authToken.slice(0, 8)}...` : 'Configure above to generate connection string'}</code>
               <button onClick={() => handleCopy(serverUrl)} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white transition-all">{copied ? <Check size={14} /> : <Copy size={14} />}</button>
             </div>
           </div>

@@ -82,7 +82,7 @@ export default function BulkQueuePage() {
           </div>
           <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
             <div className="flex items-center gap-2 mb-2">
-              <Zap size={14} className="text-[#06B6D4]" />
+              <Zap size={14} className="text-[#7C3AED]" />
               <span className="text-[10px] text-[#555] uppercase tracking-widest">Credits Used</span>
             </div>
             <p className="text-2xl font-bold text-white">{creditsUsed}</p>
@@ -128,7 +128,7 @@ export default function BulkQueuePage() {
                     <div className="text-right flex-shrink-0">
                       <p className="text-[10px] text-[#555]">{job.started}</p>
                       <p className="text-[10px] text-[#888] mt-0.5">{job.duration}</p>
-                      <p className="text-[10px] text-[#06B6D4] mt-0.5">{job.credits} credits</p>
+                      <p className="text-[10px] text-[#7C3AED] mt-0.5">{job.credits} credits</p>
                     </div>
                     <div className="flex gap-1">
                       <button onClick={() => setSelectedJob(job)} className="p-2 rounded-lg hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><Eye size={14} /></button>

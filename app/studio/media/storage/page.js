@@ -54,7 +54,7 @@ export default function StoragePage() {
               <span className="text-white text-sm">{USAGE.breakdown.videos} GB</span>
             </div>
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#06B6D4]" /><span className="text-[#888] text-sm">Audio</span></div>
+              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#7C3AED]" /><span className="text-[#888] text-sm">Audio</span></div>
               <span className="text-white text-sm">{USAGE.breakdown.audio} GB</span>
             </div>
           </div>

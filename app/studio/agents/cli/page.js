@@ -31,7 +31,7 @@ export default function CLIPage() {
         <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
           <h3 className="text-white font-bold mb-4">Installation</h3>
           <div className="bg-[#0a0a0a] rounded-xl p-4 flex items-center justify-between">
-            <code className="text-[#06B6D4] text-sm font-mono">npm install -g @creatify/cli</code>
+            <code className="text-[#7C3AED] text-sm font-mono">npm install -g @creatify/cli</code>
             <button onClick={() => handleCopy('npm install -g @creatify/cli', 'install')} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white transition-all">{copied === 'install' ? <Check size={14} /> : <Copy size={14} />}</button>
           </div>
         </div>
@@ -57,7 +57,7 @@ export default function CLIPage() {
             <p className="text-[#555]">$ creatify init</p>
             <p className="text-[#10B981]">Project initialized: /my-creatify-project</p>
             <p className="text-[#555] mt-2">$ creatify generate image "a sunset over mountains"</p>
-            <p className="text-[#06B6D4]">Generating image... 100%</p>
+            <p className="text-[#7C3AED]">Generating image... 100%</p>
             <p className="text-[#10B981]">Saved to: ./output/image_001.png</p>
             <p className="text-[#555] mt-2 cursor-pointer">$ <span className="animate-pulse">_</span></p>
           </div>
@@ -69,7 +69,7 @@ export default function CLIPage() {
             <input value={apiKey} onChange={e => setApiKey(e.target.value)} className="flex-1 bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-[#555] font-mono text-sm focus:outline-none" />
             <button onClick={() => { navigator.clipboard.writeText(apiKey); toast.success('API key copied!'); }} className="px-4 py-3 bg-[#1a1a1a] text-[#888] rounded-xl hover:text-white transition-all flex items-center gap-2"><Copy size={14} /> Copy</button>
           </div>
-          <p className="text-[#444] text-xs mt-2">Configure with: <code className="text-[#06B6D4]">creatify config set api-key YOUR_KEY</code></p>
+          <p className="text-[#444] text-xs mt-2">Configure with: <code className="text-[#7C3AED]">creatify config set api-key YOUR_KEY</code></p>
         </div>
 
         <button onClick={() => toast.success('Downloading CLI...')} className="w-full px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all flex items-center justify-center gap-2"><Download size={16} /> Download CLI</button>
