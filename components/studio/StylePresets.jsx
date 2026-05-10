@@ -1,9 +1,10 @@
 'use client';
 
 export default function StylePresets({ presets, value, onChange }) {
+  const items = presets || [];
   return (
     <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-      {presets.map(preset => (
+      {items.map(preset => (
         <button
           key={preset}
           onClick={() => onChange(preset)}

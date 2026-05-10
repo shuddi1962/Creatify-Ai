@@ -13,7 +13,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StylePresets from '@/components/studio/StylePresets';
 import PillSelector from '@/components/studio/PillSelector';
-import muapi from '@/packages/studio/src/muapi';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const QUALITY_OPTIONS = ['Standard', 'HD', '4K'];
 const NUM_IMAGES_OPTIONS = ['1', '2', '4', '8'];
@@ -142,7 +142,7 @@ export default function TextToImagePage() {
 
             <div>
               <SectionLabel>Style</SectionLabel>
-              <StylePresets options={STYLE_OPTIONS} value={style} onChange={setStyle} />
+              <StylePresets presets={STYLE_OPTIONS} value={style} onChange={setStyle} />
             </div>
           </div>
         </GenerationPanel>

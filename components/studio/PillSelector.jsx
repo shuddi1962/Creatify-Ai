@@ -1,6 +1,6 @@
 'use client';
 
-export default function PillSelector({ options, value, onChange }) {
+export default function PillSelector({ options = [], value, onChange }) {
   return (
     <div className="flex flex-wrap gap-2">
       {options.map(opt => {

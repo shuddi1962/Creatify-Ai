@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import PillSelector from '@/components/studio/PillSelector';
-import muapi from '@/packages/studio/src/muapi';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const CAMERA_PRESETS = ['Wide Shot', 'Close-Up', 'Aerial', 'Eye-Level', 'Low Angle', 'Dutch Tilt', 'Over-the-Shoulder', 'POV', 'Macro', 'Fish-Eye'];
 const LENS_TYPES = ['24mm', '35mm', '50mm', '85mm', '135mm', '200mm'];

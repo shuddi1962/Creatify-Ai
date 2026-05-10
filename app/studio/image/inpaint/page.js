@@ -11,7 +11,7 @@ import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import PillSelector from '@/components/studio/PillSelector';
-import muapi from '@/packages/studio/src/muapi';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const INPAINT_MODES = ['Replace', 'Keep Surrounding', 'Expand'];
 

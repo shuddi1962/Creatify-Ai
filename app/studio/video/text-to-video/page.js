@@ -11,7 +11,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import PillSelector from '@/components/studio/PillSelector';
-import muapi from '@/packages/studio/src/muapi';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const DURATION_OPTIONS = ['3s', '5s', '8s', '10s', '15s'];
 const QUALITY_OPTIONS = ['480p', '720p', '1080p', '4K'];
