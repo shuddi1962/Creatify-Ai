@@ -1,208 +1,398 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { Image, Video, Copy, TrendingUp, Zap, Users, Clock, BarChart3, ChevronRight, Sparkles } from 'lucide-react';
-import { useAuth } from '@/src/lib/AuthProvider';
+import Link from 'next/link';
+import { ChevronRight, ArrowRight } from 'lucide-react';
+import SpotlightRow from '@/components/home/SpotlightRow';
+import FeatureBlock from '@/components/home/FeatureBlock';
+import ToolCard from '@/components/home/ToolCard';
+import CommunityStrip from '@/components/home/CommunityStrip';
+import EffectsStrip from '@/components/home/EffectsStrip';
 
-const QUICK_CREATE = [
-  { icon: Image, label: 'Create Image', desc: 'Text to image generation', href: '/studio/image/text-to-image', color: '#7C3AED' },
-  { icon: Video, label: 'Create Video', desc: 'Text to video generation', href: '/studio/video/text-to-video', color: '#7C3AED' },
-  { icon: Copy, label: 'Bulk Generate', desc: 'Batch creation from CSV', href: '/studio/bulk/image', color: '#7C3AED' },
-  { icon: TrendingUp, label: 'Get Ideas', desc: 'Trending content ideas', href: '/studio/ideas/trending', color: '#7C3AED' },
+const MODEL_PILLS = [
+  { label: 'Nano Banana Pro', href: '/studio/image/text-to-image' },
+  { label: 'Seedance 2.0', href: '/studio/video/text-to-video' },
+  { label: 'Kling 3.0', href: '/studio/video/text-to-video' },
+  { label: 'Bulk Generate', href: '/studio/bulk/image' },
+  { label: 'Content Ideas', href: '/studio/ideas' },
+  { label: 'Voice Cloning', href: '/studio/audio/voice-clone' },
+  { label: 'Smart Shot', href: '/studio/video/smart-shot' },
 ];
 
-const RECENT_CREATIONS = [
-  { id: 1, type: 'image', url: 'https://picsum.photos/seed/cre1/400/300', model: 'GPT Image 2', date: '2 min ago' },
-  { id: 2, type: 'video', url: 'https://picsum.photos/seed/cre2/400/300', model: 'Kling 3.0', date: '15 min ago' },
-  { id: 3, type: 'image', url: 'https://picsum.photos/seed/cre3/400/300', model: 'Nano Banana Pro', date: '1 hour ago' },
-  { id: 4, type: 'audio', url: null, model: 'ElevenLabs Voiceover', date: '2 hours ago' },
-  { id: 5, type: 'image', url: 'https://picsum.photos/seed/cre5/400/300', model: 'Midjourney v7', date: '3 hours ago' },
-  { id: 6, type: 'video', url: 'https://picsum.photos/seed/cre6/400/300', model: 'Sora 2', date: '5 hours ago' },
+const TOOLS_DATA = [
+  { name: 'Create Image', description: 'Generate AI images', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950' },
+  { name: 'Create Video', description: 'Generate AI videos', href: '/studio/video/text-to-video', gradient: 'from-blue-950 to-indigo-950' },
+  { name: 'Lip Sync', description: 'Animate portraits with audio', href: '/studio/lipsync/portrait', gradient: 'from-pink-950 to-rose-950' },
+  { name: 'Bulk Generate', description: '500 assets from one CSV', href: '/studio/bulk/image', gradient: 'from-amber-950 to-orange-950' },
+  { name: 'Content Ideas', description: 'Trending topics for your niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950' },
+  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950' },
+  { name: 'Smart Shot', description: 'Prompt to full cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950' },
+  { name: 'Characters', description: 'Build reusable Soul ID characters', href: '/studio/characters/create', gradient: 'from-fuchsia-950 to-purple-950' },
+  { name: 'Marketing Ads', description: 'UGC ads that convert', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950' },
+  { name: 'Edit Image', description: 'Brush to edit any region', href: '/studio/image/inpaint', gradient: 'from-slate-950 to-gray-950' },
 ];
 
-const TRENDING_IDEAS = [
-  { id: 1, title: 'Day in My Life: Tech Edition', platform: 'TikTok', virality: 92, niche: 'Tech' },
-  { id: 2, title: 'POV: Finding Money in Thrift Store', platform: 'Instagram', virality: 87, niche: 'Fashion' },
-  { id: 3, title: 'Morning Routine That Changed Everything', platform: 'YouTube', virality: 95, niche: 'Lifestyle' },
-  { id: 4, title: 'I Tried This for 30 Days — Results', platform: 'TikTok', virality: 89, niche: 'Fitness' },
-  { id: 5, title: 'Recipe Hack Nobody Tells You', platform: 'TikTok', virality: 94, niche: 'Food' },
+const TOP_TOOLS = [
+  { name: 'Nano Banana Pro', description: 'Best 4K image model ever', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950', badge: 'TOP', badgeType: 'TOP' },
+  { name: 'Bulk Lip Sync', description: '1 character x 100 audio files', href: '/studio/lipsync/bulk', gradient: 'from-pink-950 to-rose-950', badge: 'NEW', badgeType: 'NEW' },
+  { name: 'Content Ideas', description: 'Daily trending topics for any niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950', badge: 'TOP', badgeType: 'TOP' },
+  { name: 'Face Swap', description: 'Swap faces on image or video instantly', href: '/studio/apps/face', gradient: 'from-amber-950 to-orange-950', badge: 'TOP', badgeType: 'TOP' },
+  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950', badge: 'NEW', badgeType: 'NEW' },
+  { name: 'Smart Shot', description: 'Prompt to storyboard to cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950', badge: 'NEW', badgeType: 'NEW' },
+  { name: 'Viral Effects Pack', description: '80 trending one-click VFX presets', href: '/studio/apps/vfx', gradient: 'from-fuchsia-950 to-purple-950', badge: 'TOP', badgeType: 'TOP' },
+  { name: 'Marketing Studio', description: 'UGC ads from one product link', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950', badge: 'TOP', badgeType: 'TOP' },
+];
+
+const COMM_STRIPS = [
+  {
+    title: 'Image Showcase',
+    subtitle: 'Browse stunning AI-generated images from our community',
+    href: '/studio/image/text-to-image',
+    items: [
+      { className: 'w-[130px] h-[170px]' }, { className: 'w-[110px] h-[150px]' }, { className: 'w-[140px] h-[120px]' },
+      { className: 'w-[120px] h-[160px]' }, { className: 'w-[150px] h-[110px]' }, { className: 'w-[130px] h-[140px]' },
+      { className: 'w-[110px] h-[170px]' }, { className: 'w-[140px] h-[130px]' },
+    ],
+  },
+  {
+    title: 'Video Showcase',
+    subtitle: 'Watch incredible AI-generated videos by creators worldwide',
+    href: '/studio/video/text-to-video',
+    items: [
+      { className: 'w-[140px] h-[180px]' }, { className: 'w-[120px] h-[140px]' }, { className: 'w-[130px] h-[110px]' },
+      { className: 'w-[150px] h-[130px]' }, { className: 'w-[110px] h-[160px]' }, { className: 'w-[140px] h-[150px]' },
+      { className: 'w-[120px] h-[170px]' }, { className: 'w-[130px] h-[120px]' },
+    ],
+  },
+  {
+    title: 'Marketing Ads Showcase',
+    subtitle: 'See how creators are using AI to generate converting ads',
+    href: '/studio/marketing/ugc',
+    items: [
+      { className: 'w-[120px] h-[150px]' }, { className: 'w-[140px] h-[130px]' }, { className: 'w-[110px] h-[170px]' },
+      { className: 'w-[150px] h-[120px]' }, { className: 'w-[130px] h-[160px]' }, { className: 'w-[120px] h-[110px]' },
+      { className: 'w-[140px] h-[170px]' }, { className: 'w-[110px] h-[140px]' },
+    ],
+  },
 ];
 
 export default function HomePage() {
-  const { user } = useAuth();
-  const [greeting, setGreeting] = useState('Good morning');
-
-  useEffect(() => {
-    const hour = new Date().getHours();
-    if (hour < 12) setGreeting('Good morning');
-    else if (hour < 17) setGreeting('Good afternoon');
-    else setGreeting('Good evening');
-  }, []);
-
-  const handleNavigate = (href) => {
-    window.location.href = href;
-  };
-
   return (
-    <div className="min-h-screen bg-[#000] text-white pb-12">
-      <div className="max-w-[1200px] mx-auto px-4">
-        <div className="pt-8 pb-6">
-          <div className="flex items-center gap-3 mb-1">
-            <h1 className="text-2xl font-bold text-white">{greeting}{user?.user_metadata?.full_name ? `, ${user.user_metadata.full_name.split(' ')[0]}` : user?.email?.split('@')[0] ? `, ${user.email.split('@')[0]}` : ''}</h1>
-            <span className="px-2.5 py-1 bg-[#7C3AED]/20 text-[#7C3AED] text-xs font-bold rounded-full">PRO</span>
-          </div>
-          <p className="text-sm text-[#666]">You have <span className="text-[#CCFF00] font-bold">2,450 credits</span> remaining</p>
-        </div>
+    <div className="min-h-screen bg-black text-white pb-16">
+      <div className="max-w-[1280px] mx-auto px-6">
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-8">
-          {QUICK_CREATE.map((item, i) => (
-            <button
-              key={i}
-              onClick={() => handleNavigate(item.href)}
-              className="bg-[#111111] rounded-2xl border border-white/[0.08] p-5 text-left hover:bg-[#161616] hover:border-white/[0.15] transition-all group"
-            >
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${item.color}22` }}>
-                <item.icon size={20} style={{ color: item.color }} />
-              </div>
-              <p className="text-sm font-semibold text-white mb-0.5">{item.label}</p>
-              <p className="text-xs text-[#555]">{item.desc}</p>
-              <ChevronRight size={16} className="text-[#333] group-hover:text-[#CCFF00] transition-all mt-3" />
-            </button>
-          ))}
-        </div>
+        {/********* SECTION 1: Feature Spotlight Cards Row *********/}
+        <section className="py-16 lg:py-20">
+          <SpotlightRow />
+        </section>
 
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Recent Creations</h2>
-            <button onClick={() => handleNavigate('/studio/media/all')} className="text-xs text-[#7C3AED] hover:text-[#6D28D9] font-semibold">View All</button>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
-            {RECENT_CREATIONS.map((item, i) => (
-              <div key={i} className="bg-[#0D0D0D] rounded-xl border border-white/[0.08] overflow-hidden group">
-                <div className="relative aspect-video bg-[#1a1a1a]">
-                  {item.url ? (
-                    <img src={item.url} alt="" className="w-full h-full object-cover" />
-                  ) : item.type === 'video' ? (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-8 h-8 bg-[#CCFF00] rounded-full flex items-center justify-center">
-                        <div className="w-0 h-0 border-l-[10px] border-l-black border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent ml-0.5" />
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 flex items-center justify-center">
-                        <div className="w-3 h-3 bg-[#7C3AED] rounded-full" />
-                      </div>
-                    </div>
-                  )}
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all flex items-center justify-center">
-                    <ChevronRight size={20} className="text-white opacity-0 group-hover:opacity-100 transition-all" />
-                  </div>
-                </div>
-                <div className="p-2">
-                  <p className="text-[10px] text-[#555]">{item.model}</p>
-                  <p className="text-[10px] text-[#444]">{item.date}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-bold">Trending in Your Niche</h2>
-            <button onClick={() => handleNavigate('/studio/ideas/trending')} className="text-xs text-[#7C3AED] hover:text-[#6D28D9] font-semibold">Explore</button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-            {TRENDING_IDEAS.map((idea, i) => (
-              <div key={i} className="bg-[#111111] rounded-xl border border-white/[0.08] p-4 hover:bg-[#161616] cursor-pointer transition-all">
-                <div className="flex items-center gap-2 mb-2">
-                  <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full ${
-                    idea.platform === 'TikTok' ? 'bg-pink-500/20 text-pink-400' :
-                    idea.platform === 'Instagram' ? 'bg-purple-500/20 text-purple-400' :
-                    'bg-red-500/20 text-red-400'
-                  }`}>{idea.platform}</span>
-                  <span className="px-2 py-0.5 text-[10px] font-bold bg-[#7C3AED]/20 text-[#7C3AED] rounded-full">{idea.niche}</span>
-                </div>
-                <p className="text-sm font-medium text-white mb-3">{idea.title}</p>
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
-                    <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${idea.virality}%` }} />
-                  </div>
-                  <span className="text-[10px] font-bold text-[#CCFF00]">{idea.virality}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-lg font-bold mb-4">Usage This Month</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { icon: Image, label: 'Images Generated', value: '847', change: '+12%' },
-              { icon: Video, label: 'Videos Created', value: '156', change: '+28%' },
-              { icon: Users, label: 'Characters Created', value: '23', change: '+5' },
-              { icon: BarChart3, label: 'Storage Used', value: '4.2 GB', change: 'of 10 GB' },
-            ].map((stat, i) => (
-              <div key={i} className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-                <div className="flex items-center gap-2 mb-2">
-                  <stat.icon size={16} className="text-[#7C3AED]" />
-                  <span className="text-xs text-[#555]">{stat.label}</span>
-                </div>
-                <p className="text-2xl font-bold text-white">{stat.value}</p>
-                <p className="text-[10px] text-[#444]">{stat.change}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-lg font-bold mb-4">Recent Activity</h2>
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden">
-            {[
-              { action: 'Image generated', detail: 'GPT Image 2 · "Cyberpunk city at sunset"', time: '2 min ago', status: 'success' },
-              { action: 'Video upscaled', detail: 'Kling 3.0 · 4K enhancement', time: '15 min ago', status: 'success' },
-              { action: 'Bulk job completed', detail: '50 images from CSV batch', time: '1 hour ago', status: 'success' },
-              { action: 'Lip sync generated', detail: 'Infinite Talk · portrait + audio', time: '2 hours ago', status: 'success' },
-              { action: 'Voice clone created', detail: '"Professional Male Voice"', time: '5 hours ago', status: 'success' },
-            ].map((item, i) => (
-              <div key={i} className={`flex items-center gap-4 px-4 py-3 ${i !== 0 ? 'border-t border-white/[0.05]' : ''}`}>
-                <div className={`w-2 h-2 rounded-full ${item.status === 'success' ? 'bg-green-500' : 'bg-red-500'}`} />
-                <div className="flex-1">
-                  <p className="text-sm text-white">{item.action}</p>
-                  <p className="text-xs text-[#555]">{item.detail}</p>
-                </div>
-                <span className="text-xs text-[#444]">{item.time}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div>
-          <h2 className="text-lg font-bold mb-4">Recommended Apps</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-            {[
-              { name: 'Face Swap', desc: 'Swap faces instantly', badge: 'TOP', icon: '👤' },
-              { name: 'VFX Effects Pack', desc: '80 trending effects', badge: 'TOP', icon: '🔥' },
-              { name: 'Style Transfer', desc: 'Apply artistic styles', badge: null, icon: '🎨' },
-              { name: 'Thumbnail Gen', desc: '5 YouTube thumbnails', badge: 'NEW', icon: '🖼️' },
-            ].map((app, i) => (
-              <button
+        {/********* SECTION 2: Model Quick Links *********/}
+        <section className="pb-4 mb-4">
+          <div className="flex items-center gap-3 overflow-x-auto pb-2 no-scrollbar">
+            <span className="text-sm text-[#888] whitespace-nowrap flex-shrink-0">Explore &rarr;</span>
+            {MODEL_PILLS.map((pill, i) => (
+              <Link
                 key={i}
-                onClick={() => handleNavigate('/studio/apps/all')}
-                className="bg-[#111111] rounded-xl border border-white/[0.08] p-4 text-left hover:bg-[#161616] transition-all group"
+                href={pill.href}
+                className="flex-shrink-0 px-4 py-2 rounded-full text-[13px] text-white/80 hover:text-white hover:bg-white/10 transition-all"
+                style={{ backgroundColor: '#111', border: '1px solid rgba(255,255,255,0.1)' }}
               >
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-2xl">{app.icon}</span>
-                  {app.badge && <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${app.badge === 'TOP' ? 'bg-[#CCFF00]/20 text-[#CCFF00]' : 'bg-[#7C3AED]/20 text-[#7C3AED]'}`}>{app.badge}</span>}
-                </div>
-                <p className="text-sm font-semibold text-white">{app.name}</p>
-                <p className="text-xs text-[#555]">{app.desc}</p>
-              </button>
+                {pill.label}
+              </Link>
             ))}
           </div>
-        </div>
+        </section>
+
+        {/********* SECTION 3: Meet GPT Image 2 *********/}
+        <section className="py-4">
+          <FeatureBlock
+            badge="NEW MODEL"
+            headlines={[{ text: 'Meet GPT Image 2', weight: 800, color: '#fff' }]}
+            subtitle="4K images with near-perfect text rendering"
+            buttons={[{ text: 'Try Model \u2192', variant: 'primary', href: '/studio/image/text-to-image' }]}
+          >
+            <div className="grid grid-cols-3 gap-3">
+              <div className="col-span-1 flex flex-col gap-3">
+                <div className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Boom</span>
+                </div>
+                <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Sit Better</span>
+                </div>
+              </div>
+              <div className="col-span-2 grid grid-cols-2 gap-3">
+                <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Marco Valdez</span>
+                </div>
+                <div className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Ceramics</span>
+                </div>
+                <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">AKAI</span>
+                </div>
+                <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Magazine Cover</span>
+                </div>
+              </div>
+            </div>
+          </FeatureBlock>
+        </section>
+
+        {/********* SECTION 4: One prompt in. Marketing out. *********/}
+        <section className="py-4">
+          <FeatureBlock
+            badge="MARKETING STUDIO"
+            headlines={[
+              { text: 'One prompt in.', weight: 300, color: '#888' },
+              { text: 'Marketing out.', weight: 800, color: '#fff' },
+            ]}
+            subtitle="Create UGC, demos, and ads across all channels"
+            buttons={[{ text: 'Try Marketing Studio \u2192', variant: 'secondary', href: '/studio/marketing/ugc' }]}
+            extraContent={
+              <div className="flex items-center gap-2 mt-2">
+                <div className="flex-1 h-10 rounded-full bg-white/5 border border-white/[0.08] flex items-center px-4 text-[12px] text-[#555]">
+                  Link your product...
+                </div>
+                <Link
+                  href="/studio/marketing/product-url"
+                  className="w-10 h-10 rounded-full bg-[#CCFF00] flex items-center justify-center flex-shrink-0 hover:opacity-90 transition-all"
+                >
+                  <ArrowRight size={16} className="text-black" />
+                </Link>
+              </div>
+            }
+          >
+            <div className="grid grid-cols-5 gap-3">
+              <div className="col-span-2 row-span-2 bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+              <div className="col-span-3 bg-[#1a1a1a] rounded-xl aspect-[16/9] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+              <div className="bg-[#1a1a1a] rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+              <div className="bg-[#1a1a1a] rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+              <div className="bg-[#1a1a1a] rounded-xl aspect-[3/2] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]" />
+            </div>
+          </FeatureBlock>
+        </section>
+
+        {/********* SECTION 5: Seedance 2.0 *********/}
+        <section className="py-4">
+          <FeatureBlock
+            badge="AVAILABLE FOR EVERYONE"
+            badgeColor="#888"
+            headlines={[
+              { text: 'World\u2019s Best', weight: 800, color: '#fff' },
+              { text: 'Video Model', weight: 800, color: '#fff' },
+            ]}
+            subtitle="Up to 30% OFF with limited offer"
+            buttons={[
+              { text: 'Get Seedance 2.0 \u2192', variant: 'primary', href: '/studio/video/text-to-video' },
+              { text: 'Learn more', variant: 'ghost', href: '/studio/video/text-to-video' },
+            ]}
+          >
+            <div className="grid grid-cols-4 gap-3">
+              {[0, 1, 2].map((i) => (
+                <div key={i} className="bg-[#1a1a1a] rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center">
+                      <div className="w-0 h-0 border-l-[8px] border-l-white/50 border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent ml-0.5" />
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div className="bg-[#1a1a1a] rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02] flex items-center justify-center">
+                <span className="text-[12px] text-white/40 font-medium">View all &rarr;</span>
+              </div>
+            </div>
+          </FeatureBlock>
+        </section>
+
+        {/********* SECTION 6: One Canvas. Every Workflow. *********/}
+        <section className="py-4">
+          <div className="bg-[#050f0d] border border-emerald-500/15 rounded-[20px] p-8 mb-4">
+            <div className="flex flex-col lg:flex-row items-center justify-between gap-8">
+              <div className="w-full lg:w-1/2">
+                <span
+                  className="inline-block text-[10px] font-semibold px-2.5 py-1 rounded-full mb-4"
+                  style={{ backgroundColor: 'rgba(0,200,150,0.15)', color: '#00c896' }}
+                >
+                  NEW FEATURE
+                </span>
+                <p className="text-[clamp(22px,2.5vw,32px)] font-extrabold text-white leading-tight">ONE CANVAS.</p>
+                <p className="text-[clamp(22px,2.5vw,32px)] font-extrabold text-white leading-tight">EVERY WORKFLOW.</p>
+                <p className="text-[13px] text-[#888] mt-3 max-w-[360px]">
+                  Moodboard, chain workflows, and share with your team &mdash; all in one place
+                </p>
+                <Link
+                  href="/studio/workflows/canvas"
+                  className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-full text-[13px] font-bold mt-5 transition-all hover:opacity-90"
+                  style={{ backgroundColor: '#00c896', color: '#000' }}
+                >
+                  Try Canvas &rarr;
+                </Link>
+              </div>
+              <div className="w-full lg:w-[35%] flex items-center gap-4 justify-center lg:justify-end">
+                <div
+                  className="w-[140px] h-[100px] rounded-xl relative overflow-hidden"
+                  style={{ backgroundColor: '#0a1a14', border: '1px solid rgba(0,200,150,0.2)' }}
+                >
+                  <svg className="w-full h-full p-3" viewBox="0 0 100 60">
+                    <circle cx="25" cy="30" r="6" fill="rgba(0,200,150,0.3)" />
+                    <circle cx="75" cy="20" r="6" fill="rgba(0,200,150,0.3)" />
+                    <circle cx="60" cy="45" r="6" fill="rgba(0,200,150,0.3)" />
+                    <line x1="31" y1="30" x2="69" y2="20" stroke="rgba(0,200,150,0.2)" strokeWidth="1" />
+                    <line x1="31" y1="30" x2="54" y2="45" stroke="rgba(0,200,150,0.2)" strokeWidth="1" />
+                    <line x1="69" y1="20" x2="54" y2="45" stroke="rgba(0,200,150,0.2)" strokeWidth="1" />
+                  </svg>
+                </div>
+                <div className="flex flex-col gap-2">
+                  <div className="w-[50px] h-[70px] rounded-xl bg-[#0a1a14] border border-white/[0.05]" />
+                  <div className="w-[50px] h-[70px] rounded-xl bg-[#0a1a14] border border-white/[0.05]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/********* SECTION 7: What will you create today? *********/}
+        <section className="py-16 lg:py-20">
+          <div className="text-center mb-10">
+            <p className="text-[clamp(28px,4vw,48px)] font-light text-[#888]">What will you</p>
+            <p className="text-[clamp(28px,4vw,48px)] font-extrabold text-white -mt-3">create today?</p>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+            {TOOLS_DATA.map((tool, i) => (
+              <ToolCard key={i} {...tool} />
+            ))}
+            <Link
+              href="/studio/apps"
+              className="w-[200px] h-[220px] flex-shrink-0 bg-[#0D0D0D] rounded-2xl border border-white/[0.07] flex flex-col items-center justify-center gap-2 transition-all duration-200 hover:border-[#CCFF00]/30 group"
+            >
+              <span className="text-[#CCFF00] text-[13px] font-semibold">View All Tools</span>
+              <ChevronRight size={20} className="text-[#CCFF00] group-hover:translate-x-1 transition-transform" />
+            </Link>
+          </div>
+        </section>
+
+        {/********* SECTION 8: Top Choice *********/}
+        <section className="py-8">
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <p className="text-[11px] text-[#888] uppercase tracking-[0.1em] font-semibold mb-1">Top Choice</p>
+              <h2 className="text-[22px] font-bold text-white">Creator-recommended tools</h2>
+            </div>
+            <Link
+              href="/studio/apps"
+              className="text-[12px] text-[#CCFF00] font-semibold flex items-center gap-1 hover:underline"
+            >
+              See all <ChevronRight size={14} />
+            </Link>
+          </div>
+          <div className="flex gap-3 overflow-x-auto pb-4 no-scrollbar">
+            {TOP_TOOLS.map((tool, i) => (
+              <ToolCard key={i} {...tool} />
+            ))}
+          </div>
+        </section>
+
+        {/********* SECTION 9: Cinematic VFX *********/}
+        <section className="py-4">
+          <FeatureBlock
+            badge="CINEMA STUDIO"
+            headlines={[
+              { text: 'Cinematic VFX', weight: 800, color: '#fff' },
+              { text: 'Ready to Use', weight: 800, color: '#fff' },
+            ]}
+            subtitle="Turn any shot cinematic with 200+ preset effects"
+            buttons={[{ text: 'Explore All Presets \u2192', variant: 'secondary', href: '/studio/cinema/vfx' }]}
+          >
+            <div className="relative h-[200px] flex items-center justify-center">
+              <div
+                className="absolute w-[130px] h-[170px] bg-[#1a1a1a] rounded-xl border border-white/[0.05] transition-all duration-200 hover:scale-[1.03]"
+                style={{ transform: 'rotate(-6deg) translateX(-15px)' }}
+              />
+              <div
+                className="relative w-[150px] h-[190px] bg-[#1a1a1a] rounded-xl border border-white/[0.08] z-10 transition-all duration-200 hover:scale-[1.03]"
+                style={{ transform: 'scale(1.05)' }}
+              />
+              <div
+                className="absolute w-[130px] h-[170px] bg-[#1a1a1a] rounded-xl border border-white/[0.05] transition-all duration-200 hover:scale-[1.03]"
+                style={{ transform: 'rotate(6deg) translateX(15px)' }}
+              />
+            </div>
+          </FeatureBlock>
+        </section>
+
+        {/********* SECTION 10: Different Scenes, Same Star *********/}
+        <section className="py-4">
+          <FeatureBlock
+            reversed
+            badge="CHARACTERS & WORLDS"
+            headlines={[
+              { text: 'Different Scenes.', weight: 800, color: '#fff' },
+              { text: 'Same Character.', weight: 800, color: '#fff' },
+            ]}
+            subtitle="Build your character once. Use across any scene, style, or video."
+            buttons={[{ text: 'Try Characters \u2192', variant: 'primary', href: '/studio/characters/create' }]}
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <div
+                  key={i}
+                  className="bg-[#1a1a1a] rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
+                  <div className="absolute bottom-2 left-2 text-[9px] text-white/40 font-medium">
+                    {['Urban style', 'Fantasy world', 'Beach day', 'Cyberpunk'][i - 1]}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </FeatureBlock>
+        </section>
+
+        {/********* SECTION 11: Visual Effects Preset Strip *********/}
+        <section className="py-8">
+          <EffectsStrip />
+        </section>
+
+        {/********* SECTION 12: Community Gallery Strips *********/}
+        <section className="py-8 space-y-10">
+          {COMM_STRIPS.map((strip, i) => (
+            <CommunityStrip
+              key={i}
+              title={strip.title}
+              subtitle={strip.subtitle}
+              viewAllHref={strip.href}
+              items={strip.items}
+            />
+          ))}
+        </section>
+
+        {/********* SECTION 13: Footer CTA Band *********/}
+        <section className="py-20 text-center">
+          <p className="text-[clamp(28px,4vw,48px)] font-extrabold text-white">Start creating for free</p>
+          <p className="text-[15px] text-[#888] mt-3">Join thousands of creators. No credit card required.</p>
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <Link
+              href="/studio/image/text-to-image"
+              className="inline-flex items-center gap-1.5 px-7 py-3 rounded-full text-[13px] font-bold transition-all hover:opacity-90"
+              style={{ backgroundColor: '#CCFF00', color: '#000' }}
+            >
+              Start Creating Free
+            </Link>
+            <Link
+              href="/studio/apps"
+              className="inline-flex items-center gap-1.5 px-7 py-3 rounded-full text-[13px] font-medium transition-all hover:bg-white/5"
+              style={{ border: '1px solid rgba(255,255,255,0.15)', color: '#fff' }}
+            >
+              View all tools
+            </Link>
+          </div>
+        </section>
+
       </div>
     </div>
   );
