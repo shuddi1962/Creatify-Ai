@@ -2,7 +2,14 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useParams, useRouter, usePathname } from 'next/navigation';
-import { ImageStudio, VideoStudio, LipSyncStudio, CinemaStudio, MarketingStudio, WorkflowStudio, AgentStudio, AppsStudio, McpCliStudio, getUserBalance } from 'studio';
+import { AppsStudio, McpCliStudio, getUserBalance } from 'studio';
+import ImageStudioTabs from './ImageStudioTabs';
+import VideoStudioTabs from './VideoStudioTabs';
+import LipSyncStudioTabs from './LipSyncStudioTabs';
+import CinemaStudioTabs from './CinemaStudioTabs';
+import MarketingStudioTabs from './MarketingStudioTabs';
+import WorkflowStudioTabs from './WorkflowStudioTabs';
+import AgentStudioTabs from './AgentStudioTabs';
 import axios from 'axios';
 import ApiKeyModal from './ApiKeyModal';
 import AuthModal from './AuthModal';
@@ -214,17 +221,17 @@ export default function StandaloneShell() {
   const renderContent = () => {
     switch (activeTab) {
       case 'home': return <HomeContent onTabChange={handleTabChange} />;
-      case 'image': return <ImageStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
-      case 'video': return <VideoStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
-      case 'lipsync': return <LipSyncStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
-      case 'cinema': return <CinemaStudio apiKey={apiKey} />;
-      case 'marketing': return <MarketingStudio apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
-      case 'workflows': return <WorkflowStudio apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
+      case 'image': return <ImageStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
+      case 'video': return <VideoStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
+      case 'lipsync': return <LipSyncStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
+      case 'cinema': return <CinemaStudioTabs initialTab={subTab} apiKey={apiKey} />;
+      case 'marketing': return <MarketingStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
+      case 'workflows': return <WorkflowStudioTabs initialTab={subTab} apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
       case 'agents': {
         if (slug.includes('mcp') || slug.includes('cli')) {
           return <McpCliStudio apiKey={apiKey} />;
         }
-        return <AgentStudio apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
+        return <AgentStudioTabs initialTab={subTab} apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
       }
       case 'apps': return <AppsStudio apiKey={apiKey} activeCategory={subTab || 'all'} />;
       case 'audio': return <AudioStudio initialTab={subTab} />;
