@@ -225,46 +225,49 @@ export default function StudioShell({ children }) {
           </nav>
         </div>
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'rgba(255,255,255,0.05)', padding: '4px 12px', borderRadius: 20, border: '1px solid rgba(255,255,255,0.05)' }}>
-            <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e' }} />
-            <span style={{ fontSize: 12, fontWeight: 700, color: '#F9FAFB' }}>${balance !== null ? `${balance}` : '---'}</span>
+        <div style={{ flex: 1, maxWidth: 360, margin: '0 16px' }}>
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: 8,
+            background: '#1a1a1a', borderRadius: 8,
+            border: '1px solid rgba(255,255,255,0.06)',
+            padding: '0 12px', height: 34,
+            transition: 'border-color 150ms',
+          }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+          >
+            <Icons.Search size={14} style={{ color: '#555', flexShrink: 0 }} />
+            <input
+              type="text"
+              placeholder="Search models, tools, features..."
+              style={{
+                flex: 1, border: 'none', outline: 'none', background: 'transparent',
+                color: '#ccc', fontSize: 12, height: '100%',
+              }}
+              onFocus={e => { e.target.parentElement.style.borderColor = '#00C896'; }}
+              onBlur={e => { e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+            />
+            <kbd style={{ fontSize: 9, color: '#555', background: '#222', padding: '1px 5px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.05)' }}>/</kbd>
           </div>
+        </div>
 
-          {user ? (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(124,58,237,0.2)', border: '1px solid rgba(124,58,237,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#A78BFA' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
-              </div>
-              <button onClick={() => setShowSettings(true)} title="Settings"
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', cursor: 'pointer', color: '#9CA3AF', fontSize: 12, fontWeight: 600, transition: 'all 150ms ease' }}
-                onMouseEnter={e => { e.target.style.color = '#F9FAFB'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                onMouseLeave={e => { e.target.style.color = '#9CA3AF'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
-              >
-                <Icons.Settings size={14} />
-                <span className="hidden sm:inline">Settings</span>
-              </button>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <button onClick={() => setShowAuthModal(true)}
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px', borderRadius: 6, border: 'none', cursor: 'pointer', background: '#00C896', color: '#fff', fontSize: 12, fontWeight: 700, transition: 'background 150ms ease' }}
-                onMouseEnter={e => e.target.style.background = '#6D28D9'}
-                onMouseLeave={e => e.target.style.background = '#00C896'}
-                onMouseDown={e => e.target.style.background = '#00997a'}
-              >
-                <Icons.LogIn size={14} />
-                Sign In
-              </button>
-              <button onClick={() => setShowSettings(true)} title="Settings"
-                style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 6, border: '1px solid rgba(255,255,255,0.08)', background: 'rgba(255,255,255,0.04)', cursor: 'pointer', color: '#9CA3AF', fontSize: 12, fontWeight: 600, transition: 'all 150ms ease' }}
-                onMouseEnter={e => { e.target.style.color = '#F9FAFB'; e.target.style.background = 'rgba(255,255,255,0.08)'; }}
-                onMouseLeave={e => { e.target.style.color = '#9CA3AF'; e.target.style.background = 'rgba(255,255,255,0.04)'; }}
-              >
-                <Icons.Settings size={14} />
-              </button>
-            </div>
-          )}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <Link href="/studio/pricing"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px', borderRadius: 6,
+              border: 'none', cursor: 'pointer',
+              background: '#00C896', color: '#000',
+              fontSize: 12, fontWeight: 700,
+              textDecoration: 'none',
+              transition: 'background 150ms ease',
+            }}
+            onMouseEnter={e => e.currentTarget.style.background = '#00b380'}
+            onMouseLeave={e => e.currentTarget.style.background = '#00C896'}
+          >
+            <Icons.User size={14} />
+            Account
+          </Link>
         </div>
       </header>
 

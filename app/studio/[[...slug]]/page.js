@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 
 const VALID_ROUTES = [
-  'home', 'settings',
+  'home', 'settings', 'pricing',
   'image/text-to-image', 'image/image-to-image', 'image/inpaint', 'image/outpaint',
   'image/upscale', 'image/remove-bg', 'image/multi-view', 'image/camera-angle',
   'image/product-placement', 'image/fashion', 'image/headshot', 'image/meme',
