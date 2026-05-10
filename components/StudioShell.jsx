@@ -51,6 +51,15 @@ export default function StudioShell({ children }) {
   const iconRefs = useRef({});
   const [showAccountMenu, setShowAccountMenu] = useState(false);
   const accountMenuRef = useRef(null);
+  const [theme, setTheme] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('studio_theme') || 'dark';
+    return 'dark';
+  });
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('studio_theme', theme);
+  }, [theme]);
 
   const fetchBalance = useCallback(async (key) => {
     try {
@@ -263,6 +272,21 @@ export default function StudioShell({ children }) {
             <kbd style={{ fontSize: 9, color: '#555', background: '#222', padding: '1px 5px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.05)' }}>/</kbd>
           </div>
         </div>
+
+        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          style={{
+            width: 32, height: 32, borderRadius: 8,
+            border: 'none', cursor: 'pointer',
+            background: 'transparent',
+            color: '#9CA3AF', flexShrink: 0,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            transition: 'all 150ms ease',
+          }}
+          onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+        >
+          {theme === 'dark' ? <Icons.Sun size={16} /> : <Icons.Moon size={16} />}
+        </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
           <Link href="/studio/pricing"
