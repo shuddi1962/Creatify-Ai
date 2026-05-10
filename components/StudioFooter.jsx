@@ -40,7 +40,7 @@ export default function StudioFooter() {
       borderTop: '1px solid rgba(255,255,255,0.06)',
       background: '#0a0a0a',
       padding: '48px 24px 24px',
-      marginTop: 'auto',
+      flexShrink: 0,
     }}>
       <div style={{
         maxWidth: 1200,

@@ -177,7 +177,8 @@ export default function StudioShell({ children }) {
   };
 
   return (
-    <div className="h-screen bg-black flex flex-col text-white relative overflow-y-auto no-scrollbar"
+    <div className="bg-black flex flex-col text-white relative"
+      style={{ minHeight: '100vh' }}
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
@@ -267,7 +268,7 @@ export default function StudioShell({ children }) {
         </div>
       </header>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
         <aside className="hidden lg:flex"
           style={{
             width: sidebarCollapsed ? 60 : 160, flexShrink: 0,
@@ -424,7 +425,7 @@ export default function StudioShell({ children }) {
           </div>
         )}
 
-        <main className="flex-1" style={{ background: '#050505' }}>
+        <main className="flex-1" style={{ background: '#050505', overflowY: 'auto', overflowX: 'hidden' }}>
           {children}
         </main>
       </div>
