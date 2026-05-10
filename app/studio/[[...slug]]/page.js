@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import StandaloneShell from '@/components/StandaloneShell';
 
 const VALID_ROUTES = [
-  'studio', 'home', 'settings',
+  'home', 'settings',
   'image/text-to-image', 'image/image-to-image', 'image/inpaint', 'image/outpaint',
   'image/upscale', 'image/remove-bg', 'image/multi-view', 'image/camera-angle',
   'image/product-placement', 'image/fashion', 'image/headshot', 'image/meme',
@@ -45,29 +44,36 @@ export default function StudioCatchAll() {
   const path = Array.isArray(slug) ? slug.join('/') : '';
 
   useEffect(() => {
-    if (path && !VALID_ROUTES.includes(path)) {
-      const redirects = {
-        'apps': '/studio/apps/all',
-        'image': '/studio/image/text-to-image',
-        'video': '/studio/video/text-to-video',
-        'audio': '/studio/audio/voiceover',
-        'lipsync': '/studio/lipsync/portrait',
-        'cinema': '/studio/cinema/generate',
-        'marketing': '/studio/marketing/ugc',
-        'bulk': '/studio/bulk/image',
-        'ideas': '/studio/ideas/trending',
-        'characters': '/studio/characters/mine',
-        'workflows': '/studio/workflows/mine',
-        'agents': '/studio/agents/mine',
-        'media': '/studio/media/all',
-        'schedule': '/studio/schedule/calendar',
-      };
+    if (!path) {
+      router.replace('/studio/home');
+      return;
+    }
+
+    const redirects = {
+      'image': '/studio/image/text-to-image',
+      'video': '/studio/video/text-to-video',
+      'audio': '/studio/audio/voiceover',
+      'lipsync': '/studio/lipsync/portrait',
+      'cinema': '/studio/cinema/generate',
+      'marketing': '/studio/marketing/ugc',
+      'bulk': '/studio/bulk/image',
+      'ideas': '/studio/ideas/trending',
+      'characters': '/studio/characters/mine',
+      'workflows': '/studio/workflows/mine',
+      'agents': '/studio/agents/mine',
+      'apps': '/studio/apps/all',
+      'media': '/studio/media/all',
+      'schedule': '/studio/schedule/calendar',
+    };
+
+    if (!VALID_ROUTES.includes(path)) {
       const redirect = redirects[path];
       if (redirect) {
         router.replace(redirect);
+        return;
       }
     }
   }, [path, router]);
 
-  return <StandaloneShell />;
+  return null;
 }
