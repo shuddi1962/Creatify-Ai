@@ -49,6 +49,8 @@ export default function StudioShell({ children }) {
   const [flyoutStyle, setFlyoutStyle] = useState({});
   const flyoutCloseTimer = useRef(null);
   const iconRefs = useRef({});
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountMenuRef = useRef(null);
 
   const fetchBalance = useCallback(async (key) => {
     try {
@@ -95,6 +97,17 @@ export default function StudioShell({ children }) {
     const interval = setInterval(() => fetchBalance(apiKey), 30000);
     return () => clearInterval(interval);
   }, [apiKey, fetchBalance]);
+
+  useEffect(() => {
+    if (!showAccountMenu) return;
+    const handler = (e) => {
+      if (accountMenuRef.current && !accountMenuRef.current.contains(e.target)) {
+        setShowAccountMenu(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [showAccountMenu]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
   const handleDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.items?.length) setIsDragging(true); }, []);
@@ -267,22 +280,103 @@ export default function StudioShell({ children }) {
             <Icons.CreditCard size={14} />
             Pricing
           </Link>
-          <Link href="/studio/pricing"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', borderRadius: 6,
-              border: 'none', cursor: 'pointer',
-              background: '#00C896', color: '#000',
-              fontSize: 12, fontWeight: 700,
-              textDecoration: 'none',
-              transition: 'background 150ms ease',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = '#00b380'}
-            onMouseLeave={e => e.currentTarget.style.background = '#00C896'}
-          >
-            <Icons.User size={14} />
-            Account
-          </Link>
+
+          <div ref={accountMenuRef} style={{ position: 'relative' }}>
+            <button onClick={() => setShowAccountMenu(!showAccountMenu)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '6px 14px', borderRadius: 6,
+                border: 'none', cursor: 'pointer',
+                background: '#00C896', color: '#000',
+                fontSize: 12, fontWeight: 700,
+                transition: 'background 150ms ease',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = '#00b380'}
+              onMouseLeave={e => e.currentTarget.style.background = '#00C896'}
+            >
+              <Icons.User size={14} />
+              Account
+            </button>
+
+            {showAccountMenu && (
+              <div style={{
+                position: 'absolute', right: 0, top: 'calc(100% + 6px)',
+                width: 220, background: '#1a1a1a',
+                border: '1px solid rgba(255,255,255,0.08)',
+                borderRadius: 10, padding: 6,
+                boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+                zIndex: 200,
+              }}>
+                {user && (
+                  <div style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '8px 10px', marginBottom: 4,
+                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    paddingBottom: 10,
+                  }}>
+                    <div style={{
+                      width: 32, height: 32, borderRadius: '50%',
+                      background: '#00C896', color: '#000',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontSize: 13, fontWeight: 700, flexShrink: 0,
+                    }}>
+                      {user.email?.charAt(0).toUpperCase() || 'U'}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: '#F9FAFB', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
+                      <div style={{ fontSize: 11, color: '#6B7280' }}>Signed in</div>
+                    </div>
+                  </div>
+                )}
+
+                <Link href="/studio/settings" onClick={() => setShowAccountMenu(false)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 10,
+                    padding: '8px 10px', borderRadius: 6, fontSize: 13,
+                    color: '#D1D5DB', textDecoration: 'none',
+                    transition: 'all 150ms ease',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#fff'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D1D5DB'; }}
+                >
+                  <Icons.Settings size={15} />
+                  Settings
+                </Link>
+
+                {user ? (
+                  <button onClick={async () => { await signOut(); resetStorageMode(); handleKeyChange(); setShowAccountMenu(false); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
+                      color: '#F87171', width: '100%', border: 'none', cursor: 'pointer',
+                      background: 'transparent', textAlign: 'left',
+                      transition: 'all 150ms ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.08)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
+                  >
+                    <Icons.LogOut size={15} />
+                    Sign Out
+                  </button>
+                ) : (
+                  <button onClick={() => { setShowAccountMenu(false); setShowAuthModal(true); }}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
+                      color: '#D1D5DB', width: '100%', border: 'none', cursor: 'pointer',
+                      background: 'transparent', textAlign: 'left',
+                      transition: 'all 150ms ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#fff'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D1D5DB'; }}
+                  >
+                    <Icons.LogIn size={15} />
+                    Sign In
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
