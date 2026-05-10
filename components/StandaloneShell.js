@@ -86,18 +86,17 @@ export default function StandaloneShell() {
     return null;
   });
   const [activeTab, setActiveTab] = useState(getInitialTab());
-  const { user, loading: authLoading, signOut } = useAuth();
-  const [balance, setBalance] = useState(null);
-  const [showSettings, setShowSettings] = useState(false);
-  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isHeaderVisible, setIsHeaderVisible] = useState(true);
   const [isDragging, setIsDragging] = useState(false);
   const [droppedFiles, setDroppedFiles] = useState(null);
   const [hoveredTopNav, setHoveredTopNav] = useState(null);
   const topNavTimeoutRef = useRef(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { user, loading: authLoading, signOut } = useAuth();
+  const [balance, setBalance] = useState(null);
+  const [showSettings, setShowSettings] = useState(false);
+  const [showApiKeyModal, setShowApiKeyModal] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -124,11 +123,6 @@ export default function StandaloneShell() {
     setFlyoutItem(null);
     router.push(path);
   };
-
-  useEffect(() => {
-    const isEditingWorkflow = (activeTab === 'workflows' || !!idFromParams) && urlWorkflowId;
-    setIsHeaderVisible(!isEditingWorkflow);
-  }, [activeTab, urlWorkflowId, idFromParams]);
 
   useEffect(() => {
     const fromBuilder = sessionStorage.getItem("fromWorkflowBuilder");
@@ -218,7 +212,199 @@ export default function StandaloneShell() {
 
   const subTab = slug[1] || null;
 
+  // Map URL slug to specific page component
+  const getPageComponent = () => {
+    const [category, page] = slug;
+    if (!category) return null;
+
+    const pageMap = {
+      'image': {
+        'text-to-image': () => import('@/app/studio/image/text-to-image/page'),
+        'image-to-image': () => import('@/app/studio/image/image-to-image/page'),
+        'inpaint': () => import('@/app/studio/image/inpaint/page'),
+        'outpaint': () => import('@/app/studio/image/outpaint/page'),
+        'upscale': () => import('@/app/studio/image/upscale/page'),
+        'remove-bg': () => import('@/app/studio/image/remove-bg/page'),
+        'multi-view': () => import('@/app/studio/image/multi-view/page'),
+        'camera-angle': () => import('@/app/studio/image/camera-angle/page'),
+        'product-placement': () => import('@/app/studio/image/product-placement/page'),
+        'fashion': () => import('@/app/studio/image/fashion/page'),
+        'headshot': () => import('@/app/studio/image/headshot/page'),
+        'meme': () => import('@/app/studio/image/meme/page'),
+        'style-transfer': () => import('@/app/studio/image/style-transfer/page'),
+        'image-to-3d': () => import('@/app/studio/image/image-to-3d/page'),
+        'relight': () => import('@/app/studio/image/relight/page'),
+      },
+      'video': {
+        'text-to-video': () => import('@/app/studio/video/text-to-video/page'),
+        'image-to-video': () => import('@/app/studio/video/image-to-video/page'),
+        'smart-shot': () => import('@/app/studio/video/smart-shot/page'),
+        'motion-sync': () => import('@/app/studio/video/motion-sync/page'),
+        'edit': () => import('@/app/studio/video/edit/page'),
+        'extend': () => import('@/app/studio/video/extend/page'),
+        'restyle': () => import('@/app/studio/video/restyle/page'),
+        'replace-character': () => import('@/app/studio/video/replace-character/page'),
+        'upscale': () => import('@/app/studio/video/upscale/page'),
+        'sound-effects': () => import('@/app/studio/video/sound-effects/page'),
+        'mixed-media': () => import('@/app/studio/video/mixed-media/page'),
+        'camera-motion': () => import('@/app/studio/video/camera-motion/page'),
+      },
+      'lipsync': {
+        'portrait': () => import('@/app/studio/lipsync/portrait/page'),
+        'video': () => import('@/app/studio/lipsync/video/page'),
+        'bulk': () => import('@/app/studio/lipsync/bulk/page'),
+        'avatar': () => import('@/app/studio/lipsync/avatar/page'),
+        'dubbing': () => import('@/app/studio/lipsync/dubbing/page'),
+      },
+      'audio': {
+        'voiceover': () => import('@/app/studio/audio/voiceover/page'),
+        'voice-clone': () => import('@/app/studio/audio/voice-clone/page'),
+        'music': () => import('@/app/studio/audio/music/page'),
+        'sfx': () => import('@/app/studio/audio/sfx/page'),
+        'subtitles': () => import('@/app/studio/audio/subtitles/page'),
+        'asmr': () => import('@/app/studio/audio/asmr/page'),
+        'background-music': () => import('@/app/studio/audio/background-music/page'),
+      },
+      'cinema': {
+        'generate': () => import('@/app/studio/cinema/generate/page'),
+        'vfx': () => import('@/app/studio/cinema/vfx/page'),
+        'color-grading': () => import('@/app/studio/cinema/color-grading/page'),
+        'storyboard': () => import('@/app/studio/cinema/storyboard/page'),
+        'scene': () => import('@/app/studio/cinema/scene/page'),
+        'genres': () => import('@/app/studio/cinema/genres/page'),
+      },
+      'marketing': {
+        'ugc': () => import('@/app/studio/marketing/ugc/page'),
+        'product-url': () => import('@/app/studio/marketing/product-url/page'),
+        'brand-kit': () => import('@/app/studio/marketing/brand-kit/page'),
+        'formatter': () => import('@/app/studio/marketing/formatter/page'),
+        'hooks': () => import('@/app/studio/marketing/hooks/page'),
+        'batch': () => import('@/app/studio/marketing/batch/page'),
+        'stories': () => import('@/app/studio/marketing/stories/page'),
+        'demo': () => import('@/app/studio/marketing/demo/page'),
+      },
+      'bulk': {
+        'image': () => import('@/app/studio/bulk/image/page'),
+        'video': () => import('@/app/studio/bulk/video/page'),
+        'lipsync': () => import('@/app/studio/bulk/lipsync/page'),
+        'voiceover': () => import('@/app/studio/bulk/voiceover/page'),
+        'queue': () => import('@/app/studio/bulk/queue/page'),
+      },
+      'ideas': {
+        'trending': () => import('@/app/studio/ideas/trending/page'),
+        'saved': () => import('@/app/studio/ideas/saved/page'),
+        'calendar': () => import('@/app/studio/ideas/calendar/page'),
+        'scripts': () => import('@/app/studio/ideas/scripts/page'),
+        'storyboard': () => import('@/app/studio/ideas/storyboard/page'),
+        'hooks': () => import('@/app/studio/ideas/hooks/page'),
+        'competitor': () => import('@/app/studio/ideas/competitor/page'),
+        'thumbnails': () => import('@/app/studio/ideas/thumbnails/page'),
+      },
+      'characters': {
+        'create': () => import('@/app/studio/characters/create/page'),
+        'mine': () => import('@/app/studio/characters/mine/page'),
+        'swap': () => import('@/app/studio/characters/swap/page'),
+        'multi': () => import('@/app/studio/characters/multi/page'),
+        'lighting': () => import('@/app/studio/characters/lighting/page'),
+        'templates': () => import('@/app/studio/characters/templates/page'),
+        'worlds': () => import('@/app/studio/characters/worlds/page'),
+        'worlds/create': () => import('@/app/studio/characters/worlds/create/page'),
+      },
+      'workflows': {
+        'canvas': () => import('@/app/studio/workflows/canvas/page'),
+        'builder': () => import('@/app/studio/workflows/builder/page'),
+        'mine': () => import('@/app/studio/workflows/mine/page'),
+        'templates': () => import('@/app/studio/workflows/templates/page'),
+        'community': () => import('@/app/studio/workflows/community/page'),
+        'playground': () => import('@/app/studio/workflows/playground/page'),
+        'scheduled': () => import('@/app/studio/workflows/scheduled/page'),
+        'share': () => import('@/app/studio/workflows/share/page'),
+      },
+      'agents': {
+        'create': () => import('@/app/studio/agents/create/page'),
+        'mine': () => import('@/app/studio/agents/mine/page'),
+        'templates': () => import('@/app/studio/agents/templates/page'),
+        'logs': () => import('@/app/studio/agents/logs/page'),
+        'mcp': () => import('@/app/studio/agents/mcp/page'),
+        'cli': () => import('@/app/studio/agents/cli/page'),
+        'api': () => import('@/app/studio/agents/api/page'),
+        'webhooks': () => import('@/app/studio/agents/webhooks/page'),
+      },
+      'apps': {
+        'all': () => import('@/app/studio/apps/all/page'),
+        'vfx': () => import('@/app/studio/apps/vfx/page'),
+        'face': () => import('@/app/studio/apps/face/page'),
+        'style': () => import('@/app/studio/apps/style/page'),
+        'product': () => import('@/app/studio/apps/product/page'),
+        'social': () => import('@/app/studio/apps/social/page'),
+        'favorites': () => import('@/app/studio/apps/favorites/page'),
+        'new': () => import('@/app/studio/apps/new/page'),
+        'face-swap': () => import('@/app/studio/apps/face-swap/page'),
+        'angles': () => import('@/app/studio/apps/angles/page'),
+        'skin': () => import('@/app/studio/apps/skin/page'),
+        'match-cut': () => import('@/app/studio/apps/match-cut/page'),
+        'stickers': () => import('@/app/studio/apps/stickers/page'),
+        'effects': () => import('@/app/studio/apps/effects/page'),
+      },
+      'media': {
+        'all': () => import('@/app/studio/media/all/page'),
+        'images': () => import('@/app/studio/media/images/page'),
+        'videos': () => import('@/app/studio/media/videos/page'),
+        'audio': () => import('@/app/studio/media/audio/page'),
+        'projects': () => import('@/app/studio/media/projects/page'),
+        'storage': () => import('@/app/studio/media/storage/page'),
+        'drive': () => import('@/app/studio/media/drive/page'),
+        'dropbox': () => import('@/app/studio/media/dropbox/page'),
+        'download': () => import('@/app/studio/media/download/page'),
+      },
+      'schedule': {
+        'calendar': () => import('@/app/studio/schedule/calendar/page'),
+        'posts': () => import('@/app/studio/schedule/posts/page'),
+        'new': () => import('@/app/studio/schedule/new/page'),
+        'connect': () => import('@/app/studio/schedule/connect/page'),
+        'captions': () => import('@/app/studio/schedule/captions/page'),
+        'analytics': () => import('@/app/studio/schedule/analytics/page'),
+      },
+      'settings': null,
+      'home': null,
+    };
+
+    const catMap = pageMap[category];
+    if (!catMap) return null;
+    if (catMap === null) return null;
+    const loaderFn = pageMap[category][page];
+    if (!loaderFn) return null;
+    return lazy(loaderFn);
+  };
+
+  const DynamicPage = getPageComponent();
+  const isSubPage = slug.length > 1 && DynamicPage !== null;
+
   const renderContent = () => {
+    if (isSubPage && DynamicPage) {
+      return (
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-[60vh]">
+            <div className="w-10 h-10 border-2 border-[#CCFF00] border-t-transparent rounded-full animate-spin" />
+          </div>
+        }>
+          <DynamicPage />
+        </Suspense>
+      );
+    }
+
+    if (isSubPage && DynamicPage) {
+      return (
+        <Suspense fallback={
+          <div className="flex items-center justify-center h-[60vh]">
+            <div className="w-10 h-10 border-2 border-[#CCFF00] border-t-transparent rounded-full animate-spin" />
+          </div>
+        }>
+          <DynamicPage />
+        </Suspense>
+      );
+    }
+
     switch (activeTab) {
       case 'home': return <HomeContent onTabChange={handleTabChange} />;
       case 'image': return <ImageStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
@@ -226,12 +412,12 @@ export default function StandaloneShell() {
       case 'lipsync': return <LipSyncStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
       case 'cinema': return <CinemaStudioTabs initialTab={subTab} apiKey={apiKey} />;
       case 'marketing': return <MarketingStudioTabs initialTab={subTab} apiKey={apiKey} droppedFiles={droppedFiles} onFilesHandled={() => setDroppedFiles(null)} />;
-      case 'workflows': return <WorkflowStudioTabs initialTab={subTab} apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
+      case 'workflows': return <WorkflowStudioTabs initialTab={subTab} apiKey={apiKey} />;
       case 'agents': {
         if (slug.includes('mcp') || slug.includes('cli')) {
           return <McpCliStudio apiKey={apiKey} />;
         }
-        return <AgentStudioTabs initialTab={subTab} apiKey={apiKey} isHeaderVisible={isHeaderVisible} onToggleHeader={setIsHeaderVisible} />;
+        return <AgentStudioTabs initialTab={subTab} apiKey={apiKey} />;
       }
       case 'apps': return <AppsStudio apiKey={apiKey} activeCategory={subTab || 'all'} />;
       case 'audio': return <AudioStudio initialTab={subTab} />;
@@ -240,7 +426,14 @@ export default function StandaloneShell() {
       case 'characters': return <CharactersWorldsStudio initialTab={slug[1] === 'worlds' && slug[2] === 'create' ? 'worlds-create' : subTab} />;
       case 'media': return <MediaLibraryStudio initialTab={subTab} />;
       case 'schedule': return <SchedulePublishStudio initialTab={subTab} />;
-      case 'settings': return <SettingsStudio />;
+      case 'settings': {
+        const SettingsPage = lazy(() => import('@/app/studio/settings/page'));
+        return (
+          <Suspense fallback={<div className="flex items-center justify-center h-[60vh]"><div className="w-10 h-10 border-2 border-[#CCFF00] border-t-transparent rounded-full animate-spin" /></div>}>
+            <SettingsPage />
+          </Suspense>
+        );
+      }
       default: return <HomeContent onTabChange={handleTabChange} />;
     }
   };
@@ -310,14 +503,13 @@ export default function StandaloneShell() {
         </div>
       )}
 
-      {isHeaderVisible && (
-        <header style={{
-          flexShrink: 0, height: 56,
-          background: '#111111',
-          borderBottom: '1px solid rgba(255,255,255,0.06)',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          padding: '0 16px', zIndex: 100, position: 'sticky', top: 0
-        }}>
+      <header style={{
+        flexShrink: 0, height: 56,
+        background: '#111111',
+        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '0 16px', zIndex: 100, position: 'sticky', top: 0
+      }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -377,7 +569,6 @@ export default function StandaloneShell() {
             )}
           </div>
         </header>
-      )}
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
         <aside className="hidden lg:flex"
