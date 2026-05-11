@@ -233,7 +233,7 @@ function ProfileSection({ user }) {
           </div>
         </div>
 
-        <!-- Buy Credits card -->
+        {/* Buy Credits card */}
         <BuyCreditsCard />
       </div>
 
