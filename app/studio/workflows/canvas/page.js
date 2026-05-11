@@ -1,116 +1,249 @@
 'use client';
 
 import { useState } from 'react';
-import { GitMerge, Play, Save, FolderOpen, ZoomIn, ZoomOut, Plus, Share2 } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import { PanelLeftClose, Plus, Sparkles, Layers, Play, Save, Share2, FolderOpen, ZoomIn, ZoomOut, GitMerge } from 'lucide-react';
 
-const NODE_CATEGORIES = ['Input', 'Generate Image', 'Generate Video', 'Audio', 'Transform', 'Output', 'Logic', 'Data'];
+const NODE_CATEGORIES = [
+  { name: 'INPUT', items: ['Text Input', 'Image Upload', 'Video Upload', 'Audio Upload'] },
+  { name: 'GENERATE', items: ['Text to Image', 'Text to Video', 'Image to Video', 'Image to 3D'] },
+  { name: 'TRANSFORM', items: ['Upscale', 'Remove BG', 'Inpaint', 'Outpaint', 'Style Transfer'] },
+  { name: 'OUTPUT', items: ['Save to Media', 'Download', 'Export'] },
+];
+
 const SAMPLE_NODES = [
-  { id: 'n1', x: 80, y: 120, type: 'Input', label: 'Text Input', color: '#7C3AED' },
-  { id: 'n2', x: 350, y: 100, type: 'Generate Image', label: 'Flux Model', color: '#7C3AED' },
-  { id: 'n3', x: 620, y: 100, type: 'Transform', label: 'Upscale', color: '#F59E0B' },
-  { id: 'n4', x: 350, y: 280, type: 'Generate Video', label: 'Seedance', color: '#10B981' },
-  { id: 'n5', x: 620, y: 280, type: 'Output', label: 'Save to Media', color: '#CCFF00' },
+  { id: 'n1', x: 80, y: 120, category: 'INPUT', label: 'Text Input', color: '#6366f1' },
+  { id: 'n2', x: 350, y: 100, category: 'GENERATE', label: 'Flux Model', color: '#6366f1' },
+  { id: 'n3', x: 620, y: 100, category: 'TRANSFORM', label: 'Upscale', color: '#f59e0b' },
+  { id: 'n4', x: 350, y: 280, category: 'GENERATE', label: 'Seedance', color: '#10b981' },
+  { id: 'n5', x: 620, y: 280, category: 'OUTPUT', label: 'Save to Media', color: '#ccff00' },
 ];
 
 export default function CanvasPage() {
   const [nodes, setNodes] = useState(SAMPLE_NODES);
   const [selectedNode, setSelectedNode] = useState(null);
   const [zoom, setZoom] = useState(1);
-  const [loading, setLoading] = useState(false);
 
   const addNode = (type) => {
-    const newNode = { id: `n${Date.now()}`, x: 300 + Math.random() * 200, y: 150 + Math.random() * 150, type, label: type, color: '#7C3AED' };
+    const newNode = { id: `n${Date.now()}`, x: 200 + Math.random() * 200, y: 120 + Math.random() * 200, category: type.toUpperCase(), label: type, color: '#6366f1' };
     setNodes([...nodes, newNode]);
-    toast.success(`${type} node added`);
   };
-
-  const handleRun = () => {
-    setLoading(true);
-    setTimeout(() => { setLoading(false); toast.success('Workflow executed!'); }, 3000);
-  };
-
-  const handleSave = () => toast.success('Workflow saved!');
-  const handleLoad = () => toast.success('Loading workflow...');
-  const handleNew = () => { setNodes([]); toast.success('New canvas'); };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={GitMerge} badge="NEW" title="WORKFLOW CANVAS" subtitle="Infinite visual canvas for building and running AI workflow chains" />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
-          <div className="flex gap-2">
-            <button onClick={handleNew} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white flex items-center gap-2 transition-all"><Plus size={14} /> New</button>
-            <button onClick={handleLoad} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white flex items-center gap-2 transition-all"><FolderOpen size={14} /> Load</button>
-            <button onClick={handleSave} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white flex items-center gap-2 transition-all"><Save size={14} /> Save</button>
-            <button onClick={() => toast.success('Share link copied!')} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white flex items-center gap-2 transition-all"><Share2 size={14} /> Share</button>
+    <div style={{
+      display: 'flex',
+      height: '100%',
+      background: 'var(--bg-page)',
+      overflow: 'hidden',
+    }}>
+      {/* ========== LEFT PANEL (240px) ========== */}
+      <div style={{
+        width: 240,
+        background: 'var(--bg-card)',
+        borderRight: '1px solid var(--border-subtle)',
+        display: 'flex',
+        flexDirection: 'column',
+        flexShrink: 0,
+        overflow: 'hidden',
+      }}>
+        <div style={{
+          padding: '12px 16px',
+          borderBottom: '1px solid var(--border-subtle)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+        }}>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6,
+            background: 'none', border: 'none', cursor: 'pointer',
+            color: 'var(--text-secondary)', fontSize: 13,
+          }}>
+            <PanelLeftClose size={16} />
+            Hide
+          </button>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+            borderRadius: 8, padding: '5px 10px', fontSize: 12,
+            color: 'var(--text-secondary)', cursor: 'pointer',
+          }}>
+            <GitMerge size={12} /> Nodes
+          </button>
+        </div>
+
+        <div style={{ padding: '12px', flex: 1, overflowY: 'auto' }}>
+          <div style={{
+            fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
+            textTransform: 'uppercase', letterSpacing: '0.07em',
+            padding: '0 4px 10px',
+          }}>
+            Node Library
           </div>
-          <div className="flex items-center gap-2">
-            <button onClick={() => setZoom(Math.max(0.5, zoom - 0.1))} className="w-8 h-8 bg-[#1a1a1a] rounded-lg flex items-center justify-center text-[#888] hover:text-white"><ZoomOut size={14} /></button>
-            <span className="text-[#555] text-xs px-2">{Math.round(zoom * 100)}%</span>
-            <button onClick={() => setZoom(Math.min(2, zoom + 0.1))} className="w-8 h-8 bg-[#1a1a1a] rounded-lg flex items-center justify-center text-[#888] hover:text-white"><ZoomIn size={14} /></button>
-            <button onClick={handleRun} disabled={loading} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 flex items-center gap-2 transition-all">
-              {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Play size={14} />}
-              Run Workflow
+
+          {NODE_CATEGORIES.map(cat => (
+            <div key={cat.name} style={{ marginBottom: 8 }}>
+              <div style={{
+                fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
+                textTransform: 'uppercase', letterSpacing: '0.06em',
+                padding: '4px 8px', marginBottom: 2,
+              }}>
+                {cat.name}
+              </div>
+              {cat.items.map(item => (
+                <button key={item}
+                  onClick={() => addNode(item)}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: 8,
+                    width: '100%', padding: '6px 10px',
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    borderRadius: 6, color: 'var(--text-secondary)', fontSize: 12,
+                    textAlign: 'left', transition: 'all 100ms',
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                  onMouseLeave={e => e.currentTarget.style.background = 'none'}
+                >
+                  <Plus size={12} />
+                  {item}
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ========== CENTER — INFINITE CANVAS ========== */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        position: 'relative',
+        overflow: 'hidden',
+      }}>
+        {/* Tool bar */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '8px 16px',
+          background: 'var(--bg-card)',
+          borderBottom: '1px solid var(--border-subtle)',
+        }}>
+          <div style={{ display: 'flex', gap: 4 }}>
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '6px 10px', fontSize: 12,
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+            }}><Plus size={12} /> New</button>
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '6px 10px', fontSize: 12,
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+            }}><FolderOpen size={12} /> Load</button>
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '6px 10px', fontSize: 12,
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+            }}><Save size={12} /> Save</button>
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 4,
+              padding: '6px 10px', fontSize: 12,
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+            }}><Share2 size={12} /> Share</button>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button onClick={() => setZoom(Math.max(0.5, zoom - 0.1))}
+              style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--bg-input)', border: '1px solid var(--border-default)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+              <ZoomOut size={12} />
+            </button>
+            <span style={{ fontSize: 11, color: 'var(--text-muted)', minWidth: 32, textAlign: 'center' }}>{Math.round(zoom * 100)}%</span>
+            <button onClick={() => setZoom(Math.min(2, zoom + 0.1))}
+              style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--bg-input)', border: '1px solid var(--border-default)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+              <ZoomIn size={12} />
+            </button>
+            <button style={{
+              background: '#CCFF00', border: 'none', borderRadius: 8,
+              padding: '7px 16px', fontSize: 13, fontWeight: 700, color: '#000',
+              cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6,
+            }}>
+              <Play size={12} /> RUN
             </button>
           </div>
         </div>
 
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] overflow-hidden">
-          <div className="flex">
-            <div className="w-48 border-r border-white/[0.08] p-3 min-h-[500px]">
-              <p className="text-[10px] font-semibold text-[#444] uppercase tracking-widest mb-3">Node Library</p>
-              {NODE_CATEGORIES.map(cat => (
-                <div key={cat} className="mb-2">
-                  <p className="text-[9px] text-[#333] uppercase mb-1">{cat}</p>
-                  <button onClick={() => addNode(cat)} className="w-full text-left px-2 py-1 text-xs text-[#888] hover:text-white hover:bg-[#1a1a1a] rounded transition-all">+ Add</button>
-                </div>
-              ))}
-            </div>
-            <div className="flex-1 relative overflow-hidden" style={{ minHeight: '500px', background: 'repeating-linear-gradient(0deg, #0a0a0a 0px, #0a0a0a 19px, #111 19px, #111 20px), repeating-linear-gradient(90deg, #0a0a0a 0px, #0a0a0a 19px, #111 19px, #111 20px)' }}>
-              <div style={{ transform: `scale(${zoom})`, transformOrigin: 'top left' }}>
-                {nodes.map(node => (
-                  <div key={node.id} onClick={() => setSelectedNode(node.id)} className={`absolute w-40 bg-[#1a1a1a] rounded-xl border-2 cursor-pointer transition-all ${selectedNode === node.id ? 'border-[#CCFF00] shadow-lg shadow-[#CCFF00]/20' : 'border-white/[0.08] hover:border-[#333]'}`} style={{ left: node.x, top: node.y }}>
-                    <div className="w-full h-1 rounded-t-xl" style={{ backgroundColor: node.color }} />
-                    <div className="p-3">
-                      <p className="text-[10px] text-[#555] uppercase">{node.type}</p>
-                      <p className="text-white text-sm font-semibold">{node.label}</p>
-                    </div>
-                  </div>
+        {/* Infinite canvas */}
+        <div style={{
+          flex: 1,
+          position: 'relative',
+          overflow: 'hidden',
+          backgroundImage: `
+            linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+          `,
+          backgroundSize: '30px 30px',
+        }}>
+          <div style={{
+            transform: `scale(${zoom})`,
+            transformOrigin: 'top left',
+            width: '100%', height: '100%',
+          }}>
+            {/* Connection lines */}
+            {nodes.length > 1 && (
+              <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: 0 }}>
+                <defs>
+                  <marker id="arrowhead" markerWidth="6" markerHeight="4" refX="5" refY="2" orient="auto">
+                    <polygon points="0 0, 6 2, 0 4" fill="rgba(255,255,255,0.2)" />
+                  </marker>
+                </defs>
+                {nodes.slice(0, -1).map((node, i) => (
+                  <line key={i}
+                    x1={node.x + 80} y1={node.y + 45}
+                    x2={nodes[i + 1].x} y2={nodes[i + 1].y + 45}
+                    stroke="rgba(255,255,255,0.12)"
+                    strokeWidth="1.5"
+                    strokeDasharray="5 3"
+                    markerEnd="url(#arrowhead)"
+                  />
                 ))}
-                {nodes.length > 1 && (
-                  <svg className="absolute inset-0 pointer-events-none" style={{ zIndex: -1 }}>
-                    <line x1={nodes[0].x + 80} y1={nodes[0].y + 40} x2={nodes[1].x} y2={nodes[1].y + 40} stroke="#333" strokeWidth="2" strokeDasharray="4 2" />
-                    <line x1={nodes[1].x + 80} y1={nodes[1].y + 40} x2={nodes[2].x} y2={nodes[2].y + 40} stroke="#333" strokeWidth="2" strokeDasharray="4 2" />
-                    <line x1={nodes[0].x + 80} y1={nodes[0].y + 60} x2={nodes[3].x} y2={nodes[3].y + 40} stroke="#333" strokeWidth="2" strokeDasharray="4 2" />
-                    <line x1={nodes[3].x + 80} y1={nodes[3].y + 40} x2={nodes[4].x} y2={nodes[4].y + 40} stroke="#333" strokeWidth="2" strokeDasharray="4 2" />
-                  </svg>
-                )}
+              </svg>
+            )}
+
+            {nodes.map(node => (
+              <div key={node.id}
+                onClick={() => setSelectedNode(node.id === selectedNode ? null : node.id)}
+                style={{
+                  position: 'absolute', left: node.x, top: node.y,
+                  width: 160,
+                  background: 'var(--bg-elevated)',
+                  border: `1.5px solid ${selectedNode === node.id ? '#CCFF00' : 'var(--border-subtle)'}`,
+                  borderRadius: 10,
+                  cursor: 'pointer',
+                  boxShadow: selectedNode === node.id ? '0 0 20px rgba(204,255,0,0.15)' : 'none',
+                  transition: 'all 150ms',
+                  zIndex: 1,
+                }}
+              >
+                <div style={{
+                  height: 3,
+                  background: node.color,
+                  borderRadius: '8px 8px 0 0',
+                }} />
+                <div style={{ padding: '10px 12px' }}>
+                  <div style={{ fontSize: 9, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>{node.category}</div>
+                  <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginTop: 2 }}>{node.label}</div>
+                </div>
               </div>
-              {nodes.length === 0 && <div className="absolute inset-0 flex items-center justify-center"><p className="text-[#444] text-sm">Click nodes from the library to add them</p></div>}
-            </div>
-            {selectedNode && (
-              <div className="w-64 border-l border-white/[0.08] p-4">
-                <p className="text-[10px] font-semibold text-[#444] uppercase tracking-widest mb-3">Node Settings</p>
-                {(() => {
-                  const node = nodes.find(n => n.id === selectedNode);
-                  return (
-                    <div className="space-y-3">
-                      <div>
-                        <label className="text-[9px] text-[#555] uppercase block mb-1">Label</label>
-                        <input defaultValue={node.label} className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none" />
-                      </div>
-                      <div>
-                        <label className="text-[9px] text-[#555] uppercase block mb-1">Type</label>
-                        <p className="text-xs text-[#888]">{node.type}</p>
-                      </div>
-                      <button onClick={() => setNodes(nodes.filter(n => n.id !== selectedNode))} className="w-full px-3 py-2 bg-red-500/20 text-red-500 text-xs rounded-lg hover:bg-red-500/30">Remove Node</button>
-                    </div>
-                  );
-                })()}
+            ))}
+
+            {nodes.length === 0 && (
+              <div style={{
+                position: 'absolute', inset: 0,
+                display: 'flex', flexDirection: 'column',
+                alignItems: 'center', justifyContent: 'center',
+                gap: 8, color: 'var(--text-muted)', fontSize: 13,
+              }}>
+                <Layers size={32} style={{ opacity: 0.3 }} />
+                <span>Click nodes from the library to add them</span>
               </div>
             )}
           </div>

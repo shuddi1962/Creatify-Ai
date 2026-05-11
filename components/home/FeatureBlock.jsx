@@ -12,14 +12,16 @@ export default function FeatureBlock({
   extraContent,
 }) {
   const btnStyles = {
-    primary: { backgroundColor: '#CCFF00', color: '#000', fontWeight: 700 },
-    secondary: { border: '1px solid rgba(255,255,255,0.15)', color: '#fff' },
-    ghost: { color: '#888' },
+    primary: { background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', fontWeight: 700 },
+    secondary: { border: '1px solid var(--border-default)', color: 'var(--text-primary)' },
+    ghost: { color: 'var(--text-muted)' },
     teal: { backgroundColor: '#00c896', color: '#000', fontWeight: 700 },
   };
 
   return (
-    <div className={`bg-[#0D0D0D] border border-white/[0.07] rounded-[20px] p-8 mb-4 w-full ${className}`}>
+    <div className={`border rounded-[20px] p-8 mb-4 w-full ${className}`}
+      style={{ background: 'var(--bg-card)', borderColor: 'var(--border-subtle)' }}
+    >
       <div className={`flex flex-col lg:flex-row ${reversed ? 'lg:flex-row-reverse' : ''} gap-8 lg:gap-12 items-center`}>
         <div className="w-full lg:w-[40%] flex-shrink-0">
           {badge && (
@@ -34,13 +36,13 @@ export default function FeatureBlock({
             <p
               key={i}
               className="text-[clamp(22px,3vw,36px)] leading-tight"
-              style={{ fontWeight: h.weight || 800, color: h.color || '#FFFFFF' }}
+              style={{ fontWeight: h.weight || 800, color: h.color || 'var(--text-primary)' }}
             >
               {h.text}
             </p>
           ))}
           {subtitle && (
-            <p className="text-[14px] text-[#888] mt-3 max-w-[400px]">{subtitle}</p>
+            <p className="text-[14px] mt-3 max-w-[400px]" style={{ color: 'var(--text-muted)' }}>{subtitle}</p>
           )}
           {buttons.length > 0 && (
             <div className="flex flex-wrap gap-3 mt-5">

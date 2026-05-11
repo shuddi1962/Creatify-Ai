@@ -19,8 +19,8 @@ export default function EffectsStrip() {
     <div>
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h2 className="text-lg font-bold text-white">Visual Effects</h2>
-          <p className="text-[13px] text-[#888] mt-1">
+          <h2 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>Visual Effects</h2>
+          <p className="text-[13px] mt-1" style={{ color: 'var(--text-muted)' }}>
             Big-budget visual effects \u2014 from explosions to surreal transformations
           </p>
         </div>
@@ -36,8 +36,10 @@ export default function EffectsStrip() {
           <Link
             key={i}
             href="/studio/cinema/vfx"
-            className="flex-shrink-0 px-3.5 py-2 rounded-lg text-[12px] text-[#ccc] hover:text-white hover:bg-[#1a1a1a] transition-all"
-            style={{ backgroundColor: '#111', border: '1px solid rgba(255,255,255,0.08)' }}
+            className="flex-shrink-0 px-3.5 py-2 rounded-lg text-[12px] transition-all"
+            style={{ background: 'var(--bg-input)', border: '1px solid var(--border-default)', color: 'var(--text-secondary)' }}
+            onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+            onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-input)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
           >
             {effect}
           </Link>

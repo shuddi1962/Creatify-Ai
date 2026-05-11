@@ -35,8 +35,8 @@ export default function CommunityStrip({ title, subtitle, viewAllHref, items }) 
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
       <div className="w-full lg:w-[30%] flex-shrink-0">
-        <h3 className="text-lg font-bold text-white">{title}</h3>
-        <p className="text-[13px] text-[#888] mt-2">{subtitle}</p>
+        <h3 className="text-lg font-bold" style={{ color: 'var(--text-primary)' }}>{title}</h3>
+        <p className="text-[13px] mt-2" style={{ color: 'var(--text-muted)' }}>{subtitle}</p>
         <Link
           href={viewAllHref}
           className="inline-flex items-center gap-1 text-[#00C896] text-[12px] font-semibold mt-3 hover:underline"
@@ -54,8 +54,8 @@ export default function CommunityStrip({ title, subtitle, viewAllHref, items }) 
               <Link
                 key={i}
                 href={viewAllHref}
-                className={`flex-shrink-0 rounded-xl border border-white/[0.05] overflow-hidden transition-all duration-200 hover:scale-[1.02] cursor-pointer`}
-                style={{ width: `${w}px`, height: `${h}px` }}
+                className={`flex-shrink-0 rounded-xl border overflow-hidden transition-all duration-200 hover:scale-[1.02] cursor-pointer`}
+                style={{ width: `${w}px`, height: `${h}px`, borderColor: 'var(--border-subtle)' }}
               >
                 <img
                   src={src}

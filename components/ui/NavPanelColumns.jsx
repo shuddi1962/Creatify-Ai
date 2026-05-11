@@ -2,7 +2,7 @@ export function NavPanelColumns({ left, right }) {
   const colHeaderStyle = {
     fontSize: 10,
     fontWeight: 500,
-    color: '#4B5563',
+    color: 'var(--text-muted)',
     textTransform: 'uppercase',
     letterSpacing: '0.08em',
     marginBottom: 6,

@@ -25,26 +25,23 @@ export default function ToolCard({ name, description, href, badge, badgeType, gr
   return (
     <Link
       href={href}
-      className="w-[200px] h-[220px] flex-shrink-0 bg-[#0D0D0D] rounded-2xl border border-white/[0.07] overflow-hidden cursor-pointer transition-all duration-200 hover:border-white/20 hover:-translate-y-1 group"
+      className="w-[200px] h-[220px] flex-shrink-0 rounded-2xl border overflow-hidden cursor-pointer transition-all duration-200 hover:-translate-y-1 home-section-card"
+      style={{ background: 'var(--bg-card)', borderColor: 'var(--border-subtle)' }}
     >
       <div className="h-[70%] relative overflow-hidden">
         <img src={imgSrc} alt={name} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
         {badge && (
           <span
-            className="absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded z-10"
-            style={{
-              backgroundColor: badgeType === 'TOP' ? '#00C896' : '#CCFF00',
-              color: badgeType === 'TOP' ? '#fff' : '#000',
-            }}
+            className={`absolute top-2 left-2 text-[8px] font-bold px-1.5 py-0.5 rounded z-10 ${badgeType === 'NEW' ? 'badge-new' : 'badge-top'}`}
           >
             {badge}
           </span>
         )}
       </div>
       <div className="p-3">
-        <p className="text-[13px] font-semibold text-white">{name}</p>
-        <p className="text-[11px] text-[#888] line-clamp-2 mt-0.5">{description}</p>
+        <p className="text-[13px] font-semibold" style={{ color: 'var(--text-primary)' }}>{name}</p>
+        <p className="text-[11px] line-clamp-2 mt-0.5" style={{ color: 'var(--text-muted)' }}>{description}</p>
       </div>
     </Link>
   );
