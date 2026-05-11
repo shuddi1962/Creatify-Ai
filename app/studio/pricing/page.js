@@ -101,27 +101,25 @@ export default function PricingPage() {
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <div style={{ background: '#000', minHeight: '100%', paddingBottom: 80 }}>
-      {/* Hero */}
+    <div style={{ background: 'var(--bg-page)', minHeight: '100%', paddingBottom: 80, color: 'var(--text-primary)' }}>
       <div style={{ textAlign: 'center', padding: '60px 24px 40px' }}>
         <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, color: '#00C896', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
           Pricing
         </span>
-        <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, color: '#fff', marginBottom: 12 }}>
+        <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 12 }}>
           Simple, transparent pricing
         </h1>
-        <p style={{ fontSize: 15, color: '#888', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
+        <p style={{ fontSize: 15, color: 'var(--text-muted)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
           Start for free, upgrade when you need more. All plans include access to 200+ AI models.
         </p>
       </div>
 
-      {/* Plans */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, maxWidth: 960, margin: '0 auto', padding: '0 24px' }}>
         {PLANS.map(plan => (
           <div key={plan.name} style={{
             position: 'relative',
-            background: plan.popular ? 'rgba(0,200,150,0.06)' : '#0D0D0D',
-            border: plan.popular ? '1px solid rgba(0,200,150,0.3)' : '1px solid rgba(255,255,255,0.06)',
+            background: plan.popular ? 'rgba(0,200,150,0.06)' : 'var(--bg-card)',
+            border: plan.popular ? '1px solid rgba(0,200,150,0.3)' : '1px solid var(--border-subtle)',
             borderRadius: 16,
             padding: '32px 24px',
             transition: 'all 200ms',
@@ -135,17 +133,17 @@ export default function PricingPage() {
                 Most Popular
               </div>
             )}
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 4 }}>{plan.name}</h3>
-            <p style={{ fontSize: 12, color: '#666', marginBottom: 16 }}>{plan.description}</p>
+            <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{plan.name}</h3>
+            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{plan.description}</p>
             <div style={{ marginBottom: 24 }}>
-              <span style={{ fontSize: 36, fontWeight: 800, color: '#fff' }}>{plan.price}</span>
-              <span style={{ fontSize: 13, color: '#666', marginLeft: 4 }}>{plan.period}</span>
+              <span style={{ fontSize: 36, fontWeight: 800, color: 'var(--text-primary)' }}>{plan.price}</span>
+              <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 4 }}>{plan.period}</span>
             </div>
             <Link href={plan.href} style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               width: '100%', padding: '10px 0', borderRadius: 8,
-              background: plan.popular ? '#00C896' : 'rgba(255,255,255,0.06)',
-              color: plan.popular ? '#000' : '#fff',
+              background: plan.popular ? '#00C896' : 'var(--bg-input)',
+              color: plan.popular ? '#000' : 'var(--text-primary)',
               fontSize: 13, fontWeight: 700, textDecoration: 'none',
               marginBottom: 24, transition: 'opacity 150ms',
             }}
@@ -156,7 +154,7 @@ export default function PricingPage() {
             </Link>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
               {plan.features.map(f => (
-                <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: '#999' }}>
+                <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
                   {f.value === false ? (
                     <X size={14} style={{ color: '#ff4d4d', flexShrink: 0 }} />
                   ) : f.value === true ? (
@@ -165,7 +163,7 @@ export default function PricingPage() {
                     <Check size={14} style={{ color: '#00C896', flexShrink: 0 }} />
                   )}
                   <span>{f.label}</span>
-                  <span style={{ marginLeft: 'auto', color: '#ccc', fontWeight: 500 }}>{f.value === true ? 'Yes' : f.value === false ? '—' : f.value}</span>
+                  <span style={{ marginLeft: 'auto', color: 'var(--text-primary)', fontWeight: 500 }}>{f.value === true ? 'Yes' : f.value === false ? '—' : f.value}</span>
                 </div>
               ))}
             </div>
@@ -173,27 +171,26 @@ export default function PricingPage() {
         ))}
       </div>
 
-      {/* Comparison Table */}
       <div style={{ maxWidth: 800, margin: '60px auto 0', padding: '0 24px' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#fff', textAlign: 'center', marginBottom: 8 }}>Compare plans in detail</h2>
-        <p style={{ fontSize: 13, color: '#888', textAlign: 'center', marginBottom: 32 }}>Everything you need to know about each plan</p>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', marginBottom: 8 }}>Compare plans in detail</h2>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 32 }}>Everything you need to know about each plan</p>
         <div style={{ overflowX: 'auto' }}>
           <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
             <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                <th style={{ textAlign: 'left', padding: '12px 16px', color: '#888', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Feature</th>
-                <th style={{ textAlign: 'center', padding: '12px 16px', color: '#888', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Free</th>
+              <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                <th style={{ textAlign: 'left', padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Feature</th>
+                <th style={{ textAlign: 'center', padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Free</th>
                 <th style={{ textAlign: 'center', padding: '12px 16px', color: '#00C896', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pro</th>
                 <th style={{ textAlign: 'center', padding: '12px 16px', color: '#CCFF00', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Enterprise</th>
               </tr>
             </thead>
             <tbody>
               {COMPARISON.map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                  <td style={{ padding: '12px 16px', color: '#ccc' }}>{row.feature}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#888' }}>{row.free}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#ccc' }}>{row.pro}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: '#ccc' }}>{row.enterprise}</td>
+                <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                  <td style={{ padding: '12px 16px', color: 'var(--text-primary)' }}>{row.feature}</td>
+                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>{row.free}</td>
+                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-primary)' }}>{row.pro}</td>
+                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-primary)' }}>{row.enterprise}</td>
                 </tr>
               ))}
             </tbody>
@@ -201,26 +198,26 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* FAQ */}
       <div style={{ maxWidth: 640, margin: '60px auto 0', padding: '0 24px' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: '#fff', textAlign: 'center', marginBottom: 32 }}>Frequently asked questions</h2>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', marginBottom: 32 }}>Frequently asked questions</h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {FAQS.map((faq, i) => (
             <div key={i} style={{
-              background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 12, overflow: 'hidden',
+              background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 12, overflow: 'hidden',
             }}>
               <button
                 onClick={() => setOpenFaq(openFaq === i ? null : i)}
                 style={{
                   width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '16px 20px', border: 'none', background: 'transparent', cursor: 'pointer', color: '#ccc', fontSize: 13, fontWeight: 500, textAlign: 'left',
+                  padding: '16px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
+                  color: 'var(--text-primary)', fontSize: 13, fontWeight: 500, textAlign: 'left',
                 }}
               >
                 <span>{faq.q}</span>
-                <ChevronDown size={16} style={{ color: '#666', transform: openFaq === i ? 'rotate(180deg)' : 'none', transition: 'transform 200ms', flexShrink: 0 }} />
+                <ChevronDown size={16} style={{ color: 'var(--text-muted)', transform: openFaq === i ? 'rotate(180deg)' : 'none', transition: 'transform 200ms', flexShrink: 0 }} />
               </button>
               {openFaq === i && (
-                <div style={{ padding: '0 20px 16px', fontSize: 12, color: '#888', lineHeight: 1.7 }}>
+                <div style={{ padding: '0 20px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
                   {faq.a}
                 </div>
               )}
@@ -229,10 +226,9 @@ export default function PricingPage() {
         </div>
       </div>
 
-      {/* CTA */}
       <div style={{ textAlign: 'center', padding: '60px 24px 0' }}>
-        <p style={{ fontSize: 18, fontWeight: 700, color: '#fff', marginBottom: 8 }}>Still have questions?</p>
-        <p style={{ fontSize: 13, color: '#888', marginBottom: 20 }}>Contact our sales team for a custom plan</p>
+        <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>Still have questions?</p>
+        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>Contact our sales team for a custom plan</p>
         <Link href="/studio/home" style={{
           display: 'inline-flex', alignItems: 'center', gap: 6,
           padding: '10px 24px', borderRadius: 8,

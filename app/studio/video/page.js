@@ -21,35 +21,34 @@ const FEATURES = [
 
 export default function VideoStudioPage() {
   return (
-    <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
+    <div className="min-h-screen pb-16" style={{ background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
       <StudioHero icon={Video} title="VIDEO STUDIO" subtitle="12 professional video tools — from text to video, editing, motion sync, and camera control" backgroundImage="https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1200" />
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
           gap: 12, paddingBottom: 40,
         }}>
           {FEATURES.map((f) => (
             <Link key={f.href} href={f.href} style={{ textDecoration: 'none' }}>
-              <div style={{
-                background: '#0D0D0D', border: '1px solid rgba(255,255,255,0.08)',
-                borderRadius: 12, padding: 16,
-                transition: 'border-color 200ms, transform 200ms',
-                cursor: 'pointer', position: 'relative',
+              <div className="home-section-card" style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+                borderRadius: 12, padding: 16, position: 'relative',
+                transition: 'all 200ms ease', cursor: 'pointer',
               }}
-                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.2)'; e.currentTarget.style.transform = 'translateY(-2px)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)'; e.currentTarget.style.transform = 'translateY(0)'; }}
+                onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--border-default)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = 'var(--shadow-card)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-subtle)'; e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
               >
                 {f.badge && (
-                  <span style={{ position: 'absolute', top: 8, right: 8, background: f.badge === 'TOP' ? '#CCFF00' : '#7C3AED', color: f.badge === 'TOP' ? '#000' : '#fff', fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4 }}>{f.badge}</span>
+                  <span className={f.badge === 'TOP' ? 'badge-top' : 'badge-new'} style={{ position: 'absolute', top: 8, right: 8, fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4 }}>{f.badge}</span>
                 )}
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                  <div style={{ width: 36, height: 36, background: '#1a1a1a', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <f.icon size={18} style={{ color: '#CCFF00' }} />
+                  <div style={{ width: 36, height: 36, background: 'var(--bg-input)', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <f.icon size={18} style={{ color: 'var(--btn-generate-bg)' }} />
                   </div>
-                  <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', margin: 0 }}>{f.name}</h3>
+                  <h3 style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', margin: 0 }}>{f.name}</h3>
                 </div>
-                <p style={{ fontSize: 11, color: '#6B7280', lineHeight: 1.5, margin: 0 }}>{f.desc}</p>
+                <p style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>{f.desc}</p>
               </div>
             </Link>
           ))}

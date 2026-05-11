@@ -114,32 +114,29 @@ export default function AppsPage() {
   });
 
   return (
-    <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <Toaster position="top-center" />
-
-      {/* Revenue-Ready Templates Hero */}
-      <div style={{ padding: '60px 24px', textAlign: 'center', background: '#000' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 20,
-          background: 'rgba(124,58,237,0.1)', border: '1px solid rgba(124,58,237,0.2)',
-          borderRadius: 100, padding: '6px 16px 6px 8px' }}>
-          <Sparkles size={14} style={{ color: '#7C3AED' }} />
-          <span style={{ fontSize: 11, color: '#7C3AED', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase' }}>
-            Revenue-Ready Templates
-          </span>
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+      <div className="text-center py-16 px-4">
+        <div className="inline-flex flex-col items-center">
+          <div className="w-16 h-16 rounded-2xl flex items-center justify-center border" style={{ background: 'var(--bg-input)', borderColor: 'var(--border-subtle)' }}>
+            <Sparkles size={28} style={{ color: 'var(--text-primary)' }} />
+          </div>
         </div>
-
-        <h1 style={{
-          fontSize: 'clamp(32px,5vw,56px)', fontWeight: 800, color: '#fff',
-          letterSpacing: '-0.02em', lineHeight: 1.1, marginBottom: 16,
-        }}>
-          LAUNCH AN AI APP.<br />
-          <span style={{ color: '#CCFF00' }}>START EARNING TODAY.</span>
-        </h1>
-
-        <p style={{ fontSize: 16, color: '#6B7280', maxWidth: 560, margin: '0 auto 40px' }}>
-          Choose from 76+ ready-to-deploy AI apps. Each generates revenue out of the box.
+        <h1 className="text-[clamp(28px,4vw,44px)] font-extrabold mt-6" style={{ color: 'var(--text-primary)' }}>Explore Apps</h1>
+        <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
+          60+ AI apps across VFX, face & character, product, style, and social — deploy your own and keep 100% of revenue.
         </p>
+      </div>
 
+      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 48px' }}>
+        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+          <span style={{ display: 'inline-block', fontSize: 10, fontWeight: 600, color: '#00C896', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>
+            Build Your Own AI App
+          </span>
+          <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>Turn your idea into a revenue-generating AI app</h2>
+          <p style={{ fontSize: 13, color: 'var(--text-muted)', maxWidth: 500, margin: '0 auto' }}>
+            Deploy on Vercel, collect Stripe payments, keep 100% of revenue. No platform fees.
+          </p>
+        </div>
         <div style={{
           display: 'flex', justifyContent: 'center', gap: 24,
           flexWrap: 'wrap', maxWidth: 800, margin: '0 auto',
@@ -147,40 +144,37 @@ export default function AppsPage() {
           {STEPS.map((step, i) => (
             <div key={i} style={{
               flex: '1 1 200px', minWidth: 200,
-              background: '#0D0D0D',
-              border: '1px solid rgba(255,255,255,0.08)',
+              background: 'var(--bg-card)',
+              border: '1px solid var(--border-subtle)',
               borderRadius: 12, padding: 24, textAlign: 'center',
             }}>
-              <step.icon size={28} style={{ color: '#CCFF00', marginBottom: 12 }} />
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: '#fff', marginBottom: 6 }}>{step.title}</h3>
-              <p style={{ fontSize: 12, color: '#6B7280', lineHeight: 1.5 }}>{step.desc}</p>
+              <step.icon size={28} style={{ color: 'var(--btn-generate-bg)', marginBottom: 12 }} />
+              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{step.title}</h3>
+              <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{step.desc}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Search + Filters */}
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
-          {/* Search */}
           <div style={{ position: 'relative', maxWidth: 400 }}>
-            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#444' }} />
+            <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search apps..."
               style={{
-                width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)',
+                width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)',
                 borderRadius: 10, padding: '10px 14px 10px 38px',
-                color: '#fff', fontSize: 14, outline: 'none',
+                color: 'var(--text-primary)', fontSize: 14, outline: 'none',
               }}
             />
           </div>
 
-          {/* Category Tabs */}
           <div style={{
             display: 'flex', gap: 4, flexWrap: 'wrap',
-            background: '#111', borderRadius: 100,
+            background: 'var(--bg-input)', borderRadius: 100,
             padding: 4, width: 'fit-content',
           }}>
             {CATEGORIES.map((cat) => (
@@ -190,16 +184,16 @@ export default function AppsPage() {
                 style={{
                   padding: '8px 16px', fontSize: 13,
                   borderRadius: 100, border: 'none', cursor: 'pointer',
-                  background: category === cat ? '#CCFF00' : 'transparent',
-                  color: category === cat ? '#000' : '#6B7280',
+                  background: category === cat ? 'var(--btn-generate-bg)' : 'transparent',
+                  color: category === cat ? '#000' : 'var(--text-secondary)',
                   fontWeight: category === cat ? 700 : 400,
                   transition: 'all 150ms',
                 }}
                 onMouseEnter={(e) => {
-                  if (category !== cat) e.currentTarget.style.color = '#fff';
+                  if (category !== cat) e.currentTarget.style.color = 'var(--text-primary)';
                 }}
                 onMouseLeave={(e) => {
-                  if (category !== cat) e.currentTarget.style.color = '#6B7280';
+                  if (category !== cat) e.currentTarget.style.color = 'var(--text-secondary)';
                 }}
               >
                 {cat}
@@ -208,7 +202,6 @@ export default function AppsPage() {
           </div>
         </div>
 
-        {/* Apps Grid */}
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
@@ -226,17 +219,16 @@ export default function AppsPage() {
         </div>
 
         {filteredApps.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: '#6B7280' }}>
+          <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-muted)' }}>
             <p style={{ fontSize: 14 }}>No apps found matching your search.</p>
           </div>
         )}
 
-        {/* Muapi Ecosystem Footer */}
         <div style={{
           textAlign: 'center', padding: '32px 0 16px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
+          borderTop: '1px solid var(--border-subtle)',
         }}>
-          <p style={{ fontSize: 12, color: '#444' }}>
+          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
             Muapi Ecosystem — More templates coming soon
           </p>
         </div>
