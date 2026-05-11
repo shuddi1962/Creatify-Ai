@@ -246,7 +246,7 @@ export default function StudioShell({ children }) {
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: '#ffffff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           >
             <Icons.PanelLeft size={20} />
           </button>

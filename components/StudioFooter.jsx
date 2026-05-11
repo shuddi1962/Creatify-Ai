@@ -3,7 +3,7 @@ import Link from 'next/link';
 export default function StudioFooter() {
   return (
     <footer style={{
-      borderTop: '1px solid var(--border-primary)',
+      borderTop: '1px solid var(--border-medium)',
       background: 'var(--bg-card)',
       padding: '40px 32px 24px',
       marginTop: 'auto',
@@ -139,7 +139,7 @@ export default function StudioFooter() {
           alignItems: 'center',
           justifyContent: 'space-between',
           paddingTop: 20,
-          borderTop: '1px solid var(--border-primary)',
+          borderTop: '1px solid var(--border-medium)',
           flexWrap: 'wrap',
           gap: 12,
         }}>

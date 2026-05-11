@@ -17,18 +17,18 @@ export function NavMenuItem({ icon: Icon, name, description, badge, onClick }) {
         textAlign: 'left',
         transition: 'background 120ms ease',
       }}
-      onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.06)'}
+      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
     >
       <div style={{ position: 'relative', flexShrink: 0 }}>
         <div style={{
           width: 38, height: 38,
           borderRadius: 9,
-          background: '#2a2a2a',
+          background: 'var(--bg-icon-box)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: '#9CA3AF',
+          color: 'var(--text-icon)',
         }}>
           {Icon && <Icon size={17} />}
         </div>
@@ -39,7 +39,7 @@ export function NavMenuItem({ icon: Icon, name, description, badge, onClick }) {
         <div style={{
           fontSize: 12,
           fontWeight: 600,
-          color: '#ffffff',
+          color: 'var(--text-primary)',
           lineHeight: 1.2,
           marginBottom: 2,
         }}>
@@ -47,7 +47,7 @@ export function NavMenuItem({ icon: Icon, name, description, badge, onClick }) {
         </div>
         <div style={{
           fontSize: 10,
-          color: '#6B7280',
+          color: 'var(--text-secondary)',
           lineHeight: 1.35,
         }}>
           {description}

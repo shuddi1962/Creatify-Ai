@@ -81,6 +81,8 @@ html {
   --bg-admin-sidebar: #e5e7eb;
   --bg-hover: #e5e7eb;
   --bg-active: #d1d5db;
+  --bg-flyout: #ffffff;
+  --bg-icon-box: #f0f0f0;
 
   --glass-bg: rgba(0, 0, 0, 0.03);
   --glass-border: rgba(0, 0, 0, 0.08);
@@ -107,6 +109,13 @@ html {
 
   --scrollbar-track: rgba(0,0,0,0.05);
   --scrollbar-thumb: rgba(0,0,0,0.2);
+
+  --toast-bg: rgba(255, 255, 255, 0.98);
+
+  --badge-new-bg: #a3e635;
+  --badge-new-color: #000;
+  --badge-top-bg: #ec4899;
+  --badge-top-color: #fff;
 
   color-scheme: light;
 }
@@ -218,6 +227,18 @@ body {
 }
 [data-theme="light"] .bg-\[\#0d0d0d\] {
   background-color: var(--bg-card-alt) !important;
+}
+[data-theme="light"] .bg-\[\#1C1C1C\] {
+  background-color: var(--bg-flyout) !important;
+}
+[data-theme="light"] .bg-\[\#2a2a2a\] {
+  background-color: var(--bg-icon-box) !important;
+}
+[data-theme="light"] .bg-\[\#0f172a\] {
+  background-color: var(--bg-panel) !important;
+}
+[data-theme="light"] .bg-\[\#1e1e1e\] {
+  background-color: var(--bg-elevated) !important;
 }
 
 /* Glass/overlay backgrounds - Tailwind classes */
@@ -412,6 +433,47 @@ body {
 [data-theme="light"] .border-white\/5 {
   border-color: var(--border-color) !important;
 }
+[data-theme="light"] .border-\[\#ffffff\],
+[data-theme="light"] .border-\[\#fff\] {
+  border-color: var(--border-color) !important;
+}
+[data-theme="light"] .border-\[\#2a2a2a\] {
+  border-color: var(--border-strong) !important;
+}
+[data-theme="light"] .border-\[\#1C1C1C\] {
+  border-color: var(--border-medium) !important;
+}
+
+/* Additional text color overrides */
+[data-theme="light"] .text-\[\#A0A0A0\] {
+  color: var(--text-tertiary) !important;
+}
+[data-theme="light"] .text-\[\#D1D5DB\] {
+  color: var(--text-menu) !important;
+}
+
+/* Text Tailwind overrides for light */
+[data-theme="light"] .text-\[\#4B5563\] {
+  color: var(--text-menu-muted) !important;
+}
+[data-theme="light"] .text-\[\#6B7280\] {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .text-\[\#374151\] {
+  color: var(--text-input) !important;
+}
+[data-theme="light"] .text-\[\#111827\] {
+  color: var(--text-primary) !important;
+}
+
+/* Sidebar flyout text colors */
+[data-theme="light"] .text-\[\#ffffff\],
+[data-theme="light"] .text-\[\#fff\] {
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-\[\#2a2a2a\] {
+  color: var(--text-primary) !important;
+}
 
 /* Input/select backgrounds */
 [data-theme="light"] input,
@@ -471,6 +533,146 @@ body {
   color: var(--text-primary) !important;
 }
 
+/* ======== CRITICAL: Dashed upload zone borders ======== */
+[data-theme="light"] .border-white\/\[0\.12\],
+[data-theme="light"] .border-white\/\[\.12\] {
+  border-color: var(--border-strong) !important;
+}
+[data-theme="light"] .border-white\/20 {
+  border-color: var(--border-medium) !important;
+}
+[data-theme="light"] .border-white\/\[0\.15\],
+[data-theme="light"] .border-white\/\[\.15\] {
+  border-color: var(--border-strong) !important;
+}
+
+/* ======== Overlay backgrounds ======== */
+[data-theme="light"] .bg-black\/30 {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+[data-theme="light"] .bg-black\/40 {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ======== Inline rgba overlay backgrounds ======== */
+[data-theme="light"] [style*="rgba(0,0,0,0.7)"] {
+  background: rgba(255, 255, 255, 0.7) !important;
+}
+[data-theme="light"] [style*="rgba(0,0,0,0.5)"] {
+  background: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* ======== Box shadow overrides for light mode ======== */
+[data-theme="light"] [style*="box-shadow: 0 20px 60px rgba(0,0,0,0.6)"] {
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] [style*="box-shadow: 0 12px 40px rgba(0,0,0,0.6)"] {
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] [style*="box-shadow: 0 1px 4px rgba(0,0,0,0.3)"] {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .shadow-\[0_0_100px_rgba\(0\,0\,0\,0\.8\)\] {
+  box-shadow: 0 0 100px rgba(0, 0, 0, 0.06) !important;
+}
+
+/* ======== Red/destructive text for light mode ======== */
+[data-theme="light"] [style*="color: #F87171"] {
+  color: #DC2626 !important;
+}
+[data-theme="light"] [style*="color: #EF4444"] {
+  color: #DC2626 !important;
+}
+
+/* ======== Input, select, textarea refinements for light ======== */
+[data-theme="light"] input,
+[data-theme="light"] select,
+[data-theme="light"] textarea {
+  color: var(--text-input);
+  background: var(--bg-elevated);
+}
+[data-theme="light"] input::placeholder,
+[data-theme="light"] textarea::placeholder {
+  color: var(--text-quaternary) !important;
+}
+[data-theme="light"] select {
+  border-color: var(--border-strong);
+}
+
+/* ======== Nav & subnav hover states for light theme ======== */
+[data-theme="light"] [style*="rgba(255,255,255,0.06)"]:hover {
+  background: var(--bg-hover) !important;
+}
+[data-theme="light"] .top-nav-btn {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .top-nav-btn:hover {
+  color: var(--text-primary) !important;
+  background: var(--glass-bg) !important;
+}
+
+/* ======== Sidebar hover and active refinement ======== */
+[data-theme="light"] .sidebar-link {
+  color: var(--text-menu) !important;
+}
+[data-theme="light"] .sidebar-link:hover {
+  background: var(--glass-bg) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="light"] .sidebar-link-active {
+  color: var(--color-accent) !important;
+  background: rgba(99,102,241,0.08) !important;
+}
+
+/* ======== Mobile drawer backdrop ======== */
+[data-theme="light"] .bg-black\/70 {
+  background-color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* ======== Studio shell main container text-white fix ======== */
+[data-theme="light"] .h-screen.bg-black.flex.flex-col.text-white {
+  background: var(--bg-app) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ======== KBD element light mode ======== */
+[data-theme="light"] kbd {
+  background: var(--bg-elevated) !important;
+  color: var(--text-icon) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* ======== Badge refinements for light ======== */
+[data-theme="light"] .badge-new {
+  background: var(--badge-new-bg, #a3e635) !important;
+  color: var(--badge-new-color, #000) !important;
+}
+[data-theme="light"] .badge-top {
+  background: var(--badge-top-bg, #ec4899) !important;
+  color: var(--badge-top-color, #fff) !important;
+}
+
+/* ======== Horizontal rules ======== */
+[data-theme="light"] hr {
+  border-color: var(--border-medium) !important;
+}
+
+/* ======== Dropdown panel arrow/border refinement ======== */
+[data-theme="light"] .dropdown-arrow {
+  border-right-color: var(--bg-flyout) !important;
+}
+
+/* ======== Ensure all rgba-based inline styles with white opacity use CSS vars ======== */
+[data-theme="light"] [style*="rgba(255,255,255,0.03)"] {
+  background: var(--glass-bg) !important;
+}
+[data-theme="light"] [style*="rgba(255,255,255,0.04)"] {
+  background: var(--glass-bg) !important;
+}
+[data-theme="light"] [style*="background: rgba(255,255,255,0.05)"] {
+  background: var(--glass-bg) !important;
+}
+
 /* Glass panel */
 .glass-panel {
   background: var(--glass-bg);
@@ -479,12 +681,109 @@ body {
   transition: background 0.2s ease, border-color 0.2s ease;
 }
 
-/* Top nav */
-.top-nav-btn:hover {
+/* Top nav hover */
+[data-theme="light"] .top-nav-btn:hover,
+[data-theme="light"] button.top-nav-btn:hover {
   color: var(--text-primary) !important;
 }
-[data-theme="light"] .top-nav-btn:hover {
+
+/* Nav dropdown panel hover items - light theme */
+[data-theme="light"] [style*="rgba(255,255,255,0.06)"]:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* Sidebar active indicator - light theme */
+[data-theme="light"] [style*="#6366f1"],
+[data-theme="light"] [style*="#818cf8"] {
+  color: var(--color-accent) !important;
+}
+
+/* Active nav background - light theme */
+[data-theme="light"] [style*="rgba(99,102,241,0.12)"] {
+  background: rgba(99,102,241,0.08) !important;
+}
+
+/* Drop zone text in light mode */
+[data-theme="light"] .text-white {
   color: var(--text-primary) !important;
+}
+[data-theme="light"] .text-white\/40,
+[data-theme="light"] .text-white\/50,
+[data-theme="light"] .text-white\/60 {
+  color: var(--text-secondary) !important;
+}
+
+/* Additional ultra-low opacity backgrounds */
+[data-theme="light"] .bg-white\/\[0\.02\],
+[data-theme="light"] .bg-white\/\[\.02\] {
+  background-color: rgba(0, 0, 0, 0.02) !important;
+}
+[data-theme="light"] .bg-white\/\[0\.03\],
+[data-theme="light"] .bg-white\/\[\.03\] {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+[data-theme="light"] .bg-white\/\[0\.04\],
+[data-theme="light"] .bg-white\/\[\.04\] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Ultra-low opacity borders */
+[data-theme="light"] .border-white\/\[0\.02\],
+[data-theme="light"] .border-white\/\[\.02\] {
+  border-color: var(--border-subtle) !important;
+}
+[data-theme="light"] .border-white\/\[0\.03\],
+[data-theme="light"] .border-white\/\[\.03\] {
+  border-color: var(--border-subtle) !important;
+}
+[data-theme="light"] .border-white\/\[0\.04\],
+[data-theme="light"] .border-white\/\[\.04\] {
+  border-color: var(--border-light) !important;
+}
+
+/* Select elements in light mode */
+[data-theme="light"] select {
+  background: var(--bg-elevated);
+  color: var(--text-input);
+  border-color: var(--border-strong);
+}
+[data-theme="light"] select option {
+  background: var(--bg-panel);
+  color: var(--text-primary);
+}
+
+/* Badge/tag chip styles for light */
+[data-theme="light"] .chip-active {
+  background: rgba(99,102,241,0.12) !important;
+  border-color: rgba(99,102,241,0.2) !important;
+  color: var(--color-accent) !important;
+}
+[data-theme="light"] .chip-inactive {
+  border-color: var(--border-strong) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* Hover:bg-white/5 light override */
+[data-theme="light"] .hover\:bg-white\/5:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+[data-theme="light"] .hover\:bg-white\/\[0\.05\]:hover,
+[data-theme="light"] .hover\:bg-white\/\[\.05\]:hover {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Ensure all flyout/panel elements use CSS vars */
+[data-theme="light"] [style*="#2a2a2a"] {
+  background: var(--bg-icon-box) !important;
+}
+[data-theme="light"] [style*="#1C1C1C"] {
+  background: var(--bg-flyout) !important;
+}
+[data-theme="light"] [style*="#4B5563"] {
+  color: var(--text-menu-muted) !important;
+}
+[data-theme="light"] [style*="#6B7280"] {
+  color: var(--text-secondary) !important;
 }
 
 .top-nav-dropdown {

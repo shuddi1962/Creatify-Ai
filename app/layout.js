@@ -17,7 +17,7 @@ export default function RootLayout({ children }) {
     <html lang="en" suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{
-          __html: `(function(){try{var t=localStorage.getItem('creatify_theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light')}}catch(e){}})();`
+          __html: `(function(){try{var t=localStorage.getItem('studio_theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light')}else if(t==='system'){var m=window.matchMedia('(prefers-color-scheme:light)');if(m.matches){document.documentElement.setAttribute('data-theme','light')}}}catch(e){}})();`
         }} />
       </head>
       <body className={inter.variable}>

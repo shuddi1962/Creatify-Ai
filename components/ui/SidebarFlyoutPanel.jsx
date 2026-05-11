@@ -18,7 +18,7 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
   const colHeaderStyle = {
     fontSize: 10,
     fontWeight: 500,
-    color: '#4B5563',
+    color: 'var(--text-menu-muted)',
     textTransform: 'uppercase',
     letterSpacing: '0.07em',
     marginBottom: 6,
@@ -27,12 +27,12 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
   return (
     <div ref={panelRef} style={{
       position: 'fixed',
-      background: '#1C1C1C',
-      border: '1px solid rgba(255,255,255,0.1)',
+      background: 'var(--bg-flyout)',
+      border: '1px solid var(--border-strong)',
       borderRadius: 14,
       padding: '16px 16px 24px',
       width: 640,
-      boxShadow: '0 20px 60px rgba(0,0,0,0.7)',
+      boxShadow: '0 20px 60px var(--overlay-bg)',
       zIndex: 9999,
       animation: 'flyoutFade 180ms ease forwards',
       ...style,
@@ -45,10 +45,10 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
         height: 0,
         borderTop: '7px solid transparent',
         borderBottom: '7px solid transparent',
-        borderRight: '7px solid #1C1C1C',
+        borderRight: '7px solid var(--bg-flyout)',
       }} />
 
-      <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 12, padding: '0 4px' }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12, padding: '0 4px' }}>
         {title}
       </div>
 

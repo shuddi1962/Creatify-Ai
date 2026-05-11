@@ -6,8 +6,8 @@ export function NavBadge({ type }) {
     padding: '1px 4px', borderRadius: 3,
     letterSpacing: '0.04em', lineHeight: 1.5,
     zIndex: 10, pointerEvents: 'none',
-    ...(type === 'NEW' ? { background: '#a3e635', color: '#000' } : {}),
-    ...(type === 'TOP' ? { background: '#ec4899', color: '#fff' } : {}),
+    ...(type === 'NEW' ? { background: 'var(--badge-new-bg)', color: 'var(--badge-new-color)' } : {}),
+    ...(type === 'TOP' ? { background: 'var(--badge-top-bg)', color: 'var(--badge-top-color)' } : {}),
   }
   return <span style={styles}>{type}</span>
 }

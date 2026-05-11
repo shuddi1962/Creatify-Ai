@@ -21,7 +21,7 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
       {label && (
         <div style={{
           fontSize: 11, fontWeight: 600,
-          color: isDark ? '#555' : '#888',
+          color: 'var(--text-icon)',
           textTransform: 'uppercase',
           letterSpacing: '0.08em',
           marginBottom: 6,
@@ -40,21 +40,21 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
           width: '100%',
           minWidth: 160,
           padding: '10px 14px',
-          background: isDark ? '#1a1a1a' : '#f0f0f0',
-          border: `1px solid ${isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.12)'}`,
+          background: 'var(--bg-elevated)',
+          border: '1px solid var(--border-strong)',
           borderRadius: 10,
-          color: isDark ? '#fff' : '#111',
+          color: 'var(--text-primary)',
           fontSize: 14,
           fontWeight: 500,
           cursor: 'pointer',
-          transition: 'border-color 150ms',
+          transition: 'border-color 150ms, background 150ms',
         }}
       >
         <span>{value}</span>
-        <svg 
-          width="14" height="14" viewBox="0 0 24 24" fill="none" 
+        <svg
+          width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2"
-          style={{ 
+          style={{
             transform: open ? 'rotate(180deg)' : 'rotate(0deg)',
             transition: 'transform 200ms',
             opacity: 0.6,
@@ -71,12 +71,12 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
           top: 'calc(100% + 6px)',
           left: 0,
           minWidth: '100%',
-          background: isDark ? '#1a1a1a' : '#ffffff',
-          border: `1px solid ${isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.1)'}`,
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-strong)',
           borderRadius: 12,
           padding: '6px',
           zIndex: 500,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          boxShadow: '0 8px 32px var(--overlay-bg)',
           animation: 'dropIn 150ms ease',
         }}>
           {options.map(opt => {
@@ -94,19 +94,15 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
                   padding: '9px 12px',
                   borderRadius: 8,
                   cursor: 'pointer',
-                  background: isSelected 
-                    ? (isDark ? 'rgba(99,102,241,0.15)' : 'rgba(99,102,241,0.08)') 
-                    : 'transparent',
+                  background: isSelected ? 'var(--bg-hover)' : 'transparent',
                   transition: 'background 120ms',
                 }}
                 onMouseEnter={e => {
-                  if (!isSelected) 
-                    e.currentTarget.style.background = isDark 
-                      ? 'rgba(255,255,255,0.06)' 
-                      : 'rgba(0,0,0,0.04)'
+                  if (!isSelected)
+                    e.currentTarget.style.background = 'var(--bg-hover)'
                 }}
                 onMouseLeave={e => {
-                  if (!isSelected) 
+                  if (!isSelected)
                     e.currentTarget.style.background = 'transparent'
                 }}
               >
@@ -114,16 +110,14 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
                   <div style={{
                     fontSize: 13,
                     fontWeight: isSelected ? 600 : 400,
-                    color: isSelected 
-                      ? '#6366f1' 
-                      : (isDark ? '#fff' : '#111'),
+                    color: isSelected ? 'var(--color-accent)' : 'var(--text-primary)',
                   }}>
                     {optLabel}
                   </div>
                   {optDesc && (
                     <div style={{
                       fontSize: 11,
-                      color: isDark ? '#666' : '#888',
+                      color: 'var(--text-secondary)',
                       marginTop: 1,
                     }}>
                       {optDesc}
@@ -131,8 +125,8 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
                   )}
                 </div>
                 {isSelected && (
-                  <svg width="14" height="14" viewBox="0 0 24 24" 
-                    fill="none" stroke="#6366f1" strokeWidth="2.5">
+                  <svg width="14" height="14" viewBox="0 0 24 24"
+                    fill="none" stroke="var(--color-accent)" strokeWidth="2.5">
                     <polyline points="20 6 9 17 4 12" />
                   </svg>
                 )}
