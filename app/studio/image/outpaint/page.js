@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const DIRECTIONS = [
@@ -123,7 +123,7 @@ export default function OutpaintPage() {
 
             <div>
               <SectionLabel>Expand Amount</SectionLabel>
-              <PillSelector options={EXPAND_AMOUNTS} value={expandAmount} onChange={setExpandAmount} />
+              <StudioDropdown options={EXPAND_AMOUNTS} value={expandAmount} onChange={setExpandAmount} label="EXPAND AMOUNT" />
             </div>
 
             <div>
@@ -132,7 +132,7 @@ export default function OutpaintPage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe what should appear in the expanded area..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 

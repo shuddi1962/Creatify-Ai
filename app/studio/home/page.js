@@ -19,27 +19,27 @@ const MODEL_PILLS = [
 ];
 
 const TOOLS_DATA = [
-  { name: 'Create Image', description: 'Generate AI images', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950' },
-  { name: 'Create Video', description: 'Generate AI videos', href: '/studio/video/text-to-video', gradient: 'from-blue-950 to-indigo-950' },
-  { name: 'Lip Sync', description: 'Animate portraits with audio', href: '/studio/lipsync/portrait', gradient: 'from-pink-950 to-rose-950' },
-  { name: 'Bulk Generate', description: '500 assets from one CSV', href: '/studio/bulk/image', gradient: 'from-amber-950 to-orange-950' },
-  { name: 'Content Ideas', description: 'Trending topics for your niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950' },
-  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950' },
-  { name: 'Smart Shot', description: 'Prompt to full cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950' },
-  { name: 'Characters', description: 'Build reusable Soul ID characters', href: '/studio/characters/create', gradient: 'from-fuchsia-950 to-purple-950' },
-  { name: 'Marketing Ads', description: 'UGC ads that convert', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950' },
-  { name: 'Edit Image', description: 'Brush to edit any region', href: '/studio/image/inpaint', gradient: 'from-slate-950 to-gray-950' },
+  { name: 'Create Image', description: 'Generate AI images', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950', image: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Create Video', description: 'Generate AI videos', href: '/studio/video/text-to-video', gradient: 'from-blue-950 to-indigo-950', image: 'https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Lip Sync', description: 'Animate portraits with audio', href: '/studio/lipsync/portrait', gradient: 'from-pink-950 to-rose-950', image: 'https://images.pexels.com/photos/3771836/pexels-photo-3771836.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Bulk Generate', description: '500 assets from one CSV', href: '/studio/bulk/image', gradient: 'from-amber-950 to-orange-950', image: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Content Ideas', description: 'Trending topics for your niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950', image: 'https://images.pexels.com/photos/6476589/pexels-photo-6476589.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950', image: 'https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Smart Shot', description: 'Prompt to full cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950', image: 'https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Characters', description: 'Build reusable Soul ID characters', href: '/studio/characters/create', gradient: 'from-fuchsia-950 to-purple-950', image: 'https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Marketing Ads', description: 'UGC ads that convert', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950', image: 'https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Edit Image', description: 'Brush to edit any region', href: '/studio/image/inpaint', gradient: 'from-slate-950 to-gray-950', image: 'https://images.pexels.com/photos/4467687/pexels-photo-4467687.jpeg?auto=compress&cs=tinysrgb&w=300' },
 ];
 
 const TOP_TOOLS = [
-  { name: 'Nano Banana Pro', description: 'Best 4K image model ever', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950', badge: 'TOP', badgeType: 'TOP' },
-  { name: 'Bulk Lip Sync', description: '1 character x 100 audio files', href: '/studio/lipsync/bulk', gradient: 'from-pink-950 to-rose-950', badge: 'NEW', badgeType: 'NEW' },
-  { name: 'Content Ideas', description: 'Daily trending topics for any niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950', badge: 'TOP', badgeType: 'TOP' },
-  { name: 'Face Swap', description: 'Swap faces on image or video instantly', href: '/studio/apps/face', gradient: 'from-amber-950 to-orange-950', badge: 'TOP', badgeType: 'TOP' },
-  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950', badge: 'NEW', badgeType: 'NEW' },
-  { name: 'Smart Shot', description: 'Prompt to storyboard to cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950', badge: 'NEW', badgeType: 'NEW' },
-  { name: 'Viral Effects Pack', description: '80 trending one-click VFX presets', href: '/studio/apps/vfx', gradient: 'from-fuchsia-950 to-purple-950', badge: 'TOP', badgeType: 'TOP' },
-  { name: 'Marketing Studio', description: 'UGC ads from one product link', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950', badge: 'TOP', badgeType: 'TOP' },
+  { name: 'Nano Banana Pro', description: 'Best 4K image model ever', href: '/studio/image/text-to-image', gradient: 'from-violet-950 to-purple-950', badge: 'TOP', badgeType: 'TOP', image: 'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Bulk Lip Sync', description: '1 character x 100 audio files', href: '/studio/lipsync/bulk', gradient: 'from-pink-950 to-rose-950', badge: 'NEW', badgeType: 'NEW', image: 'https://images.pexels.com/photos/3771836/pexels-photo-3771836.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Content Ideas', description: 'Daily trending topics for any niche', href: '/studio/ideas', gradient: 'from-emerald-950 to-teal-950', badge: 'TOP', badgeType: 'TOP', image: 'https://images.pexels.com/photos/6476589/pexels-photo-6476589.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Face Swap', description: 'Swap faces on image or video instantly', href: '/studio/apps/face', gradient: 'from-amber-950 to-orange-950', badge: 'TOP', badgeType: 'TOP', image: 'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Voice Cloning', description: 'Clone any voice in 10 seconds', href: '/studio/audio/voice-clone', gradient: 'from-cyan-950 to-sky-950', badge: 'NEW', badgeType: 'NEW', image: 'https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Smart Shot', description: 'Prompt to storyboard to cinematic video', href: '/studio/video/smart-shot', gradient: 'from-indigo-950 to-violet-950', badge: 'NEW', badgeType: 'NEW', image: 'https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Viral Effects Pack', description: '80 trending one-click VFX presets', href: '/studio/apps/vfx', gradient: 'from-fuchsia-950 to-purple-950', badge: 'TOP', badgeType: 'TOP', image: 'https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=300' },
+  { name: 'Marketing Studio', description: 'UGC ads from one product link', href: '/studio/marketing/ugc', gradient: 'from-rose-950 to-red-950', badge: 'TOP', badgeType: 'TOP', image: 'https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=300' },
 ];
 
 const COMM_STRIPS = [
@@ -113,36 +113,36 @@ export default function HomePage() {
             <div className="grid grid-cols-3 gap-3">
               <div className="col-span-1 flex flex-col gap-3">
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-fashion/400/600" alt="AI Fashion" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Fashion</span>
+                  <img src="https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Portrait" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Portrait</span>
                 </Link>
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-portrait/400/300" alt="AI Portrait" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Portrait</span>
+                  <img src="https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Team" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Team</span>
                 </Link>
               </div>
               <div className="col-span-2 grid grid-cols-2 gap-3">
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-landscape/400/400" alt="AI Landscape" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Landscape</span>
+                  <img src="https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Creator" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Creator</span>
                 </Link>
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-abstract/400/600" alt="AI Abstract" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Abstract</span>
+                  <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Studio" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Studio</span>
                 </Link>
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-product/400/300" alt="AI Product" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Product</span>
+                  <img src="https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Digital Art" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Digital Art</span>
                 </Link>
                 <Link href="/studio/image/text-to-image" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src="https://picsum.photos/seed/ai-architecture/400/400" alt="AI Architecture" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Architecture</span>
+                  <img src="https://images.pexels.com/photos/4467687/pexels-photo-4467687.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Fashion" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
+                  <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Fashion</span>
                 </Link>
               </div>
             </div>
@@ -175,28 +175,28 @@ export default function HomePage() {
           >
             <div className="grid grid-cols-5 gap-3">
               <Link href="/studio/marketing/ugc" className="col-span-2 row-span-2 rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                <img src="https://picsum.photos/seed/ad-creative/400/600" alt="Ad Creative" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <img src="https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=400" alt="UGC Ad" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
                 <span className="absolute bottom-2 left-2 text-[10px] text-white/60">UGC Ad</span>
               </Link>
               <Link href="/studio/marketing/ugc" className="col-span-3 rounded-xl aspect-[16/9] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                <img src="https://picsum.photos/seed/ad-video/600/338" alt="Ad Video" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <img src="https://images.pexels.com/photos/5632397/pexels-photo-5632397.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Video Ad" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
                 <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Video Ad</span>
               </Link>
               <Link href="/studio/marketing/brand-kit" className="rounded-xl aspect-[4/3] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                <img src="https://picsum.photos/seed/brand-kit/400/300" alt="Brand Kit" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <img src="https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Brand Kit" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
                 <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Brand Kit</span>
               </Link>
               <Link href="/studio/marketing/hooks" className="rounded-xl aspect-square relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                <img src="https://picsum.photos/seed/hook-generator/400/400" alt="Hook Generator" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <img src="https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Hooks" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
                 <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Hooks</span>
               </Link>
               <Link href="/studio/marketing/demo" className="rounded-xl aspect-[3/2] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                <img src="https://picsum.photos/seed/product-demo/400/267" alt="Product Demo" className="absolute inset-0 w-full h-full object-cover" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <img src="https://images.pexels.com/photos/4825701/pexels-photo-4825701.jpeg?auto=compress&cs=tinysrgb&w=400" alt="Demo" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 to-transparent" />
                 <span className="absolute bottom-2 left-2 text-[10px] text-white/60">Demo</span>
               </Link>
             </div>
@@ -220,12 +220,13 @@ export default function HomePage() {
           >
             <div className="grid grid-cols-4 gap-3">
               {[
-                'https://picsum.photos/seed/video-cinematic/400/225',
-                'https://picsum.photos/seed/video-nature/400/225',
-                'https://picsum.photos/seed/video-action/400/225',
+                'https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=400',
+                'https://images.pexels.com/photos/2510428/pexels-photo-2510428.jpeg?auto=compress&cs=tinysrgb&w=400',
+                'https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=400',
+                'https://images.pexels.com/photos/3075993/pexels-photo-3075993.jpeg?auto=compress&cs=tinysrgb&w=400',
               ].map((src, i) => (
                 <Link key={i} href="/studio/video/text-to-video" className="rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]">
-                  <img src={src} alt="Video" className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={src} alt="Video" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-8 h-8 rounded-full bg-black/50 flex items-center justify-center backdrop-blur-sm">
                       <div className="w-0 h-0 border-l-[8px] border-l-white border-t-[5px] border-t-transparent border-b-[5px] border-b-transparent ml-0.5" />
@@ -233,9 +234,6 @@ export default function HomePage() {
                   </div>
                 </Link>
               ))}
-              <Link href="/studio/video/text-to-video" className="rounded-xl aspect-video relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02] flex items-center justify-center bg-[#1a1a1a]">
-                <span className="text-[12px] text-white/40 font-medium">View all &rarr;</span>
-              </Link>
             </div>
           </FeatureBlock>
         </section>
@@ -344,19 +342,19 @@ export default function HomePage() {
                 className="absolute w-[130px] h-[170px] rounded-xl border border-white/[0.05] overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'rotate(-6deg) translateX(-15px)' }}
               >
-                <img src="https://picsum.photos/seed/cinema-vfx1/260/340" alt="VFX" className="w-full h-full object-cover" />
+                <img src="https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=400" alt="VFX" className="w-full h-full object-cover" loading="lazy" />
               </Link>
               <Link href="/studio/cinema/vfx"
                 className="relative w-[150px] h-[190px] rounded-xl border border-white/[0.08] z-10 overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'scale(1.05)' }}
               >
-                <img src="https://picsum.photos/seed/cinema-vfx2/300/380" alt="VFX" className="w-full h-full object-cover" />
+                <img src="https://images.pexels.com/photos/2510428/pexels-photo-2510428.jpeg?auto=compress&cs=tinysrgb&w=400" alt="VFX" className="w-full h-full object-cover" loading="lazy" />
               </Link>
               <Link href="/studio/cinema/vfx"
                 className="absolute w-[130px] h-[170px] rounded-xl border border-white/[0.05] overflow-hidden transition-all duration-200 hover:scale-[1.03]"
                 style={{ transform: 'rotate(6deg) translateX(15px)' }}
               >
-                <img src="https://picsum.photos/seed/cinema-vfx3/260/340" alt="VFX" className="w-full h-full object-cover" />
+                <img src="https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=400" alt="VFX" className="w-full h-full object-cover" loading="lazy" />
               </Link>
             </div>
           </FeatureBlock>
@@ -376,17 +374,17 @@ export default function HomePage() {
           >
             <div className="grid grid-cols-2 gap-3">
               {[
-                { src: 'https://picsum.photos/seed/character-urban/400/600', label: 'Urban style' },
-                { src: 'https://picsum.photos/seed/character-fantasy/400/600', label: 'Fantasy world' },
-                { src: 'https://picsum.photos/seed/character-beach/400/600', label: 'Beach day' },
-                { src: 'https://picsum.photos/seed/character-cyberpunk/400/600', label: 'Cyberpunk' },
+                { src: 'https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=300', label: 'Urban style' },
+                { src: 'https://images.pexels.com/photos/1382731/pexels-photo-1382731.jpeg?auto=compress&cs=tinysrgb&w=300', label: 'Fantasy world' },
+                { src: 'https://images.pexels.com/photos/3225517/pexels-photo-3225517.jpeg?auto=compress&cs=tinysrgb&w=300', label: 'Beach day' },
+                { src: 'https://images.pexels.com/photos/3861958/pexels-photo-3861958.jpeg?auto=compress&cs=tinysrgb&w=300', label: 'Cyberpunk' },
               ].map((item, i) => (
                 <Link
                   key={i}
                   href="/studio/characters/create"
                   className="rounded-xl aspect-[3/4] relative group cursor-pointer overflow-hidden transition-all duration-200 hover:scale-[1.02]"
                 >
-                  <img src={item.src} alt={item.label} className="absolute inset-0 w-full h-full object-cover" />
+                  <img src={item.src} alt={item.label} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
                   <div className="absolute bottom-2 left-2 text-[9px] text-white/40 font-medium">
                     {item.label}

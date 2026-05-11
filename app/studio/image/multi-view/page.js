@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const SUBJECT_TYPES = ['Person', 'Product', 'Object', 'Architecture', 'Character'];
 const ANGLES = [
@@ -91,7 +91,7 @@ export default function MultiViewPage() {
 
             <div>
               <SectionLabel>Subject Type</SectionLabel>
-              <PillSelector options={SUBJECT_TYPES} value={subjectType} onChange={setSubjectType} />
+              <StudioDropdown options={SUBJECT_TYPES.map(o => ({ value: o, label: o.toUpperCase() }))} value={subjectType} onChange={setSubjectType} />
             </div>
 
             <div>
@@ -103,7 +103,7 @@ export default function MultiViewPage() {
                     onClick={() => toggleAngle(angle)}
                     className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
                       selectedAngles.includes(angle)
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#666] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -115,14 +115,14 @@ export default function MultiViewPage() {
 
             <div>
               <SectionLabel>Background Style</SectionLabel>
-              <PillSelector options={BG_STYLES} value={bgStyle} onChange={setBgStyle} />
+              <StudioDropdown options={BG_STYLES.map(o => ({ value: o, label: o.toUpperCase() }))} value={bgStyle} onChange={setBgStyle} />
               {bgStyle === 'Custom prompt' && (
                 <input
                   type="text"
                   value={customPrompt}
                   onChange={(e) => setCustomPrompt(e.target.value)}
                   placeholder="Describe background..."
-                  className="mt-3 w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]"
+                  className="mt-3 w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
                 />
               )}
             </div>

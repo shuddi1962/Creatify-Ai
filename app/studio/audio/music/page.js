@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const GENRES = ['Hip-Hop', 'Pop', 'Electronic', 'Jazz', 'Classical', 'R&B', 'Rock', 'Lo-Fi', 'Cinematic', 'Reggaeton', 'Afrobeats', 'Country'];
 const MOODS = ['Happy', 'Sad', 'Energetic', 'Calm', 'Romantic', 'Intense', 'Mysterious', 'Playful'];
@@ -111,7 +111,7 @@ export default function MusicPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Mood</SectionLabel>
-                <PillSelector options={MOODS} value={mood} onChange={setMood} />
+                <StudioDropdown label="MOOD" value={mood} onChange={setMood} options={MOODS} />
               </div>
               <div>
                 <SectionLabel>BPM: {bpm}</SectionLabel>
@@ -141,7 +141,7 @@ export default function MusicPage() {
               </div>
               <div>
                 <SectionLabel>Duration</SectionLabel>
-                <PillSelector options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
+                <StudioDropdown label="DURATION" value={duration} onChange={setDuration} options={DURATION_OPTIONS} />
               </div>
             </div>
 
@@ -166,7 +166,7 @@ export default function MusicPage() {
 
             <div>
               <SectionLabel>Vocals</SectionLabel>
-              <PillSelector options={VOCALS_OPTIONS} value={vocals} onChange={setVocals} />
+              <StudioDropdown label="VOCALS" value={vocals} onChange={setVocals} options={VOCALS_OPTIONS} />
             </div>
 
             {vocals === 'With Vocals' && (
@@ -183,7 +183,7 @@ export default function MusicPage() {
 
             <div>
               <SectionLabel>Model</SectionLabel>
-              <PillSelector options={MODEL_OPTIONS} value={model} onChange={setModel} />
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={MODEL_OPTIONS} />
             </div>
           </div>
         </GenerationPanel>

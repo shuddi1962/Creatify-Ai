@@ -23,7 +23,7 @@ html {
 /* Dark theme (default) CSS variables */
 :root {
   --color-primary: #d9ff00;
-  --color-accent: #7C3AED;
+  --color-accent: #6366f1;
   --color-accent-hover: #6D28D9;
   --color-accent-secondary: #06B6D4;
 
@@ -533,4 +533,20 @@ body {
 @keyframes flyoutFade {
   from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+*, *::before, *::after {
+  transition: background-color 200ms ease, 
+              border-color 200ms ease, 
+              color 150ms ease,
+              box-shadow 200ms ease !important;
+}
+
+.no-theme-transition {
+  transition: none !important;
 }

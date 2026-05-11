@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const SYNC_MODES = ['Replace Audio + Sync Lips', 'Add New Voice', 'Translate & Sync'];
 const FACE_REGIONS = ['Auto-detect', 'Manual selection'];
@@ -118,7 +118,7 @@ export default function VideoLipSyncPage() {
                   <button
                     onClick={() => setInputMode('audio')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      inputMode === 'audio' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'
+                      inputMode === 'audio' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'
                     }`}
                   >
                     Audio File
@@ -126,7 +126,7 @@ export default function VideoLipSyncPage() {
                   <button
                     onClick={() => setInputMode('tts')}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      inputMode === 'tts' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'
+                      inputMode === 'tts' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'
                     }`}
                   >
                     TTS Text
@@ -153,7 +153,7 @@ export default function VideoLipSyncPage() {
 
             <div>
               <SectionLabel>Sync Mode</SectionLabel>
-              <PillSelector options={SYNC_MODES} value={syncMode} onChange={setSyncMode} />
+              <StudioDropdown options={SYNC_MODES} value={syncMode} onChange={setSyncMode} />
             </div>
 
             {syncMode === 'Translate & Sync' && (
@@ -178,7 +178,7 @@ export default function VideoLipSyncPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Face Region</SectionLabel>
-                <PillSelector options={FACE_REGIONS} value={faceRegion} onChange={setFaceRegion} />
+                <StudioDropdown options={FACE_REGIONS} value={faceRegion} onChange={setFaceRegion} />
               </div>
               <div>
                 <SectionLabel>Model</SectionLabel>

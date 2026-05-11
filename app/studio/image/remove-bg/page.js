@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const BG_OPTIONS = ['Transparent', 'Solid Color', 'Custom Background'];
 const REFINEMENT_TABS = ['Auto', 'Hair Detail', 'Product', 'Portrait'];
@@ -113,7 +113,7 @@ export default function RemoveBgPage() {
 
             <div>
               <SectionLabel>Background Replacement</SectionLabel>
-              <PillSelector options={BG_OPTIONS} value={bgType} onChange={handleBgType} />
+              <StudioDropdown options={BG_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={bgType} onChange={handleBgType} />
               {bgType === 'Solid Color' && (
                 <div className="mt-3 flex items-center gap-3">
                   <input
@@ -139,12 +139,12 @@ export default function RemoveBgPage() {
 
             <div>
               <SectionLabel>Refinement</SectionLabel>
-              <PillSelector options={REFINEMENT_TABS} value={refinement} onChange={setRefinement} />
+              <StudioDropdown options={REFINEMENT_TABS.map(o => ({ value: o, label: o.toUpperCase() }))} value={refinement} onChange={setRefinement} />
             </div>
 
             <div>
               <SectionLabel>Output Format</SectionLabel>
-              <PillSelector options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+              <StudioDropdown options={OUTPUT_FORMATS.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputFormat} onChange={setOutputFormat} />
             </div>
           </div>
         </GenerationPanel>

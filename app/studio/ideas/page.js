@@ -18,7 +18,7 @@ const FEATURES = [
 export default function IdeasPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={TrendingUp} title="CONTENT IDEAS" subtitle="8 tools for trend discovery, script writing, competitor analysis, and content planning" />
+      <StudioHero icon={TrendingUp} title="CONTENT IDEAS" subtitle="8 tools for trend discovery, script writing, competitor analysis, and content planning" backgroundImage="https://images.pexels.com/photos/6476589/pexels-photo-6476589.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

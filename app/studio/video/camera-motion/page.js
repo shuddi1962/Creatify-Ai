@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const INPUT_TABS = ['Prompt', 'Upload video'];
 const CAMERA_PRESETS = [
@@ -114,7 +114,7 @@ export default function CameraMotionPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Describe the video you want to create..."
-                  className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                  className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
                 />
               </div>
             ) : (
@@ -151,7 +151,7 @@ export default function CameraMotionPage() {
                     onClick={() => setCameraPreset(preset.id)}
                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                       cameraPreset === preset.id
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -163,7 +163,7 @@ export default function CameraMotionPage() {
 
             <div>
               <SectionLabel>Motion Speed</SectionLabel>
-              <PillSelector options={SPEED_OPTIONS} value={motionSpeed} onChange={setMotionSpeed} />
+              <StudioDropdown options={SPEED_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={motionSpeed} onChange={setMotionSpeed} />
             </div>
 
             <div>

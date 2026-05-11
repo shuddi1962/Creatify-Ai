@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const VOICES = ['Emma (US Female)', 'James (US Male)', 'Sophie (UK Female)', 'Liam (UK Male)', 'Yuki (Japanese)', 'Mei (Chinese)', 'Carlos (Spanish)', 'Sofia (French)', 'Hans (German)', 'Aria (Italian)'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Japanese', 'Chinese', 'Korean', 'Hindi', 'Arabic'];
@@ -79,8 +79,8 @@ export default function BulkVoiceoverPage() {
             <GenerationPanel>
               <div className="space-y-4">
                 <div className="flex gap-2">
-                  <button onClick={() => setInputMode('csv')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'csv' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>CSV Upload</button>
-                  <button onClick={() => setInputMode('manual')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'manual' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Manual Text</button>
+                  <button onClick={() => setInputMode('csv')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'csv' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>CSV Upload</button>
+                  <button onClick={() => setInputMode('manual')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'manual' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Manual Text</button>
                 </div>
                 {inputMode === 'csv' ? (
                   <div className="space-y-3">
@@ -116,11 +116,11 @@ export default function BulkVoiceoverPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <SectionLabel>Speed</SectionLabel>
-                    <PillSelector options={SPEEDS} value={defaultSpeed} onChange={setDefaultSpeed} />
+                    <StudioDropdown label="Speed" options={SPEEDS} value={defaultSpeed} onChange={setDefaultSpeed} />
                   </div>
                   <div>
                     <SectionLabel>Output Format</SectionLabel>
-                    <PillSelector options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+                    <StudioDropdown label="Output Format" options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
                   </div>
                 </div>
               </div>
@@ -143,7 +143,7 @@ export default function BulkVoiceoverPage() {
             )}
             <div className="flex justify-end gap-2">
               {inputMode === 'manual' && rows.length === 0 && (
-                <button onClick={handleManualStart} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#6D28D9] transition-all">Load Scripts</button>
+                <button onClick={handleManualStart} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] transition-all">Load Scripts</button>
               )}
               {rows.length > 0 && (
                 <button onClick={handleStart} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] transition-all">Start Bulk Voiceover</button>

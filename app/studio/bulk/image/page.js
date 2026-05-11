@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
 import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const NAMING_OPTIONS = ['Sequential', 'Row Number', 'Custom Prefix'];
 const OUTPUT_FORMATS = ['PNG', 'JPEG', 'WEBP'];
@@ -125,21 +125,21 @@ export default function BulkImagePage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <SectionLabel>Quality</SectionLabel>
-                    <PillSelector options={['standard', 'high', 'ultra']} value={quality} onChange={setQuality} />
+                    <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={['standard', 'high', 'ultra']} />
                   </div>
                   <div>
                     <SectionLabel>Style Preset</SectionLabel>
-                    <PillSelector options={['none', 'cinematic', 'photographic', 'anime', 'digital-art', '3d-render']} value={stylePreset} onChange={setStylePreset} />
+                    <StudioDropdown label="STYLE PRESET" value={stylePreset} onChange={setStylePreset} options={['none', 'cinematic', 'photographic', 'anime', 'digital-art', '3d-render']} />
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <SectionLabel>Naming</SectionLabel>
-                    <PillSelector options={NAMING_OPTIONS} value={naming} onChange={setNaming} />
+                    <StudioDropdown label="NAMING" value={naming} onChange={setNaming} options={NAMING_OPTIONS} />
                   </div>
                   <div>
                     <SectionLabel>Output Format</SectionLabel>
-                    <PillSelector options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+                    <StudioDropdown label="OUTPUT FORMAT" value={outputFormat} onChange={setOutputFormat} options={OUTPUT_FORMATS} />
                   </div>
                 </div>
               </div>

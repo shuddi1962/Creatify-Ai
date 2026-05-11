@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 
 const DEMO_STYLES = ['Unboxing', 'Feature Walkthrough', 'Before-After', 'How It Works', '360 Showcase', 'Lifestyle Use'];
@@ -64,7 +64,7 @@ export default function MarketingDemoPage() {
                     key={s}
                     onClick={() => setDemoStyle(s)}
                     className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      demoStyle === s ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
+                      demoStyle === s ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
                     }`}
                   >
                     {s}
@@ -74,19 +74,19 @@ export default function MarketingDemoPage() {
             </div>
             <div>
               <SectionLabel>Scene Setting</SectionLabel>
-              <PillSelector options={SCENE_SETTINGS} value={scene} onChange={setScene} />
+              <StudioDropdown label="Scene Setting" options={SCENE_SETTINGS} value={scene} onChange={setScene} />
             </div>
             <div>
               <SectionLabel>Voiceover</SectionLabel>
-              <PillSelector options={VOICEOVER_OPTIONS} value={voiceover} onChange={setVoiceover} />
+              <StudioDropdown label="Voiceover" options={VOICEOVER_OPTIONS} value={voiceover} onChange={setVoiceover} />
             </div>
             <div>
               <SectionLabel>Duration</SectionLabel>
-              <PillSelector options={DURATIONS} value={duration} onChange={setDuration} />
+              <StudioDropdown label="Duration" options={DURATIONS} value={duration} onChange={setDuration} />
             </div>
             <button
               onClick={() => setTextOverlays(!textOverlays)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${textOverlays ? 'border-[#7C3AED] bg-[#7C3AED]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}
+              className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${textOverlays ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}
             >
               Text Overlays: {textOverlays ? 'On' : 'Off'}
             </button>

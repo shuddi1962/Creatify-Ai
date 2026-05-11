@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 
 const COMPOSITION_RULES = ['Rule of Thirds', 'Golden Ratio', 'Symmetry', 'Leading Lines', 'Frame in Frame', 'Diagonal'];
@@ -80,11 +80,11 @@ export default function CinemaScenePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Weather</SectionLabel>
-                <PillSelector options={['Clear', 'Cloudy', 'Rainy', 'Stormy', 'Snowy', 'Foggy', 'Windy', 'Mixed']} value={weather} onChange={setWeather} />
+                <StudioDropdown options={['Clear', 'Cloudy', 'Rainy', 'Stormy', 'Snowy', 'Foggy', 'Windy', 'Mixed']} value={weather} onChange={setWeather} />
               </div>
               <div>
                 <SectionLabel>Time of Day</SectionLabel>
-                <PillSelector options={['Dawn', 'Golden Hour', 'Midday', 'Afternoon', 'Dusk', 'Night', 'Blue Hour']} value={timeOfDay} onChange={setTimeOfDay} />
+                <StudioDropdown options={['Dawn', 'Golden Hour', 'Midday', 'Afternoon', 'Dusk', 'Night', 'Blue Hour']} value={timeOfDay} onChange={setTimeOfDay} />
               </div>
             </div>
           </div>
@@ -93,7 +93,7 @@ export default function CinemaScenePage() {
           <div className="space-y-4">
             <div>
               <SectionLabel>Composition Rules</SectionLabel>
-              <PillSelector options={COMPOSITION_RULES} value={composition} onChange={setComposition} />
+              <StudioDropdown options={COMPOSITION_RULES} value={composition} onChange={setComposition} />
             </div>
             <div>
               <SectionLabel>Depth Layers</SectionLabel>
@@ -103,7 +103,7 @@ export default function CinemaScenePage() {
                     key={layer}
                     onClick={() => setDepthLayers(prev => ({ ...prev, [layer]: !prev[layer] }))}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium capitalize transition-all ${
-                      depthLayers[layer] ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
+                      depthLayers[layer] ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
                     }`}
                   >
                     {layer}
@@ -113,7 +113,7 @@ export default function CinemaScenePage() {
             </div>
             <div>
               <SectionLabel>Color Harmony</SectionLabel>
-              <PillSelector options={COLOR_HARMONY} value={colorHarmony} onChange={setColorHarmony} />
+              <StudioDropdown options={COLOR_HARMONY} value={colorHarmony} onChange={setColorHarmony} />
             </div>
           </div>
         </GenerationPanel>

@@ -15,7 +15,7 @@ const FEATURES = [
 export default function LipSyncPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Image} title="LIP SYNC STUDIO" subtitle="5 tools for realistic lip syncing, avatar creation, and multi-language dubbing" />
+      <StudioHero icon={Image} title="LIP SYNC STUDIO" subtitle="5 tools for realistic lip syncing, avatar creation, and multi-language dubbing" backgroundImage="https://images.pexels.com/photos/3771836/pexels-photo-3771836.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

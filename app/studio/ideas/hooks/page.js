@@ -67,18 +67,18 @@ export default function HooksPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Niche or Product</SectionLabel>
-                <input value={niche} onChange={e => setNiche(e.target.value)} placeholder="e.g. Fitness, Tech reviews, Finance" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+                <input value={niche} onChange={e => setNiche(e.target.value)} placeholder="e.g. Fitness, Tech reviews, Finance" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
               </div>
               <div>
                 <SectionLabel>Target Audience</SectionLabel>
-                <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="e.g. Gen Z, entrepreneurs, moms" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+                <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="e.g. Gen Z, entrepreneurs, moms" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
               </div>
             </div>
             <div>
               <SectionLabel>Platform</SectionLabel>
               <div className="flex gap-2 flex-wrap">
                 {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
+                  <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
                 ))}
               </div>
             </div>
@@ -86,7 +86,7 @@ export default function HooksPage() {
               <SectionLabel>Hook Types (multi-select)</SectionLabel>
               <div className="flex gap-2 flex-wrap">
                 {HOOK_TYPES.map(h => (
-                  <button key={h} onClick={() => toggleHook(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedHooks.includes(h) ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
+                  <button key={h} onClick={() => toggleHook(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedHooks.includes(h) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
                 ))}
               </div>
             </div>
@@ -95,7 +95,7 @@ export default function HooksPage() {
                 <SectionLabel>Tone</SectionLabel>
                 <div className="flex gap-2 flex-wrap">
                   {TONES.map(t => (
-                    <button key={t} onClick={() => setTone(t)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${tone === t ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{t}</button>
+                    <button key={t} onClick={() => setTone(t)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${tone === t ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{t}</button>
                   ))}
                 </div>
               </div>
@@ -103,7 +103,7 @@ export default function HooksPage() {
                 <SectionLabel>Number of Hooks</SectionLabel>
                 <div className="flex gap-2">
                   {NUM_OPTIONS.map(n => (
-                    <button key={n} onClick={() => setCount(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${count === n ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n}</button>
+                    <button key={n} onClick={() => setCount(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${count === n ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n}</button>
                   ))}
                 </div>
               </div>
@@ -121,7 +121,7 @@ export default function HooksPage() {
                 <div className="flex-1">
                   <p className="text-white text-sm font-medium mb-1">"{hook.text}"</p>
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{hook.type}</span>
+                    <span className="text-[10px] px-2 py-0.5 bg-[#6366f1]/20 text-[#6366f1] rounded">{hook.type}</span>
                     <span className="text-[10px] text-[#555]">Rating: {hook.rating}/5</span>
                   </div>
                 </div>

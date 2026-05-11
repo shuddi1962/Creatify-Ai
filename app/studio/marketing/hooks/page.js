@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn', 'Twitter'];
 const HOOK_TYPES = ['Question', 'Bold Statement', 'Provocative', 'Story Hook', 'Statistic', 'Contrast', 'Curiosity Gap', 'Fear', 'Hope', 'Celebrity', 'ASMR', 'Tutorial'];
@@ -92,7 +92,7 @@ export default function MarketingHooksPage() {
             </div>
             <div>
               <SectionLabel>Platform</SectionLabel>
-              <PillSelector options={PLATFORMS} value={platform} onChange={setPlatform} />
+              <StudioDropdown label="PLATFORM" value={platform} onChange={setPlatform} options={PLATFORMS} />
             </div>
             <div>
               <SectionLabel>Hook Types</SectionLabel>
@@ -113,11 +113,11 @@ export default function MarketingHooksPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Tone</SectionLabel>
-                <PillSelector options={TONES} value={tone} onChange={setTone} />
+                <StudioDropdown label="TONE" value={tone} onChange={setTone} options={TONES} />
               </div>
               <div>
                 <SectionLabel>Number of Hooks</SectionLabel>
-                <PillSelector options={COUNTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
+                <StudioDropdown label="NUMBER OF HOOKS" value={String(count)} onChange={v => setCount(parseInt(v))} options={COUNTS.map(String)} />
               </div>
             </div>
             <GenerateButton onClick={handleGenerate} loading={loading}>

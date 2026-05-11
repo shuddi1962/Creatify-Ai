@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const VOICE_TYPE_OPTIONS = ['Single Speaker', 'Multi-speaker'];
 
@@ -141,7 +141,7 @@ export default function VoiceClonePage() {
 
               <div>
                 <SectionLabel>Voice Type</SectionLabel>
-                <PillSelector options={VOICE_TYPE_OPTIONS} value={voiceType} onChange={setVoiceType} />
+                <StudioDropdown label="VOICE TYPE" value={voiceType} onChange={setVoiceType} options={VOICE_TYPE_OPTIONS} />
               </div>
 
               <GenerateButton onClick={handleClone} loading={cloning}>
@@ -181,7 +181,7 @@ export default function VoiceClonePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <SectionLabel>Speed</SectionLabel>
-                  <PillSelector options={['0.5x', '0.75x', '1x', '1.25x', '1.5x', '2x']} value={speed} onChange={setSpeed} />
+                  <StudioDropdown label="SPEED" value={speed} onChange={setSpeed} options={['0.5x', '0.75x', '1x', '1.25x', '1.5x', '2x']} />
                 </div>
                 <div>
                   <SectionLabel>Pitch: {pitch > 0 ? '+' : ''}{pitch}</SectionLabel>

@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const OUTPUT_TYPES = ['3D Render', 'Rotating Video', 'GLB File', 'OBJ File'];
 const VIEWING_ANGLES = ['360 Spin', 'Front 3-4', 'Isometric', 'Custom'];
@@ -79,22 +79,22 @@ export default function ImageTo3DPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Output Type</SectionLabel>
-                <PillSelector options={OUTPUT_TYPES} value={outputType} onChange={setOutputType} />
+                <StudioDropdown options={OUTPUT_TYPES.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputType} onChange={setOutputType} />
               </div>
               <div>
                 <SectionLabel>Viewing Angle</SectionLabel>
-                <PillSelector options={VIEWING_ANGLES} value={viewAngle} onChange={setViewAngle} />
+                <StudioDropdown options={VIEWING_ANGLES.map(o => ({ value: o, label: o.toUpperCase() }))} value={viewAngle} onChange={setViewAngle} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Material</SectionLabel>
-                <PillSelector options={MATERIALS} value={material} onChange={setMaterial} />
+                <StudioDropdown options={MATERIALS.map(o => ({ value: o, label: o.toUpperCase() }))} value={material} onChange={setMaterial} />
               </div>
               <div>
                 <SectionLabel>Background</SectionLabel>
-                <PillSelector options={BACKGROUNDS} value={background} onChange={setBackground} />
+                <StudioDropdown options={BACKGROUNDS.map(o => ({ value: o, label: o.toUpperCase() }))} value={background} onChange={setBackground} />
               </div>
             </div>
           </div>

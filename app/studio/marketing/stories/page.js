@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const STRUCTURES = {
   '3-Part': [
@@ -81,7 +81,7 @@ export default function MarketingStoriesPage() {
                 <button
                   key={s}
                   onClick={() => handleStructureChange(s)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${structure === s ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}
+                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${structure === s ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}
                 >
                   {s}
                 </button>
@@ -91,7 +91,7 @@ export default function MarketingStoriesPage() {
               {parts.map((part, i) => (
                 <div key={i} className="bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-4">
                   <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] text-[10px] font-bold rounded">Part {part.part}</span>
+                    <span className="px-2 py-0.5 bg-[#6366f1]/20 text-[#6366f1] text-[10px] font-bold rounded">Part {part.part}</span>
                     <span className="text-sm font-bold text-white">{part.name}</span>
                     <span className="text-xs text-[#555]">({part.range})</span>
                   </div>
@@ -108,7 +108,7 @@ export default function MarketingStoriesPage() {
         </GenerationPanel>
         <GenerationPanel>
           <div className="space-y-4">
-            <button onClick={() => setBrandKit(!brandKit)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${brandKit ? 'border-[#7C3AED] bg-[#7C3AED]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
+            <button onClick={() => setBrandKit(!brandKit)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${brandKit ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
               Apply Brand Kit: {brandKit ? 'On' : 'Off'}
             </button>
             <div>
@@ -117,11 +117,11 @@ export default function MarketingStoriesPage() {
             </div>
             <div>
               <SectionLabel>CTA Timing</SectionLabel>
-              <PillSelector options={CTA_TIMINGS} value={ctaTiming} onChange={setCtaTiming} />
+              <StudioDropdown label="CTA Timing" options={CTA_TIMINGS} value={ctaTiming} onChange={setCtaTiming} />
             </div>
             <div>
               <SectionLabel>Music</SectionLabel>
-              <PillSelector options={MUSIC_OPTIONS} value={music} onChange={setMusic} />
+              <StudioDropdown label="Music" options={MUSIC_OPTIONS} value={music} onChange={setMusic} />
             </div>
             <GenerateButton onClick={handleGenerate} loading={loading}>Build Story Ad</GenerateButton>
           </div>

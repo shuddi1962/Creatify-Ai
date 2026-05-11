@@ -22,7 +22,7 @@ const FEATURES = [
 export default function VideoStudioPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Video} title="VIDEO STUDIO" subtitle="12 professional video tools — from text to video, editing, motion sync, and camera control" />
+      <StudioHero icon={Video} title="VIDEO STUDIO" subtitle="12 professional video tools — from text to video, editing, motion sync, and camera control" backgroundImage="https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const STYLE_PRESETS = [
   'Anime', 'Cyberpunk', 'Film Noir', 'Watercolor', 'Oil Paint', 
@@ -110,7 +110,7 @@ export default function RestyleVideoPage() {
                     onClick={() => setSelectedStyle(preset)}
                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                       selectedStyle === preset
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -125,14 +125,13 @@ export default function RestyleVideoPage() {
               <textarea
                 value={customStyle}
                 onChange={(e) => setCustomStyle(e.target.value)}
-                placeholder="Describe your custom style..."
-                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div>
               <SectionLabel>Style Strength</SectionLabel>
-              <PillSelector options={STRENGTH_OPTIONS} value={styleStrength} onChange={setStyleStrength} />
+              <StudioDropdown options={STRENGTH_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={styleStrength} onChange={setStyleStrength} />
             </div>
 
             <div className="flex items-center gap-3">

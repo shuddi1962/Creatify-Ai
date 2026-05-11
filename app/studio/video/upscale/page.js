@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const SCALE_OPTIONS = ['2x', '4x'];
 const RESOLUTION_OPTIONS = ['720p', '1080p', '2K', '4K'];
@@ -107,23 +107,23 @@ export default function UpscaleVideoPage() {
 
             <div>
               <SectionLabel>Scale</SectionLabel>
-              <PillSelector options={SCALE_OPTIONS} value={scale} onChange={setScale} />
+              <StudioDropdown options={SCALE_OPTIONS} value={scale} onChange={setScale} />
             </div>
 
             <div>
               <SectionLabel>Target Resolution</SectionLabel>
-              <PillSelector options={RESOLUTION_OPTIONS} value={targetResolution} onChange={setTargetResolution} />
+              <StudioDropdown options={RESOLUTION_OPTIONS} value={targetResolution} onChange={setTargetResolution} />
             </div>
 
             <div>
               <SectionLabel>Enhancement</SectionLabel>
-              <PillSelector options={ENHANCEMENT_OPTIONS} value={enhancement} onChange={setEnhancement} />
+              <StudioDropdown options={ENHANCEMENT_OPTIONS} value={enhancement} onChange={setEnhancement} />
             </div>
 
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setFpsEnhancement(!fpsEnhancement)}
-                className={`w-12 h-6 rounded-full transition-all ${fpsEnhancement ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                className={`w-12 h-6 rounded-full transition-all ${fpsEnhancement ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fpsEnhancement ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>

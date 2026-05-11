@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Arabic', 'Russian'];
 const VOICE_STYLES = ['Match Original', 'Professional', 'Casual', 'Energetic'];
@@ -132,7 +132,7 @@ export default function DubbingPage() {
                     onClick={() => toggleLanguage(lang)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       targetLanguages.includes(lang)
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -148,11 +148,11 @@ export default function DubbingPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Voice Style</SectionLabel>
-                <PillSelector options={VOICE_STYLES} value={voiceStyle} onChange={setVoiceStyle} />
+                <StudioDropdown options={VOICE_STYLES} value={voiceStyle} onChange={setVoiceStyle} />
               </div>
               <div>
                 <SectionLabel>Lip Sync</SectionLabel>
-                <PillSelector options={LIP_SYNC_OPTIONS} value={lipSync} onChange={setLipSync} />
+                <StudioDropdown options={LIP_SYNC_OPTIONS} value={lipSync} onChange={setLipSync} />
               </div>
             </div>
 
@@ -160,7 +160,7 @@ export default function DubbingPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setGenerateSubtitles(!generateSubtitles)}
-                  className={`w-12 h-6 rounded-full transition-all ${generateSubtitles ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${generateSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${generateSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -169,7 +169,7 @@ export default function DubbingPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setBurnSubtitles(!burnSubtitles)}
-                  className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${burnSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>

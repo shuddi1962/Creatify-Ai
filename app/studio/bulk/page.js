@@ -15,7 +15,7 @@ const FEATURES = [
 export default function BulkGeneratePage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Image} title="BULK GENERATE" subtitle="5 batch production tools — image, video, lip sync, and voiceover at scale" />
+      <StudioHero icon={Image} title="BULK GENERATE" subtitle="5 batch production tools — image, video, lip sync, and voiceover at scale" backgroundImage="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

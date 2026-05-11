@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const MODEL_TYPES = ['Male', 'Female', 'Non-binary', 'Child'];
@@ -151,7 +151,7 @@ export default function FashionPage() {
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="A model wearing a red silk dress, walking on a Paris runway..."
-                  className="w-full h-28 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                  className="w-full h-28 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
                 />
               </div>
             ) : (
@@ -170,7 +170,7 @@ export default function FashionPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Model Type</SectionLabel>
-                <PillSelector options={MODEL_TYPES} value={modelType} onChange={setModelType} />
+                <StudioDropdown options={MODEL_TYPES} value={modelType} onChange={setModelType} label="MODEL TYPE" />
               </div>
               <div>
                 <SectionLabel>Pose</SectionLabel>
@@ -195,7 +195,7 @@ export default function FashionPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Background</SectionLabel>
-                <PillSelector options={BACKGROUNDS} value={background} onChange={setBackground} />
+                <StudioDropdown options={BACKGROUNDS} value={background} onChange={setBackground} label="BACKGROUND" />
                 {background === 'Custom' && (
                   <div className="mt-2">
                     <UploadZone onFile={handleCustomBg} preview={customBg} accept="image/*" label="Custom background" />
@@ -204,7 +204,7 @@ export default function FashionPage() {
               </div>
               <div>
                 <SectionLabel>Season</SectionLabel>
-                <PillSelector options={SEASONS} value={season} onChange={setSeason} />
+                <StudioDropdown options={SEASONS} value={season} onChange={setSeason} label="SEASON" />
               </div>
               <div>
                 <SectionLabel>Model</SectionLabel>

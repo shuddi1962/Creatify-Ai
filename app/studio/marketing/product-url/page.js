@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn'];
 const FORMATS = ['Short Video', 'Image Ad', 'Carousel', 'Story'];
@@ -80,7 +80,7 @@ export default function MarketingProductUrlPage() {
                 <button
                   onClick={handleScan}
                   disabled={scanning}
-                  className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#6D28D9] disabled:opacity-50 transition-all flex items-center gap-2"
+                  className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] disabled:opacity-50 transition-all flex items-center gap-2"
                 >
                   {scanning ? <Loader2 size={16} className="animate-spin" /> : null}
                   Scan Product
@@ -109,15 +109,15 @@ export default function MarketingProductUrlPage() {
             <div className="space-y-4">
               <div>
                 <SectionLabel>Platform</SectionLabel>
-                <PillSelector options={PLATFORMS} value={platform} onChange={setPlatform} />
+                <StudioDropdown label="Platform" options={PLATFORMS} value={platform} onChange={setPlatform} />
               </div>
               <div>
                 <SectionLabel>Ad Format</SectionLabel>
-                <PillSelector options={FORMATS} value={format} onChange={setFormat} />
+                <StudioDropdown label="Ad Format" options={FORMATS} value={format} onChange={setFormat} />
               </div>
               <div>
                 <SectionLabel>Style</SectionLabel>
-                <PillSelector options={STYLES} value={style} onChange={setStyle} />
+                <StudioDropdown label="Style" options={STYLES} value={style} onChange={setStyle} />
               </div>
             </div>
           </GenerationPanel>

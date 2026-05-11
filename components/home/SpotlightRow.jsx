@@ -5,11 +5,11 @@ import Link from 'next/link';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const CARDS = [
-  { label: 'IMAGE STUDIO', name: 'Create stunning visuals with 14+ tools', href: '/studio/image/text-to-image', img: 'https://picsum.photos/seed/spotlight-image/640/360' },
-  { label: 'VIDEO STUDIO', name: 'Animate anything \u2014 text, image, motion', href: '/studio/video/text-to-video', img: 'https://picsum.photos/seed/spotlight-video/640/360' },
-  { label: 'CONTENT IDEAS', name: 'Trending topics for any niche, any region', href: '/studio/ideas', img: 'https://picsum.photos/seed/spotlight-ideas/640/360' },
-  { label: 'BULK GENERATE', name: '500 images or videos from one CSV upload', href: '/studio/bulk/image', img: 'https://picsum.photos/seed/spotlight-bulk/640/360' },
-  { label: 'MARKETING STUDIO', name: 'UGC ads, hooks, and product demos at scale', href: '/studio/marketing/ugc', img: 'https://picsum.photos/seed/spotlight-marketing/640/360' },
+  { label: 'IMAGE STUDIO', name: 'Create stunning visuals with 14+ tools', href: '/studio/image/text-to-image', img: 'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=800' },
+  { label: 'VIDEO STUDIO', name: 'Animate anything \u2014 text, image, motion', href: '/studio/video/text-to-video', img: 'https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=800' },
+  { label: 'CONTENT IDEAS', name: 'Trending topics for any niche, any region', href: '/studio/ideas', img: 'https://images.pexels.com/photos/6476589/pexels-photo-6476589.jpeg?auto=compress&cs=tinysrgb&w=800' },
+  { label: 'BULK GENERATE', name: '500 images or videos from one CSV upload', href: '/studio/bulk/image', img: 'https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=800' },
+  { label: 'MARKETING STUDIO', name: 'UGC ads, hooks, and product demos at scale', href: '/studio/marketing/ugc', img: 'https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=800' },
 ];
 
 export default function SpotlightRow() {

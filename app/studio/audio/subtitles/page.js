@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const OUTPUT_FORMATS = ['SRT', 'VTT', 'ASS', 'TXT', 'JSON'];
 const MAX_CHARS = ['32', '42', '56'];
@@ -128,25 +128,25 @@ And this is the third subtitle line.`;
               </div>
               <div>
                 <SectionLabel>Output Format</SectionLabel>
-                <PillSelector options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+                <StudioDropdown options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Max Chars Per Line</SectionLabel>
-                <PillSelector options={MAX_CHARS} value={maxChars} onChange={setMaxChars} />
+                <StudioDropdown options={MAX_CHARS} value={maxChars} onChange={setMaxChars} />
               </div>
               <div>
                 <SectionLabel>Timestamps</SectionLabel>
-                <PillSelector options={TIMESTAMP_OPTIONS} value={timestamps} onChange={setTimestamps} />
+                <StudioDropdown options={TIMESTAMP_OPTIONS} value={timestamps} onChange={setTimestamps} />
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSpeakerId(!speakerId)}
-                className={`w-12 h-6 rounded-full transition-all ${speakerId ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                className={`w-12 h-6 rounded-full transition-all ${speakerId ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${speakerId ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -156,7 +156,7 @@ And this is the third subtitle line.`;
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setBurnSubtitles(!burnSubtitles)}
-                className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${burnSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -216,7 +216,7 @@ And this is the third subtitle line.`;
               <SectionLabel>Editable Subtitle Text</SectionLabel>
               <div className="flex gap-2">
                 <button className="px-3 py-1.5 bg-[#1a1a1a] text-white rounded-lg text-xs font-medium border border-white/[0.08]">Preview</button>
-                <button className="px-3 py-1.5 bg-[#7C3AED] text-white rounded-lg text-xs font-medium">Download</button>
+                <button className="px-3 py-1.5 bg-[#6366f1] text-white rounded-lg text-xs font-medium">Download</button>
               </div>
             </div>
             <textarea

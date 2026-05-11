@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const LIGHT_TYPES = ['Point', 'Directional', 'Ambient', 'Rim', 'Fill'];
 const LIGHT_COLORS = [
@@ -124,7 +124,7 @@ export default function RelightPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Light Type</SectionLabel>
-                <PillSelector options={LIGHT_TYPES} value={lightType} onChange={setLightType} />
+                <StudioDropdown options={LIGHT_TYPES.map(o => ({ value: o, label: o.toUpperCase() }))} value={lightType} onChange={setLightType} />
               </div>
               <div>
                 <SectionLabel>Light Color</SectionLabel>

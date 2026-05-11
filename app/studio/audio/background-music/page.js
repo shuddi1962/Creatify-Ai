@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const ENERGY_OPTIONS = ['Constant', 'Build Up', 'Drop', 'Rise and Fall'];
 const GENRES = ['Pop', 'Electronic', 'Cinematic', 'Acoustic', 'Rock', 'Jazz', 'Ambient'];
@@ -87,14 +87,14 @@ export default function BackgroundMusicPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => setMode('video')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'video' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'video' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
               >
                 <Video size={14} className="inline mr-1" />
                 With Video
               </button>
               <button
                 onClick={() => setMode('standalone')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'standalone' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${mode === 'standalone' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
               >
                 <Music size={14} className="inline mr-1" />
                 Standalone
@@ -129,7 +129,7 @@ export default function BackgroundMusicPage() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setAutoScore(!autoScore)}
-                className={`w-12 h-6 rounded-full transition-all ${autoScore ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                className={`w-12 h-6 rounded-full transition-all ${autoScore ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${autoScore ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -139,11 +139,11 @@ export default function BackgroundMusicPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Genre</SectionLabel>
-                <PillSelector options={GENRES} value={genre} onChange={setGenre} />
+                <StudioDropdown options={GENRES} value={genre} onChange={setGenre} />
               </div>
               <div>
                 <SectionLabel>Mood</SectionLabel>
-                <PillSelector options={MOODS} value={mood} onChange={setMood} />
+                <StudioDropdown options={MOODS} value={mood} onChange={setMood} />
               </div>
             </div>
 
@@ -156,7 +156,7 @@ export default function BackgroundMusicPage() {
                     onClick={() => toggleInstrument(inst)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       selectedInstruments.includes(inst)
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -169,7 +169,7 @@ export default function BackgroundMusicPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Energy Curve</SectionLabel>
-                <PillSelector options={ENERGY_OPTIONS} value={energy} onChange={setEnergy} />
+                <StudioDropdown options={ENERGY_OPTIONS} value={energy} onChange={setEnergy} />
               </div>
               <div>
                 <SectionLabel>Music Volume: {volume}%</SectionLabel>
@@ -188,7 +188,7 @@ export default function BackgroundMusicPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setFadeIn(!fadeIn)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeIn ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${fadeIn ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeIn ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -197,7 +197,7 @@ export default function BackgroundMusicPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setFadeOut(!fadeOut)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeOut ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${fadeOut ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeOut ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -206,7 +206,7 @@ export default function BackgroundMusicPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setLoop(!loop)}
-                  className={`w-12 h-6 rounded-full transition-all ${loop ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${loop ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${loop ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -220,14 +220,14 @@ export default function BackgroundMusicPage() {
                 {mode === 'video' ? (
                   <button
                     onClick={() => setDuration('Match video')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${duration === 'Match video' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${duration === 'Match video' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
                   >
                     Match video
                   </button>
                 ) : null}
                 <button
                   onClick={() => setDuration('Custom')}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${duration === 'Custom' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${duration === 'Custom' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
                 >
                   Custom
                 </button>

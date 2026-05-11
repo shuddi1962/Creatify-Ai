@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const CATEGORIES = ['Nature', 'Urban', 'Mechanical', 'Human', 'Impact', 'Ambient', 'Foley', 'Sci-Fi'];
 const PRESET_EXAMPLES = [
@@ -97,7 +97,7 @@ export default function SfxPage() {
                       onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
                       className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                         selectedCategory === cat
-                          ? 'bg-[#7C3AED] text-white'
+                          ? 'bg-[#6366f1] text-white'
                           : 'bg-[#1a1a1a] text-[#888] hover:bg-[#222]'
                       }`}
                     >
@@ -124,11 +124,11 @@ export default function SfxPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Duration</SectionLabel>
-                <PillSelector options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
+                <StudioDropdown options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
               </div>
               <div>
                 <SectionLabel>Variations</SectionLabel>
-                <PillSelector options={VARIATION_OPTIONS} value={variations} onChange={setVariations} />
+                <StudioDropdown options={VARIATION_OPTIONS} value={variations} onChange={setVariations} />
               </div>
             </div>
 
@@ -136,7 +136,7 @@ export default function SfxPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setFadeIn(!fadeIn)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeIn ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${fadeIn ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeIn ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>
@@ -145,7 +145,7 @@ export default function SfxPage() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setFadeOut(!fadeOut)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeOut ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                  className={`w-12 h-6 rounded-full transition-all ${fadeOut ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
                 >
                   <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeOut ? 'translate-x-6' : 'translate-x-0.5'}`} />
                 </button>

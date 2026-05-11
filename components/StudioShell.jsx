@@ -186,7 +186,7 @@ export default function StudioShell({ children }) {
             padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
             fontSize: 13, fontWeight: isActive ? 600 : 500,
             color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-            background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
+            background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
             transition: 'all 150ms ease', whiteSpace: 'nowrap'
           }}
         >
@@ -289,18 +289,34 @@ export default function StudioShell({ children }) {
         </div>
 
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           style={{
-            width: 32, height: 32, borderRadius: 8,
-            border: 'none', cursor: 'pointer',
-            background: 'transparent',
-            color: 'var(--text-secondary)', flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            transition: 'all 150ms ease',
+            width: 40, height: 22,
+            borderRadius: 100,
+            border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'}`,
+            background: theme === 'dark' ? '#1a1a1a' : '#e5e7eb',
+            position: 'relative',
+            cursor: 'pointer',
+            transition: 'background 200ms',
+            flexShrink: 0,
           }}
-          onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--glass-bg)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
         >
-          {theme === 'dark' ? <Icons.Sun size={16} /> : <Icons.Moon size={16} />}
+          <div style={{
+            position: 'absolute',
+            top: 2,
+            left: theme === 'dark' ? 2 : 18,
+            width: 16, height: 16,
+            borderRadius: '50%',
+            background: theme === 'dark' ? '#6366f1' : '#ffffff',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+            transition: 'left 200ms ease',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 9,
+          }}>
+            {theme === 'dark' ? '🌙' : '☀️'}
+          </div>
         </button>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
@@ -450,7 +466,7 @@ export default function StudioShell({ children }) {
                     width: '100%', display: 'flex', flexDirection: sidebarCollapsed ? 'column' : 'row',
                     alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: sidebarCollapsed ? 6 : 10,
                     padding: sidebarCollapsed ? '10px 0' : '8px 12px', border: 'none', cursor: 'pointer',
-                    background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
+                    background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
                     textDecoration: 'none',
                     position: 'relative',
                     transition: 'all 150ms ease'
@@ -462,8 +478,8 @@ export default function StudioShell({ children }) {
                     position: 'relative',
                     width: 54, height: 54, borderRadius: 14,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
-                    color: 'var(--text-primary)',
+                    background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
+                    color: isActive ? '#818cf8' : 'var(--text-primary)',
                     flexShrink: 0,
                     transition: 'background 150ms ease, color 150ms ease'
                   }}>
@@ -471,14 +487,14 @@ export default function StudioShell({ children }) {
                   </div>
                   <span style={{
                     fontSize: 11, fontWeight: 600,
-                    color: 'var(--text-primary)',
+                    color: isActive ? '#818cf8' : 'var(--text-primary)',
                     lineHeight: 1.2,
                     whiteSpace: 'nowrap',
                     transition: 'color 150ms ease'
                   }}>{item.label}</span>
                 </Link>
                 {isActive && (
-                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: '#00C896', borderRadius: '0 3px 3px 0' }} />
+                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: '#6366f1', borderRadius: '0 3px 3px 0' }} />
                 )}
 
                 {showFlyout && (
@@ -536,7 +552,7 @@ export default function StudioShell({ children }) {
                     style={{
                       width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                       padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                      background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
+                      background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
                       color: isActive ? '#A78BFA' : 'var(--text-secondary)',
                       fontSize: 13, fontWeight: 500, textDecoration: 'none',
                       transition: 'all 150ms ease', marginBottom: 2
@@ -560,7 +576,7 @@ export default function StudioShell({ children }) {
                       style={{
                         width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                         padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                      background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
+                      background: isActive ? 'rgba(99,102,241,0.12)' : 'transparent',
                       color: isActive ? '#A78BFA' : 'var(--text-secondary)',
                       fontSize: 13, fontWeight: 500, textDecoration: 'none',
                       transition: 'all 150ms ease', marginBottom: 2

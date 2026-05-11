@@ -8,7 +8,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const VIDEO_LENGTH_OPTIONS = ['15s', '30s', '60s', '2min', '5min'];
 const SHOTS_OPTIONS = ['3', '5', '8', '12'];
@@ -91,18 +91,18 @@ export default function SmartShotPage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe your video concept in detail..."
-                className="w-full h-40 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-40 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Video Length</SectionLabel>
-                <PillSelector options={VIDEO_LENGTH_OPTIONS} value={videoLength} onChange={setVideoLength} />
+                <StudioDropdown options={VIDEO_LENGTH_OPTIONS} value={videoLength} onChange={setVideoLength} />
               </div>
               <div>
                 <SectionLabel>Number of Shots</SectionLabel>
-                <PillSelector options={SHOTS_OPTIONS} value={numShots} onChange={setNumShots} />
+                <StudioDropdown options={SHOTS_OPTIONS} value={numShots} onChange={setNumShots} />
               </div>
             </div>
 
@@ -110,7 +110,7 @@ export default function SmartShotPage() {
               <button
                 onClick={() => setAutoStoryboard(!autoStoryboard)}
                 className={`w-12 h-6 rounded-full transition-all ${
-                  autoStoryboard ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'
+                  autoStoryboard ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'
                 }`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
@@ -122,7 +122,7 @@ export default function SmartShotPage() {
 
             <div>
               <SectionLabel>Visual Style</SectionLabel>
-              <PillSelector options={STYLE_OPTIONS} value={visualStyle} onChange={setVisualStyle} />
+              <StudioDropdown options={STYLE_OPTIONS} value={visualStyle} onChange={setVisualStyle} />
             </div>
 
             <div>

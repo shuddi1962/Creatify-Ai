@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PERSONALITY_OPTIONS = ['Professional', 'Friendly', 'Energetic', 'Calm', 'Authoritative'];
 const BACKGROUND_OPTIONS = ['Transparent', 'White', 'Office', 'Custom'];
@@ -99,13 +99,13 @@ export default function AvatarPage() {
         <div className="flex gap-2 mb-6">
           <button
             onClick={() => setStep(1)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${step === 1 ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${step === 1 ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
           >
             Create Avatar
           </button>
           <button
             onClick={() => setStep(2)}
-            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${step === 2 ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${step === 2 ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
           >
             Use Avatar
           </button>
@@ -148,7 +148,7 @@ export default function AvatarPage() {
 
               <div>
                 <SectionLabel>Personality</SectionLabel>
-                <PillSelector options={PERSONALITY_OPTIONS} value={personality} onChange={setPersonality} />
+                <StudioDropdown options={PERSONALITY_OPTIONS} value={personality} onChange={setPersonality} />
               </div>
 
               <GenerateButton onClick={handleCreateAvatar} loading={loading}>
@@ -180,13 +180,13 @@ export default function AvatarPage() {
                 <div className="flex gap-2 mb-2">
                   <button
                     onClick={() => setAudioFile(null)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${!audioFile ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${!audioFile ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
                   >
                     Text
                   </button>
                   <button
                     onClick={() => { setScriptText(''); setAudioFile('audio'); }}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${audioFile ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${audioFile ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888]'}`}
                   >
                     Audio
                   </button>
@@ -224,7 +224,7 @@ export default function AvatarPage() {
                 </div>
                 <div>
                   <SectionLabel>Background</SectionLabel>
-                  <PillSelector options={BACKGROUND_OPTIONS} value={background} onChange={setBackground} />
+                  <StudioDropdown options={BACKGROUND_OPTIONS} value={background} onChange={setBackground} />
                 </div>
               </div>
 
@@ -247,7 +247,7 @@ export default function AvatarPage() {
                   <p className="text-sm font-medium text-white text-center">{avatar.name}</p>
                   <p className="text-xs text-[#555] text-center">{avatar.personality}</p>
                   <div className="flex gap-2 mt-3 justify-center">
-                    <button onClick={() => { setStep(2); setSelectedAvatar(avatar.name); }} className="p-1.5 rounded bg-[#7C3AED] text-white text-xs">Use</button>
+                    <button onClick={() => { setStep(2); setSelectedAvatar(avatar.name); }} className="p-1.5 rounded bg-[#6366f1] text-white text-xs">Use</button>
                     <button onClick={() => handleDeleteAvatar(avatar.id)} className="p-1.5 rounded bg-[#1a1a1a] text-[#888] text-xs border border-white/[0.08]">Delete</button>
                   </div>
                 </div>

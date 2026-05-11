@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const VARIANTS = [5, 10, 20];
 const DIMENSIONS = ['Hook', 'Tone', 'Visual Style', 'Creator Type', 'Duration', 'Platform'];
@@ -66,26 +66,26 @@ export default function MarketingBatchPage() {
         <GenerationPanel>
           <div className="space-y-4">
             <div className="flex gap-2">
-              <button onClick={() => setInputType('description')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'description' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Description</button>
-              <button onClick={() => setInputType('url')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'url' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>URL</button>
+              <button onClick={() => setInputType('description')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'description' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Description</button>
+              <button onClick={() => setInputType('url')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'url' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>URL</button>
             </div>
             {inputType === 'description' ? (
               <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your product..." className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-24" />
             ) : (
               <div className="flex gap-2">
                 <input value={url} onChange={e => setUrl(e.target.value)} placeholder="Product URL..." className="flex-1 bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
-                <button onClick={handleScan} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#6D28D9] transition-all">Scan</button>
+                <button onClick={handleScan} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] transition-all">Scan</button>
               </div>
             )}
             <div>
               <SectionLabel>Number of Variants</SectionLabel>
-              <PillSelector options={VARIANTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
+              <StudioDropdown label="Number of Variants" options={VARIANTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
             </div>
             <div>
               <SectionLabel>Variation Dimensions</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {DIMENSIONS.map(d => (
-                  <button key={d} onClick={() => toggleDimension(d)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dimensions.includes(d) ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{d}</button>
+                  <button key={d} onClick={() => toggleDimension(d)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dimensions.includes(d) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{d}</button>
                 ))}
               </div>
             </div>
@@ -93,7 +93,7 @@ export default function MarketingBatchPage() {
               <SectionLabel>Platforms</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => togglePlatform(p)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${platforms.includes(p) ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
+                  <button key={p} onClick={() => togglePlatform(p)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${platforms.includes(p) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
                 ))}
               </div>
             </div>

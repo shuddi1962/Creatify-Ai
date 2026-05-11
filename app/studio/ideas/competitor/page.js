@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import GenerateButton from '@/components/studio/GenerateButton';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Twitter'];
 const DEPTH_OPTIONS = ['Quick (5 posts)', 'Standard (15 posts)', 'Deep (30 posts)'];
@@ -72,14 +72,14 @@ export default function CompetitorPage() {
               <SectionLabel>Platform</SectionLabel>
               <div className="flex gap-2 flex-wrap">
                 {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
+                  <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
                 ))}
               </div>
             </div>
             <div>
               <SectionLabel>Creator Handle</SectionLabel>
               <div className="flex gap-2">
-                <input value={handle} onChange={e => setHandle(e.target.value)} placeholder="@username or channel name" className="flex-1 bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+                <input value={handle} onChange={e => setHandle(e.target.value)} placeholder="@username or channel name" className="flex-1 bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
                 <button onClick={analyze} disabled={loading || !handle.trim()} className="px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all flex items-center gap-2">
                   {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Search size={16} />} Analyze
                 </button>
@@ -89,7 +89,7 @@ export default function CompetitorPage() {
               <SectionLabel>Analysis Depth</SectionLabel>
               <div className="flex gap-2 flex-wrap">
                 {DEPTH_OPTIONS.map(d => (
-                  <button key={d} onClick={() => setDepth(d)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${depth === d ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{d}</button>
+                  <button key={d} onClick={() => setDepth(d)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${depth === d ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{d}</button>
                 ))}
               </div>
             </div>
@@ -97,7 +97,7 @@ export default function CompetitorPage() {
               <SectionLabel>Metrics to Analyze</SectionLabel>
               <div className="flex gap-2 flex-wrap">
                 {METRICS.map(m => (
-                  <button key={m} onClick={() => toggleMetric(m)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedMetrics.includes(m) ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{m}</button>
+                  <button key={m} onClick={() => toggleMetric(m)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedMetrics.includes(m) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{m}</button>
                 ))}
               </div>
             </div>
@@ -120,11 +120,11 @@ export default function CompetitorPage() {
                   <p className="text-[#555] text-xs">Avg Views</p>
                 </div>
                 <div className="bg-[#0a0a0a] rounded-xl p-4 text-center">
-                  <p className="text-[#7C3AED] text-xl font-bold">{results.engagementRate}</p>
+                                      <p className="text-[#6366f1] text-xl font-bold">{results.engagementRate}</p>
                   <p className="text-[#555] text-xs">Engagement</p>
                 </div>
                 <div className="bg-[#0a0a0a] rounded-xl p-4 text-center">
-                  <p className="text-[#7C3AED] text-xl font-bold">{results.topPosts.length}</p>
+                                      <p className="text-[#6366f1] text-xl font-bold">{results.topPosts.length}</p>
                   <p className="text-[#555] text-xs">Posts Analyzed</p>
                 </div>
               </div>
@@ -139,7 +139,7 @@ export default function CompetitorPage() {
                     <div className="flex items-center gap-4 text-[#555] text-xs">
                       <span className="flex items-center gap-1"><Eye size={12} /> {post.views}</span>
                       <span className="flex items-center gap-1"><Heart size={12} /> {post.likes}</span>
-                      <span className="px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{post.platform}</span>
+                      <span className="px-2 py-0.5 bg-[#6366f1]/20 text-[#6366f1] rounded">{post.platform}</span>
                     </div>
                     <button onClick={() => generateSimilar(post.title)} className="mt-3 w-full px-3 py-2 bg-[#1a1a1a] text-[#CCFF00] text-xs font-semibold rounded-lg hover:bg-[#222] transition-all">Generate Similar</button>
                   </div>
@@ -163,7 +163,7 @@ export default function CompetitorPage() {
               <h3 className="text-white font-bold mb-4">Suggested Hooks Based on Analysis</h3>
               <div className="space-y-2">
                 {results.suggestedHooks.map((hook, i) => (
-                  <div key={i} className="bg-[#0a0a0a] rounded-lg border border-white/[0.06] p-3 text-[#ccc] text-sm cursor-pointer hover:border-[#7C3AED] transition-all" onClick={() => { navigator.clipboard.writeText(hook); toast.success('Hook copied!'); }}>{hook}</div>
+                  <div key={i} className="bg-[#0a0a0a] rounded-lg border border-white/[0.06] p-3 text-[#ccc] text-sm cursor-pointer hover:border-[#6366f1] transition-all" onClick={() => { navigator.clipboard.writeText(hook); toast.success('Hook copied!'); }}>{hook}</div>
                 ))}
               </div>
             </div>

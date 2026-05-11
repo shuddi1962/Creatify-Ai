@@ -16,7 +16,7 @@ const FEATURES = [
 export default function CinemaStudioPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Clapperboard} title="CINEMA STUDIO" subtitle="6 professional filmmaking tools — VFX, color grading, storyboarding, and genre presets" />
+      <StudioHero icon={Clapperboard} title="CINEMA STUDIO" subtitle="6 professional filmmaking tools — VFX, color grading, storyboarding, and genre presets" backgroundImage="https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

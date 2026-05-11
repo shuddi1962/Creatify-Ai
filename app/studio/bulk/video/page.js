@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
 import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const SAMPLE_ROWS = [
   { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-2', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0 },
@@ -93,11 +93,11 @@ export default function BulkVideoPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <SectionLabel>Duration</SectionLabel>
-                    <PillSelector options={['5', '10']} value={duration} onChange={setDuration} />
+                    <StudioDropdown label="Duration" options={['5', '10']} value={duration} onChange={setDuration} />
                   </div>
                   <div>
                     <SectionLabel>Naming</SectionLabel>
-                    <PillSelector options={['Sequential', 'Row Number', 'Custom Prefix']} value={naming} onChange={setNaming} />
+                    <StudioDropdown label="Naming" options={['Sequential', 'Row Number', 'Custom Prefix']} value={naming} onChange={setNaming} />
                   </div>
                 </div>
               </div>

@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const SCALE_OPTIONS = ['2x', '4x', '8x'];
 const ENHANCEMENT_MODES = ['Standard', 'Face Enhancement', 'Detail Boost', 'Noise Reduction'];
@@ -77,15 +77,15 @@ export default function UpscalePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Scale</SectionLabel>
-                <PillSelector options={SCALE_OPTIONS} value={scale} onChange={setScale} />
+                <StudioDropdown options={SCALE_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={scale} onChange={setScale} />
               </div>
               <div>
                 <SectionLabel>Enhancement Mode</SectionLabel>
-                <PillSelector options={ENHANCEMENT_MODES} value={enhancementMode} onChange={setEnhancementMode} />
+                <StudioDropdown options={ENHANCEMENT_MODES.map(o => ({ value: o, label: o.toUpperCase() }))} value={enhancementMode} onChange={setEnhancementMode} />
               </div>
               <div>
                 <SectionLabel>Output Format</SectionLabel>
-                <PillSelector options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+                <StudioDropdown options={OUTPUT_FORMATS.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputFormat} onChange={setOutputFormat} />
               </div>
             </div>
           </div>

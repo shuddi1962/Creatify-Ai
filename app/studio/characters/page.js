@@ -18,7 +18,7 @@ const FEATURES = [
 export default function CharactersPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={UserPlus} title="CHARACTERS & WORLDS" subtitle="8 tools for character creation, world building, lighting, and scene templates" />
+      <StudioHero icon={UserPlus} title="CHARACTERS & WORLDS" subtitle="8 tools for character creation, world building, lighting, and scene templates" backgroundImage="https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

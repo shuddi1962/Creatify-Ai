@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const TRANSFER_TYPES = ['Body Movement', 'Head Movement', 'Camera Movement', 'Full Scene'];
 const PRESERVE_OPTIONS = ['Background', 'Lighting', 'Both'];
@@ -138,7 +138,7 @@ export default function MotionSyncPage() {
 
             <div>
               <SectionLabel>Motion Transfer Type</SectionLabel>
-              <PillSelector options={TRANSFER_TYPES} value={transferType} onChange={setTransferType} />
+              <StudioDropdown options={TRANSFER_TYPES} value={transferType} onChange={setTransferType} />
             </div>
 
             <div>
@@ -155,7 +155,7 @@ export default function MotionSyncPage() {
 
             <div>
               <SectionLabel>Preserve</SectionLabel>
-              <PillSelector options={PRESERVE_OPTIONS} value={preserve} onChange={setPreserve} />
+              <StudioDropdown options={PRESERVE_OPTIONS} value={preserve} onChange={setPreserve} />
             </div>
 
             <div>

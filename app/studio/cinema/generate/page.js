@@ -10,7 +10,7 @@ import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const GENRES = ['Action', 'Horror', 'Romance', 'Sci-Fi', 'Drama', 'Comedy', 'Documentary', 'Music Video', 'Commercial', 'Thriller'];
 const VISUAL_STYLES = ['Blockbuster', 'Indie Film', 'Short Film', 'Music Video', 'TV Drama', 'Anime Cinematic', 'European Art Film'];
@@ -78,7 +78,7 @@ export default function CinemaGeneratePage() {
                     key={g}
                     onClick={() => setGenre(g)}
                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                      genre === g ? 'bg-[#7C3AED] text-white border border-[#7C3AED]' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
+                      genre === g ? 'bg-[#6366f1] text-white border border-[#6366f1]' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
                     {g}
@@ -88,15 +88,15 @@ export default function CinemaGeneratePage() {
             </div>
             <div>
               <SectionLabel>Visual Style</SectionLabel>
-              <PillSelector options={VISUAL_STYLES} value={visualStyle} onChange={setVisualStyle} />
+              <StudioDropdown options={VISUAL_STYLES.map(o => ({ value: o, label: o.toUpperCase() }))} value={visualStyle} onChange={setVisualStyle} />
             </div>
             <div>
               <SectionLabel>Shot Type</SectionLabel>
-              <PillSelector options={SHOT_TYPES} value={shotType} onChange={setShotType} />
+              <StudioDropdown options={SHOT_TYPES.map(o => ({ value: o, label: o.toUpperCase() }))} value={shotType} onChange={setShotType} />
             </div>
             <div>
               <SectionLabel>Lighting</SectionLabel>
-              <PillSelector options={LIGHTING} value={lighting} onChange={setLighting} />
+              <StudioDropdown options={LIGHTING.map(o => ({ value: o, label: o.toUpperCase() }))} value={lighting} onChange={setLighting} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
@@ -123,7 +123,7 @@ export default function CinemaGeneratePage() {
             </div>
             <div>
               <SectionLabel>Quality</SectionLabel>
-              <PillSelector options={['standard', 'high', 'ultra']} value={quality} onChange={setQuality} />
+              <StudioDropdown options={['standard', 'high', 'ultra'].map(o => ({ value: o, label: o.toUpperCase() }))} value={quality} onChange={setQuality} />
             </div>
             <GenerateButton onClick={handleGenerate} loading={loading}>
               Generate Scene

@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const INPAINT_MODES = ['Replace', 'Keep Surrounding', 'Expand'];
@@ -136,14 +136,14 @@ export default function InpaintPage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe what to add to the masked area..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Inpaint Mode</SectionLabel>
-                <PillSelector options={INPAINT_MODES} value={inpaintMode} onChange={setInpaintMode} />
+                <StudioDropdown options={INPAINT_MODES} value={inpaintMode} onChange={setInpaintMode} label="INPAINT MODE" />
               </div>
               <div>
                 <SectionLabel>Model</SectionLabel>

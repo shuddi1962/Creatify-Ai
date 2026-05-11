@@ -6,13 +6,12 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
-import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
+import StudioDropdown from '@/components/StudioDropdown';
 import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StylePresets from '@/components/studio/StylePresets';
-import PillSelector from '@/components/studio/PillSelector';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const QUALITY_OPTIONS = ['Standard', 'HD', '4K'];
@@ -84,6 +83,7 @@ export default function TextToImagePage() {
         icon={Image}
         title="IMAGE STUDIO"
         subtitle="Generate stunning AI images from any text prompt"
+        backgroundImage="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200"
       />
       
       <div className="max-w-[900px] mx-auto px-4">
@@ -95,7 +95,7 @@ export default function TextToImagePage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe your image in detail..."
-                className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
@@ -118,26 +118,27 @@ export default function TextToImagePage() {
               {showNegative ? '− Hide Negative Prompt' : '+ Add Negative Prompt'}
             </button>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Model</SectionLabel>
-                <ModelSelector type="image" value={model} onChange={setModel} />
-              </div>
-              <div>
-                <SectionLabel>Aspect Ratio</SectionLabel>
-                <AspectRatioPicker value={aspectRatio} onChange={setAspectRatio} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <SectionLabel>Quality</SectionLabel>
-                <PillSelector options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
-              </div>
-              <div>
-                <SectionLabel>Images</SectionLabel>
-                <PillSelector options={NUM_IMAGES_OPTIONS} value={numImages} onChange={setNumImages} />
-              </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
+              gap: 16,
+            }}>
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={['flux', 'dalle', 'midjourney', 'stable-diffusion']} />
+              <StudioDropdown label="ASPECT RATIO" value={aspectRatio} onChange={setAspectRatio} options={[
+                { label: '1:1', desc: 'Square — Instagram, TikTok' },
+                { label: '16:9', desc: 'Landscape — YouTube, desktop' },
+                { label: '9:16', desc: 'Portrait — Reels, Shorts' },
+                { label: '4:3', desc: 'Standard — presentations' },
+                { label: '3:4', desc: 'Portrait standard' },
+                { label: '2:3', desc: 'Portrait narrow' },
+                { label: '3:2', desc: 'Photography standard' },
+              ]} />
+              <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={[
+                { label: 'Standard', desc: 'Fast — good for previews' },
+                { label: 'HD', desc: 'High quality — recommended' },
+                { label: '4K', desc: 'Ultra quality — uses 3x credits' },
+              ]} />
+              <StudioDropdown label="IMAGES" value={`${numImages} image${numImages > 1 ? 's' : ''}`} onChange={v => setNumImages(v.replace(' image','').replace('s',''))} options={['1 image', '2 images', '4 images', '8 images']} />
             </div>
 
             <div>

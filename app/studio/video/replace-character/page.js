@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const METHOD_TABS = ['Upload New Character', 'Describe Character', 'Use Saved Character'];
 const DETECTION_OPTIONS = ['Auto-detect', 'Manual selection'];
@@ -159,7 +159,7 @@ export default function ReplaceCharacterPage() {
                   value={characterDescription}
                   onChange={(e) => setCharacterDescription(e.target.value)}
                   placeholder="Describe the new character (age, gender, appearance, style...)"
-                  className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                  className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
                 />
               </div>
             )}
@@ -175,7 +175,7 @@ export default function ReplaceCharacterPage() {
 
             <div>
               <SectionLabel>Character Detection</SectionLabel>
-              <PillSelector options={DETECTION_OPTIONS} value={detection} onChange={setDetection} />
+              <StudioDropdown options={DETECTION_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={detection} onChange={setDetection} />
             </div>
 
             <div className="space-y-2">

@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 
 const CATEGORIES = ['All', 'Fire & Explosion', 'Weather', 'Magic', 'Creatures', 'Technology', 'Space', 'Nature', 'Destruction', 'Transition', 'Light & Color'];
@@ -125,7 +125,7 @@ export default function CinemaVFXPage() {
                   key={c}
                   onClick={() => setCategory(c)}
                   className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                    category === c ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
+                    category === c ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
                   }`}
                 >
                   {c}
@@ -137,7 +137,7 @@ export default function CinemaVFXPage() {
                 <button
                   key={effect.id}
                   onClick={() => handleApply(effect)}
-                  className="relative bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-3 hover:border-[#7C3AED]/50 transition-all group"
+                  className="relative bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-3 hover:border-[#6366f1]/50 transition-all group"
                 >
                   <div className="w-full aspect-video rounded-lg mb-2 flex items-center justify-center text-2xl font-bold" style={{ backgroundColor: effect.color + '22', color: effect.color }}>
                     <Zap size={20} />
@@ -145,7 +145,7 @@ export default function CinemaVFXPage() {
                   <p className="text-xs font-semibold text-white truncate">{effect.name}</p>
                   <div className="flex items-center gap-1 mt-1">
                     {effect.badge && (
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm ${effect.badge === 'NEW' ? 'bg-[#7C3AED]/20 text-[#7C3AED]' : 'bg-[#CCFF00]/20 text-[#CCFF00]'}`}>
+                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm $                        {effect.badge === 'NEW' ? 'bg-[#6366f1]/20 text-[#6366f1]' : 'bg-[#CCFF00]/20 text-[#CCFF00]'}`}>
                         {effect.badge}
                       </span>
                     )}
@@ -160,7 +160,7 @@ export default function CinemaVFXPage() {
           <GenerationPanel>
             <div className="space-y-4">
               <div className="flex items-center gap-2">
-                <Zap size={16} className="text-[#7C3AED]" />
+                <Zap size={16} className="text-[#6366f1]" />
                 <SectionLabel>Applying: {selectedEffect.name}</SectionLabel>
               </div>
               <UploadZone onFile={setUploadedFile} accept="video/*" label="Upload video to apply VFX" icon={Upload} preview={uploadedFile ? URL.createObjectURL(uploadedFile) : null} />
@@ -168,15 +168,15 @@ export default function CinemaVFXPage() {
                 <>
                   <div>
                     <SectionLabel>Intensity</SectionLabel>
-                    <PillSelector options={INTENSITY_PILLS} value={intensity} onChange={setIntensity} />
+                    <StudioDropdown options={INTENSITY_PILLS} value={intensity} onChange={setIntensity} />
                   </div>
                   <div>
                     <SectionLabel>Position</SectionLabel>
-                    <PillSelector options={POSITION_PILLS} value={position} onChange={setPosition} />
+                    <StudioDropdown options={POSITION_PILLS} value={position} onChange={setPosition} />
                   </div>
                   <div>
                     <SectionLabel>Blend Mode</SectionLabel>
-                    <PillSelector options={BLEND_PILLS} value={blend} onChange={setBlend} />
+                    <StudioDropdown options={BLEND_PILLS} value={blend} onChange={setBlend} />
                   </div>
                   <GenerateButton onClick={handleGenerate} loading={loading}>
                     Apply {selectedEffect.name}

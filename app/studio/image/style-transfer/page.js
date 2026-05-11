@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const PRESERVE_OPTIONS = ['Content Structure', 'Color Palette', 'Both', 'Neither'];
@@ -135,7 +135,7 @@ export default function StyleTransferPage() {
 
             <div>
               <SectionLabel>Preserve</SectionLabel>
-              <PillSelector options={PRESERVE_OPTIONS} value={preserve} onChange={setPreserve} />
+              <StudioDropdown options={PRESERVE_OPTIONS} value={preserve} onChange={setPreserve} label="PRESERVE" />
             </div>
 
             <div>

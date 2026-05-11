@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok', ratio: '9:16', label: '9:16' },
@@ -87,7 +87,7 @@ export default function MarketingFormatterPage() {
                         onClick={() => togglePlatform(p.id)}
                         className={`p-3 rounded-xl border transition-all ${
                           selectedPlatforms.includes(p.id)
-                            ? 'border-[#7C3AED] bg-[#7C3AED]/10 text-white'
+                            ? 'border-[#6366f1] bg-[#6366f1]/10 text-white'
                             : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'
                         }`}
                       >
@@ -99,17 +99,17 @@ export default function MarketingFormatterPage() {
                 </div>
                 <div>
                   <SectionLabel>Crop Mode</SectionLabel>
-                  <PillSelector options={CROP_MODES} value={cropMode} onChange={setCropMode} />
+                  <StudioDropdown label="Crop Mode" options={CROP_MODES} value={cropMode} onChange={setCropMode} />
                 </div>
                 <div>
                   <SectionLabel>Background Fill</SectionLabel>
-                  <PillSelector options={BG_FILLS} value={bgFill} onChange={setBgFill} />
+                  <StudioDropdown label="Background Fill" options={BG_FILLS} value={bgFill} onChange={setBgFill} />
                 </div>
                 <div className="flex gap-4">
-                  <button onClick={() => setCaptions(!captions)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${captions ? 'border-[#7C3AED] bg-[#7C3AED]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
+                  <button onClick={() => setCaptions(!captions)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${captions ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
                     Captions: {captions ? 'On' : 'Off'}
                   </button>
-                  <button onClick={() => setWatermark(!watermark)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${watermark ? 'border-[#7C3AED] bg-[#7C3AED]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
+                  <button onClick={() => setWatermark(!watermark)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${watermark ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
                     Watermark: {watermark ? 'On' : 'Off'}
                   </button>
                 </div>
@@ -131,7 +131,7 @@ export default function MarketingFormatterPage() {
                     key={r.platform}
                     onClick={() => setActiveTab(r.platform)}
                     className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                      activeTab === r.platform ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
+                      activeTab === r.platform ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
                     }`}
                   >
                     {r.platform.replace('-', ' ')}

@@ -25,7 +25,7 @@ const FEATURES = [
 export default function ImageStudioPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Image} title="IMAGE STUDIO" subtitle="15 powerful AI image tools — from text to image, editing, upscaling, and 3D" />
+      <StudioHero icon={Image} title="IMAGE STUDIO" subtitle="15 powerful AI image tools — from text to image, editing, upscaling, and 3D" backgroundImage="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

@@ -18,7 +18,7 @@ const FEATURES = [
 export default function WorkflowsPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Workflow} title="WORKFLOWS" subtitle="8 workflow tools — canvas builder, templates, community, scheduling, and sharing" />
+      <StudioHero icon={Workflow} title="WORKFLOWS" subtitle="8 workflow tools — canvas builder, templates, community, scheduling, and sharing" backgroundImage="https://images.pexels.com/photos/8386440/pexels-photo-8386440.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

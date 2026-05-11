@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const EXTENSION_OPTIONS = ['+2s', '+4s', '+6s', '+8s', 'Custom'];
 const DIRECTION_OPTIONS = ['Extend End', 'Extend Beginning', 'Both'];
@@ -110,7 +110,7 @@ export default function ExtendVideoPage() {
 
             <div>
               <SectionLabel>Extension Amount</SectionLabel>
-              <PillSelector options={EXTENSION_OPTIONS} value={extensionAmount} onChange={setExtensionAmount} />
+              <StudioDropdown options={EXTENSION_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={extensionAmount} onChange={setExtensionAmount} />
             </div>
 
             {extensionAmount === 'Custom' && (
@@ -127,7 +127,7 @@ export default function ExtendVideoPage() {
 
             <div>
               <SectionLabel>Direction</SectionLabel>
-              <PillSelector options={DIRECTION_OPTIONS} value={direction} onChange={setDirection} />
+              <StudioDropdown options={DIRECTION_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={direction} onChange={setDirection} />
             </div>
 
             <div>
@@ -136,7 +136,7 @@ export default function ExtendVideoPage() {
                 value={extensionPrompt}
                 onChange={(e) => setExtensionPrompt(e.target.value)}
                 placeholder="Describe what should happen in the extended section..."
-                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 

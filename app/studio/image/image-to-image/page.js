@@ -12,7 +12,7 @@ import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StylePresets from '@/components/studio/StylePresets';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const STYLE_OPTIONS = [
@@ -103,7 +103,7 @@ export default function ImageToImagePage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="Describe how you want to transform the image..."
-                className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
           </div>
@@ -130,7 +130,7 @@ export default function ImageToImagePage() {
             </div>
             <div>
               <SectionLabel>Style</SectionLabel>
-              <PillSelector options={STYLE_OPTIONS.slice(0, 6)} value={style} onChange={setStyle} />
+              <StudioDropdown options={STYLE_OPTIONS.slice(0, 6)} value={style} onChange={setStyle} label="STYLE" />
             </div>
             <div>
               <SectionLabel>Aspect Ratio</SectionLabel>

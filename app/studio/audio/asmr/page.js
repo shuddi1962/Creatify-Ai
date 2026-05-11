@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const ASMR_TYPES = [
   'Whispering', 'Tapping', 'Crinkling', 'Scratching', 'Water', 'Rain', 
@@ -71,7 +71,7 @@ export default function AsmrPage() {
                     onClick={() => setAsmrType(type)}
                     className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                       asmrType === type
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -84,18 +84,18 @@ export default function AsmrPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Intensity</SectionLabel>
-                <PillSelector options={INTENSITY_OPTIONS} value={intensity} onChange={setIntensity} />
+                <StudioDropdown options={INTENSITY_OPTIONS} value={intensity} onChange={setIntensity} />
               </div>
               <div>
                 <SectionLabel>Duration</SectionLabel>
-                <PillSelector options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
+                <StudioDropdown options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
               </div>
             </div>
 
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setBinaural(!binaural)}
-                className={`w-12 h-6 rounded-full transition-all ${binaural ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
+                className={`w-12 h-6 rounded-full transition-all ${binaural ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
               >
                 <div className={`w-5 h-5 rounded-full bg-white transition-transform ${binaural ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
@@ -104,7 +104,7 @@ export default function AsmrPage() {
 
             <div>
               <SectionLabel>Background Ambience</SectionLabel>
-              <PillSelector options={AMBIENCE_OPTIONS} value={ambience} onChange={setAmbience} />
+              <StudioDropdown options={AMBIENCE_OPTIONS} value={ambience} onChange={setAmbience} />
             </div>
           </div>
         </GenerationPanel>

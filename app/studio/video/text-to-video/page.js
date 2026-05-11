@@ -6,17 +6,13 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
-import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
+import StudioDropdown from '@/components/StudioDropdown';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
 import * as muapi from '@/packages/studio/src/muapi';
 
-const DURATION_OPTIONS = ['3s', '5s', '8s', '10s', '15s'];
-const QUALITY_OPTIONS = ['480p', '720p', '1080p', '4K'];
-const MOTION_OPTIONS = ['Low', 'Medium', 'High', 'Extreme'];
-const CAMERA_OPTIONS = ['Static', 'Zoom In', 'Zoom Out', 'Pan Left', 'Pan Right', 'Orbit', 'Handheld'];
+
 
 export default function TextToVideoPage() {
   const [inputMode, setInputMode] = useState('text');
@@ -181,28 +177,52 @@ export default function TextToVideoPage() {
               </div>
               <div>
                 <SectionLabel>Aspect Ratio</SectionLabel>
-                <AspectRatioPicker value={aspectRatio} onChange={setAspectRatio} options={['16:9', '9:16', '1:1', '4:3', '2.35:1']} />
+                <StudioDropdown label="ASPECT RATIO" value={aspectRatio} onChange={setAspectRatio} options={[
+                  { label: '16:9', desc: 'Landscape — YouTube, desktop' },
+                  { label: '9:16', desc: 'Portrait — Reels, Shorts' },
+                  { label: '1:1', desc: 'Square — Instagram, TikTok' },
+                  { label: '4:3', desc: 'Standard — presentations' },
+                  { label: '2.35:1', desc: 'Cinematic widescreen' },
+                ]} />
               </div>
             </div>
 
             <div>
               <SectionLabel>Duration</SectionLabel>
-              <PillSelector options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
+              <StudioDropdown label="DURATION" value={`${duration}`} onChange={setDuration} options={['3s', '5s', '8s', '10s', '15s']} />
             </div>
 
             <div>
               <SectionLabel>Quality</SectionLabel>
-              <PillSelector options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
+              <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={[
+                { label: '480p', desc: 'Fast — good for previews' },
+                { label: '720p', desc: 'HD — recommended' },
+                { label: '1080p', desc: 'Full HD — high quality' },
+                { label: '4K', desc: 'Ultra HD — uses 3x credits' },
+              ]} />
             </div>
 
             <div>
               <SectionLabel>Motion Intensity</SectionLabel>
-              <PillSelector options={MOTION_OPTIONS} value={motionIntensity} onChange={setMotionIntensity} />
+              <StudioDropdown label="MOTION" value={motionIntensity} onChange={setMotionIntensity} options={[
+                { label: 'Low', desc: 'Subtle, minimal movement' },
+                { label: 'Medium', desc: 'Natural motion — recommended' },
+                { label: 'High', desc: 'Dynamic, energetic movement' },
+                { label: 'Extreme', desc: 'Maximum motion and action' },
+              ]} />
             </div>
 
             <div>
               <SectionLabel>Camera Movement</SectionLabel>
-              <PillSelector options={CAMERA_OPTIONS} value={cameraMovement} onChange={setCameraMovement} />
+              <StudioDropdown label="CAMERA" value={cameraMovement} onChange={setCameraMovement} options={[
+                { label: 'Static', desc: 'No camera movement' },
+                { label: 'Zoom In', desc: 'Slowly push toward subject' },
+                { label: 'Zoom Out', desc: 'Pull back to reveal scene' },
+                { label: 'Pan Left', desc: 'Horizontal sweep left' },
+                { label: 'Pan Right', desc: 'Horizontal sweep right' },
+                { label: 'Orbit', desc: 'Circle around subject' },
+                { label: 'Handheld', desc: 'Realistic slight shake' },
+              ]} />
             </div>
           </div>
         </GenerationPanel>

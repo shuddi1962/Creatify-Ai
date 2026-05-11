@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const QUALITY_OPTIONS = ['standard', 'high'];
 
@@ -115,7 +115,7 @@ export default function BulkLipsyncPage() {
                 <SectionLabel>Model</SectionLabel>
                 <ModelSelector value={model} onChange={setModel} type="lipsync" />
                 <SectionLabel>Output Quality</SectionLabel>
-                <PillSelector options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
+                <StudioDropdown label="Output Quality" options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
               </div>
             </GenerationPanel>
             {rows.length > 0 && (

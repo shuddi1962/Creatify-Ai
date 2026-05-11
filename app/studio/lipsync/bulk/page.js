@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import ProgressTable from '@/components/studio/ProgressTable';
 
 const NAMING_OPTIONS = ['Sequential', 'Use audio filename', 'Custom prefix'];
@@ -138,15 +138,15 @@ export default function BulkLipSyncPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Naming Convention</SectionLabel>
-                <PillSelector options={NAMING_OPTIONS} value={namingConvention} onChange={setNamingConvention} />
+                <StudioDropdown options={NAMING_OPTIONS} value={namingConvention} onChange={setNamingConvention} />
               </div>
               <div>
                 <SectionLabel>Output Quality</SectionLabel>
-                <PillSelector options={OUTPUT_QUALITY} value={outputQuality} onChange={setOutputQuality} />
+                <StudioDropdown options={OUTPUT_QUALITY} value={outputQuality} onChange={setOutputQuality} />
               </div>
               <div>
                 <SectionLabel>Output Format</SectionLabel>
-                <PillSelector options={OUTPUT_FORMAT} value={outputFormat} onChange={setOutputFormat} />
+                <StudioDropdown options={OUTPUT_FORMAT} value={outputFormat} onChange={setOutputFormat} />
               </div>
             </div>
 

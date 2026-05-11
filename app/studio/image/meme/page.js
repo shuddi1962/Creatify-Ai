@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const MEME_TYPES = ['Classic top-bottom text', 'Modern overlay', 'Reaction', 'Deep Fried', 'Wholesome', 'Dank'];
 const FONTS = ['Impact', 'Arial Black', 'Comic Sans', 'Helvetica Bold', 'Custom'];
@@ -83,7 +83,7 @@ export default function MemePage() {
                     onClick={() => setMemeType(type)}
                     className={`px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
                       memeType === type
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -107,7 +107,7 @@ export default function MemePage() {
                       value={topText}
                       onChange={(e) => setTopText(e.target.value)}
                       placeholder="TOP TEXT"
-                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]"
+                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
                     />
                   </div>
                   <div>
@@ -117,7 +117,7 @@ export default function MemePage() {
                       value={bottomText}
                       onChange={(e) => setBottomText(e.target.value)}
                       placeholder="BOTTOM TEXT"
-                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]"
+                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
                     />
                   </div>
                 </div>
@@ -128,7 +128,7 @@ export default function MemePage() {
                     value={prompt}
                     onChange={(e) => setPrompt(e.target.value)}
                     placeholder="Describe your meme concept..."
-                    className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                    className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
                   />
                 </div>
               )}
@@ -137,11 +137,11 @@ export default function MemePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Font</SectionLabel>
-                <PillSelector options={FONTS} value={font} onChange={setFont} />
+                <StudioDropdown options={FONTS.map(o => ({ value: o, label: o.toUpperCase() }))} value={font} onChange={setFont} />
               </div>
               <div>
                 <SectionLabel>Text Color</SectionLabel>
-                <PillSelector options={TEXT_COLORS} value={textColor} onChange={setTextColor} />
+                <StudioDropdown options={TEXT_COLORS.map(o => ({ value: o, label: o.toUpperCase() }))} value={textColor} onChange={setTextColor} />
                 {textColor === 'Custom' && (
                   <input
                     type="color"

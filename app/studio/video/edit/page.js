@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const EDIT_MODES = ['Replace Content', 'Change Style', 'Remove Object', 'Add Object'];
 
@@ -130,13 +130,13 @@ export default function EditVideoPage() {
                 value={editPrompt}
                 onChange={(e) => setEditPrompt(e.target.value)}
                 placeholder="Describe what to put in the selected region..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div>
               <SectionLabel>Edit Mode</SectionLabel>
-              <PillSelector options={EDIT_MODES} value={editMode} onChange={setEditMode} />
+              <StudioDropdown options={EDIT_MODES} value={editMode} onChange={setEditMode} />
             </div>
 
             <div className="bg-[#1a1a1a] rounded-xl p-4 border border-white/[0.08]">
@@ -145,7 +145,7 @@ export default function EditVideoPage() {
                 <p className="text-xs text-[#555]">Draw mask on video area to edit</p>
               </div>
               <div className="flex gap-2 mt-3">
-                <button className="px-3 py-1.5 bg-[#7C3AED] text-white rounded-lg text-xs font-medium">Brush</button>
+                <button className="px-3 py-1.5 bg-[#6366f1] text-white rounded-lg text-xs font-medium">Brush</button>
                 <button className="px-3 py-1.5 bg-[#1a1a1a] text-[#888] rounded-lg text-xs font-medium border border-white/[0.08]">Eraser</button>
                 <button className="px-3 py-1.5 bg-[#1a1a1a] text-[#888] rounded-lg text-xs font-medium border border-white/[0.08]">Clear</button>
               </div>

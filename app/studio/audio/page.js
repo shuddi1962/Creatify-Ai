@@ -17,7 +17,7 @@ const FEATURES = [
 export default function AudioStudioPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={Mic} title="AUDIO STUDIO" subtitle="7 audio tools — voiceovers, music generation, cloning, and sound effects" />
+      <StudioHero icon={Mic} title="AUDIO STUDIO" subtitle="7 audio tools — voiceovers, music generation, cloning, and sound effects" backgroundImage="https://images.pexels.com/photos/3756766/pexels-photo-3756766.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

@@ -19,7 +19,7 @@ const FEATURES = [
 export default function MediaPage() {
   return (
     <div className="min-h-screen pb-16" style={{ background: '#000000' }}>
-      <StudioHero icon={FolderOpen} title="MEDIA LIBRARY" subtitle="9 media tools — browse, organize, storage management, and cloud sync" />
+      <StudioHero icon={FolderOpen} title="MEDIA LIBRARY" subtitle="9 media tools — browse, organize, storage management, and cloud sync" backgroundImage="https://images.pexels.com/photos/4467687/pexels-photo-4467687.jpeg?auto=compress&cs=tinysrgb&w=1200" />
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
         <div style={{
           display: 'grid',

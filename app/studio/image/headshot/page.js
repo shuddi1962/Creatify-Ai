@@ -9,7 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const STYLE_PRESETS = [
   'Business Professional', 'LinkedIn', 'Creative', 'Executive', 
@@ -113,7 +113,7 @@ export default function HeadshotPage() {
                     onClick={() => setStylePreset(style)}
                     className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
                       stylePreset === style
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -126,22 +126,22 @@ export default function HeadshotPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Background</SectionLabel>
-                <PillSelector options={BACKGROUNDS} value={background} onChange={setBackground} />
+                <StudioDropdown options={BACKGROUNDS.map(o => ({ value: o, label: o.toUpperCase() }))} value={background} onChange={setBackground} />
               </div>
               <div>
                 <SectionLabel>Attire</SectionLabel>
-                <PillSelector options={ATTIRES} value={attire} onChange={setAttire} />
+                <StudioDropdown options={ATTIRES.map(o => ({ value: o, label: o.toUpperCase() }))} value={attire} onChange={setAttire} />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Expression</SectionLabel>
-                <PillSelector options={EXPRESSIONS} value={expression} onChange={setExpression} />
+                <StudioDropdown options={EXPRESSIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={expression} onChange={setExpression} />
               </div>
               <div>
                 <SectionLabel>Output Quantity</SectionLabel>
-                <PillSelector options={OUTPUT_QUANTITIES} value={outputQty} onChange={setOutputQty} />
+                <StudioDropdown options={OUTPUT_QUANTITIES.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputQty} onChange={setOutputQty} />
               </div>
             </div>
           </div>

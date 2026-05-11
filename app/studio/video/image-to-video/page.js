@@ -10,7 +10,7 @@ import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const MOTION_PRESETS = ['Zoom In', 'Zoom Out', 'Pan Right', 'Pan Left', 'Orbit', 'Float', 'Shake', 'Cinematic Drift', 'Breathing', 'Subtle Motion'];
 const DURATION_OPTIONS = ['3s', '5s', '8s', '10s', '15s'];
@@ -110,7 +110,7 @@ export default function ImageToVideoPage() {
                 value={motionPrompt}
                 onChange={(e) => setMotionPrompt(e.target.value)}
                 placeholder="Describe how the image should move..."
-                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
@@ -123,7 +123,7 @@ export default function ImageToVideoPage() {
                     onClick={() => setMotionPreset(preset)}
                     className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-all ${
                       motionPreset === preset
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
+                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
                         : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
                     }`}
                   >
@@ -140,7 +140,7 @@ export default function ImageToVideoPage() {
               </div>
               <div>
                 <SectionLabel>Duration</SectionLabel>
-                <PillSelector options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
+                <StudioDropdown options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
               </div>
             </div>
 
@@ -151,7 +151,7 @@ export default function ImageToVideoPage() {
               </div>
               <div>
                 <SectionLabel>Motion Strength</SectionLabel>
-                <PillSelector options={STRENGTH_OPTIONS} value={motionStrength} onChange={setMotionStrength} />
+                <StudioDropdown options={STRENGTH_OPTIONS} value={motionStrength} onChange={setMotionStrength} />
               </div>
             </div>
           </div>

@@ -1,17 +1,36 @@
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
 
-const SEED_POOLS = {
-  'Image Showcase': ['community-img1', 'community-img2', 'community-img3', 'community-img4', 'community-img5', 'community-img6', 'community-img7', 'community-img8'],
-  'Video Showcase': ['community-vid1', 'community-vid2', 'community-vid3', 'community-vid4', 'community-vid5', 'community-vid6', 'community-vid7', 'community-vid8'],
-  'Marketing Ads Showcase': ['community-ad1', 'community-ad2', 'community-ad3', 'community-ad4', 'community-ad5', 'community-ad6', 'community-ad7', 'community-ad8'],
+const IMAGE_POOLS = {
+  'Image Showcase': [
+    'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/4467687/pexels-photo-4467687.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/1239291/pexels-photo-1239291.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/3184418/pexels-photo-3184418.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/1065084/pexels-photo-1065084.jpeg?auto=compress&cs=tinysrgb&w=300',
+  ],
+  'Video Showcase': [
+    'https://images.pexels.com/photos/7988086/pexels-photo-7988086.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/1547813/pexels-photo-1547813.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/2510428/pexels-photo-2510428.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/3075993/pexels-photo-3075993.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/1121796/pexels-photo-1121796.jpeg?auto=compress&cs=tinysrgb&w=300',
+  ],
+  'Marketing Ads Showcase': [
+    'https://images.pexels.com/photos/6476808/pexels-photo-6476808.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/5632397/pexels-photo-5632397.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/3769747/pexels-photo-3769747.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=300',
+    'https://images.pexels.com/photos/4825701/pexels-photo-4825701.jpeg?auto=compress&cs=tinysrgb&w=300',
+  ],
 };
 
 const WIDTHS = ['130', '110', '140', '120', '150', '130', '110', '140'];
 const HEIGHTS = ['170', '150', '120', '160', '110', '140', '170', '130'];
 
 export default function CommunityStrip({ title, subtitle, viewAllHref, items }) {
-  const seeds = SEED_POOLS[title] || [];
+  const images = IMAGE_POOLS[title] || [];
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
@@ -30,7 +49,7 @@ export default function CommunityStrip({ title, subtitle, viewAllHref, items }) 
           {(items || []).map((item, i) => {
             const w = WIDTHS[i % WIDTHS.length];
             const h = HEIGHTS[i % HEIGHTS.length];
-            const seed = seeds[i] || `community-${title}-${i}`;
+            const src = images[i] || images[0];
             return (
               <Link
                 key={i}
@@ -39,9 +58,10 @@ export default function CommunityStrip({ title, subtitle, viewAllHref, items }) 
                 style={{ width: `${w}px`, height: `${h}px` }}
               >
                 <img
-                  src={`https://picsum.photos/seed/${seed}/${w}/${h}`}
+                  src={src}
                   alt=""
                   className="w-full h-full object-cover"
+                  loading="lazy"
                 />
               </Link>
             );

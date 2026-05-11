@@ -6,7 +6,7 @@ import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 
 const TONES = ['Professional', 'Casual', 'Playful', 'Luxury', 'Bold', 'Friendly', 'Minimal'];
@@ -16,8 +16,8 @@ export default function MarketingBrandKitPage() {
   const [logo, setLogo] = useState(null);
   const [brandName, setBrandName] = useState('');
   const [tagline, setTagline] = useState('');
-  const [primary, setPrimary] = useState('#7C3AED');
-  const [secondary, setSecondary] = useState('#7C3AED');
+  const [primary, setPrimary] = useState('#6366f1');
+  const [secondary, setSecondary] = useState('#6366f1');
   const [accent, setAccent] = useState('#CCFF00');
   const [background, setBackground] = useState('#000000');
   const [primaryFont, setPrimaryFont] = useState('Inter');
@@ -114,7 +114,7 @@ export default function MarketingBrandKitPage() {
             <SectionLabel>Brand Voice</SectionLabel>
             <div>
               <SectionLabel>Tone of Voice</SectionLabel>
-              <PillSelector options={TONES} value={tone} onChange={setTone} />
+              <StudioDropdown label="Tone of Voice" options={TONES} value={tone} onChange={setTone} />
             </div>
             <div>
               <label className="text-xs text-[#888]">Industry</label>

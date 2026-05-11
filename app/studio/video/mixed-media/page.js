@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const BLEND_MODES = ['Overlay', 'Replace Background', 'Add Foreground', 'Full Composite'];
 const POSITION_OPTIONS = ['Full Frame', 'Background Only', 'Foreground Only', 'Custom Region'];
@@ -107,18 +107,18 @@ export default function MixedMediaPage() {
                 value={aiPrompt}
                 onChange={(e) => setAiPrompt(e.target.value)}
                 placeholder="Describe the AI-generated elements..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div>
               <SectionLabel>Blend Mode</SectionLabel>
-              <PillSelector options={BLEND_MODES} value={blendMode} onChange={setBlendMode} />
+              <StudioDropdown options={BLEND_MODES.map(o => ({ value: o, label: o.toUpperCase() }))} value={blendMode} onChange={setBlendMode} />
             </div>
 
             <div>
               <SectionLabel>AI Element Position</SectionLabel>
-              <PillSelector options={POSITION_OPTIONS} value={elementPosition} onChange={setElementPosition} />
+              <StudioDropdown options={POSITION_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={elementPosition} onChange={setElementPosition} />
             </div>
 
             <div>
@@ -135,7 +135,7 @@ export default function MixedMediaPage() {
 
             <div>
               <SectionLabel>Style Matching</SectionLabel>
-              <PillSelector options={STYLE_OPTIONS} value={styleMode} onChange={setStyleMode} />
+              <StudioDropdown options={STYLE_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={styleMode} onChange={setStyleMode} />
             </div>
 
             {styleMode === 'Manual style prompt' && (
@@ -145,7 +145,7 @@ export default function MixedMediaPage() {
                   value={manualStyle}
                   onChange={(e) => setManualStyle(e.target.value)}
                   placeholder="Describe the visual style..."
-                  className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                  className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
                 />
               </div>
             )}

@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const CAMERA_PRESETS = ['Wide Shot', 'Close-Up', 'Aerial', 'Eye-Level', 'Low Angle', 'Dutch Tilt', 'Over-the-Shoulder', 'POV', 'Macro', 'Fish-Eye'];
@@ -87,7 +87,7 @@ export default function CameraAnglePage() {
                 value={prompt}
                 onChange={(e) => setPrompt(e.target.value)}
                 placeholder="A lone traveler standing on a mountain ridge at sunset..."
-                className="w-full h-28 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-28 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
@@ -113,22 +113,22 @@ export default function CameraAnglePage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Lens Type</SectionLabel>
-                <PillSelector options={LENS_TYPES} value={lens} onChange={setLens} />
+                <StudioDropdown options={LENS_TYPES} value={lens} onChange={setLens} label="LENS" />
               </div>
               <div>
                 <SectionLabel>Aperture</SectionLabel>
-                <PillSelector options={APERTURES} value={aperture} onChange={setAperture} />
+                <StudioDropdown options={APERTURES} value={aperture} onChange={setAperture} label="APERTURE" />
               </div>
               <div>
                 <SectionLabel>Depth of Field</SectionLabel>
-                <PillSelector options={DOF_OPTIONS} value={dof} onChange={setDof} />
+                <StudioDropdown options={DOF_OPTIONS} value={dof} onChange={setDof} label="DEPTH OF FIELD" />
               </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Lighting Preset</SectionLabel>
-                <PillSelector options={LIGHTING_PRESETS} value={lighting} onChange={setLighting} />
+                <StudioDropdown options={LIGHTING_PRESETS} value={lighting} onChange={setLighting} label="LIGHTING" />
               </div>
               <div>
                 <SectionLabel>Model</SectionLabel>

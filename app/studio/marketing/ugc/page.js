@@ -8,7 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 
 const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'Facebook', 'LinkedIn'];
@@ -79,29 +79,29 @@ export default function MarketingUGCPage() {
           <div className="space-y-4">
             <div>
               <SectionLabel>Platform</SectionLabel>
-              <PillSelector options={PLATFORMS} value={platform} onChange={setPlatform} />
+              <StudioDropdown label="PLATFORM" value={platform} onChange={setPlatform} options={PLATFORMS} />
             </div>
             <div>
               <SectionLabel>Hook Style</SectionLabel>
-              <PillSelector options={HOOK_STYLES} value={hookStyle} onChange={setHookStyle} />
+              <StudioDropdown label="HOOK STYLE" value={hookStyle} onChange={setHookStyle} options={HOOK_STYLES} />
             </div>
             <div>
               <SectionLabel>Tone</SectionLabel>
-              <PillSelector options={TONES} value={tone} onChange={setTone} />
+              <StudioDropdown label="TONE" value={tone} onChange={setTone} options={TONES} />
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Duration</SectionLabel>
-                <PillSelector options={DURATIONS} value={duration} onChange={setDuration} />
+                <StudioDropdown label="DURATION" value={duration} onChange={setDuration} options={DURATIONS} />
               </div>
               <div>
                 <SectionLabel>Creator Style</SectionLabel>
-                <PillSelector options={CREATOR_STYLES} value={creatorStyle} onChange={setCreatorStyle} />
+                <StudioDropdown label="CREATOR STYLE" value={creatorStyle} onChange={setCreatorStyle} options={CREATOR_STYLES} />
               </div>
             </div>
             <div>
               <SectionLabel>Number of Variants</SectionLabel>
-              <PillSelector options={VARIANTS.map(v => `${v}`)} value={`${variants}`} onChange={v => setVariants(parseInt(v))} />
+              <StudioDropdown label="NUMBER OF VARIANTS" value={`${variants}`} onChange={v => setVariants(parseInt(v))} options={VARIANTS.map(v => `${v}`)} />
             </div>
           </div>
         </GenerationPanel>

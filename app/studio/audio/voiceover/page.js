@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Arabic', 'Russian', 'Dutch', 'Polish', 'Turkish', 'Vietnamese', 'Thai', 'Indonesian', 'Czech', 'Romanian', 'Hungarian', 'Greek', 'Swedish', 'Norwegian', 'Finnish', 'Danish', 'Ukrainian', 'Hebrew', 'Bengali', 'Tamil', 'Telugu', 'Malay', 'Filipino'];
 const VOICES = [
@@ -94,7 +94,7 @@ export default function VoiceoverPage() {
                 value={script}
                 onChange={(e) => setScript(e.target.value)}
                 placeholder="Type or paste your script here..."
-                className="w-full h-40 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-40 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
@@ -137,7 +137,7 @@ export default function VoiceoverPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Speech Speed</SectionLabel>
-                <PillSelector options={SPEED_OPTIONS} value={speed} onChange={setSpeed} />
+                <StudioDropdown label="SPEECH SPEED" value={speed} onChange={setSpeed} options={SPEED_OPTIONS} />
               </div>
               <div>
                 <SectionLabel>Pitch: {pitch > 0 ? '+' : ''}{pitch}</SectionLabel>
@@ -152,7 +152,7 @@ export default function VoiceoverPage() {
               </div>
               <div>
                 <SectionLabel>Emphasis</SectionLabel>
-                <PillSelector options={EMPHASIS_OPTIONS} value={emphasis} onChange={setEmphasis} />
+                <StudioDropdown label="EMPHASIS" value={emphasis} onChange={setEmphasis} options={EMPHASIS_OPTIONS} />
               </div>
             </div>
 
@@ -171,7 +171,7 @@ export default function VoiceoverPage() {
               </div>
               <div>
                 <SectionLabel>Output Format</SectionLabel>
-                <PillSelector options={OUTPUT_FORMAT} value={outputFormat} onChange={setOutputFormat} />
+                <StudioDropdown label="OUTPUT FORMAT" value={outputFormat} onChange={setOutputFormat} options={OUTPUT_FORMAT} />
               </div>
             </div>
           </div>

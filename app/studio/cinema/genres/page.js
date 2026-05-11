@@ -74,8 +74,8 @@ export default function CinemaGenresPage() {
               <button
                 key={genre.id}
                 onClick={() => handleSelect(genre)}
-                className={`relative bg-[#0a0a0a] rounded-xl border p-3 text-left hover:border-[#7C3AED]/50 transition-all ${
-                  selectedGenre === genre.id ? 'border-[#7C3AED] ring-1 ring-[#7C3AED]' : 'border-white/[0.08]'
+                className={`relative bg-[#0a0a0a] rounded-xl border p-3 text-left hover:border-[#6366f1]/50 transition-all ${
+                  selectedGenre === genre.id ? 'border-[#6366f1] ring-1 ring-[#6366f1]' : 'border-white/[0.08]'
                 }`}
               >
                 <p className="text-sm font-bold text-white">{genre.name}</p>

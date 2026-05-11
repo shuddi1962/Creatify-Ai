@@ -9,7 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const FACE_DETECTION = ['Auto', 'Manual crop'];
 const HEAD_MOVEMENT = ['Static', 'Natural Head Bob', 'Expressive'];
@@ -151,15 +151,15 @@ export default function PortraitPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <SectionLabel>Face Detection</SectionLabel>
-                <PillSelector options={FACE_DETECTION} value={faceDetection} onChange={setFaceDetection} />
+                <StudioDropdown options={FACE_DETECTION.map(o => ({ value: o, label: o.toUpperCase() }))} value={faceDetection} onChange={setFaceDetection} />
               </div>
               <div>
                 <SectionLabel>Head Movement</SectionLabel>
-                <PillSelector options={HEAD_MOVEMENT} value={headMovement} onChange={setHeadMovement} />
+                <StudioDropdown options={HEAD_MOVEMENT.map(o => ({ value: o, label: o.toUpperCase() }))} value={headMovement} onChange={setHeadMovement} />
               </div>
               <div>
                 <SectionLabel>Eye Blink</SectionLabel>
-                <PillSelector options={EYE_BLINK} value={eyeBlink} onChange={setEyeBlink} />
+                <StudioDropdown options={EYE_BLINK.map(o => ({ value: o, label: o.toUpperCase() }))} value={eyeBlink} onChange={setEyeBlink} />
               </div>
             </div>
 
@@ -170,7 +170,7 @@ export default function PortraitPage() {
               </div>
               <div>
                 <SectionLabel>Output Quality</SectionLabel>
-                <PillSelector options={OUTPUT_QUALITY} value={outputQuality} onChange={setOutputQuality} />
+                <StudioDropdown options={OUTPUT_QUALITY.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputQuality} onChange={setOutputQuality} />
               </div>
             </div>
           </div>

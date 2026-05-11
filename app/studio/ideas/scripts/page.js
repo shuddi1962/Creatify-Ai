@@ -7,7 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import GenerateButton from '@/components/studio/GenerateButton';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn'];
 const DURATIONS = ['15s', '30s', '60s', '3min', '5min', '10min'];
@@ -60,8 +60,8 @@ export default function ScriptsPage() {
 
   const SCRIPT_SECTIONS = [
     { key: 'hook', label: 'HOOK', color: '#CCFF00' },
-    { key: 'intro', label: 'INTRO', color: '#7C3AED' },
-    { key: 'main', label: 'MAIN CONTENT', color: '#7C3AED' },
+    { key: 'intro', label: 'INTRO', color: '#6366f1' },
+    { key: 'main', label: 'MAIN CONTENT', color: '#6366f1' },
     { key: 'cta', label: 'CTA', color: '#F59E0B' },
     { key: 'outro', label: 'OUTRO', color: '#10B981' },
   ];
@@ -75,35 +75,35 @@ export default function ScriptsPage() {
           <div className="space-y-5">
             <div>
               <SectionLabel>Video Topic</SectionLabel>
-              <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="e.g. Morning routine that changed my life" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+              <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="e.g. Morning routine that changed my life" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
             </div>
             <div>
               <SectionLabel>Platform</SectionLabel>
-              <PillSelector options={PLATFORMS} value={platform} onChange={setPlatform} />
+              <StudioDropdown options={PLATFORMS} value={platform} onChange={setPlatform} />
             </div>
             <div>
               <SectionLabel>Duration</SectionLabel>
-              <PillSelector options={DURATIONS} value={duration} onChange={setDuration} />
+              <StudioDropdown options={DURATIONS} value={duration} onChange={setDuration} />
             </div>
             <div>
               <SectionLabel>Script Style</SectionLabel>
-              <PillSelector options={STYLES} value={style} onChange={setStyle} />
+              <StudioDropdown options={STYLES} value={style} onChange={setStyle} />
             </div>
             <div>
               <SectionLabel>Tone</SectionLabel>
-              <PillSelector options={TONES} value={tone} onChange={setTone} />
+              <StudioDropdown options={TONES} value={tone} onChange={setTone} />
             </div>
             <div>
               <SectionLabel>Hook Type</SectionLabel>
               <div className="flex flex-wrap gap-2">
                 {HOOK_TYPES.map(h => (
-                  <button key={h} onClick={() => setHookType(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${hookType === h ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
+                  <button key={h} onClick={() => setHookType(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${hookType === h ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
                 ))}
               </div>
             </div>
             <div>
               <SectionLabel>Call to Action (Optional)</SectionLabel>
-              <input value={cta} onChange={e => setCta(e.target.value)} placeholder="e.g. Follow for more tips" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+              <input value={cta} onChange={e => setCta(e.target.value)} placeholder="e.g. Follow for more tips" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
             </div>
           </div>
         </GenerationPanel>

@@ -10,7 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
-import PillSelector from '@/components/studio/PillSelector';
+import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const PLACEMENT_STYLES = ['Natural', 'Floating', 'Shadow', 'Reflection'];
@@ -128,14 +128,14 @@ export default function ProductPlacementPage() {
                 value={scenePrompt}
                 onChange={(e) => setScenePrompt(e.target.value)}
                 placeholder="Describe the scene or leave empty for AI to generate..."
-                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
+                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
               />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Placement Style</SectionLabel>
-                <PillSelector options={PLACEMENT_STYLES} value={placementStyle} onChange={setPlacementStyle} />
+                <StudioDropdown options={PLACEMENT_STYLES} value={placementStyle} onChange={setPlacementStyle} label="PLACEMENT STYLE" />
               </div>
               <div>
                 <SectionLabel>Product Scale</SectionLabel>
@@ -156,7 +156,7 @@ export default function ProductPlacementPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Background Style</SectionLabel>
-                <PillSelector options={BG_STYLES} value={bgStyle} onChange={setBgStyle} />
+                <StudioDropdown options={BG_STYLES} value={bgStyle} onChange={setBgStyle} label="BACKGROUND" />
                 {bgStyle === 'Custom' && (
                   <div className="mt-3">
                     <UploadZone onFile={handleCustomBg} preview={customBg} accept="image/*" label="Custom background" />

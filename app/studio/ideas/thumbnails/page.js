@@ -58,14 +58,14 @@ export default function ThumbnailsPage() {
           <div className="space-y-5">
             <div>
               <SectionLabel>Video Title</SectionLabel>
-              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. I Tried the 30-Day Challenge and Here's What Happened" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
+              <input value={title} onChange={e => setTitle(e.target.value)} placeholder="e.g. I Tried the 30-Day Challenge and Here's What Happened" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <SectionLabel>Platform</SectionLabel>
                 <div className="flex gap-2 flex-wrap">
                   {PLATFORMS.map(p => (
-                    <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
+                    <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
                   ))}
                 </div>
               </div>
@@ -73,7 +73,7 @@ export default function ThumbnailsPage() {
                 <SectionLabel>Style</SectionLabel>
                 <div className="flex gap-2 flex-wrap">
                   {STYLES.map(s => (
-                    <button key={s} onClick={() => setStyle(s)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${style === s ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{s}</button>
+                    <button key={s} onClick={() => setStyle(s)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${style === s ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{s}</button>
                   ))}
                 </div>
               </div>
@@ -87,7 +87,7 @@ export default function ThumbnailsPage() {
                 <SectionLabel>Number of Thumbnails</SectionLabel>
                 <div className="flex gap-2 mt-8">
                   {NUM_OPTIONS.map(n => (
-                    <button key={n} onClick={() => setNumThumbs(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${numThumbs === n ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n}</button>
+                    <button key={n} onClick={() => setNumThumbs(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${numThumbs === n ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n}</button>
                   ))}
                 </div>
                 <div className="mt-4">
