@@ -150,6 +150,10 @@ export default function StudioShell({ children }) {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
+  useEffect(() => {
+    setSidebarCollapsed(pathname.startsWith('/studio/settings'));
+  }, [pathname]);
+
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
   const handleDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.items?.length) setIsDragging(true); }, []);
   const handleDragLeave = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (!e.currentTarget.contains(e.relatedTarget)) setIsDragging(false); }, []);

@@ -22,7 +22,7 @@ export default function SettingsPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px', display: 'flex', gap: 0 }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: '32px 40px', display: 'flex', gap: 0 }}>
 
         <aside style={{
           width: 220, flexShrink: 0,
@@ -98,7 +98,7 @@ export default function SettingsPage() {
           </button>
         </aside>
 
-        <div style={{ flex: 1, paddingLeft: 24 }}>
+        <div style={{ flex: 1, paddingLeft: 32 }}>
           {activeTab === 'profile' && <ProfileSection user={user} />}
           {activeTab === 'api-keys' && <ApiKeysSection />}
           {activeTab === 'subscription' && <SubscriptionSection />}
@@ -115,7 +115,7 @@ export default function SettingsPage() {
 
 function ProfileSection({ user }) {
   return (
-    <div style={{ maxWidth: 780 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
@@ -233,149 +233,13 @@ function ProfileSection({ user }) {
           </div>
         </div>
 
-        <div style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-          borderRadius: 12, padding: 20,
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-            <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Usage history</span>
-            <span style={{ fontSize: 11, color: 'var(--accent-text)', cursor: 'pointer' }}>See all</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'flex-end', gap: 4, height: 120 }}>
-            {[40, 25, 55, 35, 60, 30, 45, 50, 20, 65, 40, 55, 35, 50].map((h, i) => (
-              <div key={i} style={{
-                flex: 1, height: `${h}%`,
-                background: 'var(--bg-input)',
-                borderRadius: '4px 4px 0 0', minHeight: 4,
-              }} />
-            ))}
-          </div>
-        </div>
+        <!-- Buy Credits card -->
+        <BuyCreditsCard />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        <div style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-          borderRadius: 12, padding: 20,
-        }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>Karma earned</div>
-          <div style={{ display: 'flex', gap: 6, marginBottom: 12 }}>
-            {['Karma earned', 'About karma'].map(t => (
-              <button key={t} style={{
-                padding: '4px 10px', fontSize: 11, fontWeight: 500,
-                borderRadius: 6, border: 'none', cursor: 'pointer',
-                background: t === 'Karma earned' ? 'var(--accent-bg)' : 'var(--bg-input)',
-                color: t === 'Karma earned' ? 'var(--accent-text)' : 'var(--text-secondary)',
-              }}>{t}</button>
-            ))}
-          </div>
-          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 8 }}>Overview (0) | Current streak (0)</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            {[
-              { task: 'Welcome bonus', reward: '+100 free karma bonus' },
-              { task: 'Join a project as collaborator', reward: '+100 karma bonus for 3 projects' },
-              { task: 'Image generations', reward: '+10 karma for each generation' },
-            ].map((item, i) => (
-              <div key={i} style={{
-                display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start',
-                padding: '8px 0', borderBottom: '1px solid var(--border-subtle)',
-              }}>
-                <div>
-                  <div style={{ fontSize: 12, color: 'var(--text-primary)' }}>{item.task}</div>
-                  <div style={{ fontSize: 10, color: 'var(--text-muted)' }}>{item.reward}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
-            <button style={{
-              padding: '6px 14px', fontSize: 11, fontWeight: 600,
-              background: 'transparent', border: '1px solid var(--border-default)',
-              borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
-            }}>See all</button>
-            <button style={{
-              padding: '6px 14px', fontSize: 11, fontWeight: 600,
-              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
-              border: 'none', borderRadius: 6, cursor: 'pointer',
-            }}>Exchange</button>
-          </div>
-        </div>
+      <PublishToggle />
 
-        <div style={{
-          background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-          borderRadius: 12, padding: 20,
-        }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>Karma history</div>
-          <div style={{
-            display: 'flex', flexDirection: 'column', alignItems: 'center',
-            padding: '24px 0', gap: 8,
-          }}>
-            <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Zap size={18} style={{ color: 'var(--text-muted)' }} />
-            </div>
-            <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500 }}>No karma history</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', textAlign: 'center' }}>Earn and exchange karma in Chat</div>
-            <button style={{
-              padding: '8px 16px', fontSize: 12, fontWeight: 600,
-              background: 'var(--accent-primary)', color: '#fff',
-              border: 'none', borderRadius: 8, cursor: 'pointer', marginTop: 4,
-            }}>
-              Go to Chat
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <div style={{
-        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-        borderRadius: 12, padding: 20, marginBottom: 16,
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Publish to explore</div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>All your generations will be automatically published to the explore feed</div>
-          </div>
-          <button style={{
-            width: 40, height: 22, borderRadius: 100, position: 'relative',
-            background: 'var(--accent-primary)', border: 'none', cursor: 'pointer',
-          }}>
-            <div style={{
-              position: 'absolute', top: 2, left: 20,
-              width: 18, height: 18, borderRadius: '50%',
-              background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-              transition: 'left 150ms',
-            }} />
-          </button>
-        </div>
-      </div>
-
-      <div style={{
-        background: 'rgba(239,68,68,0.04)',
-        border: '1px solid rgba(239,68,68,0.2)',
-        borderRadius: 12, padding: 20,
-      }}>
-        <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 8 }}>Danger Zone</div>
-        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>
-          Deleting your account will permanently remove:
-        </div>
-        <ul style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.8, marginBottom: 16, paddingLeft: 16 }}>
-          <li>Access to all your generations</li>
-          <li>All Library & Community content</li>
-          <li>Current discounts and subscription</li>
-          <li>All saved settings and presets</li>
-          <li>Remaining credits on your balance</li>
-        </ul>
-        <button style={{
-          padding: '8px 16px', fontSize: 12, fontWeight: 600,
-          background: 'transparent', border: '1px solid #ef4444',
-          borderRadius: 8, color: '#ef4444', cursor: 'pointer',
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.08)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-        >
-          Delete Account
-        </button>
-      </div>
+      <DangerZoneSection />
     </div>
   );
 }
@@ -384,7 +248,7 @@ function ApiKeysSection() {
   const [newKeyName, setNewKeyName] = useState('');
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
@@ -450,7 +314,7 @@ function ApiKeysSection() {
 
 function SubscriptionSection() {
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
@@ -518,7 +382,7 @@ function NotificationsSection() {
   ];
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24,
@@ -563,7 +427,7 @@ function ConnectedAccountsSection() {
   ];
 
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24,
@@ -603,7 +467,7 @@ function ConnectedAccountsSection() {
 
 function SecuritySection({ user }) {
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
@@ -701,7 +565,7 @@ function SecuritySection({ user }) {
 
 function ReferralsSection({ user }) {
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24,
@@ -749,7 +613,7 @@ function ReferralsSection({ user }) {
 
 function BillingSection() {
   return (
-    <div style={{ maxWidth: 600 }}>
+    <div style={{ maxWidth: '100%' }}>
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
@@ -812,6 +676,165 @@ function BillingSection() {
           ))}
         </div>
       </div>
+    </div>
+  );
+}
+
+function BuyCreditsCard() {
+  const [selected, setSelected] = useState(null);
+  const packs = [
+    { credits: 100, price: '$4.99', popular: false },
+    { credits: 500, price: '$19.99', popular: true },
+    { credits: 1000, price: '$34.99', popular: false },
+    { credits: 5000, price: '$149.99', popular: false },
+  ];
+
+  return (
+    <div style={{
+      background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+      borderRadius: 12, padding: 20,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Buy Credits</span>
+        <Zap size={14} style={{ color: 'var(--accent-primary)' }} />
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 12 }}>
+        {packs.map((p, i) => (
+          <button
+            key={i}
+            onClick={() => setSelected(i)}
+            style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '10px 14px',
+              background: selected === i ? 'var(--accent-bg)' : 'var(--bg-input)',
+              border: selected === i ? '1px solid var(--accent-border)' : '1px solid var(--border-default)',
+              borderRadius: 8, cursor: 'pointer',
+              transition: 'all 120ms',
+            }}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: selected === i ? 'var(--accent-text)' : 'var(--text-primary)' }}>{p.credits}</span>
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>credits</span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              {p.popular && <span style={{ fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 4, background: 'var(--btn-generate-bg)', color: '#000', textTransform: 'uppercase' }}>Best</span>}
+              <span style={{ fontSize: 13, fontWeight: 700, color: selected === i ? 'var(--accent-text)' : 'var(--text-primary)' }}>{p.price}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+      <button onClick={() => { if (selected !== null) toast.success('Purchasing credits...'); else toast.error('Select a pack first'); }}
+        style={{
+          width: '100%', padding: '9px 0', fontSize: 13, fontWeight: 700,
+          background: selected !== null ? 'var(--btn-generate-bg)' : 'var(--bg-input)',
+          color: selected !== null ? 'var(--btn-generate-text)' : 'var(--text-muted)',
+          border: 'none', borderRadius: 8, cursor: selected !== null ? 'pointer' : 'default',
+          transition: 'all 120ms',
+        }}
+      >
+        {selected !== null ? `Buy ${packs[selected].credits} Credits` : 'Select a pack'}
+      </button>
+    </div>
+  );
+}
+
+function PublishToggle() {
+  const [enabled, setEnabled] = useState(true);
+  return (
+    <div style={{
+      background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+      borderRadius: 12, padding: 20, marginBottom: 16,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div>
+          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>Publish to explore</div>
+          <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>All your generations will be automatically published to the explore feed</div>
+        </div>
+        <button onClick={() => setEnabled(!enabled)} style={{
+          width: 40, height: 22, borderRadius: 100, position: 'relative',
+          background: enabled ? 'var(--accent-primary)' : 'var(--bg-input)',
+          border: 'none', cursor: 'pointer', transition: 'background 150ms',
+        }}>
+          <div style={{
+            position: 'absolute', top: 2,
+            left: enabled ? 20 : 2,
+            width: 18, height: 18, borderRadius: '50%',
+            background: '#fff', boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+            transition: 'left 150ms',
+          }} />
+        </button>
+      </div>
+      {enabled && <div style={{ fontSize: 10, color: 'var(--accent-text)', marginTop: 6 }}>Your generations are being shared to the explore feed</div>}
+    </div>
+  );
+}
+
+function DangerZoneSection() {
+  const [confirmed, setConfirmed] = useState({
+    generations: false,
+    content: false,
+    discounts: false,
+    settings: false,
+    credits: false,
+  });
+  const allConfirmed = Object.values(confirmed).every(Boolean);
+
+  return (
+    <div style={{
+      background: 'rgba(239,68,68,0.04)',
+      border: '1px solid rgba(239,68,68,0.2)',
+      borderRadius: 12, padding: 20,
+    }}>
+      <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 8 }}>Danger Zone</div>
+      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>
+        Deleting your account will permanently remove:
+      </div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 16 }}>
+        {[
+          { key: 'generations', label: 'Access to all your generations' },
+          { key: 'content', label: 'All Library & Community content' },
+          { key: 'discounts', label: 'Current discounts and subscription' },
+          { key: 'settings', label: 'All saved settings and presets' },
+          { key: 'credits', label: 'Remaining credits on your balance' },
+        ].map(item => (
+          <div key={item.key} style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            padding: '8px 12px',
+            background: confirmed[item.key] ? 'rgba(239,68,68,0.08)' : 'transparent',
+            borderRadius: 6,
+          }}>
+            <span style={{ fontSize: 12, color: confirmed[item.key] ? '#ef4444' : 'var(--text-secondary)' }}>{item.label}</span>
+            <button
+              onClick={() => setConfirmed(prev => ({ ...prev, [item.key]: !prev[item.key] }))}
+              style={{
+                width: 36, height: 20, borderRadius: 100, position: 'relative',
+                background: confirmed[item.key] ? '#ef4444' : 'var(--bg-input)',
+                border: 'none', cursor: 'pointer', transition: 'background 150ms', flexShrink: 0,
+              }}
+            >
+              <div style={{
+                position: 'absolute', top: 2,
+                left: confirmed[item.key] ? 16 : 2,
+                width: 16, height: 16, borderRadius: '50%',
+                background: '#fff', transition: 'left 150ms',
+              }} />
+            </button>
+          </div>
+        ))}
+      </div>
+      <button
+        onClick={() => { if (allConfirmed) toast.success('Account deletion requested'); else toast.error('Please confirm all items first'); }}
+        style={{
+          width: '100%', padding: '9px 0', fontSize: 12, fontWeight: 700,
+          background: allConfirmed ? '#ef4444' : 'transparent',
+          border: `1px solid ${allConfirmed ? '#ef4444' : 'rgba(239,68,68,0.3)'}`,
+          borderRadius: 8, color: allConfirmed ? '#fff' : '#ef4444',
+          cursor: allConfirmed ? 'pointer' : 'default',
+          transition: 'all 120ms',
+        }}
+      >
+        {allConfirmed ? 'Confirm Delete Account' : 'Toggle all items to delete'}
+      </button>
     </div>
   );
 }
