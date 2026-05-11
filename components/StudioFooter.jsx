@@ -37,8 +37,8 @@ export default function StudioFooter() {
 
   return (
     <footer style={{
-      borderTop: '1px solid rgba(255,255,255,0.06)',
-      background: '#0a0a0a',
+      borderTop: '1px solid var(--border-medium)',
+      background: 'var(--bg-panel)',
       padding: '48px 24px 24px',
       flexShrink: 0,
     }}>
@@ -54,19 +54,19 @@ export default function StudioFooter() {
             <div style={{ width: 28, height: 28, background: '#00C896', borderRadius: 6, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
-            <span style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary-soft)' }}>Creatify AI</span>
           </Link>
-          <p style={{ fontSize: 12, color: '#666', lineHeight: 1.6, maxWidth: 280 }}>
+          <p style={{ fontSize: 12, color: 'var(--text-tertiary)', lineHeight: 1.6, maxWidth: 280 }}>
             Free open-source AI content studio. Generate images, videos, audio, and more with 200+ models.
           </p>
           <div style={{ display: 'flex', gap: 12, marginTop: 16 }}>
-            <a href="https://github.com/shuddi1962/Creatify-Ai" target="_blank" rel="noopener noreferrer" style={{ color: '#666', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = '#666'}>
+            <a href="https://github.com/shuddi1962/Creatify-Ai" target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-tertiary)', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}>
               GitHub
             </a>
-            <a href="#" style={{ color: '#666', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = '#666'}>
+            <a href="#" style={{ color: 'var(--text-tertiary)', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}>
               Twitter
             </a>
-            <a href="#" style={{ color: '#666', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = '#666'}>
+            <a href="#" style={{ color: 'var(--text-tertiary)', fontSize: 12, transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}>
               Discord
             </a>
           </div>
@@ -74,10 +74,10 @@ export default function StudioFooter() {
 
         {sections.map(section => (
           <div key={section.title}>
-            <h4 style={{ fontSize: 11, fontWeight: 600, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>{section.title}</h4>
+            <h4 style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 12 }}>{section.title}</h4>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {section.links.map(link => (
-                <Link key={link.label} href={link.href} style={{ fontSize: 12, color: '#666', textDecoration: 'none', transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = '#666'}>
+                <Link key={link.label} href={link.href} style={{ fontSize: 12, color: 'var(--text-tertiary)', textDecoration: 'none', transition: 'color 150ms' }} onMouseEnter={e => e.currentTarget.style.color = '#00C896'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-tertiary)'}>
                   {link.label}
                 </Link>
               ))}
@@ -90,17 +90,17 @@ export default function StudioFooter() {
         maxWidth: 1200,
         margin: '32px auto 0',
         paddingTop: 16,
-        borderTop: '1px solid rgba(255,255,255,0.04)',
+        borderTop: '1px solid var(--border-light)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         flexWrap: 'wrap',
         gap: 12,
       }}>
-        <p style={{ fontSize: 11, color: '#444' }}>
+        <p style={{ fontSize: 11, color: 'var(--text-quaternary)' }}>
           &copy; {new Date().getFullYear()} Creatify AI. Open-source under MIT License.
         </p>
-        <p style={{ fontSize: 11, color: '#444' }}>
+        <p style={{ fontSize: 11, color: 'var(--text-quaternary)' }}>
           Powered by Muapi.ai &middot; 200+ AI Models
         </p>
       </div>

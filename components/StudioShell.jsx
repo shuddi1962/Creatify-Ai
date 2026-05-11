@@ -61,6 +61,21 @@ export default function StudioShell({ children }) {
     localStorage.setItem('studio_theme', theme);
   }, [theme]);
 
+  const [themeReady, setThemeReady] = useState(false);
+
+  useEffect(() => {
+    setThemeReady(true);
+  }, []);
+
+  useEffect(() => {
+    if (themeReady) {
+      const el = document.documentElement;
+      el.classList.add('theme-transition');
+      const timer = setTimeout(() => el.classList.remove('theme-transition'), 400);
+      return () => clearTimeout(timer);
+    }
+  }, [theme, themeReady]);
+
   const fetchBalance = useCallback(async (key) => {
     try {
       const data = await getUserBalance(key);
@@ -170,7 +185,7 @@ export default function StudioShell({ children }) {
           style={{
             padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
             fontSize: 13, fontWeight: isActive ? 600 : 500,
-            color: isActive ? '#ffffff' : '#9CA3AF',
+            color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
             background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
             transition: 'all 150ms ease', whiteSpace: 'nowrap'
           }}
@@ -199,18 +214,18 @@ export default function StudioShell({ children }) {
   };
 
   return (
-    <div className="bg-black flex flex-col text-white relative"
-      style={{ minHeight: '100vh' }}
+    <div className="flex flex-col relative"
+      style={{ minHeight: '100vh', background: 'var(--bg-body)', color: 'var(--text-primary)' }}
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
-        style: { background: 'rgba(17, 24, 39, 0.95)', color: '#fff', border: '1px solid rgba(255,255,255,0.08)', backdropFilter: 'blur(10px)', fontSize: '13px' },
+        style: { background: 'var(--toast-bg, rgba(17, 24, 39, 0.95))', color: 'var(--text-primary)', border: '1px solid var(--border-strong, rgba(255,255,255,0.08))', backdropFilter: 'blur(10px)', fontSize: '13px' },
         success: { iconTheme: { primary: '#00C896', secondary: '#fff' } },
       }} />
 
       {isDragging && (
-        <div className="fixed inset-0 z-[100] bg-[#00C896]/10 backdrop-blur-md border-4 border-dashed border-[#00C896]/50 flex items-center justify-center pointer-events-none">
-          <div className="bg-[rgba(17,24,39,0.95)] p-8 rounded-3xl border border-white/10 shadow-2xl flex flex-col items-center gap-4 scale-110 animate-pulse">
+        <div className="fixed inset-0 z-[100] backdrop-blur-md border-4 border-dashed flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,200,150,0.1)', borderColor: 'rgba(0,200,150,0.5)' }}>
+          <div className="p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 scale-110 animate-pulse" style={{ background: 'var(--toast-bg, rgba(17,24,39,0.95))', border: '1px solid var(--border-strong)' }}>
             <div className="w-20 h-20 bg-[#00C896] rounded-2xl flex items-center justify-center">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
             </div>
@@ -224,8 +239,8 @@ export default function StudioShell({ children }) {
 
       <header style={{
         flexShrink: 0, height: 56,
-        background: '#111111',
-        borderBottom: '1px solid rgba(255,255,255,0.06)',
+        background: 'var(--bg-card)',
+        borderBottom: '1px solid var(--border-medium)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '0 16px', zIndex: 100, position: 'sticky', top: 0
       }}>
@@ -239,7 +254,7 @@ export default function StudioShell({ children }) {
             <div style={{ width: 32, height: 32, background: '#00C896', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
-            <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
+            <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary-soft)' }}>Creatify AI</span>
           </Link>
 
           <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -250,26 +265,26 @@ export default function StudioShell({ children }) {
         <div style={{ flex: 1, maxWidth: 360, margin: '0 16px' }}>
           <div style={{
             display: 'flex', alignItems: 'center', gap: 8,
-            background: '#1a1a1a', borderRadius: 8,
-            border: '1px solid rgba(255,255,255,0.06)',
+            background: 'var(--bg-elevated)', borderRadius: 8,
+            border: '1px solid var(--border-medium)',
             padding: '0 12px', height: 34,
             transition: 'border-color 150ms',
           }}
-            onMouseEnter={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.15)'}
-            onMouseLeave={e => e.currentTarget.style.borderColor = 'rgba(255,255,255,0.06)'}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-strong)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-medium)'}
           >
-            <Icons.Search size={14} style={{ color: '#555', flexShrink: 0 }} />
+            <Icons.Search size={14} style={{ color: 'var(--text-icon)', flexShrink: 0 }} />
             <input
               type="text"
               placeholder="Search models, tools, features..."
               style={{
                 flex: 1, border: 'none', outline: 'none', background: 'transparent',
-                color: '#ccc', fontSize: 12, height: '100%',
+                color: 'var(--text-input)', fontSize: 12, height: '100%',
               }}
               onFocus={e => { e.target.parentElement.style.borderColor = '#00C896'; }}
-              onBlur={e => { e.target.parentElement.style.borderColor = 'rgba(255,255,255,0.06)'; }}
+              onBlur={e => { e.target.parentElement.style.borderColor = 'var(--border-medium)'; }}
             />
-            <kbd style={{ fontSize: 9, color: '#555', background: '#222', padding: '1px 5px', borderRadius: 4, border: '1px solid rgba(255,255,255,0.05)' }}>/</kbd>
+            <kbd style={{ fontSize: 9, color: 'var(--text-icon)', background: 'var(--bg-hover)', padding: '1px 5px', borderRadius: 4, border: '1px solid var(--border-color)' }}>/</kbd>
           </div>
         </div>
 
@@ -278,12 +293,12 @@ export default function StudioShell({ children }) {
             width: 32, height: 32, borderRadius: 8,
             border: 'none', cursor: 'pointer',
             background: 'transparent',
-            color: '#9CA3AF', flexShrink: 0,
+            color: 'var(--text-secondary)', flexShrink: 0,
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             transition: 'all 150ms ease',
           }}
-          onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-          onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+          onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--glass-bg)'; }}
+          onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
         >
           {theme === 'dark' ? <Icons.Sun size={16} /> : <Icons.Moon size={16} />}
         </button>
@@ -294,12 +309,12 @@ export default function StudioShell({ children }) {
               display: 'flex', alignItems: 'center', gap: 5,
               padding: '6px 12px', borderRadius: 6,
               cursor: 'pointer',
-              color: '#9CA3AF', fontSize: 12, fontWeight: 600,
+              color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600,
               textDecoration: 'none',
               transition: 'all 150ms ease',
             }}
-            onMouseEnter={e => { e.currentTarget.style.color = '#fff'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = '#9CA3AF'; e.currentTarget.style.background = 'transparent'; }}
+            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--glass-bg)'; }}
+            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
           >
             <Icons.CreditCard size={14} />
             Pricing
@@ -325,17 +340,17 @@ export default function StudioShell({ children }) {
             {showAccountMenu && (
               <div style={{
                 position: 'absolute', right: 0, top: 'calc(100% + 6px)',
-                width: 220, background: '#1a1a1a',
-                border: '1px solid rgba(255,255,255,0.08)',
+                width: 220, background: 'var(--bg-elevated)',
+                border: '1px solid var(--border-strong)',
                 borderRadius: 10, padding: 6,
-                boxShadow: '0 12px 40px rgba(0,0,0,0.5)',
+                boxShadow: '0 12px 40px var(--overlay-bg)',
                 zIndex: 200,
               }}>
                 {user && (
                   <div style={{
                     display: 'flex', alignItems: 'center', gap: 10,
                     padding: '8px 10px', marginBottom: 4,
-                    borderBottom: '1px solid rgba(255,255,255,0.06)',
+                    borderBottom: '1px solid var(--border-medium)',
                     paddingBottom: 10,
                   }}>
                     <div style={{
@@ -347,7 +362,7 @@ export default function StudioShell({ children }) {
                       {user.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: '#F9FAFB', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary-soft)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
                       <div style={{ fontSize: 11, color: '#6B7280' }}>Signed in</div>
                     </div>
                   </div>
@@ -357,11 +372,11 @@ export default function StudioShell({ children }) {
                   style={{
                     display: 'flex', alignItems: 'center', gap: 10,
                     padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                    color: '#D1D5DB', textDecoration: 'none',
+                    color: 'var(--text-menu)', textDecoration: 'none',
                     transition: 'all 150ms ease',
                   }}
-                  onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#fff'; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D1D5DB'; }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--glass-bg)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-menu)'; }}
                 >
                   <Icons.Settings size={15} />
                   Settings
@@ -387,12 +402,12 @@ export default function StudioShell({ children }) {
                     style={{
                       display: 'flex', alignItems: 'center', gap: 10,
                       padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                      color: '#D1D5DB', width: '100%', border: 'none', cursor: 'pointer',
+                      color: 'var(--text-menu)', width: '100%', border: 'none', cursor: 'pointer',
                       background: 'transparent', textAlign: 'left',
                       transition: 'all 150ms ease',
                     }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = '#fff'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = '#D1D5DB'; }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--glass-bg)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-menu)'; }}
                   >
                     <Icons.LogIn size={15} />
                     Sign In
@@ -408,8 +423,8 @@ export default function StudioShell({ children }) {
         <aside className="hidden lg:flex"
           style={{
             width: sidebarCollapsed ? 60 : 160, flexShrink: 0,
-            background: '#111111',
-            borderRight: '1px solid rgba(255,255,255,0.07)',
+            background: 'var(--bg-card)',
+            borderRight: '1px solid var(--border-medium)',
             display: 'flex', flexDirection: 'column',
             gap: 4,
             paddingTop: 8, paddingBottom: 8,
@@ -448,7 +463,7 @@ export default function StudioShell({ children }) {
                     width: 54, height: 54, borderRadius: 14,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                     background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     flexShrink: 0,
                     transition: 'background 150ms ease, color 150ms ease'
                   }}>
@@ -456,7 +471,7 @@ export default function StudioShell({ children }) {
                   </div>
                   <span style={{
                     fontSize: 11, fontWeight: 600,
-                    color: '#ffffff',
+                    color: 'var(--text-primary)',
                     lineHeight: 1.2,
                     whiteSpace: 'nowrap',
                     transition: 'color 150ms ease'
@@ -495,7 +510,7 @@ export default function StudioShell({ children }) {
             <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setMobileDrawerOpen(false)} />
             <div style={{
               position: 'absolute', left: 0, top: 0, bottom: 0, width: '85vw', maxWidth: 320,
-              background: '#111111', borderRight: '1px solid rgba(255,255,255,0.07)',
+              background: 'var(--bg-card)', borderRight: '1px solid var(--border-medium)',
               overflowY: 'auto', padding: 16
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -503,14 +518,14 @@ export default function StudioShell({ children }) {
                   <div style={{ width: 32, height: 32, background: '#00C896', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: '#F9FAFB' }}>Creatify AI</span>
+                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary-soft)' }}>Creatify AI</span>
                 </Link>
-                <button onClick={() => setMobileDrawerOpen(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'rgba(255,255,255,0.05)', color: '#9CA3AF', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button onClick={() => setMobileDrawerOpen(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--glass-bg)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <Icons.X size={18} />
                 </button>
               </div>
 
-              <div style={{ fontSize: 10, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Studios</div>
+              <div style={{ fontSize: 10, color: 'var(--text-menu-muted)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Studios</div>
               {TOP_NAV.map(item => {
                 const id = topNavId(item.label);
                 const iconMap = { image: Icons.Image, video: Icons.Video, lipsync: Icons.Mic, audio: Icons.Music, cinema: Icons.Film, marketing: Icons.Briefcase };
@@ -522,7 +537,7 @@ export default function StudioShell({ children }) {
                       width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                       padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
                       background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
-                      color: isActive ? '#A78BFA' : '#9CA3AF',
+                      color: isActive ? '#A78BFA' : 'var(--text-secondary)',
                       fontSize: 13, fontWeight: 500, textDecoration: 'none',
                       transition: 'all 150ms ease', marginBottom: 2
                     }}
@@ -533,8 +548,8 @@ export default function StudioShell({ children }) {
                 );
               })}
 
-              <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', margin: '12px 0', paddingTop: 12 }}>
-                <div style={{ fontSize: 10, color: '#4B5563', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Tools</div>
+              <div style={{ borderTop: '1px solid var(--border-medium)', margin: '12px 0', paddingTop: 12 }}>
+                <div style={{ fontSize: 10, color: 'var(--text-menu-muted)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Tools</div>
                 {SIDEBAR_ITEMS.map(item => {
                   const id = getSidebarId(item);
                   const IconComp = item.icon;
@@ -545,14 +560,14 @@ export default function StudioShell({ children }) {
                       style={{
                         width: '100%', display: 'flex', alignItems: 'center', gap: 10,
                         padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                        background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
-                        color: isActive ? '#A78BFA' : '#9CA3AF',
-                        fontSize: 13, fontWeight: 500, textDecoration: 'none',
-                        transition: 'all 150ms ease', marginBottom: 2
-                      }}
-                    >
-                      <IconComp size={18} />
-                      <span>{displayLabel}</span>
+                      background: isActive ? 'rgba(124,58,237,0.15)' : 'transparent',
+                      color: isActive ? '#A78BFA' : 'var(--text-secondary)',
+                      fontSize: 13, fontWeight: 500, textDecoration: 'none',
+                      transition: 'all 150ms ease', marginBottom: 2
+                    }}
+                  >
+                    <IconComp size={18} />
+                    <span>{displayLabel}</span>
                     </Link>
                   );
                 })}
@@ -561,7 +576,7 @@ export default function StudioShell({ children }) {
           </div>
         )}
 
-        <main className="flex-1" style={{ background: '#050505', overflowY: 'auto', overflowX: 'hidden' }}>
+        <main className="flex-1" style={{ background: 'var(--bg-app)', overflowY: 'auto', overflowX: 'hidden' }}>
           {children}
         </main>
       </div>
@@ -572,40 +587,40 @@ export default function StudioShell({ children }) {
       {showApiKeyModal && <ApiKeyModal onSave={(key) => { handleKeySave(key); setShowApiKeyModal(false); }} />}
 
       {showSettings && (
-        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
-          <div className="bg-[rgba(17,24,39,0.95)] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl backdrop-blur-xl">
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up" style={{ background: 'var(--overlay-bg)' }}>
+          <div className="border rounded-xl p-8 w-full max-w-sm shadow-2xl backdrop-blur-xl" style={{ background: 'var(--toast-bg, rgba(17,24,39,0.95))', borderColor: 'var(--border-strong)' }}>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-[#F9FAFB] font-bold text-lg">Settings</h2>
-              <button onClick={() => setShowSettings(false)} className="text-[#9CA3AF] hover:text-[#F9FAFB] transition-colors">
+              <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary-soft)' }}>Settings</h2>
+              <button onClick={() => setShowSettings(false)} className="transition-colors" style={{ color: 'var(--text-secondary)' }} onMouseEnter={e => e.currentTarget.style.color = 'var(--text-primary)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--text-secondary)'}>
                 <Icons.X size={18} />
               </button>
             </div>
             <div className="space-y-4 mb-6">
-              <div className="bg-white/5 border border-white/[0.03] rounded-lg p-4">
-                <label className="block text-xs font-bold text-[#9CA3AF] mb-2">Account</label>
+              <div className="rounded-lg p-4" style={{ background: 'var(--glass-bg)', border: '1px solid var(--border-subtle)' }}>
+                <label className="block text-xs font-bold mb-2" style={{ color: 'var(--text-secondary)' }}>Account</label>
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-[#00C896]/20 border border-[#00C896]/30 flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(0,200,150,0.2)', border: '1px solid rgba(0,200,150,0.3)' }}>
                       <span className="text-xs font-bold text-[#00C896]">{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-[13px] font-medium text-[#F9FAFB] truncate">{user.email}</div>
-                      <div className="text-[11px] text-[#9CA3AF]">Signed in</div>
+                      <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary-soft)' }}>{user.email}</div>
+                      <div className="text-[11px]" style={{ color: 'var(--text-secondary)' }}>Signed in</div>
                     </div>
                     <button onClick={async () => { await signOut(); resetStorageMode(); handleKeyChange(); setShowSettings(false); }}
-                      className="text-xs text-red-400 hover:text-red-300 font-medium transition-colors">Sign Out</button>
+                      className="text-xs font-medium transition-colors" style={{ color: '#F87171' }} onMouseEnter={e => e.currentTarget.style.color = '#EF4444'} onMouseLeave={e => e.currentTarget.style.color = '#F87171'}>Sign Out</button>
                   </div>
                 ) : (
                   <div className="flex items-center justify-between">
-                    <span className="text-[13px] text-[#9CA3AF]">Not signed in</span>
+                    <span className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>Not signed in</span>
                     <button onClick={() => { setShowSettings(false); setShowAuthModal(true); }}
-                      className="text-xs text-[#00C896] font-medium hover:text-[#00C896]/80 transition-colors">Sign In</button>
+                      className="text-xs font-medium transition-colors" style={{ color: '#00C896' }} onMouseEnter={e => e.currentTarget.style.color = 'rgba(0,200,150,0.8)'} onMouseLeave={e => e.currentTarget.style.color = '#00C896'}>Sign In</button>
                   </div>
                 )}
               </div>
-              <div className="bg-white/5 border border-white/[0.03] rounded-lg p-4">
-                <label className="block text-xs font-bold text-[#9CA3AF] mb-2">Muapi API Key</label>
-                <div className="text-[13px] font-mono text-[#F9FAFB] mb-3">
+              <div className="rounded-lg p-4" style={{ background: 'var(--glass-bg)', border: '1px solid var(--border-subtle)' }}>
+                <label className="block text-xs font-bold mb-2" style={{ color: 'var(--text-secondary)' }}>Muapi API Key</label>
+                <div className="text-[13px] font-mono mb-3" style={{ color: 'var(--text-primary-soft)' }}>
                   {apiKey ? apiKey.slice(0, 8) + '••••••••••••••••' : 'Not set'}
                 </div>
                 <div className="flex gap-2">
@@ -613,14 +628,14 @@ export default function StudioShell({ children }) {
                     <>
                       {user && (
                         <button onClick={async () => { try { await saveAPIKey(apiKey); toast?.success?.('API key saved to your account'); } catch (e) { console.error(e); } }}
-                          className="flex-1 h-9 rounded-md bg-white/5 text-[#9CA3AF] hover:bg-white/10 text-[11px] font-semibold transition-all border border-white/5">Save to Account</button>
+                          className="flex-1 h-9 rounded-md text-[11px] font-semibold transition-all" style={{ background: 'var(--glass-bg)', color: 'var(--text-secondary)', border: '1px solid var(--border-color)' }}>Save to Account</button>
                       )}
                       <button onClick={handleKeyChange}
-                        className="flex-1 h-9 rounded-md bg-red-500/10 text-red-400 hover:bg-red-500/20 text-[11px] font-semibold transition-all">Remove Key</button>
+                        className="flex-1 h-9 rounded-md text-[11px] font-semibold transition-all" style={{ background: 'rgba(248,113,113,0.1)', color: '#F87171' }}>Remove Key</button>
                     </>
                   ) : (
                     <button onClick={() => { setShowSettings(false); setShowApiKeyModal(true); }}
-                      className="flex-1 h-9 rounded-md bg-[#00C896] text-white hover:bg-[#6D28D9] text-xs font-semibold transition-all">Set API Key</button>
+                      className="flex-1 h-9 rounded-md bg-[#00C896] text-black text-xs font-semibold transition-all hover:bg-[#6D28D9] hover:text-white">Set API Key</button>
                   )}
                 </div>
               </div>

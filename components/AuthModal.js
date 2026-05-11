@@ -61,13 +61,13 @@ export default function AuthModal({ onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up">
-      <div className="bg-[#0a0a0a] border border-white/10 rounded-xl p-8 w-full max-w-sm shadow-2xl">
+    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50 animate-fade-in-up" style={{ background: 'var(--overlay-bg)' }}>
+      <div className="border rounded-xl p-8 w-full max-w-sm shadow-2xl" style={{ background: 'var(--bg-panel)', borderColor: 'var(--border-strong)' }}>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-white font-bold text-lg">
+          <h2 className="font-bold text-lg" style={{ color: 'var(--text-primary)' }}>
             {mode === 'login' ? 'Sign In' : 'Create Account'}
           </h2>
-          <button onClick={onClose} className="text-white/30 hover:text-white/60 transition-colors">
+          <button onClick={onClose} className="transition-colors" style={{ color: 'var(--text-icon)' }}>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M18 6L6 18M6 6l12 12" />
             </svg>
@@ -75,13 +75,13 @@ export default function AuthModal({ onClose }) {
         </div>
 
         {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-400 text-xs">
+          <div className="mb-4 p-3 rounded-lg text-xs" style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)', color: '#F87171' }}>
             {error}
           </div>
         )}
 
         {success && (
-          <div className="mb-4 p-3 rounded-lg bg-green-500/10 border border-green-500/20 text-green-400 text-xs">
+          <div className="mb-4 p-3 rounded-lg text-xs" style={{ background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)', color: '#34D399' }}>
             {success}
           </div>
         )}
@@ -93,7 +93,8 @@ export default function AuthModal({ onClose }) {
               key={p.id}
               onClick={() => handleOAuth(p.id)}
               disabled={oauthLoading !== null}
-              className="flex items-center justify-center gap-3 h-11 rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-white text-sm font-medium disabled:opacity-50 transition-all"
+              className="flex items-center justify-center gap-3 h-11 rounded-lg text-sm font-medium disabled:opacity-50 transition-all"
+              style={{ border: '1px solid var(--border-strong)', background: 'var(--glass-bg)', color: 'var(--text-primary)' }}
             >
               {oauthLoading === p.id ? (
                 <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24">
@@ -112,25 +113,26 @@ export default function AuthModal({ onClose }) {
 
         {/* Divider */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="flex-1 h-px bg-white/10" />
-          <span className="text-xs text-white/30">or continue with email</span>
-          <div className="flex-1 h-px bg-white/10" />
+          <div className="flex-1 h-px" style={{ background: 'var(--border-strong)' }} />
+          <span className="text-xs" style={{ color: 'var(--text-icon)' }}>or continue with email</span>
+          <div className="flex-1 h-px" style={{ background: 'var(--border-strong)' }} />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold text-white/30 mb-1.5">Email</label>
+            <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
               required
-              className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#d9ff00]/50 focus:bg-white/[0.07] transition-all"
+              className="w-full h-10 px-3 rounded-lg text-sm transition-all"
+              style={{ background: 'var(--glass-bg)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }}
             />
           </div>
           <div>
-            <label className="block text-xs font-bold text-white/30 mb-1.5">Password</label>
+            <label className="block text-xs font-bold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Password</label>
             <input
               type="password"
               value={password}
@@ -138,7 +140,8 @@ export default function AuthModal({ onClose }) {
               placeholder="••••••••"
               required
               minLength={6}
-              className="w-full h-10 px-3 rounded-lg bg-white/5 border border-white/10 text-white text-sm placeholder-white/20 focus:outline-none focus:border-[#d9ff00]/50 focus:bg-white/[0.07] transition-all"
+              className="w-full h-10 px-3 rounded-lg text-sm transition-all"
+              style={{ background: 'var(--glass-bg)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }}
             />
           </div>
 
@@ -164,7 +167,8 @@ export default function AuthModal({ onClose }) {
         <div className="mt-6 text-center">
           <button
             onClick={() => { setMode(mode === 'login' ? 'signup' : 'login'); setError(null); setSuccess(null); }}
-            className="text-xs text-white/40 hover:text-white/60 transition-colors"
+            className="text-xs transition-colors"
+            style={{ color: 'var(--text-icon)' }}
           >
             {mode === 'login' ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
           </button>
