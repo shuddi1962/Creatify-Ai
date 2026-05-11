@@ -1,15 +1,19 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Bell, Shield, LogOut, Zap, RefreshCw, ChevronRight, ArrowRight, MessageCircle, ExternalLink } from 'lucide-react';
+import { User, Bell, Shield, LogOut, Zap, RefreshCw, MessageCircle, ExternalLink, Key, CreditCard, Share2, Gift, Receipt } from 'lucide-react';
 import { useAuth } from '@/src/lib/AuthProvider';
 import toast from 'react-hot-toast';
-import Link from 'next/link';
 
 const DASHBOARD_TABS = [
   { id: 'profile', label: 'Personal Profile', icon: User },
+  { id: 'api-keys', label: 'API Keys', icon: Key },
+  { id: 'subscription', label: 'Subscription', icon: CreditCard },
   { id: 'notifications', label: 'Notifications', icon: Bell },
+  { id: 'connected', label: 'Connected Accounts', icon: Share2 },
   { id: 'security', label: 'Security', icon: Shield },
+  { id: 'referrals', label: 'Referrals', icon: Gift },
+  { id: 'billing', label: 'Billing', icon: Receipt },
 ];
 
 export default function SettingsPage() {
@@ -20,7 +24,6 @@ export default function SettingsPage() {
     <div style={{ minHeight: '100vh', background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
       <div style={{ maxWidth: 1100, margin: '0 auto', padding: '32px 24px', display: 'flex', gap: 0 }}>
 
-        {/* ============ LEFT SIDEBAR ============ */}
         <aside style={{
           width: 220, flexShrink: 0,
           background: 'var(--bg-card)',
@@ -33,7 +36,7 @@ export default function SettingsPage() {
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Dashboard</div>
           </div>
 
-          <div style={{ padding: '6px' }}>
+          <div style={{ padding: '6px', overflowY: 'auto', flex: 1 }}>
             {DASHBOARD_TABS.map(tab => {
               const Icon = tab.icon;
               return (
@@ -57,7 +60,7 @@ export default function SettingsPage() {
             })}
           </div>
 
-          <div style={{ marginTop: 'auto', padding: '12px', borderTop: '1px solid var(--border-subtle)' }}>
+          <div style={{ padding: '12px', borderTop: '1px solid var(--border-subtle)' }}>
             <div style={{
               background: 'var(--bg-elevated)',
               border: '1px solid var(--border-subtle)',
@@ -80,7 +83,7 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          <button onClick={async () => { await signOut(); }}
+          <button onClick={async () => { try { await signOut(); } catch(e) {} }}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
               padding: '12px 14px', border: 'none', cursor: 'pointer',
@@ -95,11 +98,15 @@ export default function SettingsPage() {
           </button>
         </aside>
 
-        {/* ============ MAIN PANEL ============ */}
         <div style={{ flex: 1, paddingLeft: 24 }}>
           {activeTab === 'profile' && <ProfileSection user={user} />}
+          {activeTab === 'api-keys' && <ApiKeysSection />}
+          {activeTab === 'subscription' && <SubscriptionSection />}
           {activeTab === 'notifications' && <NotificationsSection />}
+          {activeTab === 'connected' && <ConnectedAccountsSection />}
           {activeTab === 'security' && <SecuritySection user={user} />}
+          {activeTab === 'referrals' && <ReferralsSection user={user} />}
+          {activeTab === 'billing' && <BillingSection />}
         </div>
       </div>
     </div>
@@ -109,10 +116,8 @@ export default function SettingsPage() {
 function ProfileSection({ user }) {
   return (
     <div style={{ maxWidth: 780 }}>
-      {/* Profile header */}
       <div style={{
-        background: 'var(--bg-card)',
-        border: '1px solid var(--border-subtle)',
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 24, marginBottom: 16,
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
@@ -173,6 +178,16 @@ function ProfileSection({ user }) {
               }}
             />
           </div>
+          <div style={{ gridColumn: '1 / -1' }}>
+            <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>Bio</label>
+            <textarea rows={3} placeholder="Tell us about yourself..."
+              style={{
+                width: '100%', padding: '10px 12px', fontSize: 13,
+                background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                borderRadius: 8, color: 'var(--text-primary)', outline: 'none', resize: 'none',
+              }}
+            />
+          </div>
         </div>
 
         <button style={{
@@ -186,9 +201,7 @@ function ProfileSection({ user }) {
         </button>
       </div>
 
-      {/* Credits + Usage row */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
-        {/* Credits card */}
         <div style={{
           background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
           borderRadius: 12, padding: 20,
@@ -198,9 +211,7 @@ function ProfileSection({ user }) {
             <RefreshCw size={14} style={{ color: 'var(--text-muted)', cursor: 'pointer' }} />
           </div>
           <div style={{ fontSize: 36, fontWeight: 700, color: 'var(--text-primary)' }}>0%</div>
-          <div style={{
-            height: 6, background: 'var(--bg-input)', borderRadius: 100, marginTop: 8, marginBottom: 6,
-          }}>
+          <div style={{ height: 6, background: 'var(--bg-input)', borderRadius: 100, marginTop: 8, marginBottom: 6 }}>
             <div style={{ width: '0%', height: '100%', background: 'var(--accent-primary)', borderRadius: 100 }} />
           </div>
           <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>0 left</div>
@@ -216,14 +227,12 @@ function ProfileSection({ user }) {
               <div key={i} style={{
                 flex: 1, height: `${h}%`,
                 background: i === 11 ? 'var(--accent-primary)' : 'var(--bg-input)',
-                borderRadius: '4px 4px 0 0',
-                minHeight: 4,
+                borderRadius: '4px 4px 0 0', minHeight: 4,
               }} />
             ))}
           </div>
         </div>
 
-        {/* Usage history card */}
         <div style={{
           background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
           borderRadius: 12, padding: 20,
@@ -237,15 +246,13 @@ function ProfileSection({ user }) {
               <div key={i} style={{
                 flex: 1, height: `${h}%`,
                 background: 'var(--bg-input)',
-                borderRadius: '4px 4px 0 0',
-                minHeight: 4,
+                borderRadius: '4px 4px 0 0', minHeight: 4,
               }} />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Karma section */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         <div style={{
           background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
@@ -319,7 +326,6 @@ function ProfileSection({ user }) {
         </div>
       </div>
 
-      {/* Publish to explore toggle */}
       <div style={{
         background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
         borderRadius: 12, padding: 20, marginBottom: 16,
@@ -343,7 +349,6 @@ function ProfileSection({ user }) {
         </div>
       </div>
 
-      {/* Danger Zone */}
       <div style={{
         background: 'rgba(239,68,68,0.04)',
         border: '1px solid rgba(239,68,68,0.2)',
@@ -370,6 +375,133 @@ function ProfileSection({ user }) {
         >
           Delete Account
         </button>
+      </div>
+    </div>
+  );
+}
+
+function ApiKeysSection() {
+  const [newKeyName, setNewKeyName] = useState('');
+
+  return (
+    <div style={{ maxWidth: 600 }}>
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24, marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>API Keys</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 20 }}>
+          {[
+            { name: 'Production Key', key: 'mk_prod_****...****f3a2', created: 'Jan 15, 2026' },
+            { name: 'Development Key', key: 'mk_dev_****...****7b1c', created: 'Feb 20, 2026' },
+          ].map((k, i) => (
+            <div key={i} style={{
+              background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+              borderRadius: 10, padding: '14px 16px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{k.name}</div>
+                <div style={{ fontSize: 12, fontFamily: 'monospace', color: 'var(--text-muted)', marginTop: 2 }}>{k.key}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 1 }}>Created {k.created}</div>
+              </div>
+              <div style={{ display: 'flex', gap: 6 }}>
+                <button onClick={() => { navigator.clipboard.writeText(k.key); toast.success('Copied!'); }}
+                  style={{
+                    padding: '5px 12px', fontSize: 11, fontWeight: 500,
+                    background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                    borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+                  }}
+                >Copy</button>
+                <button style={{
+                  padding: '5px 12px', fontSize: 11, fontWeight: 500,
+                  background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                  borderRadius: 6, color: '#ef4444', cursor: 'pointer',
+                }}>Revoke</button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Create New Key</div>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            value={newKeyName}
+            onChange={e => setNewKeyName(e.target.value)}
+            placeholder="Key name..."
+            style={{
+              flex: 1, padding: '10px 12px', fontSize: 13,
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 8, color: 'var(--text-primary)', outline: 'none',
+            }}
+          />
+          <button onClick={() => { toast.success('API key created'); setNewKeyName(''); }}
+            style={{
+              padding: '10px 20px', fontSize: 13, fontWeight: 600,
+              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
+            }}
+          >Create</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SubscriptionSection() {
+  return (
+    <div style={{ maxWidth: 600 }}>
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24, marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Subscription</div>
+        <div style={{
+          background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+          borderRadius: 10, padding: 20,
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+            <div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>Pro Plan</div>
+              <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>$29/month, renews on Mar 10, 2026</div>
+            </div>
+            <span style={{
+              padding: '4px 10px', fontSize: 10, fontWeight: 700,
+              background: 'rgba(34,197,94,0.15)', color: '#22c55e',
+              borderRadius: 100,
+            }}>Active</span>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
+            {[
+              { value: '2,450', label: 'Credits Remaining', bar: 61 },
+              { value: '4.2 GB', label: 'Storage Used' },
+              { value: '12,840', label: 'API Calls' },
+            ].map((s, i) => (
+              <div key={i} style={{
+                background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+                borderRadius: 10, padding: 16, textAlign: 'center',
+              }}>
+                <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)' }}>{s.value}</div>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{s.label}</div>
+                {s.bar && <div style={{ height: 4, background: 'var(--bg-input)', borderRadius: 100, marginTop: 8 }}>
+                  <div style={{ width: `${s.bar}%`, height: '100%', background: 'var(--accent-primary)', borderRadius: 100 }} />
+                </div>}
+              </div>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button style={{
+              padding: '8px 20px', fontSize: 12, fontWeight: 600,
+              background: 'var(--accent-primary)', color: '#fff',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
+            }}>Upgrade Plan</button>
+            <button style={{
+              padding: '8px 20px', fontSize: 12, fontWeight: 500,
+              background: 'transparent', border: '1px solid var(--border-default)',
+              borderRadius: 8, color: 'var(--text-secondary)', cursor: 'pointer',
+            }}>Downgrade</button>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -415,6 +547,55 @@ function NotificationsSection() {
             </button>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+function ConnectedAccountsSection() {
+  const accounts = [
+    { platform: 'TikTok', connected: true, user: '@creatifyai' },
+    { platform: 'Instagram', connected: true, user: 'creatify_official' },
+    { platform: 'YouTube', connected: false },
+    { platform: 'LinkedIn', connected: false },
+    { platform: 'Google Drive', connected: true, user: 'user@gmail.com' },
+    { platform: 'Dropbox', connected: false },
+  ];
+
+  return (
+    <div style={{ maxWidth: 600 }}>
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Connected Accounts</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {accounts.map((acc, i) => (
+            <div key={i} style={{
+              background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+              borderRadius: 10, padding: '12px 16px',
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+            }}>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{acc.platform}</div>
+                {acc.connected && <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>{acc.user}</div>}
+              </div>
+              {acc.connected ? (
+                <button style={{
+                  padding: '5px 12px', fontSize: 11, fontWeight: 500,
+                  background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.2)',
+                  borderRadius: 6, color: '#ef4444', cursor: 'pointer',
+                }}>Disconnect</button>
+              ) : (
+                <button style={{
+                  padding: '5px 12px', fontSize: 11, fontWeight: 600,
+                  background: 'var(--accent-primary)', color: '#fff',
+                  border: 'none', borderRadius: 6, cursor: 'pointer',
+                }}>Connect</button>
+              )}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -472,6 +653,164 @@ function SecuritySection({ user }) {
         }}>
           Set Up 2FA
         </button>
+      </div>
+
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24, marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>Active Sessions</div>
+        <div style={{
+          background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+          borderRadius: 10, padding: '12px 16px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        }}>
+          <div>
+            <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>Chrome on MacOS</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>New York, US · 2 hours ago</div>
+          </div>
+          <button style={{
+            padding: '4px 10px', fontSize: 11,
+            background: 'transparent', border: 'none',
+            color: '#ef4444', cursor: 'pointer',
+          }}>Revoke</button>
+        </div>
+      </div>
+
+      <div style={{
+        background: 'rgba(239,68,68,0.04)',
+        border: '1px solid rgba(239,68,68,0.2)',
+        borderRadius: 12, padding: 20,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: '#ef4444', marginBottom: 4 }}>Danger Zone</div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 12 }}>Permanently delete your account and all data</div>
+        <button style={{
+          padding: '8px 16px', fontSize: 12, fontWeight: 600,
+          background: 'rgba(239,68,68,0.1)', border: '1px solid #ef4444',
+          borderRadius: 8, color: '#ef4444', cursor: 'pointer',
+        }}
+          onMouseEnter={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.2)'; }}
+          onMouseLeave={e => { e.currentTarget.style.background = 'rgba(239,68,68,0.1)'; }}
+        >
+          Delete Account
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function ReferralsSection({ user }) {
+  return (
+    <div style={{ maxWidth: 600 }}>
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>Referrals</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>Share your unique referral link and earn credits</div>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 20 }}>
+          <input readOnly value={`https://creatify.ai/ref/${user?.id || 'user123'}`}
+            style={{
+              flex: 1, padding: '10px 12px', fontSize: 12, fontFamily: 'monospace',
+              background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+              borderRadius: 8, color: 'var(--text-primary)', outline: 'none',
+            }} />
+          <button onClick={() => { navigator.clipboard.writeText(`https://creatify.ai/ref/${user?.id || 'user123'}`); toast.success('Copied!'); }}
+            style={{
+              padding: '10px 16px', fontSize: 12, fontWeight: 600,
+              background: 'var(--accent-primary)', color: '#fff',
+              border: 'none', borderRadius: 8, cursor: 'pointer',
+            }}
+          >Copy Link</button>
+        </div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12, marginBottom: 16 }}>
+          {[
+            { value: '47', label: 'Total Referred' },
+            { value: '235', label: 'Credits Earned', accent: true },
+            { value: '12', label: 'Pending' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+              borderRadius: 10, padding: 16, textAlign: 'center',
+            }}>
+              <div style={{
+                fontSize: 22, fontWeight: 700,
+                color: s.accent ? 'var(--btn-generate-bg)' : 'var(--text-primary)',
+              }}>{s.value}</div>
+              <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4 }}>{s.label}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Earn 5 credits for every referral who upgrades to Pro</div>
+      </div>
+    </div>
+  );
+}
+
+function BillingSection() {
+  return (
+    <div style={{ maxWidth: 600 }}>
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24, marginBottom: 16,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Payment Method</div>
+        <div style={{
+          background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)',
+          borderRadius: 10, padding: '14px 16px',
+          display: 'flex', alignItems: 'center', gap: 12,
+        }}>
+          <div style={{
+            width: 48, height: 32, borderRadius: 6,
+            background: 'var(--bg-input)', border: '1px solid var(--border-subtle)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 10, fontWeight: 700, color: 'var(--text-primary)',
+          }}>VISA</div>
+          <div>
+            <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>•••• •••• •••• 4242</div>
+            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 1 }}>Expires 12/2027</div>
+          </div>
+          <button style={{
+            marginLeft: 'auto', padding: '5px 12px', fontSize: 11, fontWeight: 500,
+            background: 'transparent', border: '1px solid var(--border-default)',
+            borderRadius: 6, color: 'var(--text-secondary)', cursor: 'pointer',
+          }}>Update</button>
+        </div>
+      </div>
+
+      <div style={{
+        background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
+        borderRadius: 12, padding: 24,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Billing History</div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {[
+            { date: 'Mar 10, 2026', amount: '$29.00', plan: 'Pro Plan' },
+            { date: 'Feb 10, 2026', amount: '$29.00', plan: 'Pro Plan' },
+            { date: 'Jan 10, 2026', amount: '$29.00', plan: 'Pro Plan' },
+          ].map((b, i) => (
+            <div key={i} style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              padding: '10px 0',
+              borderBottom: i < 2 ? '1px solid var(--border-subtle)' : 'none',
+            }}>
+              <div>
+                <div style={{ fontSize: 13, color: 'var(--text-primary)' }}>{b.date}</div>
+                <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{b.plan}</div>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <span style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)' }}>{b.amount}</span>
+                <button style={{
+                  fontSize: 11, color: 'var(--accent-text)', cursor: 'pointer',
+                  background: 'none', border: 'none', padding: 0,
+                }}
+                  onMouseEnter={e => e.currentTarget.style.textDecoration = 'underline'}
+                  onMouseLeave={e => e.currentTarget.style.textDecoration = 'none'}
+                >Download</button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
