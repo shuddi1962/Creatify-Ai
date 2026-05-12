@@ -42,7 +42,7 @@ export default function StudioShell({ children }) {
   const topNavTimeoutRef = useRef(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const { user, loading: authLoading, signOut } = useAuth();
+  const { user, loading: authLoading, signOut, isAdmin } = useAuth();
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
@@ -474,6 +474,21 @@ export default function StudioShell({ children }) {
                   <Icons.Settings size={15} />
                   Settings
                 </Link>
+                {isAdmin && (
+                  <Link href="/admin/dashboard" onClick={() => setShowAccountMenu(false)}
+                    style={{
+                      display: 'flex', alignItems: 'center', gap: 10,
+                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
+                      color: 'var(--text-secondary)', textDecoration: 'none',
+                      transition: 'all 150ms ease',
+                    }}
+                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                  >
+                    <Icons.Shield size={15} />
+                    Admin Panel
+                  </Link>
+                )}
 
                 {user ? (
                   <button onClick={async () => { await signOut(); resetStorageMode(); handleKeyChange(); setShowAccountMenu(false); }}

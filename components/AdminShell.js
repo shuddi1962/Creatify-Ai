@@ -3,15 +3,18 @@
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '../src/lib/AuthProvider';
+import { supabase } from '../src/lib/supabase';
 
 const ADMIN_NAV = [
   { id: 'dashboard', label: 'Dashboard', icon: 'grid' },
+  { id: 'providers', label: 'API Providers', icon: 'cube' },
+  { id: 'keys', label: 'API Keys', icon: 'lock' },
   { id: 'users', label: 'Users', icon: 'users' },
   { id: 'staff', label: 'Staff', icon: 'briefcase' },
   { id: 'roles', label: 'Roles', icon: 'shield' },
   { id: 'content', label: 'Content', icon: 'flag' },
   { id: 'jobs', label: 'Jobs', icon: 'clock' },
-  { id: 'models', label: 'Models', icon: 'cube' },
+  { id: 'models', label: 'Models', icon: 'grid' },
   { id: 'seo', label: 'SEO', icon: 'search' },
   { id: 'pages', label: 'Pages', icon: 'file' },
   { id: 'analytics', label: 'Analytics', icon: 'bar-chart' },
@@ -36,6 +39,7 @@ function AdminIcon({ name }) {
     tag: <svg {...p}><path d="M20.59 13.41l-7.17 7.17a2 2 0 01-2.83 0L2 12V2h10l8.59 8.59a2 2 0 010 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>,
     settings: <svg {...p}><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>,
     list: <svg {...p}><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>,
+    lock: <svg {...p}><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>,
   };
   return icons[name] || <svg {...p}><circle cx="12" cy="12" r="10"/></svg>;
 }
@@ -57,8 +61,6 @@ export default function AdminShell({ children }) {
     }
     const checkAdmin = async () => {
       try {
-        const { createClient } = await import('../src/lib/supabase');
-        const supabase = createClient();
         const { data, error } = await supabase
           .from('admin_roles')
           .select('role')
