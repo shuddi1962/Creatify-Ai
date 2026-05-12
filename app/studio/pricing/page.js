@@ -3,11 +3,6 @@
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-export const metadata = {
-  title: 'Pricing — Creatify AI',
-  description: 'Choose a plan that fits your creative goals. Generate AI images, videos, audio and more with Creatify AI.',
-};
-
 const PLANS = [
   {
     name: 'BASIC',
