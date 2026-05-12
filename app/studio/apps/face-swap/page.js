@@ -1,13 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { User, Upload, Play } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import UploadZone from '@/components/studio/UploadZone';
-import SectionLabel from '@/components/studio/SectionLabel';
-import GenerateButton from '@/components/studio/GenerateButton';
+import { User, Upload } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 
 export default function FaceSwapPage() {
   const [sourceImg, setSourceImg] = useState(null);
@@ -21,41 +17,84 @@ export default function FaceSwapPage() {
   const handleTarget = (file) => { setTargetImg(file); setTargetPreview(URL.createObjectURL(file)); };
 
   const generate = () => {
-    if (!sourceImg || !targetImg) { toast.error('Upload both images'); return; }
+    if (!sourceImg || !targetImg) return;
     setLoading(true);
-    setTimeout(() => { setResult('https://picsum.photos/seed/faceresult/600/400'); setLoading(false); toast.success('Face swap complete!'); }, 3500);
+    setTimeout(() => { setResult('https://picsum.photos/seed/faceresult/600/400'); setLoading(false); }, 3500);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={User} title="FACE SWAP" subtitle="Swap faces between two images instantly" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <SectionLabel>Source Face (The face you want to use)</SectionLabel>
-              <UploadZone onFile={handleSource} accept="image/*" label="Upload source face" preview={sourcePreview} icon={User} />
-            </div>
-            <div>
-              <SectionLabel>Target Image (Where to place the face)</SectionLabel>
-              <UploadZone onFile={handleTarget} accept="image/*" label="Upload target image" preview={targetPreview} icon={Upload} />
-            </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="FACE SWAP">
+          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
+            Upload a source face and a target image. The face from the source will be swapped onto the target.
           </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <GenerateButton onClick={generate} loading={loading}>Swap Face</GenerateButton>
-        </div>
-        {result && (
-          <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-            <img src={result} className="w-full rounded-xl mb-4" alt="" />
-            <div className="flex gap-3">
-              <button onClick={() => toast.success('Downloading...')} className="flex-1 px-4 py-2 bg-[#1a1a1a] text-white text-sm rounded-lg hover:bg-[#222]">Download</button>
-              <button onClick={() => toast.success('Sharing...')} className="flex-1 px-4 py-2 bg-[#CCFF00] text-black font-bold text-sm rounded-lg hover:bg-[#B8FF00]">Share</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, textAlign: 'center', padding: 24, width: '100%' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              FACE SWAP
+            </h1>
+            <div style={{ display: 'flex', gap: 24, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {[
+                { label: 'Source Face', preview: sourcePreview, handler: handleSource, icon: User },
+                { label: 'Target Image', preview: targetPreview, handler: handleTarget, icon: Upload },
+              ].map((item, idx) => (
+                <label key={idx} style={{
+                  width: 240, height: 180, borderRadius: 16,
+                  border: '2px dashed var(--border-default)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', background: 'var(--bg-card)',
+                }}>
+                  {item.preview ? (
+                    <img src={item.preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 14 }} />
+                  ) : (
+                    <><item.icon size={24} style={{ color: 'var(--text-muted)', marginBottom: 8 }} /><span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>{item.label}</span></>
+                  )}
+                  <input type="file" accept="image/*" onChange={e => e.target.files[0] && item.handler(e.target.files[0])} style={{ display: 'none' }} />
+                </label>
+              ))}
             </div>
+            {result && (
+              <div style={{ marginTop: 24, maxWidth: 400, margin: '24px auto 0' }}>
+                <img src={result} alt="" style={{ width: '100%', borderRadius: 12, border: '1px solid var(--border-subtle)' }} />
+                <div style={{ display: 'flex', gap: 12, marginTop: 12 }}>
+                  <button onClick={() => {}}
+                    style={{
+                      flex: 1, padding: '10px 24px', background: 'var(--bg-card)',
+                      border: '1px solid var(--border-default)', borderRadius: 10,
+                      color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer',
+                    }}
+                  >Download</button>
+                  <button onClick={() => {}}
+                    style={{
+                      flex: 1, padding: '10px 24px', background: '#CCFF00',
+                      border: 'none', borderRadius: 10, color: '#000', fontWeight: 700,
+                      fontSize: 13, cursor: 'pointer',
+                    }}
+                  >Share</button>
+                </div>
+              </div>
+            )}
+            {loading && <div style={{ color: 'var(--text-muted)', fontSize: 13, marginTop: 16 }}>Swapping face...</div>}
           </div>
-        )}
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={generate} disabled={!sourceImg || !targetImg || loading}>Swap Face</GenerateButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

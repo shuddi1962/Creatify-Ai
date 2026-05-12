@@ -2,27 +2,17 @@
 
 import { useState } from 'react';
 import { Volume2, Library, Grid } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
+import { toast } from 'react-hot-toast';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const CATEGORIES = ['Nature', 'Urban', 'Mechanical', 'Human', 'Impact', 'Ambient', 'Foley', 'Sci-Fi'];
-const PRESET_EXAMPLES = [
-  'Glass breaking', 'Thunder', 'Crowd cheering', 'Footsteps', 
-  'Car engine', 'Door creaking', 'Rain', 'Wind', 'Explosion',
-  'Bird chirping', 'Keyboard typing', 'Applause', 'Gunshot'
-];
+const PRESET_EXAMPLES = ['Glass breaking', 'Thunder', 'Crowd cheering', 'Footsteps', 'Car engine', 'Door creaking', 'Rain', 'Wind', 'Explosion', 'Bird chirping'];
 const DURATION_OPTIONS = ['1s', '2s', '5s', '10s', '30s'];
 const VARIATION_OPTIONS = ['1', '2', '4'];
 
 export default function SfxPage() {
   const [prompt, setPrompt] = useState('');
   const [showLibrary, setShowLibrary] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
   const [duration, setDuration] = useState('5s');
   const [variations, setVariations] = useState('1');
   const [fadeIn, setFadeIn] = useState(false);
@@ -35,7 +25,6 @@ export default function SfxPage() {
       toast.error('Please enter a prompt or select from library');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
@@ -46,8 +35,7 @@ export default function SfxPage() {
         setResults(Array(parseInt(variations)).fill(null).map((_, i) => ({
           id: `demo-${Date.now()}-${i}`,
           url: 'https://www.w3schools.com/html/movie.mp3',
-          prompt: prompt,
-          type: 'audio'
+          prompt, type: 'audio'
         })));
         toast.success('Demo: Sound effect generated!');
       }
@@ -59,114 +47,108 @@ export default function SfxPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero 
-        title="SOUND EFFECTS"
-        subtitle="Create any sound effect from a simple text description"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Prompt</SectionLabel>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="SFX SETTINGS">
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px' }}>Duration</div>
+          {DURATION_OPTIONS.map(o => (
+            <button key={o} onClick={() => setDuration(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: duration === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: duration === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Variations</div>
+          {VARIATION_OPTIONS.map(o => (
+            <button key={o} onClick={() => setVariations(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: variations === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: variations === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <button onClick={() => setFadeIn(!fadeIn)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px', marginTop: 8,
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Fade In {fadeIn ? '✓' : '○'}</button>
+          <button onClick={() => setFadeOut(!fadeOut)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Fade Out {fadeOut ? '✓' : '○'}</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            SOUND EFFECTS
+          </h1>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, zIndex: 1, flexDirection: 'column', alignItems: 'center' }}>
+            <div style={{ width: 320 }}>
+              <textarea value={prompt} onChange={e => setPrompt(e.target.value)}
                 placeholder="Describe the sound effect you want..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none"
+                style={{
+                  width: '100%', height: 80, borderRadius: 12, border: '1px solid var(--border-default)',
+                  background: 'var(--bg-input)', color: 'var(--text-primary)', padding: 12,
+                  fontSize: 13, resize: 'none',
+                }}
               />
             </div>
-
-            <button
-              onClick={() => setShowLibrary(!showLibrary)}
-              className="flex items-center gap-2 px-4 py-2 bg-[#1a1a1a] border border-white/[0.08] rounded-xl text-sm text-white hover:bg-[#222] transition-all"
-            >
-              <Library size={16} className="text-[#666]" />
-              Browse library
-            </button>
-
+            <button onClick={() => setShowLibrary(!showLibrary)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 6, padding: '6px 14px',
+                background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                borderRadius: 8, color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer',
+              }}
+            ><Library size={14} /> Browse Library</button>
             {showLibrary && (
-              <div>
-                <SectionLabel>Categories</SectionLabel>
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {CATEGORIES.map(cat => (
-                    <button
-                      key={cat}
-                      onClick={() => setSelectedCategory(selectedCategory === cat ? null : cat)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        selectedCategory === cat
-                          ? 'bg-[#6366f1] text-white'
-                          : 'bg-[#1a1a1a] text-[#888] hover:bg-[#222]'
-                      }`}
-                    >
-                      {cat}
-                    </button>
-                  ))}
-                </div>
-
-                <SectionLabel>Quick Examples</SectionLabel>
-                <div className="flex flex-wrap gap-2">
-                  {PRESET_EXAMPLES.map(ex => (
-                    <button
-                      key={ex}
-                      onClick={() => { setPrompt(ex); setShowLibrary(false); }}
-                      className="px-3 py-1.5 bg-[#1a1a1a] text-[#888] rounded-lg text-xs font-medium border border-white/[0.08] hover:bg-[#222] hover:text-white transition-all"
-                    >
-                      {ex}
-                    </button>
-                  ))}
-                </div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, maxWidth: 400, justifyContent: 'center' }}>
+                {PRESET_EXAMPLES.map(ex => (
+                  <button key={ex} onClick={() => { setPrompt(ex); setShowLibrary(false); }}
+                    style={{
+                      padding: '4px 10px', borderRadius: 6, fontSize: 11,
+                      background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                      color: 'var(--text-secondary)', cursor: 'pointer',
+                    }}
+                  >{ex}</button>
+                ))}
               </div>
             )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Duration</SectionLabel>
-                <StudioDropdown options={DURATION_OPTIONS} value={duration} onChange={setDuration} />
-              </div>
-              <div>
-                <SectionLabel>Variations</SectionLabel>
-                <StudioDropdown options={VARIATION_OPTIONS} value={variations} onChange={setVariations} />
-              </div>
-            </div>
-
-            <div className="flex gap-4">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setFadeIn(!fadeIn)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeIn ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeIn ? 'translate-x-6' : 'translate-x-0.5'}`} />
-                </button>
-                <span className="text-sm text-[#888]">Fade in</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setFadeOut(!fadeOut)}
-                  className={`w-12 h-6 rounded-full transition-all ${fadeOut ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${fadeOut ? 'translate-x-6' : 'translate-x-0.5'}`} />
-                </button>
-                <span className="text-sm text-[#888]">Fade out</span>
-              </div>
-            </div>
           </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Sound Effect
-          </GenerateButton>
-        </div>
-
-        {results.length > 0 && (
-          <div className="mt-8">
-            <ResultsGrid results={results} columns={Math.min(parseInt(variations), 3)} />
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder="Describe the sound effect or pick from library..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleGenerate} disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
+              {loading ? 'Generating...' : 'Generate Sound Effect'}
+            </GenerateButton>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

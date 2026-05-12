@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { User } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import AppCard from '@/components/studio/AppCard';
 
 const APPS = [
@@ -22,25 +22,51 @@ export default function FacePage() {
   const toggleFav = (id) => setFavorites(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#000000' }}>
-      <Toaster position="top-center" />
-      <StudioHero icon={User} title="FACE & CHARACTER" subtitle="Face swap, headshot, skin enhancer and more" />
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: 16, paddingBottom: 40,
-        }}>
-          {APPS.map((app, i) => (
-            <AppCard
-              key={app.id || i}
-              app={app}
-              isFavorite={favorites.includes(app.id)}
-              onToggleFavorite={toggleFav}
-            />
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="FACE TOOLS">
+          {APPS.map(a => (
+            <button key={a.id}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+              }}
+            >{a.name}</button>
           ))}
-        </div>
-      </div>
-    </div>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxHeight: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              FACE & CHARACTER
+            </h1>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: 16,
+            }}>
+              {APPS.map((app, i) => (
+                <AppCard key={app.id || i} app={app} isFavorite={favorites.includes(app.id)} onToggleFavorite={toggleFav} />
+              ))}
+            </div>
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <ControlButton>Filter</ControlButton>
+          <StudioDropdown options={['Popular', 'Newest', 'A-Z']} value="Popular" onChange={() => {}} />
+        </DirectorBar>
+      }
+    />
   );
 }

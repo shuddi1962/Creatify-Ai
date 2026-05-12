@@ -1,23 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Image, Palette } from 'lucide-react';
+import { Palette } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const PRESERVE_OPTIONS = ['Content Structure', 'Color Palette', 'Both', 'Neither'];
 const STYLE_PRESETS = [
-  'Van Gogh', 'Monet', 'Picasso', 'Anime', 'Comic Book', 
+  'Van Gogh', 'Monet', 'Picasso', 'Anime', 'Comic Book',
   'Oil Paint', 'Watercolor', 'Neon', 'Cyberpunk', 'Film Noir'
 ];
+const MODELS = ['flux', 'stable-diffusion'];
 
 export default function StyleTransferPage() {
   const [contentImage, setContentImage] = useState(null);
@@ -54,12 +51,10 @@ export default function StyleTransferPage() {
       toast.error('Please upload a content image');
       return;
     }
-
     if (!styleImage && !stylePreset) {
       toast.error('Please upload a style reference or select a preset');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
@@ -96,82 +91,82 @@ export default function StyleTransferPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Palette}
-        title="STYLE TRANSFER"
-        subtitle="Apply the visual style of any reference image to your content"
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="STYLE PRESETS">
+            {STYLE_PRESETS.map(s => (
+              <button key={s} onClick={() => setStylePreset(stylePreset === s ? null : s)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: stylePreset === s ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: stylePreset === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (stylePreset !== s) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (stylePreset !== s) e.currentTarget.style.background = 'none'; }}
+              >
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: stylePreset === s ? 500 : 400 }}>{s}</div>
+                </div>
+              </button>
+            ))}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 8, paddingTop: 8 }}>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="PRESERVE" value={preserve} onChange={setPreserve} options={PRESERVE_OPTIONS} />
+              </div>
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={MODELS} />
+            </div>
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              Style Transfer
+            </h1>
+            <div style={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 2, display: 'flex', gap: 12 }}>
+              <div style={{ width: 160 }}>
+                <UploadZone onFile={handleContentFile} preview={contentImage} accept="image/*" label="Content" />
+              </div>
+              <div style={{ width: 160 }}>
+                <UploadZone onFile={handleStyleFile} preview={styleImage} accept="image/*" label="Style ref" />
+              </div>
+            </div>
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+                <div style={{ maxWidth: 500, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results} columns={2} />
+                </div>
+              </div>
+            )}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Style Transfer Controls">
+            <div style={{ flex: 1 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Strength:</span>
+                <input type="range" min="10" max="100" value={styleStrength}
+                  onChange={e => setStyleStrength(parseInt(e.target.value))}
+                  style={{ width: 60, accentColor: '#CCFF00' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{styleStrength}%</span>
+              </div>
+              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
+            </div>
+          </DirectorBar>
+        }
       />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Content Image</SectionLabel>
-                <UploadZone onFile={handleContentFile} preview={contentImage} accept="image/*" label="Upload content" />
-              </div>
-              <div>
-                <SectionLabel>Style Reference</SectionLabel>
-                <UploadZone onFile={handleStyleFile} preview={styleImage} accept="image/*" label="Upload style" />
-              </div>
-            </div>
-
-            <div>
-              <SectionLabel>Style Strength</SectionLabel>
-              <div className="flex items-center gap-4 mt-2">
-                <input
-                  type="range"
-                  min="10"
-                  max="100"
-                  value={styleStrength}
-                  onChange={(e) => setStyleStrength(parseInt(e.target.value))}
-                  className="flex-1 h-2 bg-[#1A1A1A] rounded-lg appearance-none cursor-pointer accent-[#7C3AED]"
-                />
-                <span className="text-sm text-white w-12">{styleStrength}%</span>
-              </div>
-            </div>
-
-            <div>
-              <SectionLabel>Preserve</SectionLabel>
-              <StudioDropdown options={PRESERVE_OPTIONS} value={preserve} onChange={setPreserve} label="PRESERVE" />
-            </div>
-
-            <div>
-              <SectionLabel>Style Presets (if no reference)</SectionLabel>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2 mt-2">
-                {STYLE_PRESETS.map((preset) => (
-                  <button
-                    key={preset}
-                    onClick={() => setStylePreset(stylePreset === preset ? null : preset)}
-                    className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
-                      stylePreset === preset
-                        ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
-                        : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {preset}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <SectionLabel>Model</SectionLabel>
-              <ModelSelector type="image" value={model} onChange={setModel} />
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Transfer Style
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} />
-      </div>
-    </div>
+    </>
   );
 }

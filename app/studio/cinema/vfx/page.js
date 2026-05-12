@@ -3,13 +3,7 @@
 import { useState } from 'react';
 import { Sparkles, Upload, Search, Sliders, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
-import UploadZone from '@/components/studio/UploadZone';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const CATEGORIES = ['All', 'Fire & Explosion', 'Weather', 'Magic', 'Creatures', 'Technology', 'Space', 'Nature', 'Destruction', 'Transition', 'Light & Color'];
 
@@ -103,91 +97,122 @@ export default function CinemaVFXPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Sparkles} badge="NEW" title="VFX PRESETS" subtitle="200+ one-click visual effects — apply to any video instantly" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" />
-                <input
-                  value={search}
-                  onChange={e => setSearch(e.target.value)}
-                  placeholder="Search effects..."
-                  className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-sm text-white placeholder-[#444]"
-                />
-              </div>
-            </div>
-            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-              {CATEGORIES.map(c => (
-                <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all whitespace-nowrap ${
-                    category === c ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-              {filtered.map(effect => (
-                <button
-                  key={effect.id}
-                  onClick={() => handleApply(effect)}
-                  className="relative bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-3 hover:border-[#6366f1]/50 transition-all group"
-                >
-                  <div className="w-full aspect-video rounded-lg mb-2 flex items-center justify-center text-2xl font-bold" style={{ backgroundColor: effect.color + '22', color: effect.color }}>
-                    <Zap size={20} />
-                  </div>
-                  <p className="text-xs font-semibold text-white truncate">{effect.name}</p>
-                  <div className="flex items-center gap-1 mt-1">
-                    {effect.badge && (
-                      <span className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm $                        {effect.badge === 'NEW' ? 'bg-[#6366f1]/20 text-[#6366f1]' : 'bg-[#CCFF00]/20 text-[#CCFF00]'}`}>
-                        {effect.badge}
-                      </span>
-                    )}
-                    <span className="text-[10px] text-[#555]">{effect.cost} credits</span>
-                  </div>
-                </button>
-              ))}
-            </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="VFX OPTIONS">
+          <div style={{ position: 'relative', marginBottom: 8 }}>
+            <Search size={14} style={{ position: 'absolute', left: 10, top: 8, color: 'var(--text-muted)' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)}
+              placeholder="Search effects..."
+              style={{
+                width: '100%', padding: '6px 10px 6px 28px', borderRadius: 8,
+                background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                color: 'var(--text-primary)', fontSize: 12,
+              }}
+            />
           </div>
-        </GenerationPanel>
-        {selectedEffect && (
-          <GenerationPanel>
-            <div className="space-y-4">
-              <div className="flex items-center gap-2">
-                <Zap size={16} className="text-[#6366f1]" />
-                <SectionLabel>Applying: {selectedEffect.name}</SectionLabel>
-              </div>
-              <UploadZone onFile={setUploadedFile} accept="video/*" label="Upload video to apply VFX" icon={Upload} preview={uploadedFile ? URL.createObjectURL(uploadedFile) : null} />
-              {uploadedFile && (
-                <>
-                  <div>
-                    <SectionLabel>Intensity</SectionLabel>
-                    <StudioDropdown options={INTENSITY_PILLS} value={intensity} onChange={setIntensity} />
+          {CATEGORIES.map(c => (
+            <button key={c} onClick={() => setCategory(c)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '6px 10px',
+                background: category === c ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 6,
+                color: category === c ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 11, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{c}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            VFX PRESETS
+          </h1>
+          {!selectedEffect && (
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(110px, 1fr))',
+              gap: 8, marginTop: 16, zIndex: 1, maxWidth: 500, width: '100%', padding: '0 16px',
+            }}>
+              {filtered.slice(0, 12).map(effect => (
+                <button key={effect.id} onClick={() => handleApply(effect)}
+                  style={{
+                    background: 'var(--bg-card)', borderRadius: 10, border: '1px solid var(--border-subtle)',
+                    padding: 8, cursor: 'pointer', textAlign: 'left',
+                  }}>
+                  <div style={{
+                    aspectRatio: '16/9', borderRadius: 6, marginBottom: 4,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    background: effect.color + '22',
+                  }}>
+                    <Zap size={14} style={{ color: effect.color }} />
                   </div>
-                  <div>
-                    <SectionLabel>Position</SectionLabel>
-                    <StudioDropdown options={POSITION_PILLS} value={position} onChange={setPosition} />
-                  </div>
-                  <div>
-                    <SectionLabel>Blend Mode</SectionLabel>
-                    <StudioDropdown options={BLEND_PILLS} value={blend} onChange={setBlend} />
-                  </div>
-                  <GenerateButton onClick={handleGenerate} loading={loading}>
-                    Apply {selectedEffect.name}
-                  </GenerateButton>
-                </>
-              )}
+                  <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-primary)' }}>{effect.name}</div>
+                  <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{effect.cost} credits</div>
+                </button>
+              ))}
             </div>
-          </GenerationPanel>
-        )}
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+          )}
+          {selectedEffect && (
+            <div style={{ display: 'flex', gap: 16, marginTop: 24, zIndex: 1 }}>
+              {uploadedFile ? (
+                <div style={{ width: 200, borderRadius: 12, border: '1px solid var(--border-default)', overflow: 'hidden' }}>
+                  <video src={URL.createObjectURL(uploadedFile)} style={{ width: '100%', height: 120, objectFit: 'contain' }} />
+                  <button onClick={() => setUploadedFile(null)}
+                    style={{
+                      width: '100%', padding: '4px', background: 'var(--bg-input)', border: 'none',
+                      color: 'var(--text-secondary)', fontSize: 10, cursor: 'pointer',
+                    }}
+                  >Remove</button>
+                </div>
+              ) : (
+                <label style={{
+                  width: 200, height: 120, borderRadius: 12, border: '2px dashed var(--border-default)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: 6, cursor: 'pointer', background: 'var(--bg-input)',
+                }}>
+                  <Upload size={20} style={{ color: 'var(--text-muted)' }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Upload video</span>
+                  <input type="file" accept="video/*" onChange={e => setUploadedFile(e.target.files?.[0])} style={{ display: 'none' }} />
+                </label>
+              )}
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--accent-text)', marginBottom: 8 }}>{selectedEffect.name}</div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Intensity: {intensity}</div>
+                <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
+                  {INTENSITY_PILLS.map(o => (
+                    <button key={o} onClick={() => setIntensity(o)}
+                      style={{
+                        padding: '3px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600,
+                        background: intensity === o ? 'var(--accent-bg)' : 'var(--bg-input)',
+                        border: '1px solid var(--border-default)', cursor: 'pointer',
+                        color: intensity === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                      }}
+                    >{o}</button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder={selectedEffect ? `Applying ${selectedEffect.name} — upload video...` : 'Browse VFX presets or search above...'} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleGenerate} disabled={loading || !uploadedFile} style={{ opacity: loading || !uploadedFile ? 0.6 : 1 }}>
+              {loading ? 'Applying...' : `Apply ${selectedEffect?.name || 'VFX'}`}
+            </GenerateButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import AppCard from '@/components/studio/AppCard';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import Link from 'next/link';
 
 const ALL_APPS = [
@@ -29,63 +27,80 @@ export default function FavoritesPage() {
     }
   }, []);
 
-  const toggleFav = (id) => {
-    setFavoriteIds(prev => {
-      const next = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
-      localStorage.setItem('creatify_fav_apps', JSON.stringify(next));
-      if (prev.includes(id)) toast.success('Removed from favorites');
-      return next;
-    });
-  };
-
   const favorites = ALL_APPS.filter(a => favoriteIds.includes(a.id));
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#000000' }}>
-      <Toaster position="top-center" />
-      <StudioHero icon={Heart} title="FAVORITE APPS" subtitle="Your pinned and most-used apps" />
-
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
-        {favorites.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '60px 0' }}>
-            <div style={{
-              width: 80, height: 80, background: '#1a1a1a', borderRadius: 16,
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              margin: '0 auto 16px',
-            }}>
-              <Heart size={32} style={{ color: '#444' }} />
-            </div>
-            <h3 style={{ color: '#fff', fontWeight: 600, marginBottom: 8 }}>No favorites yet</h3>
-            <p style={{ color: '#6B7280', fontSize: 14, marginBottom: 24 }}>Heart any app to save it here</p>
-            <Link href="/studio/apps/all"
-              style={{
-                display: 'inline-block', padding: '10px 24px',
-                background: '#CCFF00', color: '#000', fontWeight: 700,
-                fontSize: 13, borderRadius: 12, textDecoration: 'none',
-              }}
-            >
-              Browse Apps
-            </Link>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="FILTERS">
+          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 13 }}>
+            {favorites.length} favorites
           </div>
-        ) : (
-          <>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-              gap: 16, paddingBottom: 40,
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxHeight: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
             }}>
-              {favorites.map((app) => (
-                <AppCard
-                  key={app.id}
-                  app={app}
-                  isFavorite={true}
-                  onToggleFavorite={toggleFav}
-                />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
+              FAVORITE APPS
+            </h1>
+            {favorites.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '60px 0' }}>
+                <div style={{
+                  width: 80, height: 80, background: 'var(--bg-card)', borderRadius: 16,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  margin: '0 auto 16px',
+                }}>
+                  <Heart size={32} style={{ color: 'var(--text-muted)' }} />
+                </div>
+                <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, marginBottom: 8 }}>No favorites yet</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 24 }}>Heart any app to save it here</p>
+                <Link href="/studio/apps/all"
+                  style={{
+                    display: 'inline-block', padding: '10px 24px',
+                    background: '#CCFF00', color: '#000', fontWeight: 700,
+                    fontSize: 13, borderRadius: 12, textDecoration: 'none',
+                  }}
+                >
+                  Browse Apps
+                </Link>
+              </div>
+            ) : (
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+                gap: 16,
+              }}>
+                {favorites.map(app => (
+                  <div key={app.id} style={{
+                    background: 'var(--bg-card)', borderRadius: 12,
+                    border: '1px solid var(--border-subtle)', overflow: 'hidden',
+                  }}>
+                    <img src={app.url} alt="" style={{ width: '100%', height: 120, objectFit: 'cover' }} />
+                    <div style={{ padding: 12 }}>
+                      <p style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{app.name}</p>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 12 }}>{app.desc}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+            {favorites.length} saved apps
+          </span>
+        </DirectorBar>
+      }
+    />
   );
 }

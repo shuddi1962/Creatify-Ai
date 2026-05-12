@@ -10,6 +10,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const DEMO_STYLES = ['Unboxing', 'Feature Walkthrough', 'Before-After', 'How It Works', '360 Showcase', 'Lifestyle Use'];
 const SCENE_SETTINGS = ['White Studio', 'Lifestyle Home', 'Office', 'Outdoor', 'Abstract'];
@@ -45,56 +46,48 @@ export default function MarketingDemoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Play} title="PRODUCT DEMO" subtitle="Showcase your product in motion with stunning AI video demos" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Product Upload</SectionLabel>
-            <UploadZone onFile={setProduct} accept="image/*" label="Upload product image or 3D model" icon={Upload} preview={product ? URL.createObjectURL(product) : null} />
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="DEMO STYLES">
+          {DEMO_STYLES.map(s => (
+            <button key={s} onClick={() => setDemoStyle(s)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: demoStyle === s ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: demoStyle === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{s}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            PRODUCT DEMO
+          </h1>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Demo Settings">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1 }}>
+            <UploadZone onFile={setProduct} accept="image/*" label="Upload product" icon={Upload} preview={product ? URL.createObjectURL(product) : null} />
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div>
-              <SectionLabel>Demo Style</SectionLabel>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {DEMO_STYLES.map(s => (
-                  <button
-                    key={s}
-                    onClick={() => setDemoStyle(s)}
-                    className={`px-3 py-2 rounded-xl text-xs font-medium transition-all ${
-                      demoStyle === s ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Scene Setting</SectionLabel>
-              <StudioDropdown label="Scene Setting" options={SCENE_SETTINGS} value={scene} onChange={setScene} />
-            </div>
-            <div>
-              <SectionLabel>Voiceover</SectionLabel>
-              <StudioDropdown label="Voiceover" options={VOICEOVER_OPTIONS} value={voiceover} onChange={setVoiceover} />
-            </div>
-            <div>
-              <SectionLabel>Duration</SectionLabel>
-              <StudioDropdown label="Duration" options={DURATIONS} value={duration} onChange={setDuration} />
-            </div>
-            <button
-              onClick={() => setTextOverlays(!textOverlays)}
-              className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${textOverlays ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}
-            >
-              Text Overlays: {textOverlays ? 'On' : 'Off'}
-            </button>
-            <GenerateButton onClick={handleGenerate} loading={loading}>Generate Demo Video</GenerateButton>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="Scene" options={SCENE_SETTINGS} value={scene} onChange={setScene} />
+            <StudioDropdown label="Voice" options={VOICEOVER_OPTIONS} value={voiceover} onChange={setVoiceover} />
+            <StudioDropdown label="Duration" options={DURATIONS} value={duration} onChange={setDuration} />
+            <ControlButton onClick={() => setTextOverlays(!textOverlays)}>Text: {textOverlays ? 'On' : 'Off'}</ControlButton>
+            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
           </div>
-        </GenerationPanel>
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

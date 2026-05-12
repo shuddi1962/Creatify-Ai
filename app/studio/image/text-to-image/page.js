@@ -3,23 +3,36 @@
 import { useState } from 'react';
 import { Image } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
-import GenerateButton from '@/components/studio/GenerateButton';
-import UploadZone from '@/components/studio/UploadZone';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
 import StylePresets from '@/components/studio/StylePresets';
+import ResultsGrid from '@/components/studio/ResultsGrid';
 import * as muapi from '@/packages/studio/src/muapi';
 
-const QUALITY_OPTIONS = ['Standard', 'HD', '4K'];
-const NUM_IMAGES_OPTIONS = ['1', '2', '4', '8'];
-const STYLE_OPTIONS = [
-  'Photorealistic', 'Cinematic', 'Anime', 'Digital Art', 
+const STYLES = [
+  'Photorealistic', 'Cinematic', 'Anime', 'Digital Art',
   'Oil Painting', 'Watercolor', 'Sketch', '3D Render', 'Fashion', 'Abstract'
 ];
+
+const MODELS = ['flux', 'dalle', 'midjourney', 'stable-diffusion'];
+
+const RATIOS = [
+  { label: '1:1', desc: 'Square — Instagram, TikTok' },
+  { label: '16:9', desc: 'Landscape — YouTube, desktop' },
+  { label: '9:16', desc: 'Portrait — Reels, Shorts' },
+  { label: '4:3', desc: 'Standard — presentations' },
+  { label: '3:4', desc: 'Portrait standard' },
+  { label: '2:3', desc: 'Portrait narrow' },
+  { label: '3:2', desc: 'Photography standard' },
+];
+
+const QUALITIES = [
+  { label: 'Standard', desc: 'Fast — good for previews' },
+  { label: 'HD', desc: 'High quality — recommended' },
+  { label: '4K', desc: 'Ultra quality — uses 3x credits' },
+];
+
+const IMAGE_COUNTS = ['1 image', '2 images', '4 images', '8 images'];
 
 export default function TextToImagePage() {
   const [prompt, setPrompt] = useState('');
@@ -38,12 +51,11 @@ export default function TextToImagePage() {
       toast.error('Please enter a prompt');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
       if (apiKey) {
-        const promises = Array(parseInt(numImages)).fill(null).map((_, i) => 
+        const promises = Array(parseInt(numImages)).fill(null).map((_, i) =>
           muapi.generateImage(apiKey, {
             model,
             prompt: prompt + (style !== 'Photorealistic' ? `, ${style} style` : ''),
@@ -77,85 +89,70 @@ export default function TextToImagePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Image}
-        title="IMAGE STUDIO"
-        subtitle="Generate stunning AI images from any text prompt"
-        backgroundImage="https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?auto=compress&cs=tinysrgb&w=1200"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Prompt</SectionLabel>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe your image in detail..."
-                className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
-              />
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="STYLES">
+            {STYLES.map(s => (
+              <button key={s} onClick={() => setStyle(s)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: style === s ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: style === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (style !== s) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (style !== s) e.currentTarget.style.background = 'none'; }}
+              >
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: style === s ? 500 : 400 }}>{s}</div>
+                </div>
+              </button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              Text to Image
+            </h1>
+            <div style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', gap: 6 }}>
+              <ControlButton onClick={() => setShowNegative(!showNegative)}>
+                {showNegative ? '− Negative' : '+ Negative'}
+              </ControlButton>
             </div>
-
-            {showNegative && (
-              <div>
-                <SectionLabel>Negative Prompt</SectionLabel>
-                <textarea
-                  value={negativePrompt}
-                  onChange={(e) => setNegativePrompt(e.target.value)}
-                  placeholder="What to exclude from the image..."
-                  className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
-                />
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+                <div style={{ maxWidth: 500, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results} columns={parseInt(numImages) > 2 ? 2 : 3} />
+                </div>
               </div>
             )}
-
-            <button
-              onClick={() => setShowNegative(!showNegative)}
-              className="text-xs text-[#666] hover:text-white transition-colors"
-            >
-              {showNegative ? '− Hide Negative Prompt' : '+ Add Negative Prompt'}
-            </button>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))',
-              gap: 16,
-            }}>
-              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={['flux', 'dalle', 'midjourney', 'stable-diffusion']} />
-              <StudioDropdown label="ASPECT RATIO" value={aspectRatio} onChange={setAspectRatio} options={[
-                { label: '1:1', desc: 'Square — Instagram, TikTok' },
-                { label: '16:9', desc: 'Landscape — YouTube, desktop' },
-                { label: '9:16', desc: 'Portrait — Reels, Shorts' },
-                { label: '4:3', desc: 'Standard — presentations' },
-                { label: '3:4', desc: 'Portrait standard' },
-                { label: '2:3', desc: 'Portrait narrow' },
-                { label: '3:2', desc: 'Photography standard' },
-              ]} />
-              <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={[
-                { label: 'Standard', desc: 'Fast — good for previews' },
-                { label: 'HD', desc: 'High quality — recommended' },
-                { label: '4K', desc: 'Ultra quality — uses 3x credits' },
-              ]} />
-              <StudioDropdown label="IMAGES" value={`${numImages} image${numImages > 1 ? 's' : ''}`} onChange={v => setNumImages(v.replace(' image','').replace('s',''))} options={['1 image', '2 images', '4 images', '8 images']} />
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Text to Image Controls">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe your image in detail..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={MODELS} />
+              <StudioDropdown label="RATIO" value={aspectRatio} onChange={setAspectRatio} options={RATIOS} />
+              <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={QUALITIES} />
+              <StudioDropdown label="COUNT" value={`${numImages} image${numImages > 1 ? 's' : ''}`} onChange={v => setNumImages(v.replace(' image', '').replace('s', ''))} options={IMAGE_COUNTS} />
+              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Style</SectionLabel>
-              <StylePresets presets={STYLE_OPTIONS} value={style} onChange={setStyle} />
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Image
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={parseInt(numImages) > 2 ? 2 : 3} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

@@ -9,18 +9,19 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import UploadZone from '@/components/studio/UploadZone';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PLATFORMS = [
-  { id: 'tiktok', name: 'TikTok', ratio: '9:16', label: '9:16' },
-  { id: 'instagram-feed', name: 'Instagram Feed', ratio: '1:1', label: '1:1' },
-  { id: 'instagram-reel', name: 'Instagram Reel', ratio: '9:16', label: '9:16' },
-  { id: 'youtube', name: 'YouTube', ratio: '16:9', label: '16:9' },
-  { id: 'youtube-short', name: 'YouTube Short', ratio: '9:16', label: '9:16' },
-  { id: 'twitter', name: 'Twitter/X', ratio: '16:9', label: '16:9' },
-  { id: 'linkedin', name: 'LinkedIn', ratio: '1.91:1', label: '1.91:1' },
-  { id: 'facebook', name: 'Facebook', ratio: '1:1', label: '1:1' },
-  { id: 'pinterest', name: 'Pinterest', ratio: '2:3', label: '2:3' },
-  { id: 'snapchat', name: 'Snapchat', ratio: '9:16', label: '9:16' },
+  { id: 'tiktok', name: 'TikTok', ratio: '9:16' },
+  { id: 'instagram-feed', name: 'Instagram Feed', ratio: '1:1' },
+  { id: 'instagram-reel', name: 'Instagram Reel', ratio: '9:16' },
+  { id: 'youtube', name: 'YouTube', ratio: '16:9' },
+  { id: 'youtube-short', name: 'YouTube Short', ratio: '9:16' },
+  { id: 'twitter', name: 'Twitter/X', ratio: '16:9' },
+  { id: 'linkedin', name: 'LinkedIn', ratio: '1.91:1' },
+  { id: 'facebook', name: 'Facebook', ratio: '1:1' },
+  { id: 'pinterest', name: 'Pinterest', ratio: '2:3' },
+  { id: 'snapchat', name: 'Snapchat', ratio: '9:16' },
 ];
 const CROP_MODES = ['Smart Crop', 'Center', 'Custom'];
 const BG_FILLS = ['Blur', 'Black', 'White', 'Brand Color', 'Mirror'];
@@ -70,90 +71,74 @@ export default function MarketingFormatterPage() {
   const handleDownloadAll = () => toast.success('Downloading ZIP...');
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Smartphone} title="FORMAT FOR EVERY PLATFORM" subtitle="Auto-resize and reformat your content to perfect dimensions per platform" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <UploadZone onFile={setFile} accept="video/*,image/*" label="Upload video or image to reformat" icon={ImageIcon} preview={file ? URL.createObjectURL(file) : null} />
-            {file && (
-              <>
-                <div>
-                  <SectionLabel>Target Platforms</SectionLabel>
-                  <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
-                    {PLATFORMS.map(p => (
-                      <button
-                        key={p.id}
-                        onClick={() => togglePlatform(p.id)}
-                        className={`p-3 rounded-xl border transition-all ${
-                          selectedPlatforms.includes(p.id)
-                            ? 'border-[#6366f1] bg-[#6366f1]/10 text-white'
-                            : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'
-                        }`}
-                      >
-                        <p className="text-xs font-semibold">{p.name}</p>
-                        <p className="text-[10px] text-[#555] mt-0.5">{p.label}</p>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <SectionLabel>Crop Mode</SectionLabel>
-                  <StudioDropdown label="Crop Mode" options={CROP_MODES} value={cropMode} onChange={setCropMode} />
-                </div>
-                <div>
-                  <SectionLabel>Background Fill</SectionLabel>
-                  <StudioDropdown label="Background Fill" options={BG_FILLS} value={bgFill} onChange={setBgFill} />
-                </div>
-                <div className="flex gap-4">
-                  <button onClick={() => setCaptions(!captions)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${captions ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
-                    Captions: {captions ? 'On' : 'Off'}
-                  </button>
-                  <button onClick={() => setWatermark(!watermark)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${watermark ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
-                    Watermark: {watermark ? 'On' : 'Off'}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        </GenerationPanel>
-        <div className="flex justify-end gap-2">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate All Formats
-          </GenerateButton>
-        </div>
-        {results.length > 0 && (
-          <GenerationPanel>
-            <div className="space-y-4">
-              <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORMS">
+          {PLATFORMS.map(p => (
+            <button key={p.id} onClick={() => togglePlatform(p.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: selectedPlatforms.includes(p.id) ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: selectedPlatforms.includes(p.id) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p.name} <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>({p.ratio})</span></button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            PLATFORM FORMATTER
+          </h1>
+          {results.length > 0 && (
+            <div style={{ zIndex: 1, marginTop: 24, maxWidth: 500, width: '100%', padding: 16 }}>
+              <div style={{ display: 'flex', gap: 8, marginBottom: 12, overflowX: 'auto' }}>
                 {results.map(r => (
-                  <button
-                    key={r.platform}
-                    onClick={() => setActiveTab(r.platform)}
-                    className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                      activeTab === r.platform ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
-                    }`}
-                  >
-                    {r.platform.replace('-', ' ')}
-                  </button>
+                  <button key={r.platform} onClick={() => setActiveTab(r.platform)}
+                    style={{
+                      padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600,
+                      background: activeTab === r.platform ? 'var(--accent-bg)' : 'var(--bg-input)',
+                      border: '1px solid var(--border-default)', cursor: 'pointer',
+                      color: activeTab === r.platform ? 'var(--accent-text)' : 'var(--text-secondary)',
+                      textTransform: 'capitalize',
+                    }}
+                  >{r.platform.replace('-', ' ')}</button>
                 ))}
               </div>
-              <div className="relative rounded-xl overflow-hidden bg-[#0a0a0a]">
-                <img src={results.find(r => r.platform === activeTab)?.url} alt="" className="w-full max-h-96 object-contain" />
-                <button className="absolute top-3 right-3 flex items-center gap-1 px-3 py-1.5 bg-black/60 rounded-lg text-xs text-white hover:bg-black/80 transition-all">
-                  <Download size={12} /> Download
-                </button>
+              <div style={{ borderRadius: 12, overflow: 'hidden', background: 'var(--bg-card)' }}>
+                <img src={results.find(r => r.platform === activeTab)?.url} alt="" style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }} />
               </div>
-              <div className="flex justify-between items-center">
-                <p className="text-xs text-[#888]">{selectedPlatforms.length} formats ready</p>
-                <button onClick={handleDownloadAll} className="flex items-center gap-2 px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-xl hover:bg-[#B8FF00] transition-all">
-                  <Download size={14} /> Download All as ZIP
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{selectedPlatforms.length} formats ready</span>
+                <button onClick={handleDownloadAll} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#CCFF00', color: '#000', fontSize: 12, fontWeight: 700, border: 'none', borderRadius: 10, cursor: 'pointer' }}>
+                  <Download size={14} /> Download All
                 </button>
               </div>
             </div>
-          </GenerationPanel>
-        )}
-      </div>
-    </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Format Settings">
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
+            <UploadZone onFile={setFile} accept="video/*,image/*" label="Upload" icon={ImageIcon} preview={file ? URL.createObjectURL(file) : null} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="Crop" options={CROP_MODES} value={cropMode} onChange={setCropMode} />
+            <StudioDropdown label="BG" options={BG_FILLS} value={bgFill} onChange={setBgFill} />
+            <ControlButton onClick={() => setCaptions(!captions)}>{captions ? 'Captions: On' : 'Captions: Off'}</ControlButton>
+            <ControlButton onClick={() => setWatermark(!watermark)}>{watermark ? 'WM: On' : 'WM: Off'}</ControlButton>
+            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

@@ -3,17 +3,10 @@
 import { useState } from 'react';
 import { Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
 
-const STYLE_PRESETS = [
-  'Anime', 'Cyberpunk', 'Film Noir', 'Watercolor', 'Oil Paint', 
-  'Neon', 'Vintage Film', 'Comic Book', 'Claymation', 'Hyperrealistic'
-];
+const STYLE_PRESETS = ['Anime', 'Cyberpunk', 'Film Noir', 'Watercolor', 'Oil Paint', 'Neon', 'Vintage Film', 'Comic Book', 'Claymation', 'Hyperrealistic'];
 const STRENGTH_OPTIONS = ['Low', 'Medium', 'High', 'Extreme'];
 
 export default function RestyleVideoPage() {
@@ -27,13 +20,8 @@ export default function RestyleVideoPage() {
   const [results, setResults] = useState([]);
 
   const handleVideoUpload = (file) => {
-    if (file) {
-      setVideoFile(file);
-      setVideoPreview(URL.createObjectURL(file));
-    } else {
-      setVideoFile(null);
-      setVideoPreview(null);
-    }
+    if (file) { setVideoFile(file); setVideoPreview(URL.createObjectURL(file)); }
+    else { setVideoFile(null); setVideoPreview(null); }
   };
 
   const handleGenerate = async () => {
@@ -41,7 +29,6 @@ export default function RestyleVideoPage() {
       toast.error('Please upload a video to restyle');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
@@ -49,12 +36,7 @@ export default function RestyleVideoPage() {
         toast.success('Video restyling started!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
-        setResults([{
-          id: `demo-${Date.now()}`,
-          url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-          prompt: selectedStyle,
-          type: 'video'
-        }]);
+        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt: selectedStyle, type: 'video' }]);
         toast.success('Demo: Video restyled!');
       }
     } catch (error) {
@@ -65,99 +47,88 @@ export default function RestyleVideoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        title="RESTYLE VIDEO"
-        subtitle="Apply a completely new visual style to any existing video"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Video</SectionLabel>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="STYLE PRESETS">
+            {STYLE_PRESETS.map(s => (
+              <button key={s} onClick={() => setSelectedStyle(s)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: selectedStyle === s ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: selectedStyle === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (selectedStyle !== s) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (selectedStyle !== s) e.currentTarget.style.background = 'none'; }}
+              >
+                {s}
+              </button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, zIndex: 1, width: '100%', maxWidth: 500, padding: '0 24px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', lineHeight: 1.2,
+              }}>
+                RESTYLE VIDEO
+              </h1>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', textAlign: 'center' }}>
+                Apply a completely new visual style to any existing video
+              </p>
               {videoPreview ? (
-                <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a]">
-                  <video src={videoPreview} controls className="w-full h-48 object-contain rounded-lg" />
-                  <button
-                    onClick={() => handleVideoUpload(null)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white text-xs hover:bg-black/80"
-                  >
+                <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)', width: '100%' }}>
+                  <video src={videoPreview} controls style={{ width: '100%', height: 240, objectFit: 'contain', background: '#000' }} />
+                  <button onClick={() => handleVideoUpload(null)}
+                    style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     ×
                   </button>
                 </div>
               ) : (
-                <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <div className="w-14 h-14 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                    <Video size={28} className="text-[#666]" />
+                <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 40, borderRadius: 12, border: '2px dashed var(--border-subtle)', cursor: 'pointer', background: 'var(--bg-card)', width: '100%' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Video size={28} style={{ color: 'var(--text-muted)' }} />
                   </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-white">Upload video to restyle</p>
-                    <p className="text-xs text-[#555] mt-1">Drag & drop or click to browse</p>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Upload video to restyle</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Drag & drop or click to browse</p>
                   </div>
-                  <input type="file" accept="video/*" onChange={(e) => handleVideoUpload(e.target.files?.[0])} className="hidden" />
+                  <input type="file" accept="video/*" onChange={e => handleVideoUpload(e.target.files?.[0])} style={{ display: 'none' }} />
                 </label>
               )}
             </div>
-
-            <div>
-              <SectionLabel>Style Presets</SectionLabel>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                {STYLE_PRESETS.map(preset => (
-                  <button
-                    key={preset}
-                    onClick={() => setSelectedStyle(preset)}
-                    className={`px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                      selectedStyle === preset
-                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
-                        : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {preset}
-                  </button>
-                ))}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Restyle Video">
+            <PromptInput value={customStyle} onChange={e => setCustomStyle(e.target.value)} placeholder="Custom style description (optional)..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <div style={{ minWidth: 90 }}>
+                <StudioDropdown value={styleStrength} onChange={setStyleStrength} options={STRENGTH_OPTIONS} />
               </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button onClick={() => setPreserveMotion(!preserveMotion)}
+                  style={{ width: 32, height: 18, borderRadius: 100, position: 'relative', background: preserveMotion ? 'var(--accent-primary, #7C3AED)' : 'var(--bg-input)', border: 'none', cursor: 'pointer' }}>
+                  <div style={{ position: 'absolute', top: 2, left: preserveMotion ? 14 : 2, width: 14, height: 14, borderRadius: '50%', background: '#fff', transition: 'left 150ms' }} />
+                </button>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Motion</span>
+              </div>
+              <GenerateButton onClick={handleGenerate}>
+                {loading ? 'Restyling...' : 'GENERATE ✦ 10'}
+              </GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Custom Style Prompt</SectionLabel>
-              <textarea
-                value={customStyle}
-                onChange={(e) => setCustomStyle(e.target.value)}
-                className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
-              />
-            </div>
-
-            <div>
-              <SectionLabel>Style Strength</SectionLabel>
-              <StudioDropdown options={STRENGTH_OPTIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={styleStrength} onChange={setStyleStrength} />
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setPreserveMotion(!preserveMotion)}
-                className={`w-12 h-6 rounded-full transition-all ${
-                  preserveMotion ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'
-                }`}
-              >
-                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                  preserveMotion ? 'translate-x-6' : 'translate-x-0.5'
-                }`} />
-              </button>
-              <span className="text-sm text-[#888]">Preserve motion</span>
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Restyle Video
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={1} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { Mic, Upload, Download, X } from 'lucide-react';
+import { Mic, Upload, Download } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import ModelSelector from '@/components/studio/ModelSelector';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const QUALITY_OPTIONS = ['standard', 'high'];
 
@@ -60,104 +61,96 @@ export default function BulkLipsyncPage() {
   const completed = rows.filter(r => r.status === 'completed').length;
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Mic} badge="NEW" title="BULK LIP SYNC" subtitle="One character plus up to 100 audio files equals 100 talking videos" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        {!started ? (
-          <>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <SectionLabel>Character Image</SectionLabel>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-6 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                    <Upload size={24} className="text-[#666]" />
-                    <p className="text-sm font-medium text-white">Upload character portrait</p>
-                    <p className="text-xs text-[#555]">PNG/JPG, max 10MB</p>
-                    <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && handleCharacter(e.target.files[0])} className="hidden" />
-                  </label>
-                  {character && <img src={URL.createObjectURL(character)} alt="" className="w-full aspect-square rounded-xl object-cover" />}
-                </div>
-              </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <SectionLabel>Audio Files</SectionLabel>
-                <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-6 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <Upload size={24} className="text-[#666]" />
-                  <p className="text-sm font-medium text-white">Drag & drop audio batch or CSV</p>
-                  <p className="text-xs text-[#555]">MP3/WAV files or CSV with audio_url column</p>
-                  <input type="file" accept=".csv,.mp3,.wav" multiple onChange={e => {
-                    const files = Array.from(e.target.files || []);
-                    const csv = files.find(f => f.name.endsWith('.csv'));
-                    const audios = files.filter(f => !f.name.endsWith('.csv'));
-                    if (csv) handleCSVUplod(csv);
-                    if (audios.length > 0) {
-                      setRows(audios.map((f, i) => ({ id: i + 1, filename: f.name, status: 'pending', progress: 0 })));
-                      toast.success(`${audios.length} audio files loaded`);
-                    }
-                  }} className="hidden" />
-                </label>
-                {rows.length > 0 && (
-                  <div className="space-y-1 max-h-40 overflow-y-auto">
-                    {rows.map(r => (
-                      <div key={r.id} className="flex items-center gap-2 p-2 bg-[#0a0a0a] rounded-lg">
-                        <Mic size={12} className="text-[#555]" />
-                        <span className="text-xs text-white flex-1 truncate">{r.filename}</span>
-                        <span className="text-[10px] text-[#555]">Ready</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <SectionLabel>Model</SectionLabel>
-                <ModelSelector value={model} onChange={setModel} type="lipsync" />
-                <SectionLabel>Output Quality</SectionLabel>
-                <StudioDropdown label="Output Quality" options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
-              </div>
-            </GenerationPanel>
-            {rows.length > 0 && (
-              <div className="flex justify-end">
-                <button onClick={handleStart} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] transition-all">
-                  Start Bulk Lip Sync
-                </button>
-              </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="CHARACTER">
+          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 20, border: '2px dashed var(--border-subtle)', borderRadius: 12, cursor: 'pointer', background: 'var(--bg-card)' }}>
+            {character ? (
+              <img src={URL.createObjectURL(character)} alt="" style={{ width: '100%', aspectRatio: '1', borderRadius: 8, objectFit: 'cover' }} />
+            ) : (
+              <>
+                <Upload size={24} style={{ color: 'var(--text-muted)' }} />
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', textAlign: 'center' }}>Upload character portrait</p>
+              </>
             )}
-          </>
-        ) : (
-          <>
-            <GenerationPanel>
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-bold text-white">{completed}/{rows.length} complete</p>
-                <div className="w-64 h-2 bg-[#1a1a1a] rounded-full">
-                  <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
+            <input type="file" accept="image/*" onChange={e => e.target.files?.[0] && handleCharacter(e.target.files[0])} style={{ display: 'none' }} />
+          </label>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BULK LIP SYNC
+          </h1>
+          {rows.length > 0 && !started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8, display: 'block' }}>{rows.length} Audio Files</span>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: 'var(--bg-card)', borderRadius: 8, marginBottom: 4 }}>
+                  <Mic size={12} style={{ color: 'var(--text-muted)' }} />
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1 }}>{r.filename}</span>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Ready</span>
                 </div>
-                {completed > 0 && <button className="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-xl"><Download size={14} />Download All</button>}
+              ))}
+            </div>
+          )}
+          {started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{completed}/{rows.length}</span>
+                <div style={{ flex: 1, height: 8, background: 'var(--bg-input)', borderRadius: 100 }}>
+                  <div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
+                </div>
               </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-2">
-                {rows.map(r => (
-                  <div key={r.id} className="flex items-center gap-3 p-3 bg-[#0a0a0a] rounded-xl border border-white/[0.08]">
-                    <span className="text-xs font-bold text-[#555] w-6">#{r.id}</span>
-                    <span className="text-xs text-white flex-1 truncate">{r.filename}</span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${r.status === 'completed' ? 'bg-green-500/20 text-green-400' : r.status === 'generating' ? 'bg-[#CCFF00]/20 text-[#CCFF00]' : 'bg-[#1a1a1a] text-[#555]'}`}>{r.status}</span>
-                    {r.status === 'generating' && <div className="w-16 h-1.5 bg-[#1a1a1a] rounded-full"><div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${r.progress}%` }} /></div>}
-                    {r.status === 'completed' && r.url && (
-                      <>
-                        <img src={r.url} alt="" className="w-10 h-10 rounded object-cover" />
-                        <button className="p-1 text-[#888] hover:text-white"><Download size={14} /></button>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </GenerationPanel>
-          </>
-        )}
-      </div>
-    </div>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--bg-card)', borderRadius: 10, marginBottom: 4, border: '1px solid var(--border-subtle)' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1 }}>{r.filename}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
+                    background: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'generating' ? 'rgba(204,255,0,0.2)' : 'var(--bg-input)',
+                    color: r.status === 'completed' ? '#4ade80' : r.status === 'generating' ? '#CCFF00' : 'var(--text-muted)',
+                  }}>{r.status}</span>
+                  {r.status === 'generating' && <div style={{ width: 60, height: 6, background: 'var(--bg-input)', borderRadius: 100 }}><div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${r.progress}%` }} /></div>}
+                  {r.status === 'completed' && r.url && <img src={r.url} alt="" style={{ width: 32, height: 32, borderRadius: 4, objectFit: 'cover' }} />}
+                </div>
+              ))}
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Settings">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <ModelSelector value={model} onChange={setModel} type="lipsync" />
+            <StudioDropdown label="Quality" options={QUALITY_OPTIONS} value={quality} onChange={setQuality} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <label style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 10px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>
+              <Upload size={12} /> Audio CSV
+              <input type="file" accept=".csv,.mp3,.wav" multiple onChange={e => {
+                const files = Array.from(e.target.files || []);
+                const csv = files.find(f => f.name.endsWith('.csv'));
+                const audios = files.filter(f => !f.name.endsWith('.csv'));
+                if (csv) handleCSVUplod(csv);
+                if (audios.length > 0) {
+                  setRows(audios.map((f, i) => ({ id: i + 1, filename: f.name, status: 'pending', progress: 0 })));
+                  toast.success(`${audios.length} audio files loaded`);
+                }
+              }} style={{ display: 'none' }} />
+            </label>
+            {rows.length > 0 && !started && (
+              <button onClick={handleStart} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>START LIP SYNC</button>
+            )}
+            {started && completed > 0 && (
+              <button style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> Download</button>
+            )}
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

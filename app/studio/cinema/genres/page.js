@@ -3,12 +3,7 @@
 import { useState } from 'react';
 import { Clapperboard } from 'lucide-react';
 import toast from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const GENRES = [
   { id: 'action', name: 'Action', mood: 'High energy, fast-paced', style: 'Dynamic camera, bold colors', sample: 'Car chase sequence' },
@@ -36,7 +31,6 @@ const GENRES = [
 export default function CinemaGenresPage() {
   const [selectedGenre, setSelectedGenre] = useState(null);
   const [prompt, setPrompt] = useState('');
-  const [model, setModel] = useState('seedance-2');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
 
@@ -65,45 +59,74 @@ export default function CinemaGenresPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Clapperboard} title="GENRE PRESETS" subtitle="One-click style presets for action, horror, romance, sci-fi and more" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {GENRES.map(genre => (
-              <button
-                key={genre.id}
-                onClick={() => handleSelect(genre)}
-                className={`relative bg-[#0a0a0a] rounded-xl border p-3 text-left hover:border-[#6366f1]/50 transition-all ${
-                  selectedGenre === genre.id ? 'border-[#6366f1] ring-1 ring-[#6366f1]' : 'border-white/[0.08]'
-                }`}
-              >
-                <p className="text-sm font-bold text-white">{genre.name}</p>
-                <p className="text-[10px] text-[#555] mt-1">{genre.style}</p>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="GENRES">
+          {GENRES.map(g => (
+            <button key={g.id} onClick={() => handleSelect(g)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: selectedGenre === g.id ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: selectedGenre === g.id ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{g.name}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            GENRE PRESETS
+          </h1>
+          <div style={{
+            display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
+            gap: 8, marginTop: 24, zIndex: 1, maxWidth: 500, width: '100%', padding: '0 16px',
+          }}>
+            {GENRES.map(g => (
+              <button key={g.id} onClick={() => handleSelect(g)}
+                style={{
+                  background: selectedGenre === g.id ? 'var(--accent-bg)' : 'var(--bg-card)',
+                  borderRadius: 10, border: selectedGenre === g.id ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
+                  padding: '10px 12px', cursor: 'pointer', textAlign: 'left',
+                }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: selectedGenre === g.id ? 'var(--accent-text)' : 'var(--text-primary)' }}>{g.name}</div>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>{g.style}</div>
               </button>
             ))}
           </div>
-        </GenerationPanel>
-        {selectedGenre && (
-          <GenerationPanel>
-            <div className="space-y-4">
-              <SectionLabel>{GENRES.find(g => g.id === selectedGenre)?.name} Scene</SectionLabel>
-              <textarea
-                value={prompt}
-                onChange={e => setPrompt(e.target.value)}
-                placeholder="Describe your scene..."
-                className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-28"
+          {selectedGenre && (
+            <div style={{ marginTop: 16, zIndex: 1, width: '60%' }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Scene Description</div>
+              <textarea value={prompt} onChange={e => setPrompt(e.target.value)}
+                style={{
+                  width: '100%', height: 80, borderRadius: 10,
+                  border: '1px solid var(--border-default)', background: 'var(--bg-input)',
+                  color: 'var(--text-primary)', padding: 10, fontSize: 13, resize: 'none',
+                }}
               />
-              <div className="flex justify-end">
-                <GenerateButton onClick={handleGenerate} loading={loading}>
-                  Generate {GENRES.find(g => g.id === selectedGenre)?.name} Video
-                </GenerateButton>
-              </div>
             </div>
-          </GenerationPanel>
-        )}
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder="Select a genre preset and describe your scene..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleGenerate} disabled={loading || !selectedGenre} style={{ opacity: loading || !selectedGenre ? 0.6 : 1 }}>
+              {loading ? 'Generating...' : 'Generate Video'}
+            </GenerateButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

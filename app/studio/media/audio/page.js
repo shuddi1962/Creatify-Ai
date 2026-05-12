@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Music, Download, Trash2, Search, Play } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
+import { Music, Search, Play, Download, Trash2 } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const AUDIO_FILES = [
   { id: 1, name: 'voiceover-1.mp3', model: 'ElevenLabs', date: 'May 8', size: '4.1 MB', duration: '2:34' },
@@ -15,39 +15,78 @@ export default function AudioPage() {
   const [audioFiles] = useState(AUDIO_FILES);
   const [search, setSearch] = useState('');
   const [playing, setPlaying] = useState(null);
-
   const filtered = audioFiles.filter(a => !search || a.name.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <div className="max-w-[900px] mx-auto px-4 pt-8">
-        <h1 className="text-white font-bold text-2xl mb-2">Audio</h1>
-        <p className="text-[#666] text-sm mb-6">{audioFiles.length} audio files</p>
-        <div className="relative mb-6">
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#444]" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search audio..." className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl pl-10 pr-4 py-2.5 text-white placeholder-[#444] focus:outline-none" />
-        </div>
-        <div className="space-y-3 pb-8">
-          {filtered.map(audio => (
-            <div key={audio.id} className="bg-[#111111] rounded-xl border border-white/[0.08] p-4 flex items-center gap-4">
-              <button onClick={() => setPlaying(playing === audio.id ? null : audio.id)} className="w-10 h-10 bg-[#7C3AED] rounded-full flex items-center justify-center text-white flex-shrink-0"><Play size={16} /></button>
-              <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-medium truncate">{audio.name}</p>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-[#555] text-xs">{audio.model}</span>
-                  <span className="text-[#555] text-xs">{audio.duration}</span>
-                  <span className="text-[#555] text-xs">{audio.size}</span>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="AUDIO">
+          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 12 }}>
+            {audioFiles.length} audio files
+          </div>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', height: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 6,
+            }}>
+              AUDIO
+            </h1>
+            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20 }}>{filtered.length} audio files</p>
+            <div style={{ maxWidth: 600, margin: '0 auto' }}>
+              {filtered.map(audio => (
+                <div key={audio.id} style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  background: 'var(--bg-card)', borderRadius: 12,
+                  border: '1px solid var(--border-subtle)', padding: '12px 16px',
+                  marginBottom: 8,
+                }}>
+                  <button onClick={() => setPlaying(playing === audio.id ? null : audio.id)}
+                    style={{
+                      width: 36, height: 36, borderRadius: '50%',
+                      background: 'var(--accent-bg)', border: 'none',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', flexShrink: 0,
+                    }}
+                  >
+                    <Play size={14} style={{ color: 'var(--accent-text)', marginLeft: 2 }} />
+                  </button>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ color: 'var(--text-primary)', fontSize: 13, fontWeight: 500, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{audio.name}</p>
+                    <div style={{ display: 'flex', gap: 12, marginTop: 2 }}>
+                      <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{audio.model}</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{audio.duration}</span>
+                      <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{audio.size}</span>
+                    </div>
+                  </div>
+                  <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
+                    <Download size={14} />
+                  </button>
+                  <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
+                    <Trash2 size={14} />
+                  </button>
                 </div>
-              </div>
-              <div className="flex gap-2">
-                <button className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white transition-all"><Download size={14} /></button>
-                <button className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-red-500 transition-all"><Trash2 size={14} /></button>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Search">
+          <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
+            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search audio..."
+              style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 12px 8px 32px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
+            />
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

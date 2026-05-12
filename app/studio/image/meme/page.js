@@ -1,15 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Image, Smile } from 'lucide-react';
+import { Smile } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
 
 const MEME_TYPES = ['Classic top-bottom text', 'Modern overlay', 'Reaction', 'Deep Fried', 'Wholesome', 'Dank'];
 const FONTS = ['Impact', 'Arial Black', 'Comic Sans', 'Helvetica Bold', 'Custom'];
@@ -44,7 +41,6 @@ export default function MemePage() {
       toast.error('Please upload an image or enter text/prompt');
       return;
     }
-
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
@@ -62,120 +58,103 @@ export default function MemePage() {
     }
   };
 
+  const isClassic = memeType === 'Classic top-bottom text';
+
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Smile}
-        title="MEME GENERATOR"
-        subtitle="Create viral AI memes from a simple text prompt"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Meme Type</SectionLabel>
-              <div className="flex gap-2 overflow-x-auto pb-2">
-                {MEME_TYPES.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => setMemeType(type)}
-                    className={`px-4 py-2 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
-                      memeType === type
-                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
-                        : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Upload Image (Optional)</SectionLabel>
-                <UploadZone onFile={handleFile} preview={uploadedImage} accept="image/*" label="Upload image" />
-              </div>
-              {memeType === 'Classic top-bottom text' ? (
-                <div className="space-y-3">
-                  <div>
-                    <SectionLabel>Top Text</SectionLabel>
-                    <input
-                      type="text"
-                      value={topText}
-                      onChange={(e) => setTopText(e.target.value)}
-                      placeholder="TOP TEXT"
-                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
-                    />
-                  </div>
-                  <div>
-                    <SectionLabel>Bottom Text</SectionLabel>
-                    <input
-                      type="text"
-                      value={bottomText}
-                      onChange={(e) => setBottomText(e.target.value)}
-                      placeholder="BOTTOM TEXT"
-                      className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
-                    />
-                  </div>
-                </div>
-              ) : (
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="MEME TYPE">
+            {MEME_TYPES.map(t => (
+              <button key={t} onClick={() => setMemeType(t)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: memeType === t ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: memeType === t ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (memeType !== t) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (memeType !== t) e.currentTarget.style.background = 'none'; }}
+              >
                 <div>
-                  <SectionLabel>Prompt</SectionLabel>
-                  <textarea
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    placeholder="Describe your meme concept..."
-                    className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
-                  />
+                  <div style={{ fontSize: 13, fontWeight: memeType === t ? 500 : 400 }}>{t}</div>
                 </div>
+              </button>
+            ))}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 8, paddingTop: 8 }}>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="FONT" value={font} onChange={setFont} options={FONTS} />
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="COLOR" value={textColor} onChange={setTextColor} options={TEXT_COLORS} />
+              </div>
+              {textColor === 'Custom' && (
+                <input type="color" value={customColor}
+                  onChange={e => setCustomColor(e.target.value)}
+                  style={{ width: 32, height: 32, borderRadius: 6, border: 'none', cursor: 'pointer', marginLeft: 12, marginBottom: 8 }} />
               )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <SectionLabel>Font</SectionLabel>
-                <StudioDropdown options={FONTS.map(o => ({ value: o, label: o.toUpperCase() }))} value={font} onChange={setFont} />
-              </div>
-              <div>
-                <SectionLabel>Text Color</SectionLabel>
-                <StudioDropdown options={TEXT_COLORS.map(o => ({ value: o, label: o.toUpperCase() }))} value={textColor} onChange={setTextColor} />
-                {textColor === 'Custom' && (
-                  <input
-                    type="color"
-                    value={customColor}
-                    onChange={(e) => setCustomColor(e.target.value)}
-                    className="mt-2 w-10 h-10 rounded-lg cursor-pointer"
-                  />
-                )}
-              </div>
-              <div className="flex items-center gap-3">
-                <SectionLabel>Text Outline</SectionLabel>
-                <button
-                  onClick={() => setTextOutline(!textOutline)}
-                  className={`w-12 h-6 rounded-full transition-all ${
-                    textOutline ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'
-                  }`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${
-                    textOutline ? 'translate-x-6' : 'translate-x-0.5'
-                  }`} />
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '4px 12px' }}>
+                <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>Outline</span>
+                <button onClick={() => setTextOutline(!textOutline)}
+                  style={{ width: 36, height: 20, borderRadius: 10, border: 'none', cursor: 'pointer', background: textOutline ? 'var(--accent-primary)' : 'var(--bg-input)', position: 'relative', transition: 'background 200ms' }}>
+                  <div style={{ width: 16, height: 16, borderRadius: '50%', background: '#fff', position: 'absolute', top: 2, left: textOutline ? 18 : 2, transition: 'left 200ms' }} />
                 </button>
               </div>
             </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Meme
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} />
-      </div>
-    </div>
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              Meme Generator
+            </h1>
+            <div style={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 2, maxWidth: 280, width: '100%' }}>
+              <UploadZone onFile={handleFile} preview={uploadedImage} accept="image/*" label="Upload image (opt)" />
+            </div>
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+                <div style={{ maxWidth: 500, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results} columns={2} />
+                </div>
+              </div>
+            )}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Meme Controls">
+            {isClassic ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, width: '100%' }}>
+                <input type="text" value={topText}
+                  onChange={e => setTopText(e.target.value)}
+                  placeholder="TOP TEXT"
+                  style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 14, padding: '0' }} />
+                <input type="text" value={bottomText}
+                  onChange={e => setBottomText(e.target.value)}
+                  placeholder="BOTTOM TEXT"
+                  style={{ flex: 1, background: 'transparent', border: 'none', outline: 'none', color: 'var(--text-primary)', fontSize: 14, padding: '0' }} />
+                <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
+              </div>
+            ) : (
+              <>
+                <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe your meme concept..." />
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                  <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
+                </div>
+              </>
+            )}
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

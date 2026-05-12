@@ -9,6 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn'];
 const FORMATS = ['Short Video', 'Image Ad', 'Carousel', 'Story'];
@@ -63,74 +64,63 @@ export default function MarketingProductUrlPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Link} badge="NEW" title="PRODUCT URL TO AD" subtitle="Paste any product URL — AI scrapes it and generates video ads automatically" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div>
-              <SectionLabel>Product URL</SectionLabel>
-              <div className="flex gap-2">
-                <input
-                  value={url}
-                  onChange={e => setUrl(e.target.value)}
-                  placeholder="https://..."
-                  className="flex-1 bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]"
-                />
-                <button
-                  onClick={handleScan}
-                  disabled={scanning}
-                  className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] disabled:opacity-50 transition-all flex items-center gap-2"
-                >
-                  {scanning ? <Loader2 size={16} className="animate-spin" /> : null}
-                  Scan Product
-                </button>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORMS">
+          {PLATFORMS.map(p => (
+            <button key={p} onClick={() => setPlatform(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: platform === p ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: platform === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            PRODUCT URL TO AD
+          </h1>
+          {product && (
+            <div style={{ zIndex: 1, marginTop: 24, display: 'flex', gap: 16, background: 'var(--bg-card)', borderRadius: 12, padding: 16, border: '1px solid var(--border-subtle)', maxWidth: 500 }}>
+              <img src={product.image} alt="" style={{ width: 80, height: 80, borderRadius: 8, objectFit: 'cover' }} />
+              <div>
+                <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{product.name}</h3>
+                <p style={{ fontSize: 18, fontWeight: 700, color: '#CCFF00', marginTop: 4 }}>{product.price}</p>
+                <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>{product.description}</p>
               </div>
             </div>
-            {product && (
-              <div className="bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-4 flex gap-4">
-                <img src={product.image} alt="" className="w-20 h-20 rounded-lg object-cover" />
-                <div className="flex-1">
-                  <h3 className="text-sm font-bold text-white">{product.name}</h3>
-                  <p className="text-lg font-bold text-[#CCFF00] mt-1">{product.price}</p>
-                  <p className="text-xs text-[#888] mt-2 line-clamp-2">{product.description}</p>
-                  <div className="flex flex-wrap gap-1 mt-2">
-                    {product.features.map((f, i) => (
-                      <span key={i} className="px-2 py-0.5 bg-[#1a1a1a] rounded text-[10px] text-[#888]">{f}</span>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </GenerationPanel>
-        {product && (
-          <GenerationPanel>
-            <div className="space-y-4">
-              <div>
-                <SectionLabel>Platform</SectionLabel>
-                <StudioDropdown label="Platform" options={PLATFORMS} value={platform} onChange={setPlatform} />
-              </div>
-              <div>
-                <SectionLabel>Ad Format</SectionLabel>
-                <StudioDropdown label="Ad Format" options={FORMATS} value={format} onChange={setFormat} />
-              </div>
-              <div>
-                <SectionLabel>Style</SectionLabel>
-                <StudioDropdown label="Style" options={STYLES} value={style} onChange={setStyle} />
-              </div>
+          )}
+          {results.length > 0 && (
+            <div style={{ position: 'absolute', bottom: 120, left: '50%', transform: 'translateX(-50%)', zIndex: 1 }}>
+              <ResultsGrid results={results} columns={2} />
             </div>
-          </GenerationPanel>
-        )}
-        {product && (
-          <div className="flex justify-end">
-            <GenerateButton onClick={handleGenerate} loading={loading}>
-              Generate Product Ads
-            </GenerateButton>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Product URL">
+          <PromptInput value={url} onChange={e => setUrl(e.target.value)} placeholder="https://..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <ControlButton onClick={handleScan} disabled={scanning}>
+              {scanning ? <Loader2 size={12} className="animate-spin" /> : null}
+              {scanning ? 'Scanning' : 'Scan Product'}
+            </ControlButton>
+            {product && <StudioDropdown label="Format" options={FORMATS} value={format} onChange={setFormat} />}
+            {product && <StudioDropdown label="Style" options={STYLES} value={style} onChange={setStyle} />}
+            {product && <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>}
           </div>
-        )}
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

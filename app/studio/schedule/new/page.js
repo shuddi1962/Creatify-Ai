@@ -1,11 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, Send, Image as ImageIcon, Hash, Upload } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import UploadZone from '@/components/studio/UploadZone';
-import SectionLabel from '@/components/studio/SectionLabel';
+import { Upload, Send } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter', 'Pinterest'];
 const CHARACTER_LIMITS = { TikTok: 150, Instagram: 2200, YouTube: 5000, LinkedIn: 3000, Twitter: 280, Pinterest: 500 };
@@ -25,73 +23,123 @@ export default function NewPostPage() {
   const generateHashtags = () => {
     const sample = '#ai #creativity #content #socialmedia #trending #fyp #viral';
     setHashtags(sample);
-    toast.success('Hashtags generated!');
   };
 
   const handleSubmit = () => {
-    if (selectedPlatforms.length === 0) { toast.error('Select at least one platform'); return; }
+    if (selectedPlatforms.length === 0) return;
     setLoading(true);
-    setTimeout(() => { setLoading(false); toast.success('Post scheduled!'); }, 2000);
+    setTimeout(() => { setLoading(false); }, 2000);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Calendar} title="SCHEDULE NEW POST" subtitle="Create and schedule a post to any connected platform" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-          <div className="space-y-5">
-            <div>
-              <SectionLabel>Upload Asset or Pick from Media Library</SectionLabel>
-              <UploadZone onFile={(file) => { setAsset(file); setAssetPreview(URL.createObjectURL(file)); }} accept="image/*,video/*" label="Upload image or video" preview={assetPreview} icon={Upload} />
-            </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORMS">
+          {PLATFORMS.map(p => (
+            <button key={p} onClick={() => togglePlatform(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: selectedPlatforms.includes(p) ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: selectedPlatforms.includes(p) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxHeight: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              SCHEDULE NEW POST
+            </h1>
+            <div style={{ maxWidth: 500, margin: '0 auto' }}>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 20 }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 8 }}>Upload Asset</label>
+                    <label style={{
+                      width: '100%', height: 120, borderRadius: 12,
+                      border: '2px dashed var(--border-default)',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                      cursor: 'pointer', background: 'var(--bg-input)',
+                    }}>
+                      {assetPreview ? (
+                        <img src={assetPreview} alt="" style={{ height: '100%', objectFit: 'cover', borderRadius: 10 }} />
+                      ) : (
+                        <><Upload size={20} style={{ color: 'var(--text-muted)', marginBottom: 4 }} /><span style={{ color: 'var(--text-secondary)', fontSize: 12 }}>Upload image or video</span></>
+                      )}
+                      <input type="file" accept="image/*,video/*" onChange={e => e.target.files[0] && (setAsset(e.target.files[0]), setAssetPreview(URL.createObjectURL(e.target.files[0])))} style={{ display: 'none' }} />
+                    </label>
+                  </div>
 
-            <div>
-              <SectionLabel>Platforms</SectionLabel>
-              <div className="flex gap-2 flex-wrap">
-                {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => togglePlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${selectedPlatforms.includes(p) ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
-                ))}
-              </div>
-            </div>
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 8 }}>Caption</label>
+                    <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Write your caption..."
+                      style={{ width: '100%', height: 100, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: 12, color: 'var(--text-primary)', fontSize: 13, resize: 'none', outline: 'none' }}
+                    />
+                    <span style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 4, display: 'block', textAlign: 'right' }}>{caption.length}/{CHARACTER_LIMITS[selectedPlatforms[0]] || 2200}</span>
+                  </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <SectionLabel>Caption</SectionLabel>
-                <span className="text-[10px] text-[#444]">{caption.length}/{CHARACTER_LIMITS[selectedPlatforms[0]] || 2200}</span>
-              </div>
-              <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Write your caption..." className="w-full h-32 bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]" />
-            </div>
+                  <div>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 8 }}>Hashtags</label>
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <input value={hashtags} onChange={e => setHashtags(e.target.value)} placeholder="#hashtag1 #hashtag2"
+                        style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
+                      />
+                      <button onClick={generateHashtags} style={{ padding: '8px 14px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, color: 'var(--accent-text)', fontSize: 11, cursor: 'pointer', whiteSpace: 'nowrap' }}>Generate</button>
+                    </div>
+                  </div>
 
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <SectionLabel>Hashtags</SectionLabel>
-                <button onClick={generateHashtags} className="text-[10px] text-[#CCFF00] hover:underline">Generate Hashtags</button>
-              </div>
-              <input value={hashtags} onChange={e => setHashtags(e.target.value)} placeholder="#hashtag1 #hashtag2" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none" />
-            </div>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                    <div>
+                      <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 8 }}>Date</label>
+                      <input type="date" value={date} onChange={e => setDate(e.target.value)}
+                        style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
+                      />
+                    </div>
+                    <div>
+                      <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 8 }}>Time</label>
+                      <input type="time" value={time} onChange={e => setTime(e.target.value)}
+                        style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
+                      />
+                    </div>
+                  </div>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Date</SectionLabel>
-                <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none" />
+                  <div style={{ display: 'flex', gap: 8, paddingTop: 8 }}>
+                    <button style={{ flex: 1, padding: '10px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}>Save as Draft</button>
+                    <button onClick={handleSubmit} disabled={loading}
+                      style={{
+                        flex: 1, padding: '10px', background: '#CCFF00', border: 'none', borderRadius: 10,
+                        color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                      }}
+                    >
+                      {loading ? <div style={{ width: 14, height: 14, border: '2px solid rgba(0,0,0,0.3)', borderTopColor: '#000', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} /> : <Send size={14} />}
+                      Schedule Post
+                    </button>
+                  </div>
+                </div>
               </div>
-              <div>
-                <SectionLabel>Time</SectionLabel>
-                <input type="time" value={time} onChange={e => setTime(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none" />
-              </div>
-            </div>
-
-            <div className="flex gap-3 pt-2">
-              <button onClick={() => toast.success('Draft saved!')} className="flex-1 px-4 py-3 bg-[#1a1a1a] text-[#888] font-semibold rounded-xl hover:text-white transition-all">Save as Draft</button>
-              <button onClick={handleSubmit} disabled={loading} className="flex-1 px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all flex items-center justify-center gap-2">
-                {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Send size={16} />}
-                Schedule Post
-              </button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="New Post">
+          <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+            {selectedPlatforms.join(', ') || 'No platforms selected'}
+          </span>
+        </DirectorBar>
+      }
+    />
   );
 }

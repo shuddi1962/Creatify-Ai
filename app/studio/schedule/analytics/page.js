@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { BarChart3, Eye, Heart, MessageCircle, Share2, ExternalLink } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
+import { Eye, Heart, ExternalLink } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const METRICS = [
   { label: 'Total Views', value: '1.2M', change: '+12%', icon: Eye },
@@ -20,89 +21,119 @@ const POSTS_DATA = [
 ];
 
 const PLATFORM_COLORS = { TikTok: '#FF0050', Instagram: '#E4405F', YouTube: '#FF0000', LinkedIn: '#0A66C2' };
+const FILTERS = ['All', 'TikTok', 'Instagram', 'YouTube', 'LinkedIn'];
 
 export default function AnalyticsPage() {
   const [dateRange, setDateRange] = useState('30d');
   const [platformFilter, setPlatformFilter] = useState('All');
-
   const filteredPosts = platformFilter === 'All' ? POSTS_DATA : POSTS_DATA.filter(p => p.platform === platformFilter);
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <div className="max-w-[900px] mx-auto px-4 pt-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-white font-bold text-2xl">Post Analytics</h1>
-            <p className="text-[#666] text-sm mt-1">Track views, reach, engagement, and clicks for all your posts</p>
-          </div>
-          <div className="flex gap-2">
-            {['7d', '30d', '90d', '1y'].map(r => (
-              <button key={r} onClick={() => setDateRange(r)} className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${dateRange === r ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{r}</button>
-            ))}
-          </div>
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {METRICS.map(metric => (
-            <div key={metric.label} className="bg-[#111111] rounded-xl border border-white/[0.08] p-5">
-              <div className="flex items-center gap-2 mb-2">
-                <metric.icon size={16} className="text-[#555]" />
-                <span className="text-[#555] text-xs">{metric.label}</span>
-              </div>
-              <p className="text-white text-2xl font-bold">{metric.value}</p>
-              <p className="text-[#10B981] text-xs mt-1">{metric.change} vs last period</p>
-            </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORM">
+          {FILTERS.map(p => (
+            <button key={p} onClick={() => setPlatformFilter(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: platformFilter === p ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: platformFilter === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
           ))}
-        </div>
-
-        <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-6 mb-8">
-          <h3 className="text-white font-semibold mb-4">Performance Over Time</h3>
-          <div className="h-40 flex items-end gap-2">
-            {[65, 72, 58, 80, 85, 90, 78, 95, 88, 92, 88, 96].map((h, i) => (
-              <div key={i} className="flex-1 bg-gradient-to-t from-[#7C3AED] to-[#CCFF00] rounded-t-sm" style={{ height: `${h}%` }} />
-            ))}
-          </div>
-          <div className="flex justify-between mt-2 text-[#555] text-[10px]">
-            <span>Jan</span><span>Feb</span><span>Mar</span><span>Apr</span><span>May</span>
-          </div>
-        </div>
-
-        <div className="flex gap-2 mb-6">
-          {['All', 'TikTok', 'Instagram', 'YouTube', 'LinkedIn'].map(p => (
-            <button key={p} onClick={() => setPlatformFilter(p)} className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${platformFilter === p ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
+          <div style={{ height: 1, background: 'var(--border-subtle)', margin: '8px 0' }} />
+          {['7d', '30d', '90d', '1y'].map(r => (
+            <button key={r} onClick={() => setDateRange(r)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: dateRange === r ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: dateRange === r ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{r}</button>
           ))}
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-white/[0.08]">
-                <th className="text-left p-4 text-[10px] font-semibold text-[#444] uppercase">Post</th>
-                <th className="text-left p-4 text-[10px] font-semibold text-[#444] uppercase">Platform</th>
-                <th className="text-right p-4 text-[10px] font-semibold text-[#444] uppercase">Views</th>
-                <th className="text-right p-4 text-[10px] font-semibold text-[#444] uppercase">Likes</th>
-                <th className="text-right p-4 text-[10px] font-semibold text-[#444] uppercase">Comments</th>
-                <th className="text-right p-4 text-[10px] font-semibold text-[#444] uppercase">Shares</th>
-                <th className="text-right p-4 text-[10px] font-semibold text-[#444] uppercase">Clicks</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredPosts.map((post, i) => (
-                <tr key={i} className="border-b border-white/[0.04]">
-                  <td className="p-4 text-white text-sm">{post.title}</td>
-                  <td className="p-4"><span className="text-[10px] px-2 py-0.5 rounded font-semibold" style={{ backgroundColor: PLATFORM_COLORS[post.platform] + '30', color: PLATFORM_COLORS[post.platform] }}>{post.platform}</span></td>
-                  <td className="p-4 text-right text-[#ccc] text-xs">{post.views}</td>
-                  <td className="p-4 text-right text-[#ccc] text-xs">{post.likes}</td>
-                  <td className="p-4 text-right text-[#ccc] text-xs">{post.comments}</td>
-                  <td className="p-4 text-right text-[#ccc] text-xs">{post.shares}</td>
-                  <td className="p-4 text-right text-[#ccc] text-xs">{post.clicks}</td>
-                </tr>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxHeight: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              POST ANALYTICS
+            </h1>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12, marginBottom: 24 }}>
+              {METRICS.map(metric => (
+                <div key={metric.label} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', padding: 16 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                    <metric.icon size={14} style={{ color: 'var(--text-muted)' }} />
+                    <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{metric.label}</span>
+                  </div>
+                  <p style={{ color: 'var(--text-primary)', fontSize: 24, fontWeight: 700 }}>{metric.value}</p>
+                  <p style={{ color: '#10B981', fontSize: 11, marginTop: 4 }}>{metric.change} vs last period</p>
+                </div>
               ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            </div>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', padding: 20, marginBottom: 24 }}>
+              <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Performance Over Time</h3>
+              <div style={{ height: 120, display: 'flex', alignItems: 'flex-end', gap: 4 }}>
+                {[65, 72, 58, 80, 85, 90, 78, 95, 88, 92, 88, 96].map((h, i) => (
+                  <div key={i} style={{ flex: 1, background: 'linear-gradient(to top, var(--accent-bg), #CCFF00)', borderRadius: '4px 4px 0 0', height: `${h}%` }} />
+                ))}
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8 }}>
+                {['Jan', 'Feb', 'Mar', 'Apr', 'May'].map(m => (
+                  <span key={m} style={{ color: 'var(--text-muted)', fontSize: 10 }}>{m}</span>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                    <th style={{ padding: 12, textAlign: 'left', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Post</th>
+                    <th style={{ padding: 12, textAlign: 'left', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Platform</th>
+                    <th style={{ padding: 12, textAlign: 'right', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Views</th>
+                    <th style={{ padding: 12, textAlign: 'right', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Likes</th>
+                    <th style={{ padding: 12, textAlign: 'right', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Comments</th>
+                    <th style={{ padding: 12, textAlign: 'right', fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase' }}>Shares</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredPosts.map((post, i) => (
+                    <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
+                      <td style={{ padding: 12, color: 'var(--text-primary)', fontSize: 13 }}>{post.title}</td>
+                      <td style={{ padding: 12 }}>
+                        <span style={{ fontSize: 10, padding: '2px 8px', borderRadius: 4, fontWeight: 600, background: `${PLATFORM_COLORS[post.platform]}30`, color: PLATFORM_COLORS[post.platform] }}>{post.platform}</span>
+                      </td>
+                      <td style={{ padding: 12, textAlign: 'right', color: 'var(--text-secondary)', fontSize: 12 }}>{post.views}</td>
+                      <td style={{ padding: 12, textAlign: 'right', color: 'var(--text-secondary)', fontSize: 12 }}>{post.likes}</td>
+                      <td style={{ padding: 12, textAlign: 'right', color: 'var(--text-secondary)', fontSize: 12 }}>{post.comments}</td>
+                      <td style={{ padding: 12, textAlign: 'right', color: 'var(--text-secondary)', fontSize: 12 }}>{post.shares}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Analytics">
+          <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+            {dateRange} view
+          </span>
+        </DirectorBar>
+      }
+    />
   );
 }

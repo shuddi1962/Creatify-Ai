@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Package, Download, Play, Check } from 'lucide-react';
+import { Package, Download, Play } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
@@ -10,6 +10,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const VARIANTS = [5, 10, 20];
 const DIMENSIONS = ['Hook', 'Tone', 'Visual Style', 'Creator Type', 'Duration', 'Platform'];
@@ -60,67 +61,70 @@ export default function MarketingBatchPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Package} badge="NEW" title="BATCH AD GENERATOR" subtitle="Create 10 different ad variants from one product in one click" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div className="flex gap-2">
-              <button onClick={() => setInputType('description')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'description' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Description</button>
-              <button onClick={() => setInputType('url')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputType === 'url' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>URL</button>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="DIMENSIONS">
+          {DIMENSIONS.map(d => (
+            <button key={d} onClick={() => toggleDimension(d)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: dimensions.includes(d) ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: dimensions.includes(d) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{d}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BATCH AD GENERATOR
+          </h1>
+          {results.length > 0 && (
+            <div style={{ zIndex: 1, marginTop: 24, maxWidth: 600, width: '100%', padding: 16, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+              {results.map((r, i) => (
+                <div key={r.id} style={{ background: 'var(--bg-card)', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ aspectRatio: '9/16', background: 'var(--bg-input)', position: 'relative' }}>
+                    <img src={r.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <span style={{ position: 'absolute', top: 4, left: 4, padding: '2px 6px', background: 'rgba(0,0,0,0.6)', borderRadius: 4, fontSize: 9, color: '#fff' }}>{i + 1}</span>
+                  </div>
+                  <div style={{ padding: 6, display: 'flex', gap: 4 }}>
+                    <button style={{ flex: 1, padding: '4px 0', background: 'var(--bg-input)', border: 'none', borderRadius: 6, fontSize: 10, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><Play size={10} />Preview</button>
+                    <button style={{ flex: 1, padding: '4px 0', background: 'var(--bg-input)', border: 'none', borderRadius: 6, fontSize: 10, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><Download size={10} />DL</button>
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Batch Settings">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+            <ControlButton onClick={() => setInputType('description')}>{inputType === 'description' ? 'Description' : 'URL'}</ControlButton>
             {inputType === 'description' ? (
-              <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your product..." className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-24" />
+              <PromptInput value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your product..." />
             ) : (
-              <div className="flex gap-2">
-                <input value={url} onChange={e => setUrl(e.target.value)} placeholder="Product URL..." className="flex-1 bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
-                <button onClick={handleScan} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] transition-all">Scan</button>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1 }}>
+                <PromptInput value={url} onChange={e => setUrl(e.target.value)} placeholder="Product URL..." />
+                <ControlButton onClick={handleScan}>Scan</ControlButton>
               </div>
             )}
-            <div>
-              <SectionLabel>Number of Variants</SectionLabel>
-              <StudioDropdown label="Number of Variants" options={VARIANTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
-            </div>
-            <div>
-              <SectionLabel>Variation Dimensions</SectionLabel>
-              <div className="flex flex-wrap gap-2">
-                {DIMENSIONS.map(d => (
-                  <button key={d} onClick={() => toggleDimension(d)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${dimensions.includes(d) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{d}</button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Platforms</SectionLabel>
-              <div className="flex flex-wrap gap-2">
-                {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => togglePlatform(p)} className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${platforms.includes(p) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Model</SectionLabel>
-              <ModelSelector value={model} onChange={setModel} type="video" />
-            </div>
-            <GenerateButton onClick={handleGenerate} loading={loading}>Generate Ad Batch</GenerateButton>
           </div>
-        </GenerationPanel>
-        {results.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-            {results.map((r, i) => (
-              <div key={r.id} className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden">
-                <div className="relative aspect-[9/16] bg-[#1a1a1a]">
-                  <img src={r.url} alt="" className="w-full h-full object-cover" />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 bg-black/60 rounded text-[10px] text-white">{i + 1}</div>
-                </div>
-                <div className="p-2 flex gap-1">
-                  <button className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-[#1a1a1a] rounded text-[10px] text-[#888] hover:text-white transition-all"><Play size={10} />Preview</button>
-                  <button className="flex-1 flex items-center justify-center gap-1 px-2 py-1 bg-[#1a1a1a] rounded text-[10px] text-[#888] hover:text-white transition-all"><Download size={10} />DL</button>
-                </div>
-              </div>
-            ))}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="Variants" options={VARIANTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
+            <ModelSelector value={model} onChange={setModel} type="video" />
+            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

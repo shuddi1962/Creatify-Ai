@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { Sun, Upload, Zap } from 'lucide-react';
+import { Sun, Upload } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import UploadZone from '@/components/studio/UploadZone';
-import GenerateButton from '@/components/studio/GenerateButton';
 
 const CATEGORIES = ['Natural Light', 'Studio', 'Cinematic', 'Neon & Artificial', 'Time of Day', 'Weather'];
 const PRESETS = [
@@ -26,6 +25,7 @@ export default function LightingPage() {
   const [uploadPreview, setUploadPreview] = useState(null);
   const [model, setModel] = useState('flux');
   const [loading, setLoading] = useState(false);
+  const [prompt, setPrompt] = useState('');
 
   const handleUpload = (file) => { setUploadImage(file); setUploadPreview(URL.createObjectURL(file)); };
 
@@ -38,48 +38,85 @@ export default function LightingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero icon={Sun} title="LIGHTING PRESETS" subtitle="Apply professional lighting setups to any scene instantly" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2 flex-nowrap">
-          {CATEGORIES.map(c => (
-            <button key={c} onClick={() => setCategory(c)} className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${category === c ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{c}</button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {PRESETS.filter(p => p.category === category).map((preset, i) => (
-            <div key={i} className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden">
-              <img src={preset.url} className="w-full aspect-video object-cover" alt="" />
-              <div className="p-3">
-                <h4 className="text-white font-semibold text-sm mb-1">{preset.name}</h4>
-                <p className="text-[#555] text-xs mb-3">{preset.desc}</p>
-                <button onClick={() => handleApply(preset.name)} className="w-full px-3 py-2 bg-[#1a1a1a] text-[#CCFF00] text-xs font-semibold rounded-lg hover:bg-[#222] transition-all">Apply Preset</button>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="CATEGORIES">
+            {CATEGORIES.map(p => (
+              <button key={p} onClick={() => setCategory(p)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: category === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: category === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #34d399 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                LIGHTING PRESETS
+              </h1>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16, maxWidth: 800, margin: '0 auto' }}>
+                {PRESETS.filter(p => p.category === category).map((preset, i) => (
+                  <div key={i} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+                    <img src={preset.url} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} alt="" />
+                    <div style={{ padding: 12 }}>
+                      <h4 style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 4 }}>{preset.name}</h4>
+                      <p style={{ color: 'var(--text-muted)', fontSize: 12, marginBottom: 12 }}>{preset.desc}</p>
+                      <button onClick={() => handleApply(preset.name)} style={{
+                        width: '100%', padding: '8px 12px', background: 'var(--bg-input)',
+                        color: '#CCFF00', fontSize: 12, fontWeight: 600, borderRadius: 8,
+                        border: 'none', cursor: 'pointer',
+                      }}>Apply Preset</button>
+                    </div>
+                  </div>
+                ))}
               </div>
-            </div>
-          ))}
-        </div>
 
-        {applyPreset && (
-          <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-            <h3 className="text-white font-bold mb-4">Apply {applyPreset} — Upload Image</h3>
-            <div className="mb-4">
-              <label className="text-[11px] font-semibold text-[#444] uppercase tracking-widest mb-2 block">Upload Image</label>
-              <UploadZone onFile={handleUpload} accept="image/*" label="Upload image to apply lighting" preview={uploadPreview} icon={Upload} />
+              {applyPreset && (
+                <div style={{ maxWidth: 700, margin: '24px auto 0', background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                  <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: 16 }}>Apply {applyPreset}</h3>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Upload Image</label>
+                    <UploadZone onFile={handleUpload} accept="image/*" label="Upload image to apply lighting" preview={uploadPreview} icon={Upload} />
+                  </div>
+                  <div style={{ marginBottom: 16 }}>
+                    <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Model</label>
+                    <select value={model} onChange={e => setModel(e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '12px 16px', color: 'var(--text-primary)', outline: 'none' }}>
+                      <option>flux</option><option>flux-pro</option><option>juggernaut</option>
+                    </select>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="mb-4">
-              <label className="text-[11px] font-semibold text-[#444] uppercase tracking-widest mb-2 block">Model</label>
-              <select value={model} onChange={e => setModel(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white focus:outline-none">
-                <option>flux</option><option>flux-pro</option><option>juggernaut</option>
-              </select>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Controls">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe the lighting effect..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              {applyPreset && (
+                <GenerateButton onClick={handleGenerate} disabled={loading}>
+                  {loading ? 'Generating...' : 'Generate'}
+                </GenerateButton>
+              )}
             </div>
-            <div className="flex justify-end">
-              <GenerateButton onClick={handleGenerate} loading={loading}>Generate</GenerateButton>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

@@ -2,13 +2,8 @@
 
 import { useState } from 'react';
 import { Video, Languages, Subtitles } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
+import { toast } from 'react-hot-toast';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Arabic', 'Russian'];
 const VOICE_STYLES = ['Match Original', 'Professional', 'Casual', 'Energetic'];
@@ -53,7 +48,6 @@ export default function DubbingPage() {
       toast.error('Please select at least one target language');
       return;
     }
-
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 4000));
@@ -72,121 +66,116 @@ export default function DubbingPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero 
-        title="MULTI-LANGUAGE DUBBING"
-        subtitle="Dub any video into any language with AI voice and lip sync"
-        badge="NEW"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Video</SectionLabel>
-              {videoPreview ? (
-                <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a]">
-                  <video src={videoPreview} controls className="w-full h-48 object-contain rounded-lg" />
-                  <button
-                    onClick={() => handleVideoUpload(null)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white text-xs hover:bg-black/80"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <div className="w-14 h-14 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                    <Video size={28} className="text-[#666]" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-white">Upload video to dub</p>
-                    <p className="text-xs text-[#555] mt-1">Drag & drop or click to browse</p>
-                  </div>
-                  <input type="file" accept="video/*" onChange={(e) => handleVideoUpload(e.target.files?.[0])} className="hidden" />
-                </label>
-              )}
-            </div>
-
-            <div>
-              <SectionLabel>Source Language</SectionLabel>
-              <select
-                value={sourceLanguage}
-                onChange={(e) => setSourceLanguage(e.target.value)}
-                className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white"
-              >
-                <option>Auto-detect</option>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="DUBBING OPTIONS">
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px' }}>Voice Style</div>
+          {VOICE_STYLES.map(o => (
+            <button key={o} onClick={() => setVoiceStyle(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: voiceStyle === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: voiceStyle === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Lip Sync</div>
+          {LIP_SYNC_OPTIONS.map(o => (
+            <button key={o} onClick={() => setLipSync(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: lipSync === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: lipSync === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Subtitles</div>
+          <button onClick={() => setGenerateSubtitles(!generateSubtitles)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Generate {generateSubtitles ? '✓' : '○'} subtitles</button>
+          <button onClick={() => setBurnSubtitles(!burnSubtitles)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Burn {burnSubtitles ? '✓' : '○'} into video</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            MULTI-LANGUAGE DUBBING
+          </h1>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, zIndex: 1 }}>
+            {videoPreview ? (
+              <div style={{ width: 280, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+                <video src={videoPreview} controls style={{ width: '100%', height: 180, objectFit: 'contain' }} />
+                <button onClick={() => handleVideoUpload(null)} style={{
+                  width: '100%', padding: '6px', background: 'var(--bg-input)', border: 'none',
+                  color: 'var(--text-secondary)', fontSize: 11, cursor: 'pointer',
+                }}>Remove</button>
+              </div>
+            ) : (
+              <label style={{
+                width: 280, height: 180, borderRadius: 12, border: '2px dashed var(--border-default)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 8, cursor: 'pointer', background: 'var(--bg-input)',
+              }}>
+                <Video size={28} style={{ color: 'var(--text-muted)' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Upload video to dub</span>
+                <input type="file" accept="video/*" onChange={e => handleVideoUpload(e.target.files?.[0])} style={{ display: 'none' }} />
+              </label>
+            )}
+            <div style={{ maxWidth: 240 }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 8 }}>Target Languages</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4 }}>
                 {LANGUAGES.map(lang => (
-                  <option key={lang} value={lang}>{lang}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <SectionLabel>Target Languages (select multiple)</SectionLabel>
-              <div className="flex flex-wrap gap-2">
-                {LANGUAGES.map(lang => (
-                  <button
-                    key={lang}
-                    onClick={() => toggleLanguage(lang)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                      targetLanguages.includes(lang)
-                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
-                        : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {lang}
-                  </button>
+                  <button key={lang} onClick={() => toggleLanguage(lang)}
+                    style={{
+                      padding: '3px 8px', borderRadius: 4, fontSize: 10, fontWeight: 600,
+                      background: targetLanguages.includes(lang) ? 'var(--accent-bg)' : 'var(--bg-input)',
+                      border: '1px solid var(--border-default)', cursor: 'pointer',
+                      color: targetLanguages.includes(lang) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                    }}
+                  >{lang}</button>
                 ))}
               </div>
               {targetLanguages.length > 0 && (
-                <p className="text-xs text-[#555] mt-2">Selected: {targetLanguages.join(', ')}</p>
+                <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 8 }}>Selected: {targetLanguages.join(', ')}</div>
               )}
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Voice Style</SectionLabel>
-                <StudioDropdown options={VOICE_STYLES} value={voiceStyle} onChange={setVoiceStyle} />
-              </div>
-              <div>
-                <SectionLabel>Lip Sync</SectionLabel>
-                <StudioDropdown options={LIP_SYNC_OPTIONS} value={lipSync} onChange={setLipSync} />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setGenerateSubtitles(!generateSubtitles)}
-                  className={`w-12 h-6 rounded-full transition-all ${generateSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${generateSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
-                </button>
-                <span className="text-sm text-[#888]">Generate subtitles</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={() => setBurnSubtitles(!burnSubtitles)}
-                  className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-                >
-                  <div className={`w-5 h-5 rounded-full bg-white transition-transform ${burnSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
-                </button>
-                <span className="text-sm text-[#888]">Burn subtitles into video</span>
-              </div>
-            </div>
           </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading} disabled={targetLanguages.length === 0}>
-            Start Dubbing ({targetLanguages.length} languages)
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={1} />
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder="Upload a video and select target languages to dub..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleGenerate} disabled={loading || targetLanguages.length === 0} style={{ opacity: loading || targetLanguages.length === 0 ? 0.6 : 1 }}>
+              {loading ? 'Dubbing...' : `Dub (${targetLanguages.length} languages)`}
+            </GenerateButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

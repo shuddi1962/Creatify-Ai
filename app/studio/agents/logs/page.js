@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { FileText, ChevronDown, CheckCircle, XCircle, Clock } from 'lucide-react';
+import { FileText, ChevronDown, CheckCircle, XCircle } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const LOGS = [
   { id: 'LOG-001', agent: 'Daily Content Bot', triggered: 'Schedule', start: 'May 10, 9:00 AM', duration: '4.2s', status: 'success', steps: [
@@ -23,66 +23,102 @@ const LOGS = [
     { name: 'Generate Images', status: 'error', output: 'API timeout', time: '89.3s' },
   ]},
 ];
+const OPTIONS = ['All', 'Success', 'Error'];
 
 export default function LogsPage() {
   const [expanded, setExpanded] = useState(null);
   const [filter, setFilter] = useState('All');
+  const [prompt, setPrompt] = useState('');
 
   const toggleExpand = (id) => setExpanded(expanded === id ? null : id);
 
+  const filtered = LOGS.filter(l => filter === 'All' || l.status === filter.toLowerCase());
+
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero icon={FileText} title="AGENT LOGS" subtitle="View complete run history, errors, and outputs for all your agents" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex gap-2 mb-6">
-          {['All', 'Success', 'Error'].map(f => (
-            <button key={f} onClick={() => setFilter(f)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${filter === f ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{f}</button>
-          ))}
-        </div>
-
-        <div className="space-y-3 pb-8">
-          {LOGS.filter(l => filter === 'All' || l.status === filter.toLowerCase()).map(log => (
-            <div key={log.id} className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden">
-              <div onClick={() => toggleExpand(log.id)} className="p-4 flex items-center gap-4 cursor-pointer hover:bg-[#1a1a1a] transition-all">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center ${log.status === 'success' ? 'bg-[#10B981]/20' : 'bg-red-500/20'}`}>
-                  {log.status === 'success' ? <CheckCircle size={16} className="text-[#10B981]" /> : <XCircle size={16} className="text-red-500" />}
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-white font-semibold text-sm">{log.agent}</span>
-                    <span className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{log.trigger}</span>
-                    <span className="text-[10px] text-[#555]">{log.id}</span>
-                  </div>
-                  <div className="flex items-center gap-3 mt-1">
-                    <span className="text-[10px] text-[#555]">{log.start}</span>
-                    <span className="text-[10px] text-[#555]">{log.duration}</span>
-                  </div>
-                </div>
-                <ChevronDown size={16} className={`text-[#444] transition-transform ${expanded === log.id ? 'rotate-180' : ''}`} />
-              </div>
-
-              {expanded === log.id && (
-                <div className="border-t border-white/[0.08] p-4 bg-[#0a0a0a]">
-                  <p className="text-[10px] font-semibold text-[#444] uppercase tracking-widest mb-3">Steps</p>
-                  <div className="space-y-2">
-                    {log.steps.map((step, i) => (
-                      <div key={i} className="flex items-center gap-3 bg-[#111111] rounded-lg p-3">
-                        {step.status === 'success' ? <CheckCircle size={14} className="text-[#10B981]" /> : <XCircle size={14} className="text-red-500" />}
-                        <div className="flex-1">
-                          <p className="text-white text-xs font-semibold">{step.name}</p>
-                          <p className="text-[#555] text-[10px]">{step.output}</p>
-                        </div>
-                        <span className="text-[10px] text-[#444] font-mono">{step.time}</span>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="FILTER">
+            {OPTIONS.map(p => (
+              <button key={p} onClick={() => setFilter(p)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: filter === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: filter === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                AGENT LOGS
+              </h1>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 700, margin: '0 auto' }}>
+                {filtered.map(log => (
+                  <div key={log.id} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+                    <div onClick={() => toggleExpand(log.id)} style={{ padding: 16, display: 'flex', alignItems: 'center', gap: 16, cursor: 'pointer' }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        background: log.status === 'success' ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
+                      }}>
+                        {log.status === 'success' ? <CheckCircle size={16} color="#10B981" /> : <XCircle size={16} color="red" />}
                       </div>
-                    ))}
+                      <div style={{ flex: 1 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{log.agent}</span>
+                          <span style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', borderRadius: 4 }}>{log.triggered}</span>
+                          <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{log.id}</span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
+                          <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{log.start}</span>
+                          <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{log.duration}</span>
+                        </div>
+                      </div>
+                      <ChevronDown size={16} style={{ color: 'var(--text-muted)', transform: expanded === log.id ? 'rotate(180deg)' : 'none', transition: 'transform 200ms' }} />
+                    </div>
+
+                    {expanded === log.id && (
+                      <div style={{ borderTop: '1px solid var(--border-subtle)', padding: 16, background: '#0a0a0a' }}>
+                        <p style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 12 }}>Steps</p>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                          {log.steps.map((step, i) => (
+                            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, background: 'var(--bg-card)', borderRadius: 8, padding: 12 }}>
+                              {step.status === 'success' ? <CheckCircle size={14} color="#10B981" /> : <XCircle size={14} color="red" />}
+                              <div style={{ flex: 1 }}>
+                                <p style={{ color: 'var(--text-primary)', fontSize: 12, fontWeight: 600 }}>{step.name}</p>
+                                <p style={{ color: 'var(--text-muted)', fontSize: 10 }}>{step.output}</p>
+                              </div>
+                              <span style={{ fontSize: 10, color: 'var(--text-muted)', fontFamily: 'monospace' }}>{step.time}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
-                </div>
-              )}
+                ))}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Logs">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Search logs..." />
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

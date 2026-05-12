@@ -1,13 +1,13 @@
 'use client';
 
 import { useState } from 'react';
-import { Calendar, ChevronLeft, ChevronRight, Plus, Play } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-
 const STATUS_COLORS = { Idea: '#7C3AED', Script: '#7C3AED', Generated: '#10B981', Scheduled: '#F59E0B', Published: '#22C55E' };
 
 const SAMPLE_CALENDAR = {
@@ -44,66 +44,95 @@ export default function IdeasCalendarPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Calendar} title="CONTENT CALENDAR" subtitle="Plan and schedule your content creation pipeline" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <button onClick={prevMonth} className="w-8 h-8 bg-[#1a1a1a] rounded-lg flex items-center justify-center text-[#888] hover:text-white"><ChevronLeft size={16} /></button>
-            <h2 className="text-white font-semibold text-lg">{MONTHS[month]} {year}</h2>
-            <button onClick={nextMonth} className="w-8 h-8 bg-[#1a1a1a] rounded-lg flex items-center justify-center text-[#888] hover:text-white"><ChevronRight size={16} /></button>
-          </div>
-          <div className="flex gap-2">
-            <button onClick={() => setView('month')} className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${view === 'month' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#666]'}`}>Month</button>
-            <button onClick={() => setView('week')} className={`px-4 py-1.5 text-xs font-semibold rounded-lg transition-all ${view === 'week' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#666]'}`}>Week</button>
-            <button onClick={handleBulkGenerate} className="px-4 py-1.5 bg-[#CCFF00] text-black text-xs font-bold rounded-lg hover:bg-[#B8FF00] transition-all">Generate All This Week</button>
-          </div>
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] overflow-hidden">
-          <div className="grid grid-cols-7 border-b border-white/[0.08]">
-            {DAYS.map(d => (
-              <div key={d} className="py-3 text-center text-[10px] font-semibold text-[#444] uppercase tracking-widest">{d}</div>
-            ))}
-          </div>
-          <div className="grid grid-cols-7">
-            {[...Array(firstDay)].map((_, i) => (
-              <div key={`empty-${i}`} className="h-24 border border-white/[0.04]" />
-            ))}
-            {[...Array(daysInMonth)].map((_, i) => {
-              const day = i + 1;
-              const dateKey = formatDate(day);
-              const dayEvents = events[dateKey] || [];
-              return (
-                <div key={day} className="h-24 border border-white/[0.04] p-1 relative group">
-                  <div className="flex justify-between items-start">
-                    <span className={`text-xs font-semibold px-1.5 py-0.5 rounded ${day === 10 ? 'bg-[#CCFF00] text-black' : 'text-[#555]'}`}>{day}</span>
-                    <button onClick={() => handleAddEvent(day)} className="opacity-0 group-hover:opacity-100 w-5 h-5 bg-[#1a1a1a] rounded text-[#444] hover:text-[#CCFF00] flex items-center justify-center transition-all"><Plus size={12} /></button>
-                  </div>
-                  <div className="mt-1 space-y-0.5 overflow-hidden">
-                    {dayEvents.map(ev => (
-                      <div key={ev.id} className="text-[9px] px-1.5 py-0.5 rounded truncate flex items-center gap-1" style={{ backgroundColor: STATUS_COLORS[ev.status] + '30', color: STATUS_COLORS[ev.status] }}>
-                        <span className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: STATUS_COLORS[ev.status] }} />
-                        {ev.title}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
-        <div className="mt-6 flex flex-wrap gap-4">
-          {Object.entries(STATUS_COLORS).map(([status, color]) => (
-            <div key={status} className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-              <span className="text-xs text-[#555]">{status}</span>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="VIEW">
+          <button onClick={() => setView('month')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: view === 'month' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: view === 'month' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >Month View</button>
+          <button onClick={() => setView('week')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: view === 'week' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: view === 'week' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >Week View</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            CONTENT CALENDAR
+          </h1>
+          <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 640, padding: '0 16px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <button onClick={prevMonth} style={{ width: 32, height: 32, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}><ChevronLeft size={16} /></button>
+                <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>{MONTHS[month]} {year}</h2>
+                <button onClick={nextMonth} style={{ width: 32, height: 32, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: 'var(--text-muted)' }}><ChevronRight size={16} /></button>
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid var(--border-subtle)' }}>
+                {DAYS.map(d => <div key={d} style={{ padding: '10px 0', textAlign: 'center', fontSize: 10, fontWeight: 600, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{d}</div>)}
+              </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
+                {[...Array(firstDay)].map((_, i) => <div key={`e-${i}`} style={{ height: 96, border: '1px solid rgba(255,255,255,0.04)' }} />)}
+                {[...Array(daysInMonth)].map((_, i) => {
+                  const day = i + 1;
+                  const dateKey = formatDate(day);
+                  const dayEvents = events[dateKey] || [];
+                  return (
+                    <div key={day} style={{ height: 96, border: '1px solid rgba(255,255,255,0.04)', padding: 4, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 6px', borderRadius: 4, background: day === 10 ? '#CCFF00' : 'transparent', color: day === 10 ? '#000' : '#555' }}>{day}</span>
+                        <button onClick={() => handleAddEvent(day)} style={{ width: 20, height: 20, background: 'var(--bg-input)', border: 'none', borderRadius: 4, cursor: 'pointer', color: '#444', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0.7 }}><Plus size={12} /></button>
+                      </div>
+                      <div style={{ marginTop: 4, overflow: 'hidden', flex: 1 }}>
+                        {dayEvents.map(ev => (
+                          <div key={ev.id} style={{ fontSize: 9, padding: '2px 4px', borderRadius: 4, marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 4, background: STATUS_COLORS[ev.status] + '30', color: STATUS_COLORS[ev.status] }}>
+                            <span style={{ width: 6, height: 6, borderRadius: '50%', background: STATUS_COLORS[ev.status], flexShrink: 0 }} />
+                            {ev.title}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 16, marginTop: 12, flexWrap: 'wrap' }}>
+              {Object.entries(STATUS_COLORS).map(([status, color]) => (
+                <div key={status} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{status}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Calendar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'flex-end' }}>
+            <button onClick={handleBulkGenerate} style={{ padding: '8px 16px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: 'pointer' }}>Generate All This Week</button>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

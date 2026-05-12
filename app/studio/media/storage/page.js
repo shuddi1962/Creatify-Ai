@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { HardDrive, Trash2, Link2 } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const USAGE = { used: 4.2, total: 10, breakdown: { images: 1.2, videos: 2.8, audio: 0.2 } };
 
@@ -12,82 +12,93 @@ export default function StoragePage() {
 
   const handleCleanUp = () => {
     setCleaning(true);
-    setTimeout(() => { setCleaning(false); toast.success('Storage cleaned! 1.2 GB freed'); }, 3000);
+    setTimeout(() => { setCleaning(false); }, 3000);
   };
 
-  const connectDrive = () => { setConnected({ ...connected, drive: true }); toast.success('Google Drive connected!'); };
-  const connectDropbox = () => { setConnected({ ...connected, dropbox: true }); toast.success('Dropbox connected!'); };
+  const connectDrive = () => setConnected({ ...connected, drive: true });
+  const connectDropbox = () => setConnected({ ...connected, dropbox: true });
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <div className="max-w-[900px] mx-auto px-4 pt-8">
-        <h1 className="text-white font-bold text-2xl mb-2">Storage Manager</h1>
-        <p className="text-[#666] text-sm mb-6">View and manage your storage usage</p>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6 mb-6">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-3">
-              <HardDrive size={24} className="text-[#CCFF00]" />
-              <span className="text-white font-semibold">{USAGE.used} GB used of {USAGE.total} GB</span>
-            </div>
-            <button onClick={handleCleanUp} disabled={cleaning} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white flex items-center gap-2 disabled:opacity-50">
-              {cleaning ? <div className="w-4 h-4 border-2 border-[#333] border-t-[#888] rounded-full animate-spin" /> : <Trash2 size={14} />}
-              Clean Up
-            </button>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="STORAGE">
+          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 12, lineHeight: 1.6 }}>
+            Manage your storage usage and connected services.
           </div>
-          <div className="h-3 bg-[#1a1a1a] rounded-full overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-[#7C3AED] to-[#CCFF00] rounded-full" style={{ width: `${(USAGE.used / USAGE.total) * 100}%` }} />
-          </div>
-          <p className="text-[#555] text-xs mt-2">{((USAGE.used / USAGE.total) * 100).toFixed(1)}% used · {USAGE.total - USAGE.used} GB available</p>
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6 mb-6">
-          <h3 className="text-white font-semibold mb-4">Usage Breakdown</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#7C3AED]" /><span className="text-[#888] text-sm">Images</span></div>
-              <span className="text-white text-sm">{USAGE.breakdown.images} GB</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#CCFF00]" /><span className="text-[#888] text-sm">Videos</span></div>
-              <span className="text-white text-sm">{USAGE.breakdown.videos} GB</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><div className="w-3 h-3 rounded-full bg-[#7C3AED]" /><span className="text-[#888] text-sm">Audio</span></div>
-              <span className="text-white text-sm">{USAGE.breakdown.audio} GB</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-          <h3 className="text-white font-semibold mb-4">Connected Storage</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div className="bg-[#0a0a0a] rounded-xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#4285F4]/20 rounded-lg flex items-center justify-center text-[#4285F4]"><Link2 size={16} /></div>
-                <div><p className="text-white text-sm font-medium">Google Drive</p></div>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxWidth: 500, margin: '0 auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              STORAGE MANAGER
+            </h1>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 20, marginBottom: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <HardDrive size={20} style={{ color: '#CCFF00' }} />
+                  <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{USAGE.used} GB used of {USAGE.total} GB</span>
+                </div>
+                <button onClick={handleCleanUp} disabled={cleaning}
+                  style={{ padding: '6px 14px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}
+                >
+                  {cleaning ? <div style={{ width: 12, height: 12, border: '2px solid var(--border-default)', borderTopColor: 'var(--text-secondary)', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} /> : <Trash2 size={12} />}
+                  Clean Up
+                </button>
               </div>
-              {connected.drive ? (
-                <span className="text-[10px] text-[#10B981] px-2 py-0.5 bg-[#10B981]/20 rounded">Connected</span>
-              ) : (
-                <button onClick={connectDrive} className="px-3 py-1.5 bg-[#4285F4]/20 text-[#4285F4] text-xs font-semibold rounded-lg hover:bg-[#4285F4]/30 transition-all">Connect</button>
-              )}
-            </div>
-            <div className="bg-[#0a0a0a] rounded-xl p-4 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#0061FF]/20 rounded-lg flex items-center justify-center text-[#0061FF]"><Link2 size={16} /></div>
-                <div><p className="text-white text-sm font-medium">Dropbox</p></div>
+              <div style={{ height: 8, background: 'var(--bg-input)', borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ height: '100%', background: 'linear-gradient(90deg, var(--accent-bg), #CCFF00)', borderRadius: 4, width: `${(USAGE.used / USAGE.total) * 100}%` }} />
               </div>
-              {connected.dropbox ? (
-                <span className="text-[10px] text-[#10B981] px-2 py-0.5 bg-[#10B981]/20 rounded">Connected</span>
-              ) : (
-                <button onClick={connectDropbox} className="px-3 py-1.5 bg-[#0061FF]/20 text-[#0061FF] text-xs font-semibold rounded-lg hover:bg-[#0061FF]/30 transition-all">Connect</button>
-              )}
+              <p style={{ color: 'var(--text-muted)', fontSize: 11, marginTop: 8 }}>{((USAGE.used / USAGE.total) * 100).toFixed(1)}% used</p>
+            </div>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 20, marginBottom: 16 }}>
+              <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Usage Breakdown</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {Object.entries(USAGE.breakdown).map(([key, val]) => (
+                  <div key={key} style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span style={{ color: 'var(--text-secondary)', fontSize: 13, textTransform: 'capitalize' }}>{key}</span>
+                    <span style={{ color: 'var(--text-primary)', fontSize: 13 }}>{val} GB</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 20 }}>
+              <h3 style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14, marginBottom: 12 }}>Connected Storage</h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { name: 'Google Drive', color: '#4285F4', key: 'drive', connected: connected.drive, handler: connectDrive },
+                  { name: 'Dropbox', color: '#0061FF', key: 'dropbox', connected: connected.dropbox, handler: connectDropbox },
+                ].map(svc => (
+                  <div key={svc.key} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'var(--bg-input)', borderRadius: 10, padding: '10px 14px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <Link2 size={14} style={{ color: svc.color }} />
+                      <span style={{ color: 'var(--text-primary)', fontSize: 13 }}>{svc.name}</span>
+                    </div>
+                    {svc.connected ? (
+                      <span style={{ fontSize: 10, color: '#10B981', padding: '2px 8px', background: 'rgba(16,185,129,0.2)', borderRadius: 4 }}>Connected</span>
+                    ) : (
+                      <button onClick={svc.handler} style={{ padding: '4px 12px', background: `${svc.color}20`, color: svc.color, border: 'none', borderRadius: 6, fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>Connect</button>
+                    )}
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Overview">
+          <span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>
+            {USAGE.total - USAGE.used} GB available
+          </span>
+        </DirectorBar>
+      }
+    />
   );
 }

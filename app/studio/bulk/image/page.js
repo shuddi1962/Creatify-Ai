@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Image, Upload, Download, X, AlertCircle } from 'lucide-react';
+import { Image, Upload, Download, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
@@ -9,6 +9,7 @@ import ModelSelector from '@/components/studio/ModelSelector';
 import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const NAMING_OPTIONS = ['Sequential', 'Row Number', 'Custom Prefix'];
 const OUTPUT_FORMATS = ['PNG', 'JPEG', 'WEBP'];
@@ -80,149 +81,111 @@ export default function BulkImagePage() {
   const completed = rows.filter(r => r.status === 'completed').length;
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Image} title="BULK IMAGE" subtitle="Upload a CSV and generate up to 500 images in one batch" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        {!started ? (
-          <>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <button onClick={() => setInputMode('csv')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'csv' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>CSV Upload</button>
-                  <button onClick={() => setInputMode('manual')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'manual' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Manual List</button>
-                </div>
-                {inputMode === 'csv' ? (
-                  <div className="space-y-3">
-                    <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                      <Upload size={24} className="text-[#666]" />
-                      <div className="text-center">
-                        <p className="text-sm font-medium text-white">Drag & drop CSV file</p>
-                        <p className="text-xs text-[#555] mt-1">prompt column required</p>
-                      </div>
-                      <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && handleCSVUplod(e.target.files[0])} className="hidden" />
-                    </label>
-                    <a href="#" onClick={e => { e.preventDefault(); toast.success('Template downloaded'); }} className="flex items-center gap-2 text-xs text-[#7C3AED] hover:underline">
-                      <Download size={12} /> Download template CSV
-                    </a>
-                  </div>
-                ) : (
-                  <textarea value={manualList} onChange={e => setManualList(e.target.value)} placeholder="Enter one prompt per line&#10;Mountain landscape at sunset&#10;Portrait with dramatic lighting&#10;Futuristic city with neon lights" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-40" />
-                )}
-              </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <SectionLabel>Model</SectionLabel>
-                    <ModelSelector value={model} onChange={setModel} type="image" />
-                  </div>
-                  <div>
-                    <SectionLabel>Default Aspect Ratio</SectionLabel>
-                    <AspectRatioPicker value={aspectRatio} onChange={setAspectRatio} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <SectionLabel>Quality</SectionLabel>
-                    <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={['standard', 'high', 'ultra']} />
-                  </div>
-                  <div>
-                    <SectionLabel>Style Preset</SectionLabel>
-                    <StudioDropdown label="STYLE PRESET" value={stylePreset} onChange={setStylePreset} options={['none', 'cinematic', 'photographic', 'anime', 'digital-art', '3d-render']} />
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <SectionLabel>Naming</SectionLabel>
-                    <StudioDropdown label="NAMING" value={naming} onChange={setNaming} options={NAMING_OPTIONS} />
-                  </div>
-                  <div>
-                    <SectionLabel>Output Format</SectionLabel>
-                    <StudioDropdown label="OUTPUT FORMAT" value={outputFormat} onChange={setOutputFormat} options={OUTPUT_FORMATS} />
-                  </div>
-                </div>
-              </div>
-            </GenerationPanel>
-            {rows.length > 0 && (
-              <GenerationPanel>
-                <div className="space-y-3">
-                  <div className="flex justify-between items-center">
-                    <SectionLabel>{rows.length} Prompts Loaded</SectionLabel>
-                    <span className="text-xs text-[#CCFF00] font-semibold">{estimatedCredits} credits estimated</span>
-                  </div>
-                  <div className="space-y-1 max-h-48 overflow-y-auto">
-                    {rows.map(r => (
-                      <div key={r.id} className="flex items-center gap-2 p-2 bg-[#0a0a0a] rounded-lg">
-                        <span className="text-xs text-[#555] w-6">#{r.id}</span>
-                        <span className="text-xs text-white flex-1 truncate">{r.prompt}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </GenerationPanel>
-            )}
-            <div className="flex justify-end gap-2">
-              {inputMode === 'manual' && rows.length === 0 && (
-                <button onClick={handleManualStart} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#6D28D9] transition-all">Load Prompts</button>
-              )}
-              {rows.length > 0 && (
-                <button onClick={handleStart} disabled={generating} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all">
-                  {generating ? 'Starting...' : 'Start Bulk Generation'}
-                </button>
-              )}
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="INPUT">
+          <button onClick={() => setInputMode('csv')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: inputMode === 'csv' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: inputMode === 'csv' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >CSV Upload</button>
+          <button onClick={() => setInputMode('manual')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: inputMode === 'manual' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: inputMode === 'manual' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >Manual List</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BULK IMAGE
+          </h1>
+          {!started && rows.length === 0 && inputMode === 'csv' && (
+            <label style={{ zIndex: 1, marginTop: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, padding: 40, border: '2px dashed var(--border-subtle)', borderRadius: 16, cursor: 'pointer', background: 'var(--bg-card)', maxWidth: 400 }}>
+              <Upload size={28} style={{ color: 'var(--text-muted)' }} />
+              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Drag & drop CSV file</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>prompt column required</p>
+              <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && handleCSVUplod(e.target.files[0])} style={{ display: 'none' }} />
+            </label>
+          )}
+          {!started && rows.length === 0 && inputMode === 'manual' && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16 }}>
+              <textarea value={manualList} onChange={e => setManualList(e.target.value)} placeholder="Enter one prompt per line" style={{ width: '100%', height: 160, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 16, fontSize: 13, color: 'var(--text-primary)', resize: 'none' }} />
+              <button onClick={handleManualStart} style={{ marginTop: 12, padding: '10px 24px', background: '#7C3AED', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Load Prompts</button>
             </div>
-          </>
-        ) : (
-          <>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <div>
-                    <p className="text-sm font-bold text-white">{completed} of {rows.length} complete</p>
-                    <div className="w-64 h-2 bg-[#1a1a1a] rounded-full mt-2">
-                      <div className="h-full bg-[#CCFF00] rounded-full transition-all" style={{ width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <button onClick={handleCancel} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-xs font-medium rounded-xl border border-white/[0.08] hover:bg-[#222] transition-all flex items-center gap-1"><X size={14} /> Cancel Batch</button>
-                    {completed > 0 && (
-                      <button className="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-xl hover:bg-[#B8FF00] transition-all flex items-center gap-1"><Download size={14} /> Download All as ZIP</button>
-                    )}
-                  </div>
+          )}
+          {rows.length > 0 && !started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{rows.length} Prompts Loaded</span>
+                <span style={{ fontSize: 12, color: '#CCFF00', fontWeight: 600 }}>{estimatedCredits} credits</span>
+              </div>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: 'var(--bg-card)', borderRadius: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.prompt}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{completed}/{rows.length}</span>
+                <div style={{ flex: 1, height: 8, background: 'var(--bg-input)', borderRadius: 100 }}>
+                  <div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, transition: 'width 300ms', width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
                 </div>
               </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-2">
-                {rows.map(r => (
-                  <div key={r.id} className="flex items-center gap-3 p-3 bg-[#0a0a0a] rounded-xl border border-white/[0.08]">
-                    <span className="text-xs font-bold text-[#555] w-6">#{r.id}</span>
-                    <span className="text-xs text-white flex-1 truncate">{r.prompt}</span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${
-                      r.status === 'completed' ? 'bg-green-500/20 text-green-400' :
-                      r.status === 'generating' ? 'bg-[#CCFF00]/20 text-[#CCFF00]' :
-                      r.status === 'failed' ? 'bg-red-500/20 text-red-400' :
-                      'bg-[#1a1a1a] text-[#555]'
-                    }`}>{r.status}</span>
-                    {r.status === 'generating' && (
-                      <div className="w-16 h-1.5 bg-[#1a1a1a] rounded-full">
-                        <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${r.progress}%` }} />
-                      </div>
-                    )}
-                    {r.status === 'completed' && r.url && (
-                      <>
-                        <img src={r.url} alt="" className="w-8 h-8 rounded object-cover" />
-                        <button className="p-1 rounded hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><Download size={14} /></button>
-                      </>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </GenerationPanel>
-          </>
-        )}
-      </div>
-    </div>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--bg-card)', borderRadius: 10, marginBottom: 4, border: '1px solid var(--border-subtle)' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.prompt}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
+                    background: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'generating' ? 'rgba(204,255,0,0.2)' : 'var(--bg-input)',
+                    color: r.status === 'completed' ? '#4ade80' : r.status === 'generating' ? '#CCFF00' : 'var(--text-muted)',
+                  }}>{r.status}</span>
+                  {r.status === 'generating' && <div style={{ width: 60, height: 6, background: 'var(--bg-input)', borderRadius: 100 }}><div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${r.progress}%` }} /></div>}
+                  {r.status === 'completed' && r.url && <img src={r.url} alt="" style={{ width: 32, height: 32, borderRadius: 4, objectFit: 'cover' }} />}
+                </div>
+              ))}
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Settings">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <ModelSelector value={model} onChange={setModel} type="image" />
+            <StudioDropdown label="Ratio" options={['1:1', '16:9', '9:16', '4:3', '3:2']} value={aspectRatio} onChange={setAspectRatio} />
+            <StudioDropdown label="Quality" options={['standard', 'high', 'ultra']} value={quality} onChange={setQuality} />
+            <StudioDropdown label="Style" options={['none', 'cinematic', 'photographic', 'anime', 'digital-art', '3d-render']} value={stylePreset} onChange={setStylePreset} />
+            <StudioDropdown label="Naming" options={NAMING_OPTIONS} value={naming} onChange={setNaming} />
+            <StudioDropdown label="Format" options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            {started ? (
+              <ControlButton onClick={handleCancel}><X size={14} /> Cancel</ControlButton>
+            ) : rows.length > 0 ? (
+              <button onClick={handleStart} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>START BULK</button>
+            ) : null}
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

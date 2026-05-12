@@ -1,24 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { Image, User } from 'lucide-react';
+import { User } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import UploadZone from '@/components/studio/UploadZone';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import ResultsGrid from '@/components/studio/ResultsGrid';
 
 const STYLE_PRESETS = [
-  'Business Professional', 'LinkedIn', 'Creative', 'Executive', 
+  'Business Professional', 'LinkedIn', 'Creative', 'Executive',
   'Casual Smart', 'Medical', 'Legal', 'Tech', 'Academic'
 ];
 const BACKGROUNDS = ['White', 'Grey', 'Dark', 'Gradient', 'Office', 'Outdoor', 'Bokeh'];
 const ATTIRES = ['Suit', 'Business Casual', 'Smart Casual', 'Industry Specific'];
 const EXPRESSIONS = ['Friendly', 'Confident', 'Approachable', 'Serious'];
-const OUTPUT_QUANTITIES = ['10', '20', '40'];
+const QUANTITIES = ['10', '20', '40'];
 
 export default function HeadshotPage() {
   const [images, setImages] = useState([]);
@@ -49,7 +45,6 @@ export default function HeadshotPage() {
       toast.error('Please upload at least one selfie photo');
       return;
     }
-
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -69,92 +64,100 @@ export default function HeadshotPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={User}
-        title="AI HEADSHOT"
-        subtitle="Professional studio-quality headshots generated in seconds"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload 4–10 selfie photos for best results</SectionLabel>
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-3 mt-2">
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="STYLE PRESETS">
+            {STYLE_PRESETS.map(s => (
+              <button key={s} onClick={() => setStylePreset(s)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: stylePreset === s ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: stylePreset === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (stylePreset !== s) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (stylePreset !== s) e.currentTarget.style.background = 'none'; }}
+              >
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: stylePreset === s ? 500 : 400 }}>{s}</div>
+                </div>
+              </button>
+            ))}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 8, paddingTop: 8 }}>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="BACKGROUND" value={background} onChange={setBackground} options={BACKGROUNDS} />
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="ATTIRE" value={attire} onChange={setAttire} options={ATTIRES} />
+              </div>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="EXPRESSION" value={expression} onChange={setExpression} options={EXPRESSIONS} />
+              </div>
+              <StudioDropdown label="QUANTITY" value={outputQty} onChange={setOutputQty} options={QUANTITIES} />
+            </div>
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              AI Headshot
+            </h1>
+            <div style={{ position: 'absolute', top: 80, zIndex: 2 }}>
+              <label style={{
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 6,
+                width: 140, height: 100,
+                borderRadius: 12, border: '2px dashed var(--border-default)',
+                background: 'var(--bg-card)', cursor: 'pointer',
+              }}>
+                <User size={20} style={{ color: 'var(--text-muted)' }} />
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Upload selfies</span>
+                <input type="file" accept="image/*"
+                  onChange={(e) => { if (e.target.files?.[0]) handleFile(e.target.files[0]); }}
+                  style={{ display: 'none' }} />
+              </label>
+            </div>
+            {images.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 80, zIndex: 2, display: 'flex', gap: 6 }}>
                 {images.map((img, i) => (
-                  <div key={i} className="relative rounded-lg border border-white/[0.08] p-1 bg-[#0a0a0a]">
-                    <img src={img.preview} alt="" className="w-full h-20 object-cover rounded" />
-                    <button
-                      onClick={() => removeImage(i)}
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-full flex items-center justify-center text-white text-xs"
-                    >
+                  <div key={i} style={{ position: 'relative', width: 48, height: 48, borderRadius: 6, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+                    <img src={img.preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button onClick={() => removeImage(i)}
+                      style={{ position: 'absolute', top: -3, right: -3, width: 16, height: 16, background: 'var(--danger)', border: 'none', borderRadius: '50%', cursor: 'pointer', color: '#fff', fontSize: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       ×
                     </button>
                   </div>
                 ))}
-                {images.length < 10 && (
-                  <label className="flex flex-col items-center justify-center gap-1 rounded-lg border-2 border-dashed border-white/[0.12] p-3 cursor-pointer bg-[#0a0a0a] hover:bg-[#111]">
-                    <User size={16} className="text-[#444]" />
-                    <span className="text-[10px] text-[#444]">Add</span>
-                    <input type="file" accept="image/*" onChange={(e) => handleFile(e.target.files?.[0])} className="hidden" />
-                  </label>
-                )}
               </div>
+            )}
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2, overflow: 'auto' }}>
+                <div style={{ maxWidth: 700, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results.slice(0, 8)} columns={4} />
+                </div>
+              </div>
+            )}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Headshot Controls">
+            <div style={{ flex: 1 }} />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Style Preset</SectionLabel>
-              <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mt-2">
-                {STYLE_PRESETS.map((style) => (
-                  <button
-                    key={style}
-                    onClick={() => setStylePreset(style)}
-                    className={`py-2 px-2 rounded-lg text-xs font-semibold transition-all ${
-                      stylePreset === style
-                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
-                        : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {style}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Background</SectionLabel>
-                <StudioDropdown options={BACKGROUNDS.map(o => ({ value: o, label: o.toUpperCase() }))} value={background} onChange={setBackground} />
-              </div>
-              <div>
-                <SectionLabel>Attire</SectionLabel>
-                <StudioDropdown options={ATTIRES.map(o => ({ value: o, label: o.toUpperCase() }))} value={attire} onChange={setAttire} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Expression</SectionLabel>
-                <StudioDropdown options={EXPRESSIONS.map(o => ({ value: o, label: o.toUpperCase() }))} value={expression} onChange={setExpression} />
-              </div>
-              <div>
-                <SectionLabel>Output Quantity</SectionLabel>
-                <StudioDropdown options={OUTPUT_QUANTITIES.map(o => ({ value: o, label: o.toUpperCase() }))} value={outputQty} onChange={setOutputQty} />
-              </div>
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Headshots
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={4} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

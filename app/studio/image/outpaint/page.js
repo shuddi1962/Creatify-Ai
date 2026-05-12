@@ -1,16 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { Image, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpLeft, ArrowUpRight, ArrowDownLeft, ArrowDownRight } from 'lucide-react';
+import { ArrowUp, ArrowDown, ArrowLeft, ArrowRight, ArrowUpLeft, ArrowUpRight, ArrowDownLeft, ArrowDownRight } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const DIRECTIONS = [
@@ -25,6 +21,7 @@ const DIRECTIONS = [
 ];
 
 const EXPAND_AMOUNTS = ['256px', '512px', '1024px'];
+const MODELS = ['flux', 'dalle', 'stable-diffusion'];
 
 export default function OutpaintPage() {
   const [sourceImage, setSourceImage] = useState(null);
@@ -50,7 +47,6 @@ export default function OutpaintPage() {
       toast.error('Please upload an image to expand');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
@@ -86,71 +82,70 @@ export default function OutpaintPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Image}
-        title="OUTPAINT"
-        subtitle="Expand your image in any direction — AI seamlessly extends the scene"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Image to Expand</SectionLabel>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="DIRECTIONS">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4 }}>
+              {DIRECTIONS.map(dir => (
+                <button key={dir.id} onClick={() => setDirection(dir.id)}
+                  style={{
+                    display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    padding: '10px 8px',
+                    background: direction === dir.id ? 'var(--accent-bg)' : 'none',
+                    border: 'none', cursor: 'pointer', borderRadius: 8,
+                    color: direction === dir.id ? 'var(--accent-text)' : 'var(--text-secondary)',
+                    fontSize: 13, transition: 'all 100ms',
+                  }}
+                  onMouseEnter={e => { if (direction !== dir.id) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                  onMouseLeave={e => { if (direction !== dir.id) e.currentTarget.style.background = 'none'; }}
+                >
+                  <dir.icon size={18} />
+                </button>
+              ))}
+            </div>
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 8, paddingTop: 8 }}>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="EXPAND" value={expandAmount} onChange={setExpandAmount} options={EXPAND_AMOUNTS} />
+              </div>
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={MODELS} />
+            </div>
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              Outpaint
+            </h1>
+            <div style={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 2, maxWidth: 300, width: '100%' }}>
               <UploadZone onFile={handleFile} preview={sourceImage} accept="image/*" label="Upload image to expand" />
             </div>
-
-            <div>
-              <SectionLabel>Direction</SectionLabel>
-              <div className="grid grid-cols-4 gap-2 max-w-[200px] mx-auto">
-                {DIRECTIONS.map((dir) => (
-                  <button
-                    key={dir.id}
-                    onClick={() => setDirection(dir.id)}
-                    className={`p-3 rounded-lg transition-all ${
-                      direction === dir.id 
-                        ? 'bg-[#7C3AED] text-white' 
-                        : 'bg-[#1a1a1a] text-[#666] hover:bg-[#222]'
-                    }`}
-                  >
-                    <dir.icon size={20} />
-                  </button>
-                ))}
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+                <div style={{ maxWidth: 500, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results} columns={2} />
+                </div>
               </div>
+            )}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Outpaint Controls">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe what should appear in the expanded area..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Expand Amount</SectionLabel>
-              <StudioDropdown options={EXPAND_AMOUNTS} value={expandAmount} onChange={setExpandAmount} label="EXPAND AMOUNT" />
-            </div>
-
-            <div>
-              <SectionLabel>Describe what should appear in the expanded area</SectionLabel>
-              <textarea
-                value={prompt}
-                onChange={(e) => setPrompt(e.target.value)}
-                placeholder="Describe what should appear in the expanded area..."
-                className="w-full h-24 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#6366f1]"
-              />
-            </div>
-
-            <div>
-              <SectionLabel>Model</SectionLabel>
-              <ModelSelector type="image" value={model} onChange={setModel} />
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Expand Image
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

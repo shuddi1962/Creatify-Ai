@@ -8,11 +8,14 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const TONES = ['Professional', 'Casual', 'Playful', 'Luxury', 'Bold', 'Friendly', 'Minimal'];
 const INDUSTRIES = ['Technology', 'Fashion', 'Beauty', 'Food & Beverage', 'Health & Fitness', 'Finance', 'Real Estate', 'Education', 'Entertainment', 'Retail', 'Travel', 'Automotive'];
+const SECTIONS = ['Identity', 'Colors', 'Typography', 'Voice', 'Social', 'Preview'];
 
 export default function MarketingBrandKitPage() {
+  const [activeSection, setActiveSection] = useState('Identity');
   const [logo, setLogo] = useState(null);
   const [brandName, setBrandName] = useState('');
   const [tagline, setTagline] = useState('');
@@ -38,33 +41,31 @@ export default function MarketingBrandKitPage() {
 
   const handleSocialChange = (platform, value) => setSocial(prev => ({ ...prev, [platform]: value }));
 
-  return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Palette} title="YOUR BRAND KIT" subtitle="Upload your brand assets once — automatically applied to all outputs" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Brand Identity</SectionLabel>
-            <div>
-              <label className="text-xs text-[#888] mb-2 block">Logo</label>
-              <UploadZone onFile={setLogo} accept="image/*" label="Upload logo" icon={Upload} preview={logo ? URL.createObjectURL(logo) : null} />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+  const renderSectionContent = () => {
+    switch (activeSection) {
+      case 'Identity':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Brand Identity</h3>
+            <label style={{ fontSize: 12, color: 'var(--text-muted)', display: 'block', marginBottom: 8 }}>Logo</label>
+            <UploadZone onFile={setLogo} accept="image/*" label="Upload logo" icon={Upload} preview={logo ? URL.createObjectURL(logo) : null} />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginTop: 16 }}>
               <div>
-                <SectionLabel>Brand Name</SectionLabel>
-                <input value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your brand name" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Brand Name</label>
+                <input value={brandName} onChange={e => setBrandName(e.target.value)} placeholder="Your brand name" style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }} />
               </div>
               <div>
-                <SectionLabel>Tagline</SectionLabel>
-                <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="Your brand tagline" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Tagline</label>
+                <input value={tagline} onChange={e => setTagline(e.target.value)} placeholder="Your brand tagline" style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }} />
               </div>
             </div>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Color Palette</SectionLabel>
-            <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+        );
+      case 'Colors':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Color Palette</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {[
                 { label: 'Primary', value: primary, set: setPrimary },
                 { label: 'Secondary', value: secondary, set: setSecondary },
@@ -72,104 +73,141 @@ export default function MarketingBrandKitPage() {
                 { label: 'Background', value: background, set: setBackground },
               ].map(c => (
                 <div key={c.label}>
-                  <label className="text-[10px] text-[#444] uppercase tracking-widest">{c.label}</label>
-                  <div className="flex items-center gap-2 mt-1">
-                    <input type="color" value={c.value} onChange={e => c.set(e.target.value)} className="w-10 h-10 rounded-lg cursor-pointer border-0 bg-transparent" />
-                    <input type="text" value={c.value} onChange={e => c.set(e.target.value)} className="flex-1 bg-[#1a1a1a] border border-white/[0.08] rounded-lg px-2 py-1.5 text-xs text-white font-mono" />
+                  <label style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{c.label}</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                    <input type="color" value={c.value} onChange={e => c.set(e.target.value)} style={{ width: 40, height: 40, borderRadius: 8, cursor: 'pointer', border: 'none', background: 'transparent' }} />
+                    <input type="text" value={c.value} onChange={e => c.set(e.target.value)} style={{ flex: 1, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-primary)', fontFamily: 'monospace' }} />
                   </div>
                 </div>
               ))}
             </div>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Typography</SectionLabel>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        );
+      case 'Typography':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Typography</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               <div>
-                <label className="text-xs text-[#888]">Primary Font</label>
-                <select value={primaryFont} onChange={e => setPrimaryFont(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white mt-1">
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Primary Font</label>
+                <select value={primaryFont} onChange={e => setPrimaryFont(e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }}>
                   {['Inter', 'Poppins', 'Montserrat', 'Roboto', 'Open Sans', 'Playfair Display', 'Lato', 'Oswald'].map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
               <div>
-                <label className="text-xs text-[#888]">Secondary Font</label>
-                <select value={secondaryFont} onChange={e => setSecondaryFont(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white mt-1">
+                <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Secondary Font</label>
+                <select value={secondaryFont} onChange={e => setSecondaryFont(e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }}>
                   {['Inter', 'Poppins', 'Montserrat', 'Roboto', 'Open Sans', 'Lato', 'Merriweather', 'Source Sans Pro'].map(f => <option key={f} value={f}>{f}</option>)}
                 </select>
               </div>
             </div>
-            <div>
-              <SectionLabel>Upload Custom Font</SectionLabel>
-              <label className="flex items-center gap-2 px-4 py-2.5 bg-[#1a1a1a] border border-white/[0.08] rounded-xl text-xs text-[#888] cursor-pointer hover:bg-[#222] transition-all">
-                <Upload size={14} />
-                <span>Upload .ttf or .otf font file</span>
-                <input type="file" accept=".ttf,.otf,.woff,.woff2" className="hidden" />
+            <div style={{ marginTop: 16 }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <Upload size={14} /> Upload .ttf or .otf font file
+                <input type="file" accept=".ttf,.otf,.woff,.woff2" style={{ display: 'none' }} />
               </label>
             </div>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Brand Voice</SectionLabel>
-            <div>
-              <SectionLabel>Tone of Voice</SectionLabel>
-              <StudioDropdown label="Tone of Voice" options={TONES} value={tone} onChange={setTone} />
+        );
+      case 'Voice':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Brand Voice</h3>
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Tone of Voice</label>
+              <StudioDropdown label="Tone" options={TONES} value={tone} onChange={setTone} />
             </div>
-            <div>
-              <label className="text-xs text-[#888]">Industry</label>
-              <select value={industry} onChange={e => setIndustry(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white mt-1">
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Industry</label>
+              <select value={industry} onChange={e => setIndustry(e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }}>
                 {INDUSTRIES.map(ind => <option key={ind} value={ind}>{ind}</option>)}
               </select>
             </div>
             <div>
-              <SectionLabel>Target Audience</SectionLabel>
-              <input value={targetAudience} onChange={e => setTargetAudience(e.target.value)} placeholder="e.g., Young professionals 25-35, urban, fitness-focused" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
+              <label style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 6, display: 'block' }}>Target Audience</label>
+              <input value={targetAudience} onChange={e => setTargetAudience(e.target.value)} placeholder="e.g., Young professionals 25-35" style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)' }} />
             </div>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Social Handles</SectionLabel>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        );
+      case 'Social':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Social Handles</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
               {Object.entries(social).map(([platform, value]) => (
                 <div key={platform}>
-                  <label className="text-[10px] text-[#444] uppercase tracking-widest">{platform}</label>
-                  <input value={value} onChange={e => handleSocialChange(platform, e.target.value)} placeholder={`@yourbrand`} className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2 text-xs text-white placeholder-[#444] mt-1" />
+                  <label style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{platform}</label>
+                  <input value={value} onChange={e => handleSocialChange(platform, e.target.value)} placeholder={`@yourbrand`} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '8px 12px', fontSize: 12, color: 'var(--text-primary)', marginTop: 4 }} />
                 </div>
               ))}
             </div>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Brand Kit Preview</SectionLabel>
-            <div className="bg-[#0a0a0a] rounded-xl p-6 border border-white/[0.08]">
-              <div className="flex items-center gap-4 mb-4">
-                {logo && <img src={URL.createObjectURL(logo)} alt="Logo" className="w-12 h-12 rounded-lg object-contain" />}
+        );
+      case 'Preview':
+        return (
+          <div style={{ zIndex: 1, width: '100%', maxWidth: 500, padding: 24 }}>
+            <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 16 }}>Brand Kit Preview</h3>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 24, border: '1px solid var(--border-subtle)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+                {logo && <img src={URL.createObjectURL(logo)} alt="Logo" style={{ width: 48, height: 48, borderRadius: 8, objectFit: 'contain' }} />}
                 <div>
-                  <p className="text-lg font-bold" style={{ color: primary }}>{brandName || 'Your Brand'}</p>
-                  {tagline && <p className="text-xs text-[#888]">{tagline}</p>}
+                  <p style={{ fontSize: 18, fontWeight: 700, color: primary }}>{brandName || 'Your Brand'}</p>
+                  {tagline && <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>{tagline}</p>}
                 </div>
               </div>
-              <div className="flex gap-2">
+              <div style={{ display: 'flex', gap: 8 }}>
                 {['Primary', 'Secondary', 'Accent'].map((name, i) => (
-                  <div key={name} className="flex-1 text-center">
-                    <div className="h-8 rounded-lg mb-1" style={{ backgroundColor: [primary, secondary, accent][i] }} />
-                    <p className="text-[10px] text-[#555]">{name}</p>
+                  <div key={name} style={{ flex: 1, textAlign: 'center' }}>
+                    <div style={{ height: 32, borderRadius: 8, marginBottom: 4, backgroundColor: [primary, secondary, accent][i] }} />
+                    <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>{name}</p>
                   </div>
                 ))}
               </div>
             </div>
           </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <button onClick={handleSave} disabled={saving} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all flex items-center gap-2">
-            <Save size={16} />
-            {saving ? 'Saving...' : 'Save Brand Kit'}
-          </button>
-        </div>
-      </div>
-    </div>
+        );
+    }
+  };
+
+  return (
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="SECTIONS">
+          {SECTIONS.map(s => (
+            <button key={s} onClick={() => setActiveSection(s)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: activeSection === s ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: activeSection === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{s}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BRAND KIT
+          </h1>
+          {renderSectionContent()}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Brand Kit">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1, justifyContent: 'flex-end' }}>
+            <ControlButton onClick={handleSave} disabled={saving}>
+              <Save size={14} /> {saving ? 'Saving...' : 'Save Brand Kit'}
+            </ControlButton>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

@@ -10,6 +10,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'Facebook', 'LinkedIn'];
 const HOOK_STYLES = ['Problem/Solution', 'Before/After', 'Testimonial', 'Tutorial', 'Unboxing', 'Transformation', 'Lifestyle'];
@@ -56,62 +57,52 @@ export default function MarketingUGCPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={ShoppingBag} badge="TOP" title="UGC AD GENERATOR" subtitle="Create scroll-stopping UGC-style video ads that actually convert" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div>
-              <SectionLabel>Product Description</SectionLabel>
-              <textarea value={productDesc} onChange={e => setProductDesc(e.target.value)} placeholder="Describe your product or service..." className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-24" />
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORMS">
+          {PLATFORMS.map(p => (
+            <button key={p} onClick={() => setPlatform(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: platform === p ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: platform === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            UGC AD GENERATOR
+          </h1>
+          {results.length > 0 && (
+            <div style={{ position: 'absolute', bottom: 120, left: '50%', transform: 'translateX(-50%)', zIndex: 1 }}>
+              <ResultsGrid results={results} columns={2} />
             </div>
-            <div>
-              <SectionLabel>Product Image (Optional)</SectionLabel>
-              <UploadZone onFile={setProductImage} accept="image/*" label="Upload product image" icon={Upload} preview={productImage ? URL.createObjectURL(productImage) : null} />
-            </div>
-            <div>
-              <SectionLabel>Target Audience</SectionLabel>
-              <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="e.g., Women 25-35, fitness enthusiasts" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
-            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="UGC Settings">
+          <PromptInput value={productDesc} onChange={e => setProductDesc(e.target.value)} placeholder="Describe your product or service..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="Hook" options={HOOK_STYLES} value={hookStyle} onChange={setHookStyle} />
+            <StudioDropdown label="Tone" options={TONES} value={tone} onChange={setTone} />
+            <StudioDropdown label="Dur" options={DURATIONS} value={duration} onChange={setDuration} />
+            <StudioDropdown label="Style" options={CREATOR_STYLES} value={creatorStyle} onChange={setCreatorStyle} />
+            <StudioDropdown label="#" options={VARIANTS.map(String)} value={String(variants)} onChange={v => setVariants(parseInt(v))} />
+            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div>
-              <SectionLabel>Platform</SectionLabel>
-              <StudioDropdown label="PLATFORM" value={platform} onChange={setPlatform} options={PLATFORMS} />
-            </div>
-            <div>
-              <SectionLabel>Hook Style</SectionLabel>
-              <StudioDropdown label="HOOK STYLE" value={hookStyle} onChange={setHookStyle} options={HOOK_STYLES} />
-            </div>
-            <div>
-              <SectionLabel>Tone</SectionLabel>
-              <StudioDropdown label="TONE" value={tone} onChange={setTone} options={TONES} />
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Duration</SectionLabel>
-                <StudioDropdown label="DURATION" value={duration} onChange={setDuration} options={DURATIONS} />
-              </div>
-              <div>
-                <SectionLabel>Creator Style</SectionLabel>
-                <StudioDropdown label="CREATOR STYLE" value={creatorStyle} onChange={setCreatorStyle} options={CREATOR_STYLES} />
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Number of Variants</SectionLabel>
-              <StudioDropdown label="NUMBER OF VARIANTS" value={`${variants}`} onChange={v => setVariants(parseInt(v))} options={VARIANTS.map(v => `${v}`)} />
-            </div>
-          </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate UGC Ads
-          </GenerateButton>
-        </div>
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

@@ -7,6 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import GenerateButton from '@/components/studio/GenerateButton';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter'];
 const HOOK_TYPES = ['Question Hook', 'Bold Statement', 'Problem-Agitate', 'Shocking Stat', 'Story Hook', 'Teaser Hook', 'Contrast Hook', 'Number Hook'];
@@ -58,82 +59,67 @@ export default function HooksPage() {
   const useInScript = (text) => toast.success('Hook added to script generator');
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Zap} title="HOOK GENERATOR" subtitle="Generate 20 proven viral opening hooks for any niche or product" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Niche or Product</SectionLabel>
-                <input value={niche} onChange={e => setNiche(e.target.value)} placeholder="e.g. Fitness, Tech reviews, Finance" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
-              </div>
-              <div>
-                <SectionLabel>Target Audience</SectionLabel>
-                <input value={audience} onChange={e => setAudience(e.target.value)} placeholder="e.g. Gen Z, entrepreneurs, moms" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Platform</SectionLabel>
-              <div className="flex gap-2 flex-wrap">
-                {PLATFORMS.map(p => (
-                  <button key={p} onClick={() => setPlatform(p)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${platform === p ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{p}</button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <SectionLabel>Hook Types (multi-select)</SectionLabel>
-              <div className="flex gap-2 flex-wrap">
-                {HOOK_TYPES.map(h => (
-                  <button key={h} onClick={() => toggleHook(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${selectedHooks.includes(h) ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
-                ))}
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Tone</SectionLabel>
-                <div className="flex gap-2 flex-wrap">
-                  {TONES.map(t => (
-                    <button key={t} onClick={() => setTone(t)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${tone === t ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{t}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <SectionLabel>Number of Hooks</SectionLabel>
-                <div className="flex gap-2">
-                  {NUM_OPTIONS.map(n => (
-                    <button key={n} onClick={() => setCount(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${count === n ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n}</button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <GenerateButton onClick={generateHooks} loading={loading}>Generate Hooks</GenerateButton>
-        </div>
-
-        {hooks.length > 0 && (
-          <div className="space-y-3">
-            {hooks.map(hook => (
-              <div key={hook.id} className="bg-[#111111] rounded-xl border border-white/[0.08] p-4 flex items-start gap-3">
-                <div className="flex-1">
-                  <p className="text-white text-sm font-medium mb-1">"{hook.text}"</p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[10px] px-2 py-0.5 bg-[#6366f1]/20 text-[#6366f1] rounded">{hook.type}</span>
-                    <span className="text-[10px] text-[#555]">Rating: {hook.rating}/5</span>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="HOOK TYPES">
+          {HOOK_TYPES.map(t => (
+            <button key={t} onClick={() => toggleHook(t)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: selectedHooks.includes(t) ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: selectedHooks.includes(t) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{t}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            HOOK GENERATOR
+          </h1>
+          {hooks.length > 0 && (
+            <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 600, padding: '0 16px', maxHeight: '65%', overflowY: 'auto' }}>
+              {hooks.map(hook => (
+                <div key={hook.id} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, marginBottom: 8, border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+                  <div style={{ flex: 1 }}>
+                    <p style={{ fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', marginBottom: 4 }}>"{hook.text}"</p>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{ fontSize: 10, padding: '2px 8px', background: 'var(--accent-bg)', color: 'var(--accent-text)', borderRadius: 4 }}>{hook.type}</span>
+                      <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>Rating: {hook.rating}/5</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, flexShrink: 0 }}>
+                    <button onClick={() => copyHook(hook.id, hook.text)} style={{ padding: 8, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, cursor: 'pointer', color: 'var(--text-muted)' }}>
+                      {copiedId === hook.id ? <Check size={14} color="#4ade80" /> : <Copy size={14} />}
+                    </button>
+                    <button onClick={() => useInScript(hook.text)} style={{ padding: '8px 12px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: 'pointer' }}>Use</button>
                   </div>
                 </div>
-                <div className="flex gap-1">
-                  <button onClick={() => copyHook(hook.id, hook.text)} className="p-2 rounded-lg bg-[#1a1a1a] text-[#888] hover:text-white transition-all">{copiedId === hook.id ? <Check size={14} /> : <Copy size={14} />}</button>
-                  <button onClick={() => useInScript(hook.text)} className="px-3 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-lg hover:bg-[#B8FF00] transition-all">Use</button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Hook Settings">
+          <PromptInput value={niche} onChange={e => setNiche(e.target.value)} placeholder="Niche or topic..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <PromptInput value={audience} onChange={e => setAudience(e.target.value)} placeholder="Target audience..." />
+            <ControlButton onClick={() => setPlatform(PLATFORMS[(PLATFORMS.indexOf(platform) + 1) % PLATFORMS.length])}>{platform}</ControlButton>
+            <ControlButton onClick={() => setTone(TONES[(TONES.indexOf(tone) + 1) % TONES.length])}>{tone}</ControlButton>
+            <ControlButton onClick={() => setCount(NUM_OPTIONS[(NUM_OPTIONS.indexOf(count) + 1) % NUM_OPTIONS.length])}>{count}</ControlButton>
+            <GenerateButton onClick={generateHooks} loading={loading}>GENERATE</GenerateButton>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

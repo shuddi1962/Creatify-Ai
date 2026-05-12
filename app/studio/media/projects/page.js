@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { FolderOpen, Plus, MoreHorizontal } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
+import { FolderOpen, Plus } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PROJECTS = [
   { id: 1, name: 'Product Campaign', count: 24, preview: ['https://picsum.photos/seed/p1/100/100', 'https://picsum.photos/seed/p2/100/100', 'https://picsum.photos/seed/p3/100/100'], updated: '2 hours ago' },
@@ -17,61 +17,94 @@ export default function ProjectsPage() {
   const [newName, setNewName] = useState('');
 
   const createProject = () => {
-    if (!newName.trim()) { toast.error('Enter a project name'); return; }
+    if (!newName.trim()) return;
     setProjects([{ id: Date.now(), name: newName, count: 0, preview: [], updated: 'Just now' }, ...projects]);
     setNewName('');
     setShowNew(false);
-    toast.success('Project created!');
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <div className="max-w-[900px] mx-auto px-4 pt-8">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-white font-bold text-2xl">My Projects</h1>
-            <p className="text-[#666] text-sm mt-1">Organize your creations into named project folders</p>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PROJECTS">
+          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 12 }}>
+            {projects.length} projects
           </div>
-          <button onClick={() => setShowNew(true)} className="flex items-center gap-2 px-5 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] transition-all"><Plus size={16} /> New Project</button>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-8">
-          {projects.map(proj => (
-            <div key={proj.id} className="bg-[#111111] rounded-xl border border-white/[0.08] p-5 cursor-pointer hover:border-[#333] transition-all group">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-[#1a1a1a] rounded-xl flex items-center justify-center text-[#CCFF00]"><FolderOpen size={20} /></div>
-                  <div>
-                    <h3 className="text-white font-semibold">{proj.name}</h3>
-                    <p className="text-[#555] text-xs">{proj.count} items · {proj.updated}</p>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', height: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              MY PROJECTS
+            </h1>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 16 }}>
+              {projects.map(proj => (
+                <div key={proj.id} style={{
+                  background: 'var(--bg-card)', borderRadius: 12,
+                  border: '1px solid var(--border-subtle)', padding: 16,
+                  cursor: 'pointer',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 12 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <FolderOpen size={20} style={{ color: '#CCFF00' }} />
+                      <div>
+                        <p style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{proj.name}</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: 11 }}>{proj.count} items &middot; {proj.updated}</p>
+                      </div>
+                    </div>
+                  </div>
+                  {proj.preview.length > 0 && (
+                    <div style={{ display: 'flex' }}>
+                      {proj.preview.map((src, i) => (
+                        <img key={i} src={src} style={{ width: 28, height: 28, borderRadius: 6, border: '2px solid var(--bg-card)', marginRight: -8 }} alt="" />
+                      ))}
+                      {proj.count > proj.preview.length && (
+                        <div style={{ width: 28, height: 28, borderRadius: 6, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: 10 }}>
+                          +{proj.count - proj.preview.length}
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+            {showNew && (
+              <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}
+                onClick={() => setShowNew(false)}>
+                <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24, width: '100%', maxWidth: 360 }}
+                  onClick={e => e.stopPropagation()}>
+                  <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: 16 }}>New Project</h3>
+                  <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Project name"
+                    style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, padding: '10px 14px', color: 'var(--text-primary)', fontSize: 14, outline: 'none', marginBottom: 16 }}
+                  />
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button onClick={() => setShowNew(false)}
+                      style={{ flex: 1, padding: '10px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}
+                    >Cancel</button>
+                    <button onClick={createProject}
+                      style={{ flex: 1, padding: '10px', background: '#CCFF00', border: 'none', borderRadius: 10, color: '#000', fontWeight: 700, fontSize: 13, cursor: 'pointer' }}
+                    >Create</button>
                   </div>
                 </div>
-                <button className="p-1.5 text-[#444] hover:text-white opacity-0 group-hover:opacity-100 transition-all"><MoreHorizontal size={16} /></button>
               </div>
-              {proj.preview.length > 0 && (
-                <div className="flex -space-x-2">
-                  {proj.preview.map((src, i) => <img key={i} src={src} className="w-8 h-8 rounded-lg border-2 border-[#111]" alt="" />)}
-                  {proj.count > proj.preview.length && <div className="w-8 h-8 rounded-lg border-2 border-[#111] bg-[#1a1a1a] flex items-center justify-center text-[#555] text-xs">+{proj.count - proj.preview.length}</div>}
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {showNew && (
-          <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50" onClick={() => setShowNew(false)}>
-            <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6 w-full max-w-sm" onClick={e => e.stopPropagation()}>
-              <h3 className="text-white font-bold mb-4">New Project</h3>
-              <input value={newName} onChange={e => setNewName(e.target.value)} placeholder="Project name" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none mb-4" />
-              <div className="flex gap-3">
-                <button onClick={() => setShowNew(false)} className="flex-1 px-4 py-2.5 bg-[#1a1a1a] text-[#888] font-semibold rounded-xl hover:text-white">Cancel</button>
-                <button onClick={createProject} className="flex-1 px-4 py-2.5 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00]">Create</button>
-              </div>
-            </div>
+            )}
           </div>
-        )}
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <GenerateButton onClick={() => setShowNew(true)} credits={0}>
+            <Plus size={14} /> New Project
+          </GenerateButton>
+        </DirectorBar>
+      }
+    />
   );
 }

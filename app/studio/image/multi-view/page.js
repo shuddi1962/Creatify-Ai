@@ -1,22 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Image } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
 
 const SUBJECT_TYPES = ['Person', 'Product', 'Object', 'Architecture', 'Character'];
-const ANGLES = [
-  'Front', 'Front-Left', 'Left', 'Back-Left', 'Back', 'Back-Right', 'Right', 'Front-Right', 'Top'
-];
 const BG_STYLES = ['Transparent', 'White Studio', 'Gradient', 'Custom prompt'];
+const MODELS = ['flux', 'stable-diffusion'];
 
 export default function MultiViewPage() {
   const [sourceImage, setSourceImage] = useState(null);
@@ -27,6 +20,10 @@ export default function MultiViewPage() {
   const [model, setModel] = useState('flux');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
+
+  const ANGLES = [
+    'Front', 'Front-Left', 'Left', 'Back-Left', 'Back', 'Back-Right', 'Right', 'Front-Right', 'Top'
+  ];
 
   const handleFile = (file) => {
     if (file) {
@@ -39,7 +36,7 @@ export default function MultiViewPage() {
   };
 
   const toggleAngle = (angle) => {
-    setSelectedAngles(prev => 
+    setSelectedAngles(prev =>
       prev.includes(angle) ? prev.filter(a => a !== angle) : [...prev, angle]
     );
   };
@@ -49,12 +46,10 @@ export default function MultiViewPage() {
       toast.error('Please upload a subject image');
       return;
     }
-
     if (selectedAngles.length === 0) {
       toast.error('Please select at least one angle');
       return;
     }
-
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
@@ -73,75 +68,87 @@ export default function MultiViewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Image}
-        title="MULTI-VIEW"
-        subtitle="Generate 9 camera angles from one single image automatically"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Subject Image</SectionLabel>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="SUBJECT TYPE">
+            {SUBJECT_TYPES.map(t => (
+              <button key={t} onClick={() => setSubjectType(t)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: subjectType === t ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: subjectType === t ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (subjectType !== t) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (subjectType !== t) e.currentTarget.style.background = 'none'; }}
+              >
+                <div>
+                  <div style={{ fontSize: 13, fontWeight: subjectType === t ? 500 : 400 }}>{t}</div>
+                </div>
+              </button>
+            ))}
+            <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 8, paddingTop: 8 }}>
+              <div style={{ marginBottom: 8 }}>
+                <StudioDropdown label="BG STYLE" value={bgStyle} onChange={setBgStyle} options={BG_STYLES} />
+              </div>
+              {bgStyle === 'Custom prompt' && (
+                <input type="text" value={customPrompt}
+                  onChange={e => setCustomPrompt(e.target.value)}
+                  placeholder="Describe background..."
+                  style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 6, padding: '6px 10px', color: 'var(--text-primary)', fontSize: 12, marginBottom: 8 }} />
+              )}
+              <StudioDropdown label="MODEL" value={model} onChange={setModel} options={MODELS} />
+            </div>
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+              padding: '0 24px', zIndex: 1,
+            }}>
+              Multi-View
+            </h1>
+            <div style={{ position: 'absolute', top: 80, left: '50%', transform: 'translateX(-50%)', zIndex: 2, maxWidth: 300, width: '100%' }}>
               <UploadZone onFile={handleFile} preview={sourceImage} accept="image/*" label="Upload subject image" />
             </div>
-
-            <div>
-              <SectionLabel>Subject Type</SectionLabel>
-              <StudioDropdown options={SUBJECT_TYPES.map(o => ({ value: o, label: o.toUpperCase() }))} value={subjectType} onChange={setSubjectType} />
-            </div>
-
-            <div>
-              <SectionLabel>Select Angles (3x3 grid)</SectionLabel>
-              <div className="grid grid-cols-3 gap-2 max-w-[240px] mx-auto mt-3">
-                {ANGLES.map((angle) => (
-                  <button
-                    key={angle}
-                    onClick={() => toggleAngle(angle)}
-                    className={`py-2 px-3 rounded-lg text-xs font-semibold transition-all ${
-                      selectedAngles.includes(angle)
-                        ? 'bg-[#6366f1] text-white border border-[#6366f1]'
-                        : 'bg-[#1a1a1a] text-[#666] border border-white/[0.08] hover:bg-[#222]'
-                    }`}
-                  >
-                    {selectedAngles.includes(angle) && '✓ '}{angle}
-                  </button>
-                ))}
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
+                <div style={{ maxWidth: 600, width: '100%', padding: '0 24px' }}>
+                  <ResultsGrid results={results} columns={3} />
+                </div>
               </div>
+            )}
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Angles (select at least 1)">
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              {ANGLES.map(angle => (
+                <ControlButton key={angle} onClick={() => toggleAngle(angle)}
+                  style={{
+                    background: selectedAngles.includes(angle) ? 'var(--accent-bg)' : 'var(--bg-input)',
+                    color: selectedAngles.includes(angle) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                    border: selectedAngles.includes(angle) ? '1px solid var(--accent-primary)' : '1px solid var(--border-default)',
+                  }}>
+                  {selectedAngles.includes(angle) && '✓ '}{angle}
+                </ControlButton>
+              ))}
             </div>
-
-            <div>
-              <SectionLabel>Background Style</SectionLabel>
-              <StudioDropdown options={BG_STYLES.map(o => ({ value: o, label: o.toUpperCase() }))} value={bgStyle} onChange={setBgStyle} />
-              {bgStyle === 'Custom prompt' && (
-                <input
-                  type="text"
-                  value={customPrompt}
-                  onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="Describe background..."
-                  className="mt-3 w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]"
-                />
-              )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Model</SectionLabel>
-              <ModelSelector type="image" value={model} onChange={setModel} />
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate All Angles
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={3} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

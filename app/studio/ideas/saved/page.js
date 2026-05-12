@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Bookmark, Trash2, TrendingUp } from 'lucide-react';
+import { Bookmark, Trash2 } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import Link from 'next/link';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const SAVED_IDEAS = [
   { id: 1, topic: 'Morning routine aesthetic', platform: 'TikTok', niche: 'Lifestyle', virality: 94, hook: '5 AM mornings changed my life', savedDate: 'May 8, 2026' },
@@ -23,49 +24,79 @@ export default function SavedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Bookmark} title="MY SAVED IDEAS" subtitle="All your bookmarked content ideas in one organized place" />
-      <div className="max-w-[900px] mx-auto px-4">
-        {ideas.length === 0 ? (
-          <div className="text-center py-20">
-            <div className="w-20 h-20 bg-[#1a1a1a] rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <Bookmark size={32} className="text-[#444]" />
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="FILTER">
+          {['All', ...new Set(SAVED_IDEAS.map(i => i.platform))].map(p => (
+            <button key={p} onClick={() => setFilter(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: filter === p ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: filter === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            SAVED IDEAS
+          </h1>
+          {ideas.length === 0 ? (
+            <div style={{ zIndex: 1, textAlign: 'center', padding: 40, maxWidth: 400 }}>
+              <div style={{ width: 80, height: 80, background: 'var(--bg-card)', borderRadius: 16, display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px' }}>
+                <Bookmark size={32} style={{ color: '#444' }} />
+              </div>
+              <h3 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>No saved ideas yet</h3>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>Browse trending ideas to save some</p>
+              <Link href="/studio/ideas/trending" style={{ display: 'inline-block', padding: '10px 24px', background: '#CCFF00', color: '#000', borderRadius: 10, fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>Browse Trending</Link>
             </div>
-            <h3 className="text-white font-semibold mb-2">No saved ideas yet</h3>
-            <p className="text-[#666] text-sm mb-6">Browse trending ideas to save some</p>
-            <Link href="/studio/ideas/trending" className="inline-block px-6 py-2 bg-[#CCFF00] text-black font-bold text-sm rounded-xl">Browse Trending</Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-8">
-            {ideas.map(idea => (
-              <div key={idea.id} className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-                <div className="flex items-start justify-between mb-3">
-                  <div>
-                    <h3 className="text-white font-semibold text-sm">{idea.topic}</h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{idea.platform}</span>
-                      <span className="text-[10px] text-[#555]">{idea.niche}</span>
+          ) : (
+            <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 600, padding: '0 16px', maxHeight: '65%', overflowY: 'auto', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+              {ideas.map(idea => (
+                <div key={idea.id} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 8 }}>
+                    <div>
+                      <h3 style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{idea.topic}</h3>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                        <span style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', borderRadius: 4 }}>{idea.platform}</span>
+                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{idea.niche}</span>
+                      </div>
+                    </div>
+                    <button onClick={() => handleRemove(idea.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><Trash2 size={16} /></button>
+                  </div>
+                  <div style={{ marginBottom: 8 }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10, color: 'var(--text-muted)', marginBottom: 4 }}><span>Virality</span><span>{idea.virality}/100</span></div>
+                    <div style={{ height: 6, background: 'var(--bg-input)', borderRadius: 100, overflow: 'hidden' }}>
+                      <div style={{ height: '100%', background: 'linear-gradient(90deg, #7C3AED, #CCFF00)', borderRadius: 100, width: `${idea.virality}%` }} />
                     </div>
                   </div>
-                  <button onClick={() => handleRemove(idea.id)} className="text-[#666] hover:text-red-500 transition-colors"><Trash2 size={16} /></button>
-                </div>
-                <div className="mb-3">
-                  <div className="flex justify-between text-[10px] text-[#555] mb-1"><span>Virality</span><span>{idea.virality}/100</span></div>
-                  <div className="h-1.5 bg-[#1a1a1a] rounded-full overflow-hidden">
-                    <div className="h-full bg-gradient-to-r from-[#7C3AED] to-[#CCFF00] rounded-full" style={{ width: `${idea.virality}%` }} />
+                  <p style={{ color: 'var(--text-secondary)', fontSize: 12, marginBottom: 8 }}>"{idea.hook}"</p>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 10, color: '#444' }}>Saved {idea.savedDate}</span>
+                    <button onClick={() => toast.success('Opening script generator...')} style={{ padding: '6px 12px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', border: 'none', borderRadius: 8, fontSize: 10, fontWeight: 600, cursor: 'pointer' }}>Generate Script</button>
                   </div>
                 </div>
-                <p className="text-[#888] text-xs mb-3">"{idea.hook}"</p>
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] text-[#444]">Saved {idea.savedDate}</span>
-                  <button onClick={() => toast.success('Opening script generator...')} className="px-3 py-1.5 bg-[#7C3AED]/20 text-[#7C3AED] text-xs font-semibold rounded-lg hover:bg-[#7C3AED]/30 transition-all">Generate Script</button>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Saved Ideas">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'flex-end' }}>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{ideas.length} saved ideas</span>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

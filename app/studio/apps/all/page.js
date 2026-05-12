@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { Grid, Search, Heart, Sparkles, Zap } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 import AppCard from '@/components/studio/AppCard';
 
 const CATEGORIES = ['All', 'VFX', 'Face & Character', 'Style', 'Product', 'Meme & Social', 'New'];
@@ -47,101 +47,85 @@ export default function AllAppsPage() {
   });
 
   return (
-    <div className="min-h-screen pb-12" style={{ background: '#000000' }}>
-      <Toaster position="top-center" />
-      <StudioHero icon={Grid} title="EXPLORE APPS" subtitle="150+ one-click creative apps for every creative use case" />
-
-      <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px' }}>
-        {/* Search + Sort */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginBottom: 24 }}>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ position: 'relative', flex: 1, minWidth: 200, maxWidth: 400 }}>
-              <Search size={16} style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', color: '#444' }} />
-              <input
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                placeholder="Search apps..."
-                style={{
-                  width: '100%', background: '#111', border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 10, padding: '10px 14px 10px 38px',
-                  color: '#fff', fontSize: 14, outline: 'none',
-                }}
-              />
-            </div>
-            <div style={{ display: 'flex', gap: 6 }}>
-              {SORTS.map(s => (
-                <button key={s} onClick={() => setSort(s)}
-                  style={{
-                    padding: '8px 16px', borderRadius: 8, fontSize: 12, fontWeight: 600,
-                    border: '1px solid rgba(255,255,255,0.08)', cursor: 'pointer',
-                    transition: 'all 150ms',
-                    background: sort === s ? '#CCFF00' : '#111',
-                    color: sort === s ? '#000' : '#6B7280',
-                  }}
-                >
-                  {s}
-                </button>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="CATEGORIES">
+          {CATEGORIES.map(c => (
+            <button key={c} onClick={() => setCategory(c)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: category === c ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: category === c ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{c}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, padding: 24, width: '100%', maxHeight: '100%', overflowY: 'auto' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              EXPLORE APPS
+            </h1>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))',
+              gap: 16,
+            }}>
+              {sortedApps.map(app => (
+                <AppCard
+                  key={app.id}
+                  app={app}
+                  isFavorite={app.favorite}
+                  onToggleFavorite={toggleFav}
+                />
               ))}
             </div>
+            {sortedApps.length === 0 && (
+              <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--text-secondary)' }}>
+                <p style={{ fontSize: 14 }}>No apps found.</p>
+              </div>
+            )}
           </div>
-
-          {/* Category Tabs */}
-          <div style={{
-            display: 'flex', gap: 4, flexWrap: 'wrap', overflowX: 'auto',
-            background: '#111', borderRadius: 100, padding: 4, width: 'fit-content',
-          }}>
-            {CATEGORIES.map(c => (
-              <button key={c} onClick={() => setCategory(c)}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Browse">
+          <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
+            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+            <input
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              placeholder="Search apps..."
+              style={{
+                width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                borderRadius: 8, padding: '8px 12px 8px 32px',
+                color: 'var(--text-primary)', fontSize: 13, outline: 'none',
+              }}
+            />
+          </div>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {SORTS.map(s => (
+              <ControlButton key={s} onClick={() => setSort(s)}
                 style={{
-                  padding: '8px 16px', fontSize: 13, whiteSpace: 'nowrap',
-                  borderRadius: 100, border: 'none', cursor: 'pointer',
-                  transition: 'all 150ms',
-                  background: category === c ? '#CCFF00' : 'transparent',
-                  color: category === c ? '#000' : '#6B7280',
-                  fontWeight: category === c ? 700 : 400,
+                  background: sort === s ? 'var(--accent-bg)' : 'var(--bg-input)',
+                  color: sort === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  borderColor: sort === s ? 'var(--accent-bg)' : 'var(--border-default)',
                 }}
-                onMouseEnter={(e) => { if (category !== c) e.currentTarget.style.color = '#fff'; }}
-                onMouseLeave={(e) => { if (category !== c) e.currentTarget.style.color = '#6B7280'; }}
-              >
-                {c}
-              </button>
+              >{s}</ControlButton>
             ))}
           </div>
-        </div>
-
-        {/* Apps Grid */}
-        <div style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))',
-          gap: 16,
-          paddingBottom: 40,
-        }}>
-          {sortedApps.map(app => (
-            <AppCard
-              key={app.id}
-              app={app}
-              isFavorite={app.favorite}
-              onToggleFavorite={toggleFav}
-            />
-          ))}
-        </div>
-
-        {sortedApps.length === 0 && (
-          <div style={{ textAlign: 'center', padding: '60px 0', color: '#6B7280' }}>
-            <p style={{ fontSize: 14 }}>No apps found.</p>
-          </div>
-        )}
-
-        {/* Muapi Ecosystem Footer */}
-        <div style={{
-          textAlign: 'center', padding: '24px 0 16px',
-          borderTop: '1px solid rgba(255,255,255,0.06)',
-        }}>
-          <p style={{ fontSize: 12, color: '#444' }}>
-            Muapi Ecosystem — More templates coming soon
-          </p>
-        </div>
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

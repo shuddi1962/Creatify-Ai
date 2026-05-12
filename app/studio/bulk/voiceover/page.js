@@ -7,6 +7,7 @@ import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const VOICES = ['Emma (US Female)', 'James (US Male)', 'Sophie (UK Female)', 'Liam (UK Male)', 'Yuki (Japanese)', 'Mei (Chinese)', 'Carlos (Spanish)', 'Sofia (French)', 'Hans (German)', 'Aria (Italian)'];
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Japanese', 'Chinese', 'Korean', 'Hindi', 'Arabic'];
@@ -71,112 +72,109 @@ export default function BulkVoiceoverPage() {
   const completed = rows.filter(r => r.status === 'completed').length;
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Volume2} title="BULK VOICEOVER" subtitle="CSV of scripts instantly converted to batch audio files" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        {!started ? (
-          <>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <div className="flex gap-2">
-                  <button onClick={() => setInputMode('csv')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'csv' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>CSV Upload</button>
-                  <button onClick={() => setInputMode('manual')} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${inputMode === 'manual' ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>Manual Text</button>
-                </div>
-                {inputMode === 'csv' ? (
-                  <div className="space-y-3">
-                    <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                      <Upload size={24} className="text-[#666]" />
-                      <p className="text-sm font-medium text-white">Drag & drop CSV file</p>
-                      <p className="text-xs text-[#555]">Columns: script, voice_name, language, speed, emotion</p>
-                      <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && handleCSV(e.target.files[0])} className="hidden" />
-                    </label>
-                  </div>
-                ) : (
-                  <textarea value={manualText} onChange={e => setManualText(e.target.value)} placeholder="Enter scripts, one per line..." className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-[#444] resize-none h-40" />
-                )}
-              </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-4">
-                <SectionLabel>Default Settings</SectionLabel>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-[#888]">Default Voice</label>
-                    <select value={defaultVoice} onChange={e => setDefaultVoice(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white mt-1">
-                      {VOICES.map(v => <option key={v} value={v}>{v}</option>)}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="text-xs text-[#888]">Default Language</label>
-                    <select value={defaultLang} onChange={e => setDefaultLang(e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white mt-1">
-                      {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
-                    </select>
-                  </div>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <SectionLabel>Speed</SectionLabel>
-                    <StudioDropdown label="Speed" options={SPEEDS} value={defaultSpeed} onChange={setDefaultSpeed} />
-                  </div>
-                  <div>
-                    <SectionLabel>Output Format</SectionLabel>
-                    <StudioDropdown label="Output Format" options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
-                  </div>
-                </div>
-              </div>
-            </GenerationPanel>
-            {rows.length > 0 && (
-              <GenerationPanel>
-                <div className="space-y-3">
-                  <SectionLabel>{rows.length} Scripts Loaded</SectionLabel>
-                  <div className="space-y-1 max-h-48 overflow-y-auto">
-                    {rows.map(r => (
-                      <div key={r.id} className="flex items-center gap-2 p-2 bg-[#0a0a0a] rounded-lg">
-                        <span className="text-xs text-[#555] w-6">#{r.id}</span>
-                        <span className="text-xs text-white flex-1 truncate">{r.script}</span>
-                        <span className="text-[10px] text-[#555]">{r.voice.split(' ')[0]}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </GenerationPanel>
-            )}
-            <div className="flex justify-end gap-2">
-              {inputMode === 'manual' && rows.length === 0 && (
-                <button onClick={handleManualStart} className="px-4 py-2.5 bg-[#7C3AED] text-white text-sm font-semibold rounded-xl hover:bg-[#5558E3] transition-all">Load Scripts</button>
-              )}
-              {rows.length > 0 && (
-                <button onClick={handleStart} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold text-sm rounded-xl hover:bg-[#B8FF00] transition-all">Start Bulk Voiceover</button>
-              )}
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="INPUT">
+          <button onClick={() => setInputMode('csv')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: inputMode === 'csv' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: inputMode === 'csv' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >CSV Upload</button>
+          <button onClick={() => setInputMode('manual')}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: inputMode === 'manual' ? 'var(--accent-bg)' : 'none',
+              border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: inputMode === 'manual' ? 'var(--accent-text)' : 'var(--text-secondary)',
+              fontSize: 13, textAlign: 'left',
+            }}
+          >Manual Text</button>
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BULK VOICEOVER
+          </h1>
+          {!started && rows.length === 0 && inputMode === 'csv' && (
+            <label style={{ zIndex: 1, marginTop: 24, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: 40, border: '2px dashed var(--border-subtle)', borderRadius: 16, cursor: 'pointer', background: 'var(--bg-card)', maxWidth: 400 }}>
+              <Upload size={28} style={{ color: 'var(--text-muted)' }} />
+              <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Drag & drop CSV file</p>
+              <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>Columns: script, voice_name, language, speed</p>
+              <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && handleCSV(e.target.files[0])} style={{ display: 'none' }} />
+            </label>
+          )}
+          {!started && rows.length === 0 && inputMode === 'manual' && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16 }}>
+              <textarea value={manualText} onChange={e => setManualText(e.target.value)} placeholder="Enter scripts, one per line..." style={{ width: '100%', height: 160, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 16, fontSize: 13, color: 'var(--text-primary)', resize: 'none' }} />
+              <button onClick={handleManualStart} style={{ marginTop: 12, padding: '10px 24px', background: '#7C3AED', color: '#fff', border: 'none', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer' }}>Load Scripts</button>
             </div>
-          </>
-        ) : (
-          <>
-            <GenerationPanel>
-              <div className="flex justify-between items-center">
-                <p className="text-sm font-bold text-white">{completed}/{rows.length} complete</p>
-                <div className="w-64 h-2 bg-[#1a1a1a] rounded-full">
-                  <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
+          )}
+          {rows.length > 0 && !started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8, display: 'block' }}>{rows.length} Scripts Loaded</span>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: 'var(--bg-card)', borderRadius: 8, marginBottom: 4 }}>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.script}</span>
+                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{r.voice.split(' ')[0]}</span>
                 </div>
-                {completed > 0 && <button className="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-xl flex items-center gap-1"><Download size={14} />Download All</button>}
+              ))}
+            </div>
+          )}
+          {started && (
+            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{completed}/{rows.length}</span>
+                <div style={{ flex: 1, height: 8, background: 'var(--bg-input)', borderRadius: 100 }}>
+                  <div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
+                </div>
               </div>
-            </GenerationPanel>
-            <GenerationPanel>
-              <div className="space-y-2">
-                {rows.map(r => (
-                  <div key={r.id} className="flex items-center gap-3 p-3 bg-[#0a0a0a] rounded-xl border border-white/[0.08]">
-                    <span className="text-xs font-bold text-[#555] w-6">#{r.id}</span>
-                    <span className="text-xs text-white flex-1 truncate">{r.script}</span>
-                    <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm ${r.status === 'completed' ? 'bg-green-500/20 text-green-400' : r.status === 'generating' ? 'bg-[#CCFF00]/20 text-[#CCFF00]' : 'bg-[#1a1a1a] text-[#555]'}`}>{r.status}</span>
-                    {r.status === 'generating' && <div className="w-16 h-1.5 bg-[#1a1a1a] rounded-full"><div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${r.progress}%` }} /></div>}
-                    {r.status === 'completed' && <button className="p-1 text-[#888] hover:text-white"><Download size={14} /></button>}
-                  </div>
-                ))}
-              </div>
-            </GenerationPanel>
-          </>
-        )}
-      </div>
-    </div>
+              {rows.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--bg-card)', borderRadius: 10, marginBottom: 4, border: '1px solid var(--border-subtle)' }}>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
+                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.script}</span>
+                  <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
+                    background: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'generating' ? 'rgba(204,255,0,0.2)' : 'var(--bg-input)',
+                    color: r.status === 'completed' ? '#4ade80' : r.status === 'generating' ? '#CCFF00' : 'var(--text-muted)',
+                  }}>{r.status}</span>
+                  {r.status === 'generating' && <div style={{ width: 60, height: 6, background: 'var(--bg-input)', borderRadius: 100 }}><div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${r.progress}%` }} /></div>}
+                  {r.status === 'completed' && <button style={{ padding: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><Download size={14} /></button>}
+                </div>
+              ))}
+            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Settings">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
+            <select value={defaultVoice} onChange={e => setDefaultVoice(e.target.value)} style={{ background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-primary)' }}>
+              {VOICES.map(v => <option key={v} value={v}>{v}</option>)}
+            </select>
+            <select value={defaultLang} onChange={e => setDefaultLang(e.target.value)} style={{ background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '6px 10px', fontSize: 12, color: 'var(--text-primary)' }}>
+              {LANGUAGES.map(l => <option key={l} value={l}>{l}</option>)}
+            </select>
+            <StudioDropdown label="Speed" options={SPEEDS} value={defaultSpeed} onChange={setDefaultSpeed} />
+            <StudioDropdown label="Format" options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            {rows.length > 0 && !started && (
+              <button onClick={handleStart} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>START BULK</button>
+            )}
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

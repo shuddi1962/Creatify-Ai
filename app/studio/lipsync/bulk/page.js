@@ -2,15 +2,8 @@
 
 import { useState } from 'react';
 import { Image, FileAudio, Users } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
-import ProgressTable from '@/components/studio/ProgressTable';
+import { toast } from 'react-hot-toast';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const NAMING_OPTIONS = ['Sequential', 'Use audio filename', 'Custom prefix'];
 const OUTPUT_QUALITY = ['720p', '1080p'];
@@ -24,7 +17,6 @@ export default function BulkLipSyncPage() {
   const [customPrefix, setCustomPrefix] = useState('');
   const [outputQuality, setOutputQuality] = useState('1080p');
   const [outputFormat, setOutputFormat] = useState('MP4');
-  const [model, setModel] = useState('infinite-talk');
   const [started, setStarted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
@@ -52,139 +44,150 @@ export default function BulkLipSyncPage() {
       toast.error('Please upload audio files');
       return;
     }
-
     setLoading(true);
     setStarted(true);
-    
     await new Promise(resolve => setTimeout(resolve, 1000));
-    
     const mockResults = audioFiles.map((file, i) => ({
       id: `job-${i}`,
       filename: file.name,
       status: i === 0 ? 'processing' : 'queued',
       progress: i === 0 ? 45 : 0,
     }));
-    
     setResults(mockResults);
-    
     setTimeout(() => {
       setResults(prev => prev.map((r, i) => i === 0 ? { ...r, status: 'completed', progress: 100 } : r));
     }, 2000);
-    
     setLoading(false);
     toast.success(`Started processing ${audioFiles.length} files!`);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero 
-        title="BULK LIP SYNC"
-        subtitle="One character × 100 audio files = 100 talking videos automatically"
-        badge="NEW"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Character (used for all videos)</SectionLabel>
-                {characterPreview ? (
-                  <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a] w-40">
-                    <img src={characterPreview} alt="Character" className="w-full h-40 object-cover rounded-lg" />
-                    <button
-                      onClick={() => handleCharacterUpload(null)}
-                      className="absolute top-2 right-2 w-6 h-6 bg-black/60 rounded-full flex items-center justify-center text-white text-xs"
-                    >
-                      ×
-                    </button>
-                  </div>
-                ) : (
-                  <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/[0.12] p-6 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                    <div className="w-10 h-10 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                      <Image size={20} className="text-[#666]" />
-                    </div>
-                    <p className="text-xs font-medium text-white">Upload portrait</p>
-                    <input type="file" accept="image/*" onChange={(e) => handleCharacterUpload(e.target.files?.[0])} className="hidden" />
-                  </label>
-                )}
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="BULK OPTIONS">
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px' }}>Naming</div>
+          {NAMING_OPTIONS.map(o => (
+            <button key={o} onClick={() => setNamingConvention(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: namingConvention === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: namingConvention === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          {namingConvention === 'Custom prefix' && (
+            <input value={customPrefix} onChange={e => setCustomPrefix(e.target.value)}
+              placeholder="e.g., video_"
+              style={{
+                width: '100%', marginTop: 8, padding: '6px 10px',
+                background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                borderRadius: 8, color: 'var(--text-primary)', fontSize: 12,
+              }}
+            />
+          )}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Output Quality</div>
+          {OUTPUT_QUALITY.map(o => (
+            <button key={o} onClick={() => setOutputQuality(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: outputQuality === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: outputQuality === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Output Format</div>
+          {OUTPUT_FORMAT.map(o => (
+            <button key={o} onClick={() => setOutputFormat(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: outputFormat === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: outputFormat === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            BULK LIP SYNC
+          </h1>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, zIndex: 1 }}>
+            {characterPreview ? (
+              <div style={{ width: 140, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+                <img src={characterPreview} alt="Character" style={{ width: '100%', height: 140, objectFit: 'cover' }} />
+                <button onClick={() => handleCharacterUpload(null)} style={{
+                  width: '100%', padding: '6px', background: 'var(--bg-input)', border: 'none',
+                  color: 'var(--text-secondary)', fontSize: 11, cursor: 'pointer',
+                }}>Remove</button>
               </div>
-              <div>
-                <SectionLabel>Audio Files (MP3/WAV)</SectionLabel>
-                <label className="flex flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/[0.12] p-6 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <div className="w-10 h-10 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                    <FileAudio size={20} className="text-[#666]" />
-                  </div>
-                  <p className="text-xs font-medium text-white">
-                    {audioFiles.length > 0 ? `${audioFiles.length} files selected` : 'Upload audio files'}
-                  </p>
-                  <p className="text-[10px] text-[#555]">Up to 100 files</p>
-                  <input type="file" accept="audio/*" multiple onChange={(e) => handleAudioUpload(e.target.files)} className="hidden" />
-                </label>
-                {audioFiles.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1">
-                    {audioFiles.slice(0, 5).map((f, i) => (
-                      <span key={i} className="px-2 py-0.5 bg-[#1a1a1a] rounded text-[10px] text-[#888]">{f.name}</span>
-                    ))}
-                    {audioFiles.length > 5 && (
-                      <span className="px-2 py-0.5 bg-[#1a1a1a] rounded text-[10px] text-[#888]">+{audioFiles.length - 5} more</span>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <SectionLabel>Naming Convention</SectionLabel>
-                <StudioDropdown options={NAMING_OPTIONS} value={namingConvention} onChange={setNamingConvention} />
-              </div>
-              <div>
-                <SectionLabel>Output Quality</SectionLabel>
-                <StudioDropdown options={OUTPUT_QUALITY} value={outputQuality} onChange={setOutputQuality} />
-              </div>
-              <div>
-                <SectionLabel>Output Format</SectionLabel>
-                <StudioDropdown options={OUTPUT_FORMAT} value={outputFormat} onChange={setOutputFormat} />
-              </div>
-            </div>
-
-            {namingConvention === 'Custom prefix' && (
-              <div>
-                <SectionLabel>Custom Prefix</SectionLabel>
-                <input
-                  type="text"
-                  value={customPrefix}
-                  onChange={(e) => setCustomPrefix(e.target.value)}
-                  placeholder="e.g., video_"
-                  className="w-full bg-[#1A1A1A] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white placeholder-[#444]"
-                />
-              </div>
+            ) : (
+              <label style={{
+                width: 140, height: 140, borderRadius: 12, border: '2px dashed var(--border-default)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 6, cursor: 'pointer', background: 'var(--bg-input)',
+              }}>
+                <Image size={24} style={{ color: 'var(--text-muted)' }} />
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Portrait</span>
+                <input type="file" accept="image/*" onChange={e => handleCharacterUpload(e.target.files?.[0])} style={{ display: 'none' }} />
+              </label>
             )}
-
-            <div>
-              <SectionLabel>Model</SectionLabel>
-              <ModelSelector type="lipsync" value={model} onChange={setModel} />
+            <label style={{
+              width: 200, height: 140, borderRadius: 12, border: '2px dashed var(--border-default)',
+              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+              gap: 6, cursor: 'pointer', background: 'var(--bg-input)',
+            }}>
+              <FileAudio size={24} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                {audioFiles.length > 0 ? `${audioFiles.length} files` : 'Upload audio files'}
+              </span>
+              <input type="file" accept="audio/*" multiple onChange={e => handleAudioUpload(e.target.files)} style={{ display: 'none' }} />
+            </label>
+          </div>
+          {started && results.length > 0 && (
+            <div style={{
+              marginTop: 24, width: '60%', maxHeight: 200, overflowY: 'auto',
+              background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)',
+              padding: 12, zIndex: 1,
+            }}>
+              {results.map(r => (
+                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', borderBottom: '1px solid var(--border-subtle)' }}>
+                  <span style={{ flex: 1, fontSize: 12, color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.filename}</span>
+                  <span style={{ fontSize: 11, color: r.status === 'completed' ? '#4ade80' : r.status === 'processing' ? 'var(--accent-primary)' : 'var(--text-muted)' }}>{r.status}</span>
+                  <div style={{ width: 60, height: 4, background: 'var(--bg-input)', borderRadius: 2 }}>
+                    <div style={{ width: `${r.progress}%`, height: '100%', background: 'var(--accent-primary)', borderRadius: 2 }} />
+                  </div>
+                </div>
+              ))}
             </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder={`${audioFiles.length} audio files loaded for batch processing...`} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleStart} disabled={loading || started} style={{ opacity: loading || started ? 0.6 : 1 }}>
+              {started ? 'Processing...' : `Start Bulk (${audioFiles.length})`}
+            </GenerateButton>
           </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleStart} loading={loading} disabled={started}>
-            {started ? 'Processing...' : `Start Bulk Lip Sync (${audioFiles.length})`}
-          </GenerateButton>
-        </div>
-
-        {started && results.length > 0 && (
-          <div className="mt-8">
-            <SectionLabel>Progress</SectionLabel>
-            <ProgressTable items={results} />
-          </div>
-        )}
-
-        <ResultsGrid results={results.filter(r => r.status === 'completed').map(r => ({ ...r, url: 'https://www.w3schools.com/html/mov_bbb.mp4', type: 'video' }))} columns={1} />
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

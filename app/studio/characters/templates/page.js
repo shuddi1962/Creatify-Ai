@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { LayoutTemplate, Play } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const CATEGORIES = ['Urban', 'Nature', 'Interior', 'Fantasy', 'Sci-Fi', 'Historical', 'Abstract', 'Studio'];
 const TEMPLATES = [
@@ -16,43 +16,79 @@ const TEMPLATES = [
   { name: 'Neon Void', category: 'Abstract', desc: 'Surreal light installation', nodes: 4, url: 'https://picsum.photos/seed/neonvoid/400/225' },
   { name: 'White Studio', category: 'Studio', desc: 'Clean infinite white', nodes: 3, url: 'https://picsum.photos/seed/white/400/225' },
 ];
+const OPTIONS = ['All', ...CATEGORIES];
 
 export default function TemplatesPage() {
   const [category, setCategory] = useState('All');
+  const [prompt, setPrompt] = useState('');
+
+  const filtered = category === 'All' ? TEMPLATES : TEMPLATES.filter(t => t.category === category);
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero icon={LayoutTemplate} title="SCENE TEMPLATES" subtitle="Ready-made world and location templates for fast scene setup" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          <button onClick={() => setCategory('All')} className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${category === 'All' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>All</button>
-          {CATEGORIES.map(c => (
-            <button key={c} onClick={() => setCategory(c)} className={`px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all ${category === c ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{c}</button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-8">
-          {TEMPLATES.filter(t => category === 'All' || t.category === category).map((t, i) => (
-            <div key={i} className="bg-[#111111] rounded-xl border border-white/[0.08] overflow-hidden">
-              <img src={t.url} className="w-full aspect-video object-cover" alt="" />
-              <div className="p-4">
-                <div className="flex items-start justify-between mb-1">
-                  <div>
-                    <h4 className="text-white font-semibold">{t.name}</h4>
-                    <p className="text-[#555] text-xs mt-0.5">{t.desc}</p>
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="CATEGORIES">
+            {OPTIONS.map(p => (
+              <button key={p} onClick={() => setCategory(p)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: category === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: category === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #34d399 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                SCENE TEMPLATES
+              </h1>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, maxWidth: 700, margin: '0 auto' }}>
+                {filtered.map((t, i) => (
+                  <div key={i} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
+                    <img src={t.url} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} alt="" />
+                    <div style={{ padding: 16 }}>
+                      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 4 }}>
+                        <div>
+                          <h4 style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{t.name}</h4>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 2 }}>{t.desc}</p>
+                        </div>
+                        <span style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', borderRadius: 4, whiteSpace: 'nowrap' }}>{t.category}</span>
+                      </div>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 12 }}>
+                        <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{t.nodes} nodes</span>
+                        <button onClick={() => toast.success(`Template "${t.name}" applied!`)} style={{
+                          display: 'flex', alignItems: 'center', gap: 4,
+                          padding: '8px 16px', background: '#CCFF00', color: 'black',
+                          fontSize: 12, fontWeight: 700, borderRadius: 8, border: 'none', cursor: 'pointer',
+                        }}><Play size={12} /> Use Template</button>
+                      </div>
+                    </div>
                   </div>
-                  <span className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">{t.category}</span>
-                </div>
-                <div className="flex items-center justify-between mt-3">
-                  <span className="text-[10px] text-[#444]">{t.nodes} nodes</span>
-                  <button onClick={() => toast.success(`Template "${t.name}" applied!`)} className="px-4 py-2 bg-[#CCFF00] text-black text-xs font-bold rounded-lg hover:bg-[#B8FF00] transition-all flex items-center gap-1"><Play size={12} /> Use Template</button>
-                </div>
+                ))}
               </div>
             </div>
-          ))}
-        </div>
-      </div>
-    </div>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Templates">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Search templates..." />
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

@@ -1,15 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Bot, ChevronRight, ChevronLeft, Check, Zap } from 'lucide-react';
+import { Bot, ChevronRight, ChevronLeft, Zap } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const STEPS = ['Name & Purpose', 'Trigger', 'Actions', 'Output', 'Review'];
 const TRIGGERS = ['Manual', 'Webhook', 'Schedule', 'Event'];
 const ACTIONS = ['Generate Image', 'Generate Video', 'Generate Script', 'Create Caption', 'Analyze Content', 'Schedule Post', 'Send Email', 'Update DB'];
 const OUTPUTS = ['Media Library', 'Email', 'Webhook', 'Slack', 'Discord'];
 const EMOJIS = ['🤖', '🎨', '📹', '✨', '🚀', '⚡', '🎯', '💡'];
+const OPTIONS = STEPS;
 
 export default function CreateAgentPage() {
   const [step, setStep] = useState(0);
@@ -20,6 +21,7 @@ export default function CreateAgentPage() {
   const [actions, setActions] = useState([]);
   const [outputs, setOutputs] = useState(['Media Library']);
   const [loading, setLoading] = useState(false);
+  const [prompt, setPrompt] = useState('');
 
   const toggleTrigger = (t) => setTriggers(prev => prev.includes(t) ? prev.filter(x => x !== t) : [...prev, t]);
   const toggleAction = (a) => setActions(prev => prev.includes(a) ? prev.filter(x => x !== a) : [...prev, a]);
@@ -34,113 +36,181 @@ export default function CreateAgentPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero icon={Bot} title="CREATE AN AI AGENT" subtitle="Build a custom AI agent for automated content generation" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex items-center justify-center gap-3 mb-8">
-          {STEPS.map((s, i) => (
-            <div key={s} className="flex items-center gap-2">
-              <button onClick={() => setStep(i)} className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold transition-all ${step >= i ? 'bg-[#CCFF00] text-black' : 'bg-[#1a1a1a] text-[#444]'}`}>{i + 1}</button>
-              <span className={`text-xs font-semibold hidden sm:inline ${step >= i ? 'text-white' : 'text-[#444]'}`}>{s}</span>
-              {i < 4 && <div className={`w-8 h-px ${step > i ? 'bg-[#333]' : 'bg-[#1a1a1a]'}`} />}
-            </div>
-          ))}
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-          {step === 0 && (
-            <div className="space-y-5">
-              <h3 className="text-white font-bold text-lg">Step 1: Name & Purpose</h3>
-              <div>
-                <label className="text-[11px] font-semibold text-[#444] uppercase tracking-widest mb-2 block">Agent Name</label>
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily Content Generator" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
-              </div>
-              <div>
-                <label className="text-[11px] font-semibold text-[#444] uppercase tracking-widest mb-2 block">Description</label>
-                <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="What does this agent do?" className="w-full h-20 bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-3 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]" />
-              </div>
-              <div>
-                <label className="text-[11px] font-semibold text-[#444] uppercase tracking-widest mb-2 block">Icon</label>
-                <div className="flex gap-3">
-                  {EMOJIS.map(e => (
-                    <button key={e} onClick={() => setEmoji(e)} className={`w-10 h-10 rounded-xl flex items-center justify-center text-xl transition-all ${emoji === e ? 'bg-[#7C3AED] ring-2 ring-[#7C3AED]' : 'bg-[#1a1a1a] hover:bg-[#222]'}`}>{e}</button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-
-          {step === 1 && (
-            <div className="space-y-5">
-              <h3 className="text-white font-bold text-lg">Step 2: Trigger</h3>
-              <p className="text-[#555] text-sm">How should this agent be triggered?</p>
-              <div className="grid grid-cols-2 gap-3">
-                {TRIGGERS.map(t => (
-                  <button key={t} onClick={() => toggleTrigger(t)} className={`p-4 rounded-xl border transition-all text-left ${triggers.includes(t) ? 'border-[#CCFF00] bg-[#CCFF00]/10' : 'border-white/[0.08] bg-[#0a0a0a]'}`}>
-                    <p className="text-white font-semibold text-sm">{t}</p>
-                    <p className="text-[#555] text-xs mt-1">{t === 'Manual' ? 'Run on demand' : t === 'Webhook' ? 'HTTP trigger' : t === 'Schedule' ? 'Cron-based' : 'Event-based'}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div className="space-y-5">
-              <h3 className="text-white font-bold text-lg">Step 3: Actions</h3>
-              <p className="text-[#555] text-sm">What should this agent do? (drag to reorder)</p>
-              <div className="grid grid-cols-2 gap-3">
-                {ACTIONS.map(a => (
-                  <button key={a} onClick={() => toggleAction(a)} className={`p-3 rounded-xl border transition-all text-left ${actions.includes(a) ? 'border-[#CCFF00] bg-[#CCFF00]/10' : 'border-white/[0.08] bg-[#0a0a0a]'}`}>
-                    <span className="text-white font-semibold text-sm">{a}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 3 && (
-            <div className="space-y-5">
-              <h3 className="text-white font-bold text-lg">Step 4: Output Destination</h3>
-              <p className="text-[#555] text-sm">Where should results be sent?</p>
-              <div className="grid grid-cols-2 gap-3">
-                {OUTPUTS.map(o => (
-                  <button key={o} onClick={() => toggleOutput(o)} className={`p-3 rounded-xl border transition-all text-left ${outputs.includes(o) ? 'border-[#CCFF00] bg-[#CCFF00]/10' : 'border-white/[0.08] bg-[#0a0a0a]'}`}>
-                    <span className="text-white font-semibold text-sm">{o}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {step === 4 && (
-            <div className="space-y-5">
-              <h3 className="text-white font-bold text-lg">Step 5: Review & Create</h3>
-              <div className="bg-[#0a0a0a] rounded-xl p-4 space-y-3">
-                <div className="flex items-center gap-3">
-                  <span className="text-2xl">{emoji}</span>
-                  <div><p className="text-white font-bold">{name || 'Agent Name'}</p><p className="text-[#555] text-xs">{desc || 'No description'}</p></div>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {triggers.map(t => <span key={t} className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">Trigger: {t}</span>)}
-                  {actions.map(a => <span key={a} className="text-[10px] px-2 py-0.5 bg-[#7C3AED]/20 text-[#7C3AED] rounded">Action: {a}</span>)}
-                  {outputs.map(o => <span key={o} className="text-[10px] px-2 py-0.5 bg-[#10B981]/20 text-[#10B981] rounded">Output: {o}</span>)}
-                </div>
-              </div>
-              <button onClick={createAgent} disabled={loading} className="w-full px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all flex items-center justify-center gap-2">
-                {loading ? <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : <Zap size={16} />}
-                Create Agent
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="STEPS">
+            {OPTIONS.map((p, i) => (
+              <button key={p} onClick={() => setStep(i)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: step >= i ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: step >= i ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >
+                <span style={{
+                  width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 700,
+                  background: step >= i ? '#CCFF00' : 'var(--bg-input)',
+                  color: step >= i ? 'black' : 'var(--text-muted)',
+                }}>{i + 1}</span>
+                {p}
               </button>
-            </div>
-          )}
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                CREATE AGENT
+              </h1>
+              <div style={{ width: '100%', maxWidth: 700 }}>
+                <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                  {step === 0 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                      <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 1: Name & Purpose</h3>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Agent Name</label>
+                        <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Daily Content Generator" style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '12px 16px', color: 'var(--text-primary)', outline: 'none' }} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Description</label>
+                        <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="What does this agent do?" style={{ width: '100%', height: 80, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '12px 16px', color: 'var(--text-primary)', resize: 'none', outline: 'none' }} />
+                      </div>
+                      <div>
+                        <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Icon</label>
+                        <div style={{ display: 'flex', gap: 12 }}>
+                          {EMOJIS.map(e => (
+                            <button key={e} onClick={() => setEmoji(e)} style={{
+                              width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
+                              fontSize: 20, background: emoji === e ? '#7C3AED' : 'var(--bg-input)',
+                              border: emoji === e ? '2px solid #7C3AED' : 'none', cursor: 'pointer',
+                            }}>{e}</button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
-          <div className="flex justify-between mt-6">
-            <button onClick={back} disabled={step === 0} className="px-4 py-2.5 bg-[#1a1a1a] text-[#888] rounded-xl hover:text-white disabled:opacity-30 flex items-center gap-2"><ChevronLeft size={16} /> Back</button>
-            {step < 4 && <button onClick={next} className="px-6 py-2.5 bg-[#7C3AED] text-white font-semibold rounded-xl hover:bg-[#6D28D9] flex items-center gap-2">Next <ChevronRight size={16} /></button>}
-          </div>
-        </div>
-      </div>
-    </div>
+                  {step === 1 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                      <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 2: Trigger</h3>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>How should this agent be triggered?</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        {TRIGGERS.map(t => (
+                          <button key={t} onClick={() => toggleTrigger(t)} style={{
+                            padding: 16, borderRadius: 12, border: `1px solid ${triggers.includes(t) ? '#CCFF00' : 'var(--border-default)'}`,
+                            background: triggers.includes(t) ? 'rgba(204,255,0,0.1)' : '#0a0a0a', cursor: 'pointer', textAlign: 'left', transition: 'all 150ms',
+                          }}>
+                            <p style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{t}</p>
+                            <p style={{ color: 'var(--text-muted)', fontSize: 12, marginTop: 4 }}>
+                              {t === 'Manual' ? 'Run on demand' : t === 'Webhook' ? 'HTTP trigger' : t === 'Schedule' ? 'Cron-based' : 'Event-based'}
+                            </p>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 2 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                      <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 3: Actions</h3>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>What should this agent do?</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        {ACTIONS.map(a => (
+                          <button key={a} onClick={() => toggleAction(a)} style={{
+                            padding: 12, borderRadius: 12, border: `1px solid ${actions.includes(a) ? '#CCFF00' : 'var(--border-default)'}`,
+                            background: actions.includes(a) ? 'rgba(204,255,0,0.1)' : '#0a0a0a', cursor: 'pointer', textAlign: 'left',
+                          }}>
+                            <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{a}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 3 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                      <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 4: Output Destination</h3>
+                      <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>Where should results be sent?</p>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                        {OUTPUTS.map(o => (
+                          <button key={o} onClick={() => toggleOutput(o)} style={{
+                            padding: 12, borderRadius: 12, border: `1px solid ${outputs.includes(o) ? '#CCFF00' : 'var(--border-default)'}`,
+                            background: outputs.includes(o) ? 'rgba(204,255,0,0.1)' : '#0a0a0a', cursor: 'pointer', textAlign: 'left',
+                          }}>
+                            <span style={{ color: 'var(--text-primary)', fontWeight: 600, fontSize: 14 }}>{o}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {step === 4 && (
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                      <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 5: Review & Create</h3>
+                      <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
+                          <span style={{ fontSize: 24 }}>{emoji}</span>
+                          <div><p style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{name || 'Agent Name'}</p><p style={{ color: 'var(--text-muted)', fontSize: 12 }}>{desc || 'No description'}</p></div>
+                        </div>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                          {triggers.map(t => <span key={t} style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', borderRadius: 4 }}>Trigger: {t}</span>)}
+                          {actions.map(a => <span key={a} style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(124,58,237,0.2)', color: '#7C3AED', borderRadius: 4 }}>Action: {a}</span>)}
+                          {outputs.map(o => <span key={o} style={{ fontSize: 10, padding: '2px 8px', background: 'rgba(16,185,129,0.2)', color: '#10B981', borderRadius: 4 }}>Output: {o}</span>)}
+                        </div>
+                      </div>
+                      <button onClick={createAgent} disabled={loading} style={{
+                        width: '100%', padding: '12px 24px', background: '#CCFF00', color: 'black',
+                        fontWeight: 700, borderRadius: 12, border: 'none', cursor: 'pointer',
+                        opacity: loading ? 0.5 : 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+                      }}>
+                        {loading ? <div style={{ width: 16, height: 16, border: '2px solid rgba(0,0,0,0.3)', borderTopColor: 'black', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} /> : <Zap size={16} />}
+                        Create Agent
+                      </button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title={`Step ${step + 1} of 5`}>
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe your agent..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <button onClick={back} disabled={step === 0} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 16px', background: 'var(--bg-input)', color: 'var(--text-secondary)',
+                fontWeight: 600, fontSize: 14, borderRadius: 10, border: 'none', cursor: 'pointer',
+                opacity: step === 0 ? 0.3 : 1,
+              }}><ChevronLeft size={16} /> Back</button>
+              {step < 4 ? (
+                <button onClick={next} style={{
+                  display: 'flex', alignItems: 'center', gap: 6,
+                  padding: '10px 20px', background: '#7C3AED', color: 'white',
+                  fontWeight: 600, fontSize: 14, borderRadius: 10, border: 'none', cursor: 'pointer',
+                }}>Next <ChevronRight size={16} /></button>
+              ) : (
+                <GenerateButton onClick={createAgent} disabled={loading}>
+                  {loading ? 'Creating...' : 'Create Agent'}
+                </GenerateButton>
+              )}
+            </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

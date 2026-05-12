@@ -2,22 +2,16 @@
 
 import { useState } from 'react';
 import { FileText, Play, Download, Edit } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
+import { toast } from 'react-hot-toast';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const OUTPUT_FORMATS = ['SRT', 'VTT', 'ASS', 'TXT', 'JSON'];
 const MAX_CHARS = ['32', '42', '56'];
 const TIMESTAMP_OPTIONS = ['Word-level', 'Sentence-level', 'Paragraph-level'];
-const LANGUAGES = ['Auto-detect', 'English', 'Spanish', 'French', 'German', 'Chinese', 'Japanese', 'Korean', 'Portuguese', 'Italian', 'Russian', 'Arabic'];
 
 export default function SubtitlesPage() {
   const [file, setFile] = useState(null);
   const [filePreview, setFilePreview] = useState(null);
-  const [language, setLanguage] = useState('Auto-detect');
   const [outputFormat, setOutputFormat] = useState('SRT');
   const [maxChars, setMaxChars] = useState('42');
   const [speakerId, setSpeakerId] = useState(false);
@@ -33,8 +27,7 @@ export default function SubtitlesPage() {
   const handleFileUpload = (f) => {
     if (f) {
       setFile(f);
-      const url = URL.createObjectURL(f);
-      setFilePreview(url);
+      setFilePreview(URL.createObjectURL(f));
     } else {
       setFile(null);
       setFilePreview(null);
@@ -46,28 +39,12 @@ export default function SubtitlesPage() {
       toast.error('Please upload an audio or video file');
       return;
     }
-
     setLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 3000));
-      const mockSubtitles = `1
-00:00:01,000 --> 00:00:04,500
-This is the first line of your subtitles.
-
-2
-00:00:05,000 --> 00:00:08,200
-Here's another line of text.
-
-3
-00:00:09,000 --> 00:00:12,500
-And this is the third subtitle line.`;
+      const mockSubtitles = `1\n00:00:01,000 --> 00:00:04,500\nThis is the first line of your subtitles.\n\n2\n00:00:05,000 --> 00:00:08,200\nHere's another line of text.\n\n3\n00:00:09,000 --> 00:00:12,500\nAnd this is the third subtitle line.`;
       setEditableText(mockSubtitles);
-      setResults([{
-        id: `demo-${Date.now()}`,
-        format: outputFormat,
-        text: mockSubtitles,
-        url: '#'
-      }]);
+      setResults([{ id: `demo-${Date.now()}`, format: outputFormat, text: mockSubtitles, url: '#' }]);
       toast.success('Subtitles generated!');
     } catch (error) {
       toast.error(error.message || 'Generation failed');
@@ -77,156 +54,146 @@ And this is the third subtitle line.`;
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero 
-        title="AUDIO TO SUBTITLES"
-        subtitle="Auto-transcribe any audio or video to accurate subtitle text"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Audio or Video</SectionLabel>
-              {filePreview ? (
-                <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a]">
-                  <video src={filePreview} controls className="w-full h-32 object-contain rounded-lg" />
-                  <button
-                    onClick={() => handleFileUpload(null)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white text-xs"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <div className="w-14 h-14 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                    <FileText size={28} className="text-[#666]" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-white">Upload audio or video</p>
-                    <p className="text-xs text-[#555] mt-1">MP3, WAV, MP4, MOV...</p>
-                  </div>
-                  <input type="file" accept="audio/*,video/*" onChange={(e) => handleFileUpload(e.target.files?.[0])} className="hidden" />
-                </label>
-              )}
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="SUBTITLE OPTIONS">
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px' }}>Output Format</div>
+          {OUTPUT_FORMATS.map(o => (
+            <button key={o} onClick={() => setOutputFormat(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: outputFormat === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: outputFormat === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Max Chars</div>
+          {MAX_CHARS.map(o => (
+            <button key={o} onClick={() => setMaxChars(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: maxChars === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: maxChars === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '10px 12px 6px', marginTop: 8 }}>Timestamps</div>
+          {TIMESTAMP_OPTIONS.map(o => (
+            <button key={o} onClick={() => setTimestamps(o)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: timestamps === o ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: timestamps === o ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+              }}
+            >{o}</button>
+          ))}
+          <button onClick={() => setSpeakerId(!speakerId)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px', marginTop: 8,
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Speaker ID {speakerId ? '✓' : '○'}</button>
+          <button onClick={() => setBurnSubtitles(!burnSubtitles)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 8,
+              width: '100%', padding: '8px 12px',
+              background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+              color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+            }}
+          >Burn into video {burnSubtitles ? '✓' : '○'}</button>
+          {burnSubtitles && (
+            <div style={{ padding: '8px 12px' }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Font Size</div>
+              <select value={fontSize} onChange={e => setFontSize(e.target.value)}
+                style={{
+                  width: '100%', padding: '4px 8px', borderRadius: 6, marginBottom: 8,
+                  background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                  color: 'var(--text-primary)', fontSize: 12,
+                }}>
+                {['18', '24', '32', '48'].map(s => <option key={s} value={s}>{s}</option>)}
+              </select>
+              <input type="color" value={fontColor} onChange={e => setFontColor(e.target.value)}
+                style={{ width: '100%', height: 30, borderRadius: 6, background: 'var(--bg-input)', border: '1px solid var(--border-default)', marginBottom: 8 }} />
+              <select value={position} onChange={e => setPosition(e.target.value)}
+                style={{
+                  width: '100%', padding: '4px 8px', borderRadius: 6,
+                  background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                  color: 'var(--text-primary)', fontSize: 12,
+                }}>
+                {['Top', 'Bottom', 'Center'].map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Language</SectionLabel>
-                <select
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white"
-                >
-                  {LANGUAGES.map(lang => (
-                    <option key={lang} value={lang}>{lang}</option>
-                  ))}
-                </select>
+          )}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{
+            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+            color: 'transparent',
+            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            AUDIO TO SUBTITLES
+          </h1>
+          <div style={{ display: 'flex', gap: 16, marginTop: 24, zIndex: 1 }}>
+            {filePreview ? (
+              <div style={{ width: 240, borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+                <video src={filePreview} controls style={{ width: '100%', height: 140, objectFit: 'contain' }} />
+                <button onClick={() => handleFileUpload(null)}
+                  style={{
+                    width: '100%', padding: '6px', background: 'var(--bg-input)', border: 'none',
+                    color: 'var(--text-secondary)', fontSize: 11, cursor: 'pointer',
+                  }}
+                >Remove</button>
               </div>
-              <div>
-                <SectionLabel>Output Format</SectionLabel>
-                <StudioDropdown options={OUTPUT_FORMATS} value={outputFormat} onChange={setOutputFormat} />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Max Chars Per Line</SectionLabel>
-                <StudioDropdown options={MAX_CHARS} value={maxChars} onChange={setMaxChars} />
-              </div>
-              <div>
-                <SectionLabel>Timestamps</SectionLabel>
-                <StudioDropdown options={TIMESTAMP_OPTIONS} value={timestamps} onChange={setTimestamps} />
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setSpeakerId(!speakerId)}
-                className={`w-12 h-6 rounded-full transition-all ${speakerId ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-              >
-                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${speakerId ? 'translate-x-6' : 'translate-x-0.5'}`} />
-              </button>
-              <span className="text-sm text-[#888]">Speaker identification</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setBurnSubtitles(!burnSubtitles)}
-                className={`w-12 h-6 rounded-full transition-all ${burnSubtitles ? 'bg-[#6366f1]' : 'bg-[#1a1a1a]'}`}
-              >
-                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${burnSubtitles ? 'translate-x-6' : 'translate-x-0.5'}`} />
-              </button>
-              <span className="text-sm text-[#888]">Burn subtitles into video</span>
-            </div>
-
-            {burnSubtitles && (
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div>
-                  <SectionLabel>Font Size</SectionLabel>
-                  <select
-                    value={fontSize}
-                    onChange={(e) => setFontSize(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white"
-                  >
-                    <option>18</option>
-                    <option>24</option>
-                    <option>32</option>
-                    <option>48</option>
-                  </select>
-                </div>
-                <div>
-                  <SectionLabel>Font Color</SectionLabel>
-                  <input
-                    type="color"
-                    value={fontColor}
-                    onChange={(e) => setFontColor(e.target.value)}
-                    className="w-full h-10 rounded-xl bg-[#1a1a1a] border border-white/[0.08]"
-                  />
-                </div>
-                <div>
-                  <SectionLabel>Position</SectionLabel>
-                  <select
-                    value={position}
-                    onChange={(e) => setPosition(e.target.value)}
-                    className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-white"
-                  >
-                    <option>Top</option>
-                    <option>Bottom</option>
-                    <option>Center</option>
-                  </select>
-                </div>
+            ) : (
+              <label style={{
+                width: 240, height: 140, borderRadius: 12, border: '2px dashed var(--border-default)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                gap: 8, cursor: 'pointer', background: 'var(--bg-input)',
+              }}>
+                <FileText size={28} style={{ color: 'var(--text-muted)' }} />
+                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Upload audio/video</span>
+                <input type="file" accept="audio/*,video/*" onChange={e => handleFileUpload(e.target.files?.[0])} style={{ display: 'none' }} />
+              </label>
+            )}
+            {editableText && (
+              <div style={{ width: 280 }}>
+                <textarea value={editableText} onChange={e => setEditableText(e.target.value)}
+                  style={{
+                    width: '100%', height: 160, borderRadius: 12, border: '1px solid var(--border-default)',
+                    background: 'var(--bg-input)', color: 'var(--text-primary)',
+                    padding: 10, fontSize: 12, fontFamily: 'monospace', resize: 'none',
+                  }}
+                />
               </div>
             )}
           </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Subtitles
-          </GenerateButton>
-        </div>
-
-        {results.length > 0 && (
-          <div className="mt-8 bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-            <div className="flex justify-between items-center mb-4">
-              <SectionLabel>Editable Subtitle Text</SectionLabel>
-              <div className="flex gap-2">
-                <button className="px-3 py-1.5 bg-[#1a1a1a] text-white rounded-lg text-xs font-medium border border-white/[0.08]">Preview</button>
-                <button className="px-3 py-1.5 bg-[#6366f1] text-white rounded-lg text-xs font-medium">Download</button>
-              </div>
-            </div>
-            <textarea
-              value={editableText}
-              onChange={(e) => setEditableText(e.target.value)}
-              className="w-full h-64 bg-[#0a0a0a] border border-white/[0.08] rounded-xl p-4 text-white font-mono text-sm resize-none"
-            />
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={''} placeholder="Upload audio or video to transcribe..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={handleGenerate} disabled={loading} style={{ opacity: loading ? 0.6 : 1 }}>
+              {loading ? 'Transcribing...' : 'Generate Subtitles'}
+            </GenerateButton>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

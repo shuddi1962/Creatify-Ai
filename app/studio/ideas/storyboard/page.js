@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Layout, ChevronRight, ChevronLeft, Play, Save } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 export default function StoryboardPage() {
   const [step, setStep] = useState(1);
@@ -34,100 +35,117 @@ export default function StoryboardPage() {
   const handleSendToBulk = () => toast.success('Sent to bulk video generator!');
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Layout} badge="NEW" title="STORYBOARD PIPELINE" subtitle="Script to storyboard to bulk video generation in one click" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="flex items-center justify-center gap-4 mb-8">
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PIPELINE STEPS">
           {[1, 2, 3].map(s => (
-            <div key={s} className="flex items-center gap-2">
-              <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${step >= s ? 'bg-[#CCFF00] text-black' : 'bg-[#1a1a1a] text-[#444]'}`}>{s}</div>
-              <span className={`text-xs font-semibold ${step >= s ? 'text-white' : 'text-[#444]'}`}>
-                {s === 1 ? 'Script' : s === 2 ? 'Storyboard' : 'Generate'}
-              </span>
-              {s < 3 && <ChevronRight size={14} className="text-[#444]" />}
-            </div>
+            <button key={s} onClick={() => setStep(s)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: step === s ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: step === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >Step {s}: {s === 1 ? 'Script' : s === 2 ? 'Storyboard' : 'Generate'}</button>
           ))}
-        </div>
-
-        <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-          {step === 1 && (
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4">Step 1: Enter Your Script</h3>
-              <textarea value={script} onChange={e => setScript(e.target.value)} placeholder="Paste your script here or generate one using the Script Generator..." className="w-full h-64 bg-[#0a0a0a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]" />
-              <div className="mt-4 flex gap-3">
-                <button onClick={() => toast.success('Loading saved scripts...')} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-sm rounded-lg hover:text-white transition-all">Use Saved Script</button>
-                <button onClick={() => { setStep(2); handleGenerateStoryboard(); }} disabled={!script.trim()} className="ml-auto px-6 py-2.5 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all flex items-center gap-2">
-                  Generate Storyboard <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
-          )}
-
-          {step === 2 && (
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4">Step 2: Edit Your Storyboard</h3>
-              {loading ? (
-                <div className="flex items-center justify-center py-12">
-                  <div className="w-8 h-8 border-2 border-[#333] border-t-[#CCFF00] rounded-full animate-spin" />
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {scenes.map((scene, idx) => (
-                    <div key={scene.id} className="bg-[#0a0a0a] rounded-xl border border-white/[0.06] p-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <span className="w-6 h-6 bg-[#7C3AED] text-white text-xs font-bold rounded-full flex items-center justify-center">{idx + 1}</span>
-                        <span className="text-white font-semibold text-sm">Scene {idx + 1}</span>
-                      </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                        <div>
-                          <label className="text-[10px] text-[#444] uppercase">Scene</label>
-                          <input value={scene.scene} onChange={e => updateScene(scene.id, 'scene', e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none mt-1" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] text-[#444] uppercase">Duration</label>
-                          <input value={scene.duration} onChange={e => updateScene(scene.id, 'duration', e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none mt-1" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] text-[#444] uppercase">Camera</label>
-                          <input value={scene.camera} onChange={e => updateScene(scene.id, 'camera', e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none mt-1" />
-                        </div>
-                        <div>
-                          <label className="text-[10px] text-[#444] uppercase">Action</label>
-                          <input value={scene.action} onChange={e => updateScene(scene.id, 'action', e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none mt-1" />
-                        </div>
-                      </div>
-                      <div className="mt-2">
-                        <label className="text-[10px] text-[#444] uppercase">Visuals</label>
-                        <input value={scene.visuals} onChange={e => updateScene(scene.id, 'visuals', e.target.value)} className="w-full bg-[#1a1a1a] border border-white/[0.06] rounded-lg px-3 py-1.5 text-xs text-white focus:outline-none mt-1" />
-                      </div>
-                    </div>
-                  ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            STORYBOARD
+          </h1>
+          <div style={{ zIndex: 1, marginTop: 12, width: '100%', maxWidth: 600, padding: '0 16px', maxHeight: '65%', overflowY: 'auto' }}>
+            <div style={{ background: 'var(--bg-card)', borderRadius: 16, padding: 20, border: '1px solid var(--border-subtle)' }}>
+              {step === 1 && (
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Step 1: Enter Your Script</h3>
+                  <textarea value={script} onChange={e => setScript(e.target.value)} placeholder="Paste your script here..." style={{ width: '100%', height: 240, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 12, padding: 16, fontSize: 13, color: 'var(--text-primary)', resize: 'none' }} />
+                  <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12 }}>
+                    <button onClick={() => { setStep(2); handleGenerateStoryboard(); }} disabled={!script.trim()} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 24px', background: !script.trim() ? 'var(--bg-input)' : '#CCFF00', color: !script.trim() ? 'var(--text-muted)' : '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: !script.trim() ? 'not-allowed' : 'pointer' }}>
+                      Generate Storyboard <ChevronRight size={16} />
+                    </button>
+                  </div>
                 </div>
               )}
-              <div className="mt-4 flex justify-between">
-                <button onClick={() => setStep(1)} className="px-4 py-2.5 bg-[#1a1a1a] text-[#888] rounded-xl hover:text-white flex items-center gap-2"><ChevronLeft size={16} /> Back</button>
-                <button onClick={() => setStep(3)} disabled={scenes.length === 0} className="px-6 py-2.5 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] disabled:opacity-50 transition-all">Proceed to Generate</button>
-              </div>
+              {step === 2 && (
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Step 2: Edit Your Storyboard</h3>
+                  {loading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: 40 }}>
+                      <div style={{ width: 32, height: 32, border: '2px solid #333', borderTopColor: '#CCFF00', borderRadius: '50%', animation: 'spin 1s linear infinite' }} />
+                    </div>
+                  ) : scenes.length > 0 ? (
+                    <div>
+                      {scenes.map((scene, idx) => (
+                        <div key={scene.id} style={{ background: 'var(--bg-input)', borderRadius: 10, padding: 12, marginBottom: 8, border: '1px solid rgba(255,255,255,0.06)' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                            <span style={{ width: 24, height: 24, background: '#7C3AED', color: '#fff', fontSize: 11, fontWeight: 700, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{idx + 1}</span>
+                            <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>Scene {idx + 1}</span>
+                          </div>
+                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                            <div>
+                              <label style={{ fontSize: 9, color: '#444', textTransform: 'uppercase' }}>Scene</label>
+                              <input value={scene.scene} onChange={e => updateScene(scene.id, 'scene', e.target.value)} style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, padding: '6px 8px', fontSize: 11, color: 'var(--text-primary)', marginTop: 2 }} />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: 9, color: '#444', textTransform: 'uppercase' }}>Duration</label>
+                              <input value={scene.duration} onChange={e => updateScene(scene.id, 'duration', e.target.value)} style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, padding: '6px 8px', fontSize: 11, color: 'var(--text-primary)', marginTop: 2 }} />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: 9, color: '#444', textTransform: 'uppercase' }}>Camera</label>
+                              <input value={scene.camera} onChange={e => updateScene(scene.id, 'camera', e.target.value)} style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, padding: '6px 8px', fontSize: 11, color: 'var(--text-primary)', marginTop: 2 }} />
+                            </div>
+                            <div>
+                              <label style={{ fontSize: 9, color: '#444', textTransform: 'uppercase' }}>Action</label>
+                              <input value={scene.action} onChange={e => updateScene(scene.id, 'action', e.target.value)} style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, padding: '6px 8px', fontSize: 11, color: 'var(--text-primary)', marginTop: 2 }} />
+                            </div>
+                          </div>
+                          <div style={{ marginTop: 8 }}>
+                            <label style={{ fontSize: 9, color: '#444', textTransform: 'uppercase' }}>Visuals</label>
+                            <input value={scene.visuals} onChange={e => updateScene(scene.id, 'visuals', e.target.value)} style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 6, padding: '6px 8px', fontSize: 11, color: 'var(--text-primary)', marginTop: 2 }} />
+                          </div>
+                        </div>
+                      ))}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 12 }}>
+                        <ControlButton onClick={() => setStep(1)}><ChevronLeft size={14} /> Back</ControlButton>
+                        <button onClick={() => setStep(3)} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Proceed to Generate</button>
+                      </div>
+                    </div>
+                  ) : null}
+                </div>
+              )}
+              {step === 3 && (
+                <div>
+                  <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 12 }}>Step 3: Generate All Videos</h3>
+                  <div style={{ background: 'var(--bg-input)', borderRadius: 12, padding: 32, textAlign: 'center', border: '1px solid rgba(255,255,255,0.06)' }}>
+                    <Play size={40} color="#CCFF00" style={{ marginBottom: 16 }} />
+                    <p style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>{scenes.length} scenes ready to generate</p>
+                    <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 24 }}>All scenes will be generated in parallel</p>
+                    <button onClick={handleSendToBulk} style={{ padding: '12px 32px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>Send to Bulk Video Generator</button>
+                  </div>
+                  <div style={{ marginTop: 12 }}>
+                    <ControlButton onClick={() => setStep(2)}><ChevronLeft size={14} /> Edit Storyboard</ControlButton>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-
-          {step === 3 && (
-            <div>
-              <h3 className="text-white font-bold text-lg mb-4">Step 3: Generate All Videos</h3>
-              <div className="bg-[#0a0a0a] rounded-xl border border-white/[0.06] p-6 text-center">
-                <Play size={40} className="text-[#CCFF00] mx-auto mb-4" />
-                <p className="text-white font-semibold mb-2">{scenes.length} scenes ready to generate</p>
-                <p className="text-[#666] text-sm mb-6">All scenes will be generated in parallel using your selected model</p>
-                <button onClick={handleSendToBulk} className="px-8 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all">Send All Scenes to Bulk Video Generator</button>
-              </div>
-              <div className="mt-4 flex justify-between">
-                <button onClick={() => setStep(2)} className="px-4 py-2.5 bg-[#1a1a1a] text-[#888] rounded-xl hover:text-white flex items-center gap-2"><ChevronLeft size={16} /> Edit Storyboard</button>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+          </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Storyboard Pipeline">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'flex-end' }}>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{scenes.length} scenes</span>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

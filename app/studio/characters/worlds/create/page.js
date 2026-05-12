@@ -3,16 +3,15 @@
 import { useState } from 'react';
 import { Globe, Save } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import UploadZone from '@/components/studio/UploadZone';
 import SectionLabel from '@/components/studio/SectionLabel';
-import GenerateButton from '@/components/studio/GenerateButton';
 
 const TIMES = ['Morning', 'Golden Hour', 'Midday', 'Afternoon', 'Dusk', 'Night'];
 const WEATHERS = ['Clear', 'Cloudy', 'Rainy', 'Foggy', 'Stormy', 'Snow'];
 const SETTINGS = ['Urban', 'Natural', 'Interior', 'Fantasy', 'Sci-Fi', 'Historical'];
 const MOODS = ['Cinematic', 'Natural', 'Dramatic', 'Soft', 'High Contrast', 'Moody'];
+const OPTIONS = [...TIMES, ...WEATHERS, ...SETTINGS, ...MOODS];
 
 export default function CreateWorldPage() {
   const [name, setName] = useState('');
@@ -25,6 +24,7 @@ export default function CreateWorldPage() {
   const [mood, setMood] = useState('Cinematic');
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [option, setOption] = useState('Morning');
 
   const handleRefUpload = (file) => { setRefImage(file); setRefPreview(URL.createObjectURL(file)); };
 
@@ -37,75 +37,129 @@ export default function CreateWorldPage() {
   const saveWorld = () => { toast.success('World saved!'); };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero icon={Globe} title="CREATE A WORLD" subtitle="Save a scene, location, or environment as a reusable preset" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>World Name</SectionLabel>
-                <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Sunset Beach, Cyberpunk Alley" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#7C3AED]" />
-              </div>
-              <div>
-                <SectionLabel>Reference Image (Optional)</SectionLabel>
-                <UploadZone onFile={handleRefUpload} accept="image/*" label="Upload reference" preview={refPreview} icon={Globe} />
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="OPTIONS">
+            {TIMES.map(p => (
+              <button key={p} onClick={() => { setTime(p); setOption(p); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: time === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: time === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+            <div style={{ height: 1, background: 'var(--border-subtle)', margin: '4px 0' }} />
+            {WEATHERS.map(p => (
+              <button key={p} onClick={() => { setWeather(p); setOption(p); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: weather === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: weather === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+            <div style={{ height: 1, background: 'var(--border-subtle)', margin: '4px 0' }} />
+            {SETTINGS.map(p => (
+              <button key={p} onClick={() => { setSetting(p); setOption(p); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: setting === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: setting === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+            <div style={{ height: 1, background: 'var(--border-subtle)', margin: '4px 0' }} />
+            {MOODS.map(p => (
+              <button key={p} onClick={() => { setMood(p); setOption(p); }}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: mood === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: mood === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #34d399 0%, #06b6d4 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                CREATE A WORLD
+              </h1>
+              <div style={{ width: '100%', maxWidth: 700 }}>
+                <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+                    <div>
+                      <SectionLabel>World Name</SectionLabel>
+                      <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Sunset Beach, Cyberpunk Alley" style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: 16, color: 'var(--text-primary)', outline: 'none' }} />
+                    </div>
+                    <div>
+                      <SectionLabel>Reference Image (Optional)</SectionLabel>
+                      <UploadZone onFile={handleRefUpload} accept="image/*" label="Upload reference" preview={refPreview} icon={Globe} />
+                    </div>
+                  </div>
+                  <div style={{ marginBottom: 20 }}>
+                    <SectionLabel>Description</SectionLabel>
+                    <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe this world in detail..." style={{ width: '100%', height: 80, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: 16, color: 'var(--text-primary)', resize: 'none', outline: 'none' }} />
+                  </div>
+                </div>
+
+                {preview && (
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', overflow: 'hidden', marginTop: 16 }}>
+                    <img src={preview} style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover' }} alt="" />
+                    <div style={{ padding: 16, display: 'flex', justifyContent: 'flex-end' }}>
+                      <button onClick={saveWorld} style={{ padding: '12px 24px', background: '#CCFF00', color: 'black', fontWeight: 700, borderRadius: 12, border: 'none', cursor: 'pointer' }}>Save to Library</button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
-            <div>
-              <SectionLabel>Description</SectionLabel>
-              <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe this world in detail..." className="w-full h-20 bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]" />
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Controls">
+            <PromptInput value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe this world..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <button onClick={generatePreview} disabled={loading || !name.trim()} style={{
+                padding: '10px 20px', background: 'var(--bg-input)', color: 'var(--text-secondary)',
+                fontWeight: 600, fontSize: 14, borderRadius: 10, border: 'none', cursor: 'pointer',
+                whiteSpace: 'nowrap', opacity: loading || !name.trim() ? 0.5 : 1,
+              }}>
+                {loading ? 'Generating...' : 'Generate Preview'}
+              </button>
+              <button onClick={saveWorld} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                padding: '10px 20px', background: '#CCFF00', color: 'black',
+                fontWeight: 700, fontSize: 14, borderRadius: 10, border: 'none', cursor: 'pointer',
+                whiteSpace: 'nowrap',
+              }}>
+                <Save size={16} /> Save World
+              </button>
             </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div>
-                <SectionLabel>Time of Day</SectionLabel>
-                <div className="space-y-1">
-                  {TIMES.map(t => (
-                    <button key={t} onClick={() => setTime(t)} className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${time === t ? 'bg-[#7C3AED] text-white' : 'text-[#666] hover:bg-[#1a1a1a]'}`}>{t}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <SectionLabel>Weather</SectionLabel>
-                <div className="space-y-1">
-                  {WEATHERS.map(w => (
-                    <button key={w} onClick={() => setWeather(w)} className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${weather === w ? 'bg-[#7C3AED] text-white' : 'text-[#666] hover:bg-[#1a1a1a]'}`}>{w}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <SectionLabel>Setting Type</SectionLabel>
-                <div className="space-y-1">
-                  {SETTINGS.map(s => (
-                    <button key={s} onClick={() => setSetting(s)} className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${setting === s ? 'bg-[#7C3AED] text-white' : 'text-[#666] hover:bg-[#1a1a1a]'}`}>{s}</button>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <SectionLabel>Lighting Mood</SectionLabel>
-                <div className="space-y-1">
-                  {MOODS.map(m => (
-                    <button key={m} onClick={() => setMood(m)} className={`w-full text-left px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${mood === m ? 'bg-[#7C3AED] text-white' : 'text-[#666] hover:bg-[#1a1a1a]'}`}>{m}</button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        </GenerationPanel>
-        <div className="flex justify-end gap-3">
-          <button onClick={generatePreview} disabled={loading || !name.trim()} className="px-5 py-2.5 bg-[#1a1a1a] text-[#888] font-semibold rounded-xl hover:text-white disabled:opacity-50 transition-all">Generate Preview</button>
-          <button onClick={saveWorld} className="px-5 py-2.5 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all flex items-center gap-2"><Save size={16} /> Save World</button>
-        </div>
-        {preview && (
-          <div className="bg-[#111111] rounded-2xl border border-white/[0.08] overflow-hidden">
-            <img src={preview} className="w-full aspect-video object-cover" alt="" />
-            <div className="p-4 flex justify-end">
-              <button onClick={saveWorld} className="px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all">Save to Library</button>
-            </div>
-          </div>
-        )}
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

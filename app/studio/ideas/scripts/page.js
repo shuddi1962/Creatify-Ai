@@ -8,6 +8,7 @@ import GenerationPanel from '@/components/studio/GenerationPanel';
 import SectionLabel from '@/components/studio/SectionLabel';
 import GenerateButton from '@/components/studio/GenerateButton';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn'];
 const DURATIONS = ['15s', '30s', '60s', '3min', '5min', '10min'];
@@ -67,87 +68,84 @@ export default function ScriptsPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={FileText} badge="NEW" title="SCRIPT GENERATOR" subtitle="AI writes a complete video script from any content idea" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-5">
-            <div>
-              <SectionLabel>Video Topic</SectionLabel>
-              <input value={topic} onChange={e => setTopic(e.target.value)} placeholder="e.g. Morning routine that changed my life" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
-            </div>
-            <div>
-              <SectionLabel>Platform</SectionLabel>
-              <StudioDropdown options={PLATFORMS} value={platform} onChange={setPlatform} />
-            </div>
-            <div>
-              <SectionLabel>Duration</SectionLabel>
-              <StudioDropdown options={DURATIONS} value={duration} onChange={setDuration} />
-            </div>
-            <div>
-              <SectionLabel>Script Style</SectionLabel>
-              <StudioDropdown options={STYLES} value={style} onChange={setStyle} />
-            </div>
-            <div>
-              <SectionLabel>Tone</SectionLabel>
-              <StudioDropdown options={TONES} value={tone} onChange={setTone} />
-            </div>
-            <div>
-              <SectionLabel>Hook Type</SectionLabel>
-              <div className="flex flex-wrap gap-2">
-                {HOOK_TYPES.map(h => (
-                  <button key={h} onClick={() => setHookType(h)} className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${hookType === h ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{h}</button>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="PLATFORMS">
+          {PLATFORMS.map(p => (
+            <button key={p} onClick={() => setPlatform(p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: platform === p ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: platform === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{p}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            SCRIPT GENERATOR
+          </h1>
+          {script && (
+            <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 580, padding: 24, background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', maxHeight: '60%', overflowY: 'auto' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+                <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Generated Script</h3>
+                <div style={{ display: 'flex', gap: 8 }}>
+                  <button onClick={handleCopy} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    {copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied!' : 'Copy'}
+                  </button>
+                  <button onClick={() => { setLoading(true); setTimeout(() => { generateScript(); }, 100); }} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 12px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer' }}>
+                    <RefreshCw size={14} /> Regenerate
+                  </button>
+                </div>
+              </div>
+              <div style={{}}>
+                {SCRIPT_SECTIONS.map(sec => (
+                  <div key={sec.key} style={{ marginBottom: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                      <span style={{ width: 8, height: 8, borderRadius: '50%', background: sec.color }} />
+                      <span style={{ fontSize: 10, fontWeight: 700, color: '#444', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{sec.label}</span>
+                    </div>
+                    {sec.key === 'main' ? (
+                      <div style={{ paddingLeft: 16, borderLeft: '2px solid var(--bg-input)' }}>
+                        {script.main.map((m, i) => (
+                          <p key={i} style={{ fontSize: 13, color: '#ccc', marginBottom: 4, lineHeight: 1.6 }}>{i + 1}. {m}</p>
+                        ))}
+                      </div>
+                    ) : (
+                      <textarea value={script[sec.key]} onChange={e => setScript({ ...script, [sec.key]: e.target.value })}
+                        style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: 8, padding: 12, fontSize: 13, color: '#ccc', resize: 'none' }}
+                        rows={sec.key === 'hook' || sec.key === 'cta' ? 2 : 3}
+                      />
+                    )}
+                  </div>
                 ))}
               </div>
+              <button onClick={handleSendToStoryboard} style={{ width: '100%', padding: '12px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', marginTop: 8 }}>Send to Storyboard</button>
             </div>
-            <div>
-              <SectionLabel>Call to Action (Optional)</SectionLabel>
-              <input value={cta} onChange={e => setCta(e.target.value)} placeholder="e.g. Follow for more tips" className="w-full bg-[#1a1a1a] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] focus:outline-none focus:border-[#6366f1]" />
-            </div>
+          )}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Script Settings">
+          <PromptInput value={topic} onChange={e => setTopic(e.target.value)} placeholder="Video topic..." />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="Dur" options={DURATIONS} value={duration} onChange={setDuration} />
+            <StudioDropdown label="Style" options={STYLES} value={style} onChange={setStyle} />
+            <StudioDropdown label="Tone" options={TONES} value={tone} onChange={setTone} />
+            <PromptInput value={cta} onChange={e => setCta(e.target.value)} placeholder="CTA (optional)..." />
+            <GenerateButton onClick={generateScript} loading={loading}>GENERATE</GenerateButton>
           </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <GenerateButton onClick={generateScript} loading={loading}>Generate Script</GenerateButton>
-        </div>
-
-        {script && (
-          <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="text-white font-bold">Generated Script</h3>
-              <div className="flex gap-2">
-                <button onClick={handleCopy} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-xs rounded-lg hover:text-white flex items-center gap-2 transition-all">{copied ? <Check size={14} /> : <Copy size={14} />} {copied ? 'Copied!' : 'Copy'}</button>
-                <button onClick={() => { setLoading(true); setTimeout(() => { generateScript(); }, 100); }} className="px-4 py-2 bg-[#1a1a1a] text-[#888] text-xs rounded-lg hover:text-white flex items-center gap-2 transition-all"><RefreshCw size={14} /> Regenerate</button>
-              </div>
-            </div>
-            <div className="space-y-4">
-              {SCRIPT_SECTIONS.map(sec => (
-                <div key={sec.key}>
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: sec.color }} />
-                    <span className="text-[10px] font-bold text-[#444] uppercase tracking-widest">{sec.label}</span>
-                  </div>
-                  {sec.key === 'main' ? (
-                    <div className="space-y-2 pl-4 border-l-2 border-[#1a1a1a]">
-                      {script.main.map((m, i) => (
-                        <div key={i} className="text-[#ccc] text-sm leading-relaxed">{i + 1}. {m}</div>
-                      ))}
-                    </div>
-                  ) : (
-                    <textarea
-                      value={script[sec.key]}
-                      onChange={e => setScript({ ...script, [sec.key]: e.target.value })}
-                      className="w-full bg-[#0a0a0a] border border-white/[0.06] rounded-lg p-3 text-[#ccc] text-sm leading-relaxed resize-none focus:outline-none"
-                      rows={sec.key === 'hook' || sec.key === 'cta' ? 2 : 3}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
-            <button onClick={handleSendToStoryboard} className="mt-6 w-full px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all">Send to Storyboard</button>
-          </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

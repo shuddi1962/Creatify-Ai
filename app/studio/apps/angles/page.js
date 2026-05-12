@@ -1,13 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Camera, Upload } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import UploadZone from '@/components/studio/UploadZone';
-import SectionLabel from '@/components/studio/SectionLabel';
-import GenerateButton from '@/components/studio/GenerateButton';
+import { Upload } from 'lucide-react';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const ANGLES = ['1', '3', '5', '7', '9'];
 
@@ -21,46 +17,77 @@ export default function AnglesPage() {
   const handleUpload = (file) => { setImage(file); setPreview(URL.createObjectURL(file)); };
 
   const generate = () => {
-    if (!image) { toast.error('Upload an image'); return; }
+    if (!image) return;
     setLoading(true);
     setTimeout(() => {
       const imgs = Array.from({ length: parseInt(angleCount) }, (_, i) => `https://picsum.photos/seed/angle${i}/300/200`);
       setResults(imgs);
       setLoading(false);
-      toast.success(`${angleCount} camera angles generated!`);
     }, 3000);
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Camera} title="CAMERA ANGLES" subtitle="Generate multiple camera angles from a single image" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-5">
-            <div>
-              <SectionLabel>Upload Image</SectionLabel>
-              <UploadZone onFile={handleUpload} accept="image/*" label="Upload image" preview={preview} icon={Camera} />
-            </div>
-            <div>
-              <SectionLabel>Number of Angles</SectionLabel>
-              <div className="flex gap-2">
-                {ANGLES.map(n => (
-                  <button key={n} onClick={() => setAngleCount(n)} className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${angleCount === n ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}>{n} angles</button>
-                ))}
-              </div>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="ANGLES">
+          {ANGLES.map(n => (
+            <button key={n} onClick={() => setAngleCount(n)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: angleCount === n ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: angleCount === n ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{n} angles</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <div style={{ zIndex: 1, textAlign: 'center', padding: 24, width: '100%' }}>
+            <h1 style={{
+              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+              color: 'transparent',
+              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
+              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+              textAlign: 'center', marginBottom: 24,
+            }}>
+              CAMERA ANGLES
+            </h1>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16 }}>
+              <label style={{
+                width: 300, height: 180, borderRadius: 16,
+                border: '2px dashed var(--border-default)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                cursor: 'pointer', background: 'var(--bg-card)',
+              }}>
+                {preview ? (
+                  <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: 14 }} />
+                ) : (
+                  <><Upload size={24} style={{ color: 'var(--text-muted)', marginBottom: 8 }} /><span style={{ color: 'var(--text-secondary)', fontSize: 13 }}>Upload Image</span></>
+                )}
+                <input type="file" accept="image/*" onChange={e => e.target.files[0] && handleUpload(e.target.files[0])} style={{ display: 'none' }} />
+              </label>
+              {results.length > 0 && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: 12, maxWidth: 600 }}>
+                  {results.map((url, i) => <img key={i} src={url} alt="" style={{ width: '100%', borderRadius: 10, border: '1px solid var(--border-subtle)' }} />)}
+                </div>
+              )}
+              {loading && <div style={{ color: 'var(--text-muted)', fontSize: 13 }}>Generating angles...</div>}
             </div>
           </div>
-        </GenerationPanel>
-        <div className="flex justify-end">
-          <GenerateButton onClick={generate} loading={loading}>Generate Angles</GenerateButton>
-        </div>
-        {results.length > 0 && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-            {results.map((url, i) => <img key={i} src={url} className="w-full rounded-xl" alt="" />)}
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Controls">
+          <PromptInput value={angleCount} onChange={() => {}} placeholder="Angles: " />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <GenerateButton onClick={generate} disabled={!image || loading}>Generate Angles</GenerateButton>
           </div>
-        )}
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

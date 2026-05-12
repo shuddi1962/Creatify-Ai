@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { Code, Copy, Eye, EyeOff, RefreshCw, Download } from 'lucide-react';
+import { Code, Copy, Eye, EyeOff, RefreshCw } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const ENDPOINTS = [
   { method: 'POST', path: '/v1/image/generate', desc: 'Generate an image from text prompt', auth: 'Bearer token' },
@@ -15,89 +15,150 @@ const ENDPOINTS = [
   { method: 'POST', path: '/v1/webhooks', desc: 'Register webhook endpoint', auth: 'Bearer token' },
   { method: 'DELETE', path: '/v1/jobs/:id', desc: 'Cancel a running job', auth: 'Bearer token' },
 ];
+const SECTIONS = ['Authentication', 'Image Endpoints', 'Video Endpoints', 'Audio Endpoints', 'Bulk Endpoints', 'Webhooks', 'Rate Limits'];
+const OPTIONS = SECTIONS;
 
 export default function APIPage() {
   const [apiKey, setApiKey] = useState('sk-creatify-xxxx-xxxx-xxxx-xxxx');
   const [showKey, setShowKey] = useState(false);
   const [section, setSection] = useState('Authentication');
-
-  const sections = ['Authentication', 'Image Endpoints', 'Video Endpoints', 'Audio Endpoints', 'Bulk Endpoints', 'Webhooks', 'Rate Limits'];
+  const [prompt, setPrompt] = useState('');
 
   const handleCopy = (text) => {
     navigator.clipboard.writeText(text);
     toast.success('Copied!');
   };
 
-  return (
-    <div className="min-h-screen bg-[#000000] pb-12">
-      <Toaster position="top-center" />
-      <StudioHero icon={Code} title="API ACCESS" subtitle="REST API endpoints for all generation features with full documentation" />
-      <div className="max-w-[900px] mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-[200px_1fr] gap-6">
-          <div className="space-y-1">
-            {sections.map(s => (
-              <button key={s} onClick={() => setSection(s)} className={`w-full text-left px-3 py-2 rounded-lg text-sm font-semibold transition-all ${section === s ? 'bg-[#7C3AED] text-white' : 'text-[#555] hover:text-white hover:bg-[#1a1a1a]'}`}>{s}</button>
-            ))}
-          </div>
+  const filteredEndpoints = ENDPOINTS.filter(e => {
+    if (section === 'Image Endpoints') return e.path.includes('image');
+    if (section === 'Video Endpoints') return e.path.includes('video');
+    if (section === 'Audio Endpoints') return e.path.includes('audio');
+    if (section === 'Bulk Endpoints') return e.path.includes('bulk');
+    if (section === 'Webhooks') return e.path.includes('webhook');
+    return false;
+  });
 
-          <div className="space-y-6">
-            {section === 'Authentication' && (
-              <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-                <h3 className="text-white font-bold mb-4">Authentication</h3>
-                <p className="text-[#555] text-sm mb-4">All API requests require a Bearer token in the Authorization header.</p>
-                <div className="bg-[#0a0a0a] rounded-xl p-4 mb-4">
-                  <p className="text-[10px] text-[#444] uppercase mb-2">Your API Key</p>
-                  <div className="flex items-center gap-2">
-                    <code className="flex-1 text-[#7C3AED] text-sm font-mono">{showKey ? apiKey : '•'.repeat(32)}</code>
-                    <button onClick={() => setShowKey(!showKey)} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white">{showKey ? <EyeOff size={14} /> : <Eye size={14} />}</button>
-                    <button onClick={() => handleCopy(apiKey)} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white"><Copy size={14} /></button>
-                    <button onClick={() => { setApiKey(`sk-creatify-${Date.now()}`); toast.success('Key regenerated!'); }} className="p-2 bg-[#1a1a1a] text-[#888] rounded-lg hover:text-white"><RefreshCw size={14} /></button>
-                  </div>
-                </div>
-                <div className="bg-[#0a0a0a] rounded-xl p-4">
-                  <p className="text-[10px] text-[#444] uppercase mb-2">Example Request</p>
-                  <pre className="text-[#10B981] text-xs font-mono overflow-x-auto">{`curl -X GET https://api.creatify.ai/v1/image/generate \\
+  return (
+    <>
+      <Toaster position="top-center" />
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="SECTIONS">
+            {OPTIONS.map(p => (
+              <button key={p} onClick={() => setSection(p)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: section === p ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: section === p ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left',
+                }}
+              >{p}</button>
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ position: 'absolute', inset: 0, overflow: 'auto', padding: '40px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', zIndex: 1, marginBottom: 32,
+              }}>
+                API ACCESS
+              </h1>
+              <div style={{ width: '100%', maxWidth: 800 }}>
+                {section === 'Authentication' && (
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                    <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: 16 }}>Authentication</h3>
+                    <p style={{ color: 'var(--text-secondary)', fontSize: 14, marginBottom: 16 }}>All API requests require a Bearer token in the Authorization header.</p>
+                    <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16, marginBottom: 16 }}>
+                      <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Your API Key</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <code style={{ flex: 1, color: '#7C3AED', fontSize: 14, fontFamily: 'monospace' }}>{showKey ? apiKey : '•'.repeat(32)}</code>
+                        <button onClick={() => setShowKey(!showKey)} style={{ padding: 8, background: 'var(--bg-input)', color: 'var(--text-secondary)', borderRadius: 8, border: 'none', cursor: 'pointer' }}>{showKey ? <EyeOff size={14} /> : <Eye size={14} />}</button>
+                        <button onClick={() => handleCopy(apiKey)} style={{ padding: 8, background: 'var(--bg-input)', color: 'var(--text-secondary)', borderRadius: 8, border: 'none', cursor: 'pointer' }}><Copy size={14} /></button>
+                        <button onClick={() => { setApiKey(`sk-creatify-${Date.now()}`); toast.success('Key regenerated!'); }} style={{ padding: 8, background: 'var(--bg-input)', color: 'var(--text-secondary)', borderRadius: 8, border: 'none', cursor: 'pointer' }}><RefreshCw size={14} /></button>
+                      </div>
+                    </div>
+                    <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16 }}>
+                      <p style={{ fontSize: 10, color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: 8 }}>Example Request</p>
+                      <pre style={{ color: '#10B981', fontSize: 12, fontFamily: 'monospace', overflowX: 'auto', whiteSpace: 'pre-wrap' }}>{`curl -X GET https://api.creatify.ai/v1/image/generate \\
   -H "Authorization: Bearer ${apiKey}" \\
   -H "Content-Type: application/json" \\
   -d '{"prompt": "a sunset", "model": "flux"}'`}</pre>
-                </div>
-              </div>
-            )}
-
-            {['Image Endpoints', 'Video Endpoints', 'Audio Endpoints', 'Bulk Endpoints', 'Webhooks', 'Rate Limits'].includes(section) && (
-              <div className="bg-[#111111] rounded-2xl border border-white/[0.08] p-6">
-                <h3 className="text-white font-bold mb-4">{section}</h3>
-                <div className="space-y-3">
-                  {ENDPOINTS.filter(e => {
-                    if (section === 'Image Endpoints') return e.path.includes('image');
-                    if (section === 'Video Endpoints') return e.path.includes('video');
-                    if (section === 'Audio Endpoints') return e.path.includes('audio');
-                    if (section === 'Bulk Endpoints') return e.path.includes('bulk');
-                    if (section === 'Webhooks') return e.path.includes('webhook');
-                    return false;
-                  }).map((ep, i) => (
-                    <div key={i} className="bg-[#0a0a0a] rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${ep.method === 'GET' ? 'bg-[#10B981]/20 text-[#10B981]' : 'bg-[#7C3AED]/20 text-[#7C3AED]'}`}>{ep.method}</span>
-                        <code className="text-[#ccc] text-xs font-mono">{ep.path}</code>
-                      </div>
-                      <p className="text-[#555] text-xs">{ep.desc}</p>
                     </div>
-                  ))}
-                </div>
-                {section === 'Rate Limits' && (
-                  <div className="mt-4 grid grid-cols-3 gap-3">
-                    <div className="bg-[#0a0a0a] rounded-xl p-4 text-center"><p className="text-[#CCFF00] text-lg font-bold">100</p><p className="text-[#555] text-xs">req/min</p></div>
-                    <div className="bg-[#0a0a0a] rounded-xl p-4 text-center"><p className="text-[#CCFF00] text-lg font-bold">1000</p><p className="text-[#555] text-xs">req/hour</p></div>
-                    <div className="bg-[#0a0a0a] rounded-xl p-4 text-center"><p className="text-[#CCFF00] text-lg font-bold">10000</p><p className="text-[#555] text-xs">req/day</p></div>
                   </div>
                 )}
+
+                {filteredEndpoints.length > 0 && (
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                    <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: 16 }}>{section}</h3>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                      {filteredEndpoints.map((ep, i) => (
+                        <div key={i} style={{ background: '#0a0a0a', borderRadius: 12, padding: 16 }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                            <span style={{
+                              fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4,
+                              background: ep.method === 'GET' ? 'rgba(16,185,129,0.2)' : 'rgba(124,58,237,0.2)',
+                              color: ep.method === 'GET' ? '#10B981' : '#7C3AED',
+                            }}>{ep.method}</span>
+                            <code style={{ color: '#ccc', fontSize: 12, fontFamily: 'monospace' }}>{ep.path}</code>
+                          </div>
+                          <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>{ep.desc}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {section === 'Rate Limits' && (
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24 }}>
+                    <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, marginBottom: 16 }}>Rate Limits</h3>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+                      <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16, textAlign: 'center' }}>
+                        <p style={{ color: '#CCFF00', fontSize: 24, fontWeight: 700 }}>100</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>req/min</p>
+                      </div>
+                      <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16, textAlign: 'center' }}>
+                        <p style={{ color: '#CCFF00', fontSize: 24, fontWeight: 700 }}>1000</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>req/hour</p>
+                      </div>
+                      <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16, textAlign: 'center' }}>
+                        <p style={{ color: '#CCFF00', fontSize: 24, fontWeight: 700 }}>10000</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>req/day</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {section !== 'Authentication' && section !== 'Rate Limits' && filteredEndpoints.length === 0 && (
+                  <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', padding: 24, textAlign: 'center' }}>
+                    <p style={{ color: 'var(--text-secondary)' }}>No endpoints found for this section.</p>
+                  </div>
+                )}
+
+                <button onClick={() => toast.success('Opening full API docs...')} style={{
+                  width: '100%', marginTop: 24, padding: '12px 24px',
+                  background: '#CCFF00', color: 'black', fontWeight: 700,
+                  borderRadius: 12, border: 'none', cursor: 'pointer', fontSize: 16,
+                }}>View Full API Documentation</button>
               </div>
-            )}
-          </div>
-        </div>
-        <button onClick={() => toast.success('Opening full API docs...')} className="mt-6 w-full px-6 py-3 bg-[#CCFF00] text-black font-bold rounded-xl hover:bg-[#B8FF00] transition-all">View Full API Documentation</button>
-      </div>
-    </div>
+            </div>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="API">
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Search endpoints..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <GenerateButton onClick={() => handleCopy(apiKey)}>Copy API Key</GenerateButton>
+            </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

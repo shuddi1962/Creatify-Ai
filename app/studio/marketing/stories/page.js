@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { BookOpen, Music } from 'lucide-react';
+import { BookOpen } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
@@ -9,6 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const STRUCTURES = {
   '3-Part': [
@@ -70,64 +71,59 @@ export default function MarketingStoriesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={BookOpen} title="STORY AD BUILDER" subtitle="Build high-converting short-form story ads for any platform" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <GenerationPanel>
-          <div className="space-y-4">
-            <SectionLabel>Story Structure</SectionLabel>
-            <div className="flex gap-2">
-              {Object.keys(STRUCTURES).map(s => (
-                <button
-                  key={s}
-                  onClick={() => handleStructureChange(s)}
-                  className={`px-4 py-2 rounded-xl text-sm font-semibold transition-all ${structure === s ? 'bg-[#6366f1] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'}`}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-            <div className="space-y-4">
-              {parts.map((part, i) => (
-                <div key={i} className="bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="px-2 py-0.5 bg-[#6366f1]/20 text-[#6366f1] text-[10px] font-bold rounded">Part {part.part}</span>
-                    <span className="text-sm font-bold text-white">{part.name}</span>
-                    <span className="text-xs text-[#555]">({part.range})</span>
-                  </div>
-                  <textarea
-                    value={part.default}
-                    onChange={e => updatePart(i, 'default', e.target.value)}
-                    placeholder={`Describe the ${part.name.toLowerCase()} content...`}
-                    className="w-full bg-[#111] border border-white/[0.08] rounded-lg px-3 py-2 text-xs text-white placeholder-[#444] resize-none h-16"
-                  />
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="STRUCTURES">
+          {Object.keys(STRUCTURES).map(s => (
+            <button key={s} onClick={() => handleStructureChange(s)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: structure === s ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: structure === s ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left',
+              }}
+            >{s}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            STORY AD BUILDER
+          </h1>
+          <div style={{ zIndex: 1, marginTop: 24, maxWidth: 500, width: '100%', padding: 16, maxHeight: '60%', overflowY: 'auto' }}>
+            {parts.map((part, i) => (
+              <div key={i} style={{ background: 'var(--bg-card)', borderRadius: 12, padding: 16, marginBottom: 8, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
+                  <span style={{ padding: '2px 8px', background: 'var(--accent-bg)', color: 'var(--accent-text)', fontSize: 10, fontWeight: 700, borderRadius: 4 }}>Part {part.part}</span>
+                  <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--text-primary)' }}>{part.name}</span>
+                  <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>({part.range})</span>
                 </div>
-              ))}
-            </div>
+                <textarea value={part.default} onChange={e => updatePart(i, 'default', e.target.value)}
+                  style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--text-primary)', resize: 'none', height: 60 }}
+                />
+              </div>
+            ))}
           </div>
-        </GenerationPanel>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <button onClick={() => setBrandKit(!brandKit)} className={`flex items-center gap-2 px-3 py-2 rounded-xl border text-xs font-medium transition-all ${brandKit ? 'border-[#6366f1] bg-[#6366f1]/10 text-white' : 'border-white/[0.08] bg-[#0a0a0a] text-[#888]'}`}>
-              Apply Brand Kit: {brandKit ? 'On' : 'Off'}
-            </button>
-            <div>
-              <SectionLabel>CTA Text</SectionLabel>
-              <input value={ctaText} onChange={e => setCtaText(e.target.value)} placeholder="Shop Now" className="w-full bg-[#0a0a0a] border border-white/[0.08] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#444]" />
-            </div>
-            <div>
-              <SectionLabel>CTA Timing</SectionLabel>
-              <StudioDropdown label="CTA Timing" options={CTA_TIMINGS} value={ctaTiming} onChange={setCtaTiming} />
-            </div>
-            <div>
-              <SectionLabel>Music</SectionLabel>
-              <StudioDropdown label="Music" options={MUSIC_OPTIONS} value={music} onChange={setMusic} />
-            </div>
-            <GenerateButton onClick={handleGenerate} loading={loading}>Build Story Ad</GenerateButton>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Story Settings">
+          <PromptInput value={ctaText} onChange={e => setCtaText(e.target.value)} placeholder="CTA Text (e.g. Shop Now)" />
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+            <StudioDropdown label="CTA Timing" options={CTA_TIMINGS} value={ctaTiming} onChange={setCtaTiming} />
+            <StudioDropdown label="Music" options={MUSIC_OPTIONS} value={music} onChange={setMusic} />
+            <ControlButton onClick={() => setBrandKit(!brandKit)}>Brand Kit: {brandKit ? 'On' : 'Off'}</ControlButton>
+            <GenerateButton onClick={handleGenerate} loading={loading}>BUILD STORY</GenerateButton>
           </div>
-        </GenerationPanel>
-        <ResultsGrid results={results} columns={2} />
-      </div>
-    </div>
+        </DirectorBar>
+      }
+    />
   );
 }

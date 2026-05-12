@@ -3,17 +3,11 @@
 import { useState } from 'react';
 import { Video, Volume2, Library } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import StudioDropdown from '@/components/StudioDropdown';
 
 const EFFECT_SOURCE = ['Auto Detect', 'Manual', 'Library'];
-const EFFECT_LIBRARY = [
-  'Rain', 'Explosion', 'Footsteps', 'Crowd', 'Ocean', 'Wind', 'Birds', 'City', 
-  'Thunder', 'Fire', 'Glass Breaking', 'Car Engine', 'Door', 'Applause', 'Gunshot'
-];
+const EFFECT_LIBRARY = ['Rain', 'Explosion', 'Footsteps', 'Crowd', 'Ocean', 'Wind', 'Birds', 'City', 'Thunder', 'Fire', 'Glass Breaking', 'Car Engine', 'Door', 'Applause', 'Gunshot'];
 
 export default function SoundEffectsPage() {
   const [videoFile, setVideoFile] = useState(null);
@@ -27,13 +21,8 @@ export default function SoundEffectsPage() {
   const [results, setResults] = useState([]);
 
   const handleVideoUpload = (file) => {
-    if (file) {
-      setVideoFile(file);
-      setVideoPreview(URL.createObjectURL(file));
-    } else {
-      setVideoFile(null);
-      setVideoPreview(null);
-    }
+    if (file) { setVideoFile(file); setVideoPreview(URL.createObjectURL(file)); }
+    else { setVideoFile(null); setVideoPreview(null); }
   };
 
   const toggleEffect = (effect) => {
@@ -49,7 +38,6 @@ export default function SoundEffectsPage() {
       toast.error('Please upload a video');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
@@ -57,12 +45,7 @@ export default function SoundEffectsPage() {
         toast.success('Adding sound effects!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
-        setResults([{
-          id: `demo-${Date.now()}`,
-          url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-          prompt: selectedEffects.length > 0 ? selectedEffects.join(', ') : 'Auto-detected sounds',
-          type: 'video'
-        }]);
+        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt: selectedEffects.length > 0 ? selectedEffects.join(', ') : 'Auto-detected sounds', type: 'video' }]);
         toast.success('Demo: Sound effects added!');
       }
     } catch (error) {
@@ -73,121 +56,119 @@ export default function SoundEffectsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        title="ADD SOUND EFFECTS"
-        subtitle="Layer AI-generated sound effects onto any video automatically"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div>
-              <SectionLabel>Upload Video</SectionLabel>
-              {videoPreview ? (
-                <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a]">
-                  <video src={videoPreview} controls className="w-full h-48 object-contain rounded-lg" />
-                  <button
-                    onClick={() => handleVideoUpload(null)}
-                    className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white text-xs hover:bg-black/80"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-8 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                  <div className="w-14 h-14 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                    <Video size={28} className="text-[#666]" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-white">Upload video to add sound to</p>
-                    <p className="text-xs text-[#555] mt-1">Drag & drop or click to browse</p>
-                  </div>
-                  <input type="file" accept="video/*" onChange={(e) => handleVideoUpload(e.target.files?.[0])} className="hidden" />
-                </label>
-              )}
-            </div>
-
-            <div className="flex gap-2">
-              {EFFECT_SOURCE.map(source => (
-                <button
-                  key={source}
-                  onClick={() => setEffectSource(source)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                    effectSource === source ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'
-                  }`}
-                >
-                  {source}
-                </button>
-              ))}
-            </div>
-
-            {effectSource === 'Manual' && (
-              <div>
-                <SectionLabel>Manual Prompt</SectionLabel>
-                <textarea
-                  value={manualPrompt}
-                  onChange={(e) => setManualPrompt(e.target.value)}
-                  placeholder="Describe the sound effects you want..."
-                  className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
-                />
-              </div>
-            )}
-
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="EFFECT SOURCE">
+            {EFFECT_SOURCE.map(src => (
+              <button key={src} onClick={() => setEffectSource(src)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: effectSource === src ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: effectSource === src ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (effectSource !== src) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (effectSource !== src) e.currentTarget.style.background = 'none'; }}
+              >
+                {src === 'Auto Detect' && <Volume2 size={14} />}
+                {src === 'Manual' && <Library size={14} />}
+                {src === 'Library' && <Library size={14} />}
+                {src}
+              </button>
+            ))}
             {effectSource === 'Library' && (
-              <div>
-                <SectionLabel>Effect Library</SectionLabel>
-                <div className="flex flex-wrap gap-2">
+              <>
+                <div style={{ height: 1, background: 'var(--border-subtle)', margin: '12px 0' }} />
+                <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 4px 10px' }}>
+                  Sound Library
+                </div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 4, padding: '0 4px' }}>
                   {EFFECT_LIBRARY.map(effect => (
-                    <button
-                      key={effect}
-                      onClick={() => toggleEffect(effect)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                        selectedEffects.includes(effect)
-                          ? 'bg-[#7C3AED] text-white border border-[#7C3AED]'
-                          : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08] hover:bg-[#222]'
-                      }`}
-                    >
+                    <button key={effect} onClick={() => toggleEffect(effect)}
+                      style={{
+                        padding: '4px 8px', borderRadius: 6, fontSize: 11, fontWeight: 500,
+                        background: selectedEffects.includes(effect) ? 'var(--accent-bg)' : 'var(--bg-input)',
+                        border: selectedEffects.includes(effect) ? '1px solid var(--accent-border)' : '1px solid var(--border-default)',
+                        color: selectedEffects.includes(effect) ? 'var(--accent-text)' : 'var(--text-secondary)',
+                        cursor: 'pointer',
+                      }}>
                       {effect}
                     </button>
                   ))}
                 </div>
-              </div>
+              </>
             )}
-
-            <div>
-              <SectionLabel>Volume: {volume}%</SectionLabel>
-              <input
-                type="range"
-                min="0"
-                max="100"
-                value={volume}
-                onChange={(e) => setVolume(parseInt(e.target.value))}
-                className="w-full h-2 bg-[#1a1a1a] rounded-lg appearance-none cursor-pointer mt-2"
-              />
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, zIndex: 1, width: '100%', maxWidth: 500, padding: '0 24px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', lineHeight: 1.2,
+              }}>
+                ADD SOUND EFFECTS
+              </h1>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', textAlign: 'center' }}>
+                Layer AI-generated sound effects onto any video automatically
+              </p>
+              {videoPreview ? (
+                <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)', width: '100%' }}>
+                  <video src={videoPreview} controls style={{ width: '100%', height: 240, objectFit: 'contain', background: '#000' }} />
+                  <button onClick={() => handleVideoUpload(null)}
+                    style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    ×
+                  </button>
+                </div>
+              ) : (
+                <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 40, borderRadius: 12, border: '2px dashed var(--border-subtle)', cursor: 'pointer', background: 'var(--bg-card)', width: '100%' }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Video size={28} style={{ color: 'var(--text-muted)' }} />
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Upload video to add sound to</p>
+                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Drag & drop or click to browse</p>
+                  </div>
+                  <input type="file" accept="video/*" onChange={e => handleVideoUpload(e.target.files?.[0])} style={{ display: 'none' }} />
+                </label>
+              )}
             </div>
-
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setMixWithOriginal(!mixWithOriginal)}
-                className={`w-12 h-6 rounded-full transition-all ${mixWithOriginal ? 'bg-[#7C3AED]' : 'bg-[#1a1a1a]'}`}
-              >
-                <div className={`w-5 h-5 rounded-full bg-white transition-transform ${mixWithOriginal ? 'translate-x-6' : 'translate-x-0.5'}`} />
-              </button>
-              <span className="text-sm text-[#888]">Mix with original audio</span>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Sound Effects">
+            {effectSource === 'Manual' && (
+              <PromptInput value={manualPrompt} onChange={e => setManualPrompt(e.target.value)} placeholder="Describe the sound effects you want..." />
+            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12, flex: 1 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flex: 1, maxWidth: 200 }}>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)', whiteSpace: 'nowrap' }}>Vol: {volume}%</span>
+                <input type="range" min="0" max="100" value={volume} onChange={e => setVolume(parseInt(e.target.value))}
+                  style={{ flex: 1, height: 6, borderRadius: 3, background: 'var(--bg-input)', accentColor: '#7C3AED' }} />
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                <button onClick={() => setMixWithOriginal(!mixWithOriginal)}
+                  style={{ width: 32, height: 18, borderRadius: 100, position: 'relative', background: mixWithOriginal ? '#7C3AED' : 'var(--bg-input)', border: 'none', cursor: 'pointer' }}>
+                  <div style={{ position: 'absolute', top: 2, left: mixWithOriginal ? 14 : 2, width: 14, height: 14, borderRadius: '50%', background: '#fff', transition: 'left 150ms' }} />
+                </button>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Mix audio</span>
+              </div>
             </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Add Sound Effects
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={1} />
-      </div>
-    </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <GenerateButton onClick={handleGenerate}>
+                {loading ? 'Adding...' : 'GENERATE ✦ 8'}
+              </GenerateButton>
+            </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }

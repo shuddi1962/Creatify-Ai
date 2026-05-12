@@ -5,6 +5,7 @@ import { Clock, Eye, Download, RotateCcw, X, Trash2, Zap, CheckCircle, AlertCirc
 import toast from 'react-hot-toast';
 import StudioHero from '@/components/studio/StudioHero';
 import GenerationPanel from '@/components/studio/GenerationPanel';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const SAMPLE_JOBS = [
   { id: 'job_001', type: 'bulk-image', items: 50, completed: 50, failed: 0, status: 'completed', started: '2 hours ago', duration: '12m 34s', credits: 500, zip_url: '#' },
@@ -16,11 +17,13 @@ const SAMPLE_JOBS = [
 ];
 
 const STATUS_COLORS = {
-  completed: 'bg-green-500/20 text-green-400',
-  running: 'bg-[#CCFF00]/20 text-[#CCFF00]',
-  queued: 'bg-[#7C3AED]/20 text-[#7C3AED]',
-  failed: 'bg-red-500/20 text-red-400',
+  completed: { bg: 'rgba(74,222,128,0.2)', color: '#4ade80' },
+  running: { bg: 'rgba(204,255,0,0.2)', color: '#CCFF00' },
+  queued: { bg: 'rgba(124,58,237,0.2)', color: '#7C3AED' },
+  failed: { bg: 'rgba(248,113,113,0.2)', color: '#f87171' },
 };
+
+const STATUS_FILTERS = ['all', 'running', 'queued', 'completed', 'failed'];
 
 export default function BulkQueuePage() {
   const [filter, setFilter] = useState('all');
@@ -55,101 +58,119 @@ export default function BulkQueuePage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-20">
-      <StudioHero icon={Clock} title="JOB QUEUE" subtitle="Live progress tracker for all your running and completed batch jobs" />
-      <div className="max-w-[900px] mx-auto px-4 space-y-6">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap size={14} className="text-[#CCFF00]" />
-              <span className="text-[10px] text-[#555] uppercase tracking-widest">Running</span>
+    <StudioEditorLayout
+      left={
+        <LeftPanel title="FILTERS">
+          {STATUS_FILTERS.map(f => (
+            <button key={f} onClick={() => setFilter(f)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8,
+                width: '100%', padding: '8px 12px',
+                background: filter === f ? 'var(--accent-bg)' : 'none',
+                border: 'none', cursor: 'pointer', borderRadius: 8,
+                color: filter === f ? 'var(--accent-text)' : 'var(--text-secondary)',
+                fontSize: 13, textAlign: 'left', textTransform: 'capitalize',
+              }}
+            >{f}</button>
+          ))}
+        </LeftPanel>
+      }
+      canvas={
+        <StudioCanvas overlay={<CornerMarkers />}>
+          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
+            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
+            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+            textAlign: 'center', zIndex: 1,
+          }}>
+            JOB QUEUE
+          </h1>
+          <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 600, padding: '0 16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8, marginBottom: 16 }}>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 10, padding: 12, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <Zap size={14} color="#CCFF00" />
+                  <span style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Running</span>
+                </div>
+                <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{running}</p>
+              </div>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 10, padding: 12, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <Clock size={14} color="#7C3AED" />
+                  <span style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Queued</span>
+                </div>
+                <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{queued}</p>
+              </div>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 10, padding: 12, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <CheckCircle size={14} color="#4ade80" />
+                  <span style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Completed</span>
+                </div>
+                <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{completedToday}</p>
+              </div>
+              <div style={{ background: 'var(--bg-card)', borderRadius: 10, padding: 12, border: '1px solid var(--border-subtle)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                  <Zap size={14} color="#7C3AED" />
+                  <span style={{ fontSize: 9, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>Credits</span>
+                </div>
+                <p style={{ fontSize: 20, fontWeight: 700, color: 'var(--text-primary)' }}>{creditsUsed}</p>
+              </div>
             </div>
-            <p className="text-2xl font-bold text-white">{running}</p>
-          </div>
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Clock size={14} className="text-[#7C3AED]" />
-              <span className="text-[10px] text-[#555] uppercase tracking-widest">Queued</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{queued}</p>
-          </div>
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <CheckCircle size={14} className="text-green-400" />
-              <span className="text-[10px] text-[#555] uppercase tracking-widest">Completed Today</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{completedToday}</p>
-          </div>
-          <div className="bg-[#111111] rounded-xl border border-white/[0.08] p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <Zap size={14} className="text-[#7C3AED]" />
-              <span className="text-[10px] text-[#555] uppercase tracking-widest">Credits Used</span>
-            </div>
-            <p className="text-2xl font-bold text-white">{creditsUsed}</p>
-          </div>
-        </div>
-        <GenerationPanel>
-          <div className="space-y-4">
-            <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-              {['all', 'running', 'queued', 'completed', 'failed'].map(f => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold capitalize transition-all ${
-                    filter === f ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888] border border-white/[0.08]'
-                  }`}
-                >
-                  {f}
-                </button>
-              ))}
-            </div>
-            <div className="space-y-2">
-              {filteredJobs.map(job => (
-                <div key={job.id} className="bg-[#0a0a0a] rounded-xl border border-white/[0.08] p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-mono text-[#555]">{job.id}</span>
-                        <span className="text-xs text-[#888] capitalize">{job.type.replace('bulk-', '')}</span>
-                        {job.status === 'running' && <Loader2 size={12} className="animate-spin text-[#CCFF00]" />}
-                      </div>
-                      <div className="flex items-center gap-3 mt-1">
-                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm capitalize ${STATUS_COLORS[job.status]}`}>{job.status}</span>
-                        <span className="text-[10px] text-[#555]">{job.items} items</span>
-                        {job.status === 'completed' && <span className="text-[10px] text-green-400">{job.items - job.failed} done</span>}
-                        {job.failed > 0 && <span className="text-[10px] text-red-400">{job.failed} failed</span>}
-                      </div>
-                      {job.status === 'running' && (
-                        <div className="w-48 h-1.5 bg-[#1a1a1a] rounded-full mt-2">
-                          <div className="h-full bg-[#CCFF00] rounded-full" style={{ width: `${(job.completed / job.items) * 100}%` }} />
+            <div style={{ maxHeight: '50vh', overflowY: 'auto' }}>
+              {filteredJobs.map(job => {
+                const sc = STATUS_COLORS[job.status] || { bg: 'var(--bg-input)', color: 'var(--text-muted)' };
+                return (
+                  <div key={job.id} style={{ background: 'var(--bg-card)', borderRadius: 10, padding: 12, marginBottom: 6, border: '1px solid var(--border-subtle)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                          <span style={{ fontSize: 11, fontFamily: 'monospace', color: 'var(--text-muted)' }}>{job.id}</span>
+                          <span style={{ fontSize: 11, color: 'var(--text-secondary)', textTransform: 'capitalize' }}>{job.type.replace('bulk-', '')}</span>
+                          {job.status === 'running' && <Loader2 size={12} style={{ animation: 'spin 1s linear infinite', color: '#CCFF00' }} />}
                         </div>
-                      )}
-                    </div>
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-[10px] text-[#555]">{job.started}</p>
-                      <p className="text-[10px] text-[#888] mt-0.5">{job.duration}</p>
-                      <p className="text-[10px] text-[#7C3AED] mt-0.5">{job.credits} credits</p>
-                    </div>
-                    <div className="flex gap-1">
-                      <button onClick={() => setSelectedJob(job)} className="p-2 rounded-lg hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><Eye size={14} /></button>
-                      {job.zip_url && <button onClick={() => handleDownload(job)} className="p-2 rounded-lg hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><Download size={14} /></button>}
-                      {job.status === 'failed' && <button onClick={() => handleRetry(job.id)} className="p-2 rounded-lg hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><RotateCcw size={14} /></button>}
-                      {job.status === 'queued' && <button onClick={() => handleCancel(job.id)} className="p-2 rounded-lg hover:bg-white/[0.08] text-[#888] hover:text-white transition-all"><X size={14} /></button>}
-                      <button onClick={() => handleDelete(job.id)} className="p-2 rounded-lg hover:bg-red-500/20 text-[#888] hover:text-red-400 transition-all"><Trash2 size={14} /></button>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                          <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4, background: sc.bg, color: sc.color, textTransform: 'capitalize' }}>{job.status}</span>
+                          <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{job.items} items</span>
+                          {job.failed > 0 && <span style={{ fontSize: 10, color: '#f87171' }}>{job.failed} failed</span>}
+                        </div>
+                        {job.status === 'running' && (
+                          <div style={{ width: 160, height: 6, background: 'var(--bg-input)', borderRadius: 100, marginTop: 8 }}>
+                            <div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${(job.completed / job.items) * 100}%` }} />
+                          </div>
+                        )}
+                      </div>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>{job.started}</p>
+                        <p style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 2 }}>{job.duration}</p>
+                        <p style={{ fontSize: 10, color: '#7C3AED', marginTop: 2 }}>{job.credits} credits</p>
+                      </div>
+                      <div style={{ display: 'flex', gap: 4 }}>
+                        <button onClick={() => setSelectedJob(job)} style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 6 }}><Eye size={14} /></button>
+                        {job.zip_url && <button onClick={() => handleDownload(job)} style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 6 }}><Download size={14} /></button>}
+                        {job.status === 'failed' && <button onClick={() => handleRetry(job.id)} style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 6 }}><RotateCcw size={14} /></button>}
+                        {job.status === 'queued' && <button onClick={() => handleCancel(job.id)} style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 6 }}><X size={14} /></button>}
+                        <button onClick={() => handleDelete(job.id)} style={{ padding: 6, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)', borderRadius: 6 }}><Trash2 size={14} /></button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
               {filteredJobs.length === 0 && (
-                <div className="text-center py-12">
-                  <Clock size={32} className="mx-auto text-[#333] mb-3" />
-                  <p className="text-sm text-[#555]">No jobs in this category</p>
+                <div style={{ textAlign: 'center', padding: 40 }}>
+                  <Clock size={32} style={{ color: '#333', marginBottom: 12 }} />
+                  <p style={{ fontSize: 13, color: 'var(--text-muted)' }}>No jobs in this category</p>
                 </div>
               )}
             </div>
           </div>
-        </GenerationPanel>
-      </div>
-    </div>
+        </StudioCanvas>
+      }
+      directorBar={
+        <DirectorBar title="Job Queue Overview">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'flex-end' }}>
+            <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{jobs.length} total jobs</span>
+          </div>
+        </DirectorBar>
+      }
+    />
   );
 }

@@ -1,18 +1,36 @@
 'use client';
 
 import { useState } from 'react';
-import { Video } from 'lucide-react';
+import { Video, Image } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
 import * as muapi from '@/packages/studio/src/muapi';
 
-
+const ASPECT_PRESETS = [
+  { id: '16:9', label: '16:9', desc: 'Landscape' },
+  { id: '9:16', label: '9:16', desc: 'Portrait' },
+  { id: '1:1', label: '1:1', desc: 'Square' },
+  { id: '4:3', label: '4:3', desc: 'Standard' },
+  { id: '2.35:1', label: '2.35:1', desc: 'Cinematic' },
+];
+const MODELS = ['seedance-2', 'kling', 'veo-2', 'runway-gen3'];
+const DURATIONS = ['3s', '5s', '8s', '10s', '15s'];
+const QUALITIES = [
+  { label: '480p', desc: 'Fast — previews' },
+  { label: '720p', desc: 'HD — recommended' },
+  { label: '1080p', desc: 'Full HD' },
+  { label: '4K', desc: 'Ultra HD' },
+];
+const MOTION_INTENSITIES = [
+  { label: 'Low', desc: 'Subtle' },
+  { label: 'Medium', desc: 'Natural' },
+  { label: 'High', desc: 'Dynamic' },
+  { label: 'Extreme', desc: 'Maximum' },
+];
+const CAMERA_MOVEMENTS = [
+  'Static', 'Zoom In', 'Zoom Out', 'Pan Left', 'Pan Right', 'Orbit', 'Handheld',
+];
 
 export default function TextToVideoPage() {
   const [inputMode, setInputMode] = useState('text');
@@ -43,46 +61,28 @@ export default function TextToVideoPage() {
       toast.error('Please enter a prompt or upload an image');
       return;
     }
-
     setLoading(true);
     try {
       const apiKey = localStorage.getItem('muapi_key');
       if (apiKey) {
         const params = {
-          model,
-          prompt: prompt || 'Animate this image',
-          aspect_ratio: aspectRatio,
-          duration: parseInt(duration),
+          model, prompt: prompt || 'Animate this image',
+          aspect_ratio: aspectRatio, duration: parseInt(duration),
           quality: quality.toLowerCase(),
         };
         if (inputMode === 'image' && imageFile) {
           const uploaded = await muapi.uploadFile(imageFile);
           params.image_url = uploaded;
           const response = await muapi.generateI2V(apiKey, params);
-          setResults([{
-            id: `result-${Date.now()}`,
-            url: response.url,
-            prompt: prompt,
-            type: 'video'
-          }]);
+          setResults([{ id: `result-${Date.now()}`, url: response.url, prompt, type: 'video' }]);
         } else {
           const response = await muapi.generateVideo(apiKey, params);
-          setResults([{
-            id: `result-${Date.now()}`,
-            url: response.url,
-            prompt: prompt,
-            type: 'video'
-          }]);
+          setResults([{ id: `result-${Date.now()}`, url: response.url, prompt, type: 'video' }]);
         }
         toast.success('Video generated successfully!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
-        setResults([{
-          id: `demo-${Date.now()}`,
-          url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-          prompt: prompt,
-          type: 'video'
-        }]);
+        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt, type: 'video' }]);
         toast.success('Demo: Video generated!');
       }
     } catch (error) {
@@ -93,148 +93,127 @@ export default function TextToVideoPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#000000] pb-12">
+    <>
       <Toaster position="top-center" />
-      <StudioHero 
-        icon={Video}
-        title="VIDEO STUDIO"
-        subtitle="Generate high-quality video clips from any text prompt"
-      />
-      
-      <div className="max-w-[900px] mx-auto px-4">
-        <GenerationPanel>
-          <div className="space-y-6">
-            <div className="flex gap-2 mb-4">
-              <button
-                onClick={() => setInputMode('text')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  inputMode === 'text' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'
-                }`}
+      <StudioEditorLayout
+        left={
+          <LeftPanel title="ASPECT RATIO">
+            {ASPECT_PRESETS.map(p => (
+              <button key={p.id} onClick={() => setAspectRatio(p.id)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: aspectRatio === p.id ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: aspectRatio === p.id ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (aspectRatio !== p.id) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (aspectRatio !== p.id) e.currentTarget.style.background = 'none'; }}
               >
-                Text
+                <span style={{ fontWeight: 600, fontSize: 14 }}>{p.label}</span>
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{p.desc}</span>
               </button>
-              <button
-                onClick={() => setInputMode('image')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  inputMode === 'image' ? 'bg-[#7C3AED] text-white' : 'bg-[#1a1a1a] text-[#888]'
-                }`}
+            ))}
+            <div style={{ height: 1, background: 'var(--border-subtle)', margin: '12px 0' }} />
+            {QUALITIES.map(q => (
+              <button key={q.label} onClick={() => setQuality(q.label)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8,
+                  width: '100%', padding: '8px 12px',
+                  background: quality === q.label ? 'var(--accent-bg)' : 'none',
+                  border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                }}
+                onMouseEnter={e => { if (quality !== q.label) e.currentTarget.style.background = 'var(--bg-hover)'; }}
+                onMouseLeave={e => { if (quality !== q.label) e.currentTarget.style.background = 'none'; }}
               >
-                Image+Text
+                <span style={{ fontWeight: 600, fontSize: 13 }}>{q.label}</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)', marginLeft: 4 }}>{q.desc}</span>
               </button>
-            </div>
-
-            {inputMode === 'text' ? (
-              <div>
-                <SectionLabel>Prompt</SectionLabel>
-                <textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe the video you want to create..."
-                  className="w-full h-32 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
-                />
-              </div>
-            ) : (
-              <div>
-                <SectionLabel>Upload Image</SectionLabel>
-                <div className="mb-4">
+            ))}
+          </LeftPanel>
+        }
+        canvas={
+          <StudioCanvas overlay={<CornerMarkers />}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, zIndex: 1, width: '100%', maxWidth: 500, padding: '0 24px' }}>
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', lineHeight: 1.2,
+              }}>
+                TEXT TO VIDEO
+              </h1>
+              <p style={{ fontSize: 14, color: 'var(--text-muted)', textAlign: 'center' }}>
+                Generate high-quality video clips from any text prompt
+              </p>
+              {inputMode === 'image' && (
+                <div style={{ width: '100%' }}>
                   {imagePreview ? (
-                    <div className="relative rounded-xl border-2 border-dashed border-white/[0.12] p-2 bg-[#0a0a0a]">
-                      <img src={imagePreview} alt="Preview" className="w-full h-48 object-contain rounded-lg" />
-                      <button
-                        onClick={() => handleImageUpload(null)}
-                        className="absolute top-2 right-2 w-8 h-8 bg-black/60 rounded-full flex items-center justify-center text-white text-xs hover:bg-black/80"
-                      >
+                    <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                      <img src={imagePreview} alt="Preview" style={{ width: '100%', height: 200, objectFit: 'contain', background: '#000' }} />
+                      <button onClick={() => handleImageUpload(null)}
+                        style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         ×
                       </button>
                     </div>
                   ) : (
-                    <label className="flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-white/[0.12] p-6 cursor-pointer bg-[#0a0a0a] hover:bg-[#111] transition-all">
-                      <div className="w-12 h-12 bg-[#1a1a1a] rounded-xl flex items-center justify-center">
-                        <Video size={24} className="text-[#666]" />
-                      </div>
-                      <div className="text-center">
-                        <p className="text-sm font-medium text-white">Upload image to animate</p>
-                        <p className="text-xs text-[#555] mt-1">Drag & drop or click to browse</p>
-                      </div>
-                      <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e.target.files?.[0])} className="hidden" />
+                    <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12, padding: 24, borderRadius: 12, border: '2px dashed var(--border-subtle)', cursor: 'pointer', background: 'var(--bg-card)' }}>
+                      <Image size={32} style={{ color: 'var(--text-muted)' }} />
+                      <span style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Upload image to animate</span>
+                      <input type="file" accept="image/*" onChange={e => handleImageUpload(e.target.files?.[0])} style={{ display: 'none' }} />
                     </label>
                   )}
                 </div>
-                <SectionLabel>Motion Prompt</SectionLabel>
-                <textarea
-                  value={prompt}
-                  onChange={(e) => setPrompt(e.target.value)}
-                  placeholder="Describe how the image should move..."
-                  className="w-full h-20 bg-[#1A1A1A] border border-white/[0.08] rounded-xl p-4 text-white placeholder-[#444] resize-none focus:outline-none focus:border-[#7C3AED]"
-                />
+              )}
+            </div>
+          </StudioCanvas>
+        }
+        directorBar={
+          <DirectorBar title="Text to Video">
+            <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+              <button onClick={() => setInputMode('text')}
+                style={{
+                  padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500,
+                  background: inputMode === 'text' ? 'var(--accent-bg)' : 'var(--bg-input)',
+                  border: inputMode === 'text' ? '1px solid var(--accent-border)' : '1px solid var(--border-default)',
+                  color: inputMode === 'text' ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                }}>
+                Text
+              </button>
+              <button onClick={() => setInputMode('image')}
+                style={{
+                  padding: '4px 12px', borderRadius: 8, fontSize: 12, fontWeight: 500,
+                  background: inputMode === 'image' ? 'var(--accent-bg)' : 'var(--bg-input)',
+                  border: inputMode === 'image' ? '1px solid var(--accent-border)' : '1px solid var(--border-default)',
+                  color: inputMode === 'image' ? 'var(--accent-text)' : 'var(--text-secondary)',
+                  cursor: 'pointer',
+                }}>
+                Image+Text
+              </button>
+            </div>
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe the video you want to create..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, flexWrap: 'wrap' }}>
+              <div style={{ minWidth: 100 }}>
+                <StudioDropdown value={model} onChange={setModel} options={MODELS} />
               </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <SectionLabel>Model</SectionLabel>
-                <ModelSelector type="video" value={model} onChange={setModel} />
+              <div style={{ minWidth: 80 }}>
+                <StudioDropdown value={duration} onChange={setDuration} options={DURATIONS} />
               </div>
-              <div>
-                <SectionLabel>Aspect Ratio</SectionLabel>
-                <StudioDropdown label="ASPECT RATIO" value={aspectRatio} onChange={setAspectRatio} options={[
-                  { label: '16:9', desc: 'Landscape — YouTube, desktop' },
-                  { label: '9:16', desc: 'Portrait — Reels, Shorts' },
-                  { label: '1:1', desc: 'Square — Instagram, TikTok' },
-                  { label: '4:3', desc: 'Standard — presentations' },
-                  { label: '2.35:1', desc: 'Cinematic widescreen' },
-                ]} />
+              <div style={{ minWidth: 100 }}>
+                <StudioDropdown value={cameraMovement} onChange={setCameraMovement} options={CAMERA_MOVEMENTS} />
               </div>
+              <GenerateButton onClick={handleGenerate}>
+                {loading ? 'Generating...' : `GENERATE ✦ 8`}
+              </GenerateButton>
             </div>
-
-            <div>
-              <SectionLabel>Duration</SectionLabel>
-              <StudioDropdown label="DURATION" value={`${duration}`} onChange={setDuration} options={['3s', '5s', '8s', '10s', '15s']} />
-            </div>
-
-            <div>
-              <SectionLabel>Quality</SectionLabel>
-              <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={[
-                { label: '480p', desc: 'Fast — good for previews' },
-                { label: '720p', desc: 'HD — recommended' },
-                { label: '1080p', desc: 'Full HD — high quality' },
-                { label: '4K', desc: 'Ultra HD — uses 3x credits' },
-              ]} />
-            </div>
-
-            <div>
-              <SectionLabel>Motion Intensity</SectionLabel>
-              <StudioDropdown label="MOTION" value={motionIntensity} onChange={setMotionIntensity} options={[
-                { label: 'Low', desc: 'Subtle, minimal movement' },
-                { label: 'Medium', desc: 'Natural motion — recommended' },
-                { label: 'High', desc: 'Dynamic, energetic movement' },
-                { label: 'Extreme', desc: 'Maximum motion and action' },
-              ]} />
-            </div>
-
-            <div>
-              <SectionLabel>Camera Movement</SectionLabel>
-              <StudioDropdown label="CAMERA" value={cameraMovement} onChange={setCameraMovement} options={[
-                { label: 'Static', desc: 'No camera movement' },
-                { label: 'Zoom In', desc: 'Slowly push toward subject' },
-                { label: 'Zoom Out', desc: 'Pull back to reveal scene' },
-                { label: 'Pan Left', desc: 'Horizontal sweep left' },
-                { label: 'Pan Right', desc: 'Horizontal sweep right' },
-                { label: 'Orbit', desc: 'Circle around subject' },
-                { label: 'Handheld', desc: 'Realistic slight shake' },
-              ]} />
-            </div>
-          </div>
-        </GenerationPanel>
-
-        <div className="mt-6 flex justify-end">
-          <GenerateButton onClick={handleGenerate} loading={loading}>
-            Generate Video
-          </GenerateButton>
-        </div>
-
-        <ResultsGrid results={results} columns={1} />
-      </div>
-    </div>
+          </DirectorBar>
+        }
+      />
+    </>
   );
 }
