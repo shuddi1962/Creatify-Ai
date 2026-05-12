@@ -1,242 +1,461 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
-import { Check, X, ChevronDown } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+
+export const metadata = {
+  title: 'Pricing — Creatify AI',
+  description: 'Choose a plan that fits your creative goals. Generate AI images, videos, audio and more with Creatify AI.',
+};
 
 const PLANS = [
   {
-    name: 'Free',
-    price: '$0',
-    period: 'forever',
-    description: 'Perfect for trying out AI generation',
-    color: '#555',
+    name: 'BASIC',
+    badge: null, color: null, highlight: false,
+    tagline: 'For those who need more than free',
+    monthly: 5, annual: 4,
+    credits: '90 credits/month',
+    saveBadge: null,
+    cta: 'Get Plan',
+    ctaStyle: 'outline',
     features: [
-      { label: 'AI Models Available', value: '10+ models' },
-      { label: 'Generations per day', value: '20' },
-      { label: 'Image Resolution', value: '720p' },
-      { label: 'Video Duration', value: '5 seconds' },
-      { label: 'Bulk Generate', value: false },
-      { label: 'Content Ideas', value: false },
-      { label: 'Voice Cloning', value: false },
-      { label: 'API Access', value: false },
-      { label: 'Priority Support', value: false },
-      { label: 'Custom Brand Kit', value: false },
+      '90 credits/month',
+      '480p Resolution for Generations',
+      '1 GB Storage Per Generation',
+      'Basic access to all models',
+      'Standard queue priority',
     ],
-    cta: 'Get Started Free',
-    href: '/studio/home',
-    popular: false,
+    unlimitedModels: ['Seedance Lite', 'Nano Banana', 'Kling Lite'],
+    payPerUseNote: '360 GPU UNLIMITED & PAY-PER-USE:',
+    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'LTX', 'Turbo Nano', 'Nano Banana 2', 'GPT Image'],
   },
   {
-    name: 'Pro',
-    price: '$19',
-    period: '/month',
-    description: 'For creators who need more power',
-    color: '#00C896',
+    name: 'PLUS',
+    badge: { text: 'GOOD VALUE', bg: '#a3e635', color: '#000' },
+    color: null, highlight: false,
+    tagline: 'For creators leveling up',
+    monthly: 55, annual: 39,
+    credits: '1,500 credits/month',
+    saveBadge: 'Save $192 compared to monthly',
+    cta: 'Get Plan', ctaStyle: 'outline',
     features: [
-      { label: 'AI Models Available', value: '50+ models' },
-      { label: 'Generations per day', value: '500' },
-      { label: 'Image Resolution', value: '4K' },
-      { label: 'Video Duration', value: '30 seconds' },
-      { label: 'Bulk Generate', value: '500 rows' },
-      { label: 'Content Ideas', value: 'Unlimited' },
-      { label: 'Voice Cloning', value: '5 voices' },
-      { label: 'API Access', value: true },
-      { label: 'Priority Support', value: true },
-      { label: 'Custom Brand Kit', value: true },
+      '1,500 credits/month',
+      '1,000 Video Generation Pro Generations',
+      '1 GB Storage Per Generation',
+      'Access to all models',
+      '5 TB unlimited unlocked',
     ],
-    cta: 'Start Pro Trial',
-    href: '/studio/home',
-    popular: true,
+    unlimitedModels: [
+      'Nano Banana 2',
+      { name: 'Nano Banana Pro', badge: 'NEW' },
+      { name: 'Kling 3.0', badge: 'NEW' },
+      'Kling Lite',
+    ],
+    payPerUseNote: '360 GPU UNLIMITED & PAY-PER-USE:',
+    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'LTX', 'Turbo Nano', 'Nano Banana 2', 'GPT Image'],
   },
   {
-    name: 'Enterprise',
-    price: '$99',
-    period: '/month',
-    description: 'For teams and businesses at scale',
-    color: '#CCFF00',
+    name: 'ULTRA',
+    badge: { text: '# MOST POPULAR', bg: '#22c55e', color: '#fff' },
+    color: '#ec4899', highlight: true,
+    tagline: 'For power creators',
+    monthly: 148, annual: 99,
+    credits: '5,000 credits/month',
+    saveBadge: 'Save $588 compared to monthly',
+    cta: 'Get Plan', ctaStyle: 'pink',
     features: [
-      { label: 'AI Models Available', value: '200+ models' },
-      { label: 'Generations per day', value: 'Unlimited' },
-      { label: 'Image Resolution', value: '4K+' },
-      { label: 'Video Duration', value: '60 seconds' },
-      { label: 'Bulk Generate', value: 'Unlimited' },
-      { label: 'Content Ideas', value: 'Unlimited' },
-      { label: 'Voice Cloning', value: 'Unlimited' },
-      { label: 'API Access', value: 'Full API' },
-      { label: 'Priority Support', value: '24/7 Dedicated' },
-      { label: 'Custom Brand Kit', value: 'Unlimited' },
+      '5,000 credits/month',
+      'Parallel generations up to 4 Videos, 8 Images',
+      'Access to all models',
+      'Priority 4k unlimited AI features',
+      'Daily Unlimited video model',
     ],
-    cta: 'Contact Sales',
-    href: '/studio/home',
-    popular: false,
+    unlimitedModels: [
+      { name: 'Nano Banana Pro', badge: 'NEW' },
+      { name: 'Kling 3.0', badge: 'NEW' },
+      'Nano Banana 2', 'Kling Lite',
+    ],
+    payPerUseNote: '360 GPU UNLIMITED & PAY-PER-USE:',
+    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'LTX', 'Turbo Nano', 'Nano Banana 2', 'GPT Image'],
+  },
+  {
+    name: 'BUSINESS',
+    badge: { text: '# BEST VALUE', bg: '#6366f1', color: '#fff' },
+    color: '#6366f1', highlight: false,
+    tagline: 'For agencies and studios',
+    monthly: 225, annual: 162,
+    credits: '2,000 credits to start',
+    saveBadge: 'Save $756 compared to monthly',
+    cta: 'Get Plan', ctaStyle: 'indigo',
+    teamNote: '2 seats',
+    features: [
+      'Access to all features in studio',
+      'Plus AI-enabled 1-seat workspace',
+      'Parallel generations up to 8 Videos, 16 Images',
+      'Team and pool credit',
+      'API support',
+      'Priority support',
+    ],
+    teamFeatures: [
+      'Shareable elements and fixed CTL',
+      'Drag analytics and branding',
+      'Shared projects with integrated data',
+      'More coming soon',
+    ],
+    unlimitedModels: [
+      { name: 'Nano Banana Pro', badge: 'NEW' },
+      { name: 'Kling 3.0', badge: 'NEW' },
+      'Seedance Lite', 'Nano Banana 2', 'Kling Lite', 'Kling 3.0',
+      'Kling Full HD', 'Kling Full HD Pro', 'Wan 2.2', 'Wan 2.2 Pro', 'Grok T2V',
+    ],
+    payPerUseNote: '360 GPU UNLIMITED & PAY-PER-USE:',
+    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'LTX', 'Turbo Nano', 'Nano Banana 2', 'GPT Image'],
   },
 ];
 
-const COMPARISON = [
-  { feature: 'AI Models', free: '10+', pro: '50+', enterprise: '200+' },
-  { feature: 'Daily Generations', free: '20', pro: '500', enterprise: 'Unlimited' },
-  { feature: 'Max Image Resolution', free: '720p', pro: '4K', enterprise: '4K+' },
-  { feature: 'Max Video Duration', free: '5s', pro: '30s', enterprise: '60s' },
-  { feature: 'Bulk Generate', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: '500 rows', enterprise: <Check size={16} style={{ color: '#00C896' }} /> },
-  { feature: 'Content Ideas', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: 'Unlimited', enterprise: <Check size={16} style={{ color: '#00C896' }} /> },
-  { feature: 'Voice Cloning', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: '5 voices', enterprise: 'Unlimited' },
-  { feature: 'API Access', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: <Check size={16} style={{ color: '#00C896' }} />, enterprise: <Check size={16} style={{ color: '#00C896' }} /> },
-  { feature: 'Priority Support', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: <Check size={16} style={{ color: '#00C896' }} />, enterprise: '24/7 Dedicated' },
-  { feature: 'Custom Brand Kit', free: <X size={16} style={{ color: '#ff4d4d' }} />, pro: <Check size={16} style={{ color: '#00C896' }} />, enterprise: <Check size={16} style={{ color: '#00C896' }} /> },
-  { feature: 'Team Members', free: '1', pro: 'Up to 5', enterprise: 'Unlimited' },
-  { feature: 'Storage', free: '1 GB', pro: '50 GB', enterprise: '1 TB' },
-];
+const COMPARE_DATA = {
+  categories: [
+    {
+      name: 'Video',
+      rows: [
+        { feature: 'Concurrent jobs', free: '1', basic: '1', plus: '2', ultra: '4', business: '10' },
+        { feature: 'Seedance 480 720p', free: '—', basic: '20 videos', plus: '50 videos', ultra: '600 videos', business: '600 videos' },
+        { feature: 'Seedance Full HD 720p', free: '—', basic: '—', plus: '30 videos', ultra: '480 videos', business: '480 videos' },
+      ],
+    },
+    {
+      name: 'Image',
+      rows: [
+        { feature: 'GPT Image 2', free: '—', basic: '—', plus: '∞', ultra: '∞', business: '∞' },
+        { feature: 'Nano Banana Pro', free: '—', basic: '—', plus: '∞', ultra: '∞', business: '∞' },
+        { feature: 'Flux Kontext', free: '5', basic: '20', plus: '100', ultra: '∞', business: '∞' },
+        { feature: 'Midjourney v7', free: '—', basic: '10', plus: '50', ultra: '200', business: '∞' },
+        { feature: 'Seedream 5.0', free: '5', basic: '20', plus: '100', ultra: '∞', business: '∞' },
+        { feature: 'SDXL', free: '∞', basic: '∞', plus: '∞', ultra: '∞', business: '∞' },
+        { feature: 'GPT Image', free: '—', basic: '5', plus: '20', ultra: '∞', business: '∞' },
+      ],
+    },
+    {
+      name: 'Audio',
+      rows: [
+        { feature: 'Text to Voiceover', free: '5 min', basic: '30 min', plus: '120 min', ultra: '∞', business: '∞' },
+        { feature: 'Voice Cloning', free: '—', basic: '—', plus: '3 voices', ultra: '10 voices', business: '∞' },
+        { feature: 'Text to Music', free: '3', basic: '10', plus: '50', ultra: '∞', business: '∞' },
+      ],
+    },
+    {
+      name: 'Features',
+      rows: [
+        { feature: 'Bulk Generate', free: '—', basic: '—', plus: '50 items', ultra: '200 items', business: '∞ items' },
+        { feature: 'Content Ideas', free: '10/day', basic: '50/day', plus: '∞', ultra: '∞', business: '∞' },
+        { feature: 'API Access', free: '—', basic: '—', plus: '✓', ultra: '✓', business: '✓' },
+        { feature: 'Custom Brand Kit', free: '—', basic: '1', plus: '5', ultra: '20', business: '∞' },
+        { feature: 'Storage', free: '1 GB', basic: '10 GB', plus: '50 GB', ultra: '200 GB', business: '2 TB' },
+        { feature: 'Priority Queue', free: '—', basic: '—', plus: '—', ultra: '✓', business: '✓' },
+        { feature: 'Team Seats', free: '1', basic: '1', plus: '1', ultra: '1', business: '5' },
+        { feature: 'Remove Watermark', free: '—', basic: '✓', plus: '✓', ultra: '✓', business: '✓' },
+      ],
+    },
+  ],
+};
 
 const FAQS = [
-  { q: 'Can I upgrade or downgrade anytime?', a: 'Yes. You can change your plan at any time. Upgrades take effect immediately, downgrades apply at the next billing cycle.' },
-  { q: 'Is there a free trial for Pro?', a: 'Yes. We offer a 7-day free trial on the Pro plan with full access to all features. No credit card required.' },
-  { q: 'What payment methods do you accept?', a: 'We accept all major credit cards, PayPal, and cryptocurrency payments through our partners.' },
-  { q: 'Can I use the API on the Free plan?', a: 'API access is available on Pro and Enterprise plans only. The Free plan includes web-based generation.' },
-  { q: 'How many models can I access?', a: 'Free tier includes 10+ models. Pro unlocks 50+ models. Enterprise gives you access to all 200+ models.' },
-  { q: 'Is there a team plan?', a: 'Enterprise plan supports unlimited team members with shared billing, workspaces, and collaboration features.' },
+  { q: 'What are credits?', a: 'Credits are used for each generation. Images use 1\u20133 credits, videos use 10\u201325 depending on model and duration.' },
+  { q: 'Do unused credits roll over?', a: 'No \u2014 credits reset at the start of each billing period.' },
+  { q: 'Can I change my plan?', a: 'Yes. Upgrade or downgrade any time. Changes take effect at the next billing cycle.' },
+  { q: 'Is there a free trial?', a: 'Yes \u2014 sign up free and get 20 credits to try any feature with no credit card required.' },
+  { q: 'What payment methods do you accept?', a: 'We accept all major credit/debit cards via Stripe. Enterprise plans support invoicing.' },
+  { q: 'Can I get a refund?', a: 'We offer a 7-day refund on first purchases. Contact support within 7 days of purchase.' },
 ];
 
+const COL_KEYS = ['free', 'basic', 'plus', 'ultra', 'business'];
+const COL_LABELS = ['Free', 'Basic', 'Plus', 'Ultra', 'Business'];
+
+function CtaColors(col) {
+  const m = { ultra: '#ec4899', business: '#6366f1' };
+  return m[col] || 'var(--bg-input)';
+}
+
+function PriceLabel(col, annual) {
+  const prices = { free: '0', basic: annual ? '4' : '5', plus: annual ? '39' : '55', ultra: annual ? '99' : '148', business: annual ? '162' : '225' };
+  return prices[col];
+}
+
+function PricingCard({ plan, annual }) {
+  const price = annual ? plan.annual : plan.monthly;
+  return (
+    <div style={{
+      background: plan.highlight ? 'linear-gradient(180deg, #1a0020 0%, #0d0015 100%)' : 'var(--bg-card)',
+      border: plan.highlight ? '1px solid rgba(236,72,153,0.4)' : plan.color === '#6366f1' ? '1px solid rgba(99,102,241,0.4)' : '1px solid var(--border-default)',
+      borderRadius: 16, padding: '20px', display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden',
+    }}>
+      {(plan.highlight || plan.color === '#6366f1') && (
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: `linear-gradient(90deg, transparent, ${plan.highlight ? '#ec4899' : '#6366f1'}, transparent)` }} />
+      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+        <span style={{ fontSize: 16, fontWeight: 800, color: plan.highlight ? '#ec4899' : plan.color === '#6366f1' ? '#818cf8' : 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{plan.name}</span>
+        {plan.badge && <span style={{ background: plan.badge.bg, color: plan.badge.color, fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 100, textTransform: 'uppercase', letterSpacing: '0.05em' }}>{plan.badge.text}</span>}
+      </div>
+      <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{plan.tagline}</p>
+      <div style={{ marginBottom: 4 }}>
+        {plan.monthly !== plan.annual && <span style={{ fontSize: 14, color: 'var(--text-muted)', textDecoration: 'line-through', marginRight: 6 }}>${annual ? plan.monthly : plan.annual}</span>}
+        <span style={{ fontSize: 36, fontWeight: 800, color: plan.highlight ? '#ec4899' : plan.color === '#6366f1' ? '#818cf8' : 'var(--text-primary)' }}>${price}</span>
+        <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 4 }}>{annual ? '/mo billed annually' : '/mo billed monthly'}</span>
+      </div>
+      {annual && plan.saveBadge && <div style={{ fontSize: 11, color: '#10b981', marginBottom: 16 }}>{plan.saveBadge}</div>}
+      <button style={{ width: '100%', padding: '10px 0', borderRadius: 8, fontSize: 13, fontWeight: 700, cursor: 'pointer', marginBottom: 16,
+        background: plan.ctaStyle === 'pink' ? '#ec4899' : plan.ctaStyle === 'indigo' ? '#6366f1' : 'transparent',
+        color: plan.ctaStyle === 'outline' ? 'var(--text-primary)' : '#fff',
+        border: plan.ctaStyle === 'outline' ? '1px solid var(--border-default)' : 'none',
+        transition: 'opacity 150ms',
+      }}
+        onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
+        onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+      >{plan.cta}</button>
+      <hr style={{ border: 'none', borderTop: '1px solid var(--border-subtle)', margin: '0 0 14px' }} />
+      <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: 7 }}>
+        {plan.features.map((f, i) => (
+          <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
+            <span style={{ color: '#10b981', fontSize: 14, marginTop: 0, flexShrink: 0 }}>{'\u2713'}</span>
+            {f}
+          </li>
+        ))}
+      </ul>
+      {plan.teamNote && (
+        <div style={{ background: 'var(--bg-elevated)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: 'var(--text-secondary)', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
+          {'\uD83D\uDC65'} {plan.teamNote}
+        </div>
+      )}
+      {plan.teamFeatures && (
+        <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {plan.teamFeatures.map((f, i) => (
+            <li key={i} style={{ fontSize: 11, color: 'var(--text-muted)', paddingLeft: 12, position: 'relative' }}>
+              <span style={{ position: 'absolute', left: 0 }}>{'\u00B7'}</span>
+              {f}
+            </li>
+          ))}
+        </ul>
+      )}
+      <div style={{ marginBottom: 12 }}>
+        <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>7 CLIP UNLIMITED</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+          {plan.unlimitedModels.map((m, i) => {
+            const name = typeof m === 'string' ? m : m.name;
+            const badge = typeof m === 'object' ? m.badge : null;
+            return (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-secondary)' }}>
+                <span>{name}</span>
+                {badge && <span style={{ background: plan.highlight ? '#ec4899' : '#6366f1', color: '#fff', fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3 }}>{badge}</span>}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      <div>
+        <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>{plan.payPerUseNote}</div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+          {plan.payPerUse.map((m, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)' }}>
+              <span>{m}</span>
+              <button style={{
+                background: plan.highlight ? '#ec4899' : plan.color === '#6366f1' ? '#6366f1' : 'var(--bg-input)',
+                color: plan.highlight || plan.color === '#6366f1' ? '#fff' : 'var(--text-muted)',
+                border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 600, cursor: 'pointer',
+              }}>Unlock</button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function PricingPage() {
+  const [annual, setAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
 
   return (
-    <div style={{ background: 'var(--bg-page)', minHeight: '100%', paddingBottom: 80, color: 'var(--text-primary)' }}>
-      <div style={{ textAlign: 'center', padding: '60px 24px 40px' }}>
-        <span style={{ display: 'inline-block', fontSize: 11, fontWeight: 600, color: '#00C896', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
-          Pricing
-        </span>
-        <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 12 }}>
-          Simple, transparent pricing
+    <div style={{ background: 'var(--bg-page)', color: 'var(--text-primary)', paddingBottom: 60, minHeight: '100%' }}>
+
+      {/* SECTION 1 — Promo Banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, #1a0030 0%, #2d0050 40%, #1a0030 100%)',
+        border: '1px solid rgba(168,85,247,0.3)', borderRadius: 16,
+        padding: '20px 28px', margin: '24px 24px 0', position: 'relative',
+        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      }}>
+        <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40%', background: 'radial-gradient(ellipse at right, rgba(168,85,247,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
+        <div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.4)', borderRadius: 100, padding: '3px 10px', fontSize: 10, fontWeight: 700, color: '#c084fc', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
+            {'\u2726'} AI SPECIAL RELEASE
+          </div>
+          <div style={{ fontSize: 'clamp(16px, 2vw, 22px)', fontWeight: 800, color: '#ffffff', lineHeight: 1.3, marginBottom: 4 }}>
+            NANO BANANA PRO & NANO BANANA 2 UNLIMITED.
+          </div>
+          <div style={{ fontSize: 'clamp(14px, 1.5vw, 18px)', fontWeight: 700, color: '#c084fc', marginBottom: 10 }}>
+            KLING 3.0 UNLIMITED WITH 30% OFF
+          </div>
+          <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)' }}>
+            Get Nano Banana 2 & Pro Unlimited on Ultra plan for 7 days after signup. GPU tokens applied.
+          </div>
+        </div>
+        <div style={{ width: 80, height: 80, borderRadius: 16, background: 'rgba(168,85,247,0.15)', border: '1px solid rgba(168,85,247,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32, flexShrink: 0, zIndex: 1 }}>
+          {'\u2726'}
+        </div>
+      </div>
+
+      {/* SECTION 2 — Header */}
+      <div style={{ textAlign: 'center', padding: '40px 24px 24px' }}>
+        <h1 style={{ fontSize: 'clamp(28px, 3vw, 42px)', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', letterSpacing: '0.02em', marginBottom: 8 }}>
+          PICK YOUR PLAN
         </h1>
-        <p style={{ fontSize: 15, color: 'var(--text-muted)', maxWidth: 480, margin: '0 auto', lineHeight: 1.6 }}>
-          Start for free, upgrade when you need more. All plans include access to 200+ AI models.
+        <p style={{ fontSize: 15, color: 'var(--text-secondary)' }}>
+          Scale creativity with higher limits, priority access, and early features
         </p>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 20, maxWidth: 960, margin: '0 auto', padding: '0 24px' }}>
-        {PLANS.map(plan => (
-          <div key={plan.name} style={{
-            position: 'relative',
-            background: plan.popular ? 'rgba(0,200,150,0.06)' : 'var(--bg-card)',
-            border: plan.popular ? '1px solid rgba(0,200,150,0.3)' : '1px solid var(--border-subtle)',
-            borderRadius: 16,
-            padding: '32px 24px',
-            transition: 'all 200ms',
-          }}>
-            {plan.popular && (
-              <div style={{
-                position: 'absolute', top: -12, left: '50%', transform: 'translateX(-50%)',
-                background: '#00C896', color: '#000', fontSize: 10, fontWeight: 700,
-                padding: '3px 14px', borderRadius: 20, textTransform: 'uppercase', letterSpacing: '0.05em',
-              }}>
-                Most Popular
-              </div>
-            )}
-            <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 4 }}>{plan.name}</h3>
-            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 16 }}>{plan.description}</p>
-            <div style={{ marginBottom: 24 }}>
-              <span style={{ fontSize: 36, fontWeight: 800, color: 'var(--text-primary)' }}>{plan.price}</span>
-              <span style={{ fontSize: 13, color: 'var(--text-muted)', marginLeft: 4 }}>{plan.period}</span>
+      {/* SECTION 3 — Billing Toggle */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, marginBottom: 32 }}>
+        <span style={{ fontSize: 14, color: annual ? 'var(--text-muted)' : 'var(--text-primary)', fontWeight: annual ? 400 : 600 }}>Monthly</span>
+        <button onClick={() => setAnnual(a => !a)} style={{ width: 48, height: 26, borderRadius: 100, background: annual ? '#6366f1' : 'var(--bg-input)', border: '1px solid var(--border-default)', position: 'relative', cursor: 'pointer', transition: 'background 200ms' }}>
+          <div style={{ position: 'absolute', top: 3, left: annual ? 24 : 3, width: 18, height: 18, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)', transition: 'left 200ms ease' }} />
+        </button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <span style={{ fontSize: 14, color: annual ? 'var(--text-primary)' : 'var(--text-muted)', fontWeight: annual ? 600 : 400 }}>Annual</span>
+          <span style={{ background: '#10b981', color: '#fff', fontSize: 10, fontWeight: 700, padding: '2px 7px', borderRadius: 100 }}>SAVE 20%</span>
+        </div>
+      </div>
+
+      {/* SECTION 4 — Pricing Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, padding: '0 24px', maxWidth: 1400, margin: '0 auto' }}>
+        {PLANS.map(plan => <PricingCard key={plan.name} plan={plan} annual={annual} />)}
+      </div>
+      <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-muted)', marginTop: 16, padding: '0 24px' }}>
+        Prices exclude VAT and local taxes. All plans are billed in USD. Unlimited usage is subject to our fair use policy. Unused credits expire at end of billing period. Early access features may change before general availability.
+      </p>
+
+      {/* SECTION 5 — Enterprise Block */}
+      <div style={{ maxWidth: 1400, margin: '32px auto', padding: '0 24px' }}>
+        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
+          <div style={{ padding: '32px' }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
+              Everything on Business Plan plus...
             </div>
-            <Link href={plan.href} style={{
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              width: '100%', padding: '10px 0', borderRadius: 8,
-              background: plan.popular ? '#00C896' : 'var(--bg-input)',
-              color: plan.popular ? '#000' : 'var(--text-primary)',
-              fontSize: 13, fontWeight: 700, textDecoration: 'none',
-              marginBottom: 24, transition: 'opacity 150ms',
-            }}
-              onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
-              onMouseLeave={e => e.currentTarget.style.opacity = '1'}
-            >
-              {plan.cta}
-            </Link>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {plan.features.map(f => (
-                <div key={f.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12, color: 'var(--text-secondary)' }}>
-                  {f.value === false ? (
-                    <X size={14} style={{ color: '#ff4d4d', flexShrink: 0 }} />
-                  ) : f.value === true ? (
-                    <Check size={14} style={{ color: '#00C896', flexShrink: 0 }} />
-                  ) : (
-                    <Check size={14} style={{ color: '#00C896', flexShrink: 0 }} />
-                  )}
-                  <span>{f.label}</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--text-primary)', fontWeight: 500 }}>{f.value === true ? 'Yes' : f.value === false ? '—' : f.value}</span>
+            <h2 style={{ fontSize: 'clamp(18px, 2vw, 24px)', fontWeight: 700, color: 'var(--text-primary)', marginBottom: 10, lineHeight: 1.3 }}>
+              Enterprise AI video infrastructure for teams that produce at scale
+            </h2>
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 28 }}>
+              Custom workflows, dedicated support, seamless onboarding, full control at scale, and no trading on your data.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+              {[
+                { icon: '\uD83D\uDEE1\uFE0F', title: 'Security & Compliance', desc: 'SOC 2 Type II compliance, GDPR, CCPA, and custom data retention policies.' },
+                { icon: '\uD83D\uDCCA', title: 'Data & usage rights', desc: 'Full ownership of outputs. We guarantee no training on your generations without explicit consent.' },
+                { icon: '\uD83D\uDC51', title: 'SSO & admin control', desc: 'SAML SSO, user provisioning, usage analytics, and team-level permission controls from a single admin portal.' },
+              ].map((f, i) => (
+                <div key={i}>
+                  <div style={{ fontSize: 22, marginBottom: 8 }}>{f.icon}</div>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 6 }}>{f.title}</div>
+                  <div style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{f.desc}</div>
                 </div>
               ))}
             </div>
           </div>
-        ))}
-      </div>
-
-      <div style={{ maxWidth: 800, margin: '60px auto 0', padding: '0 24px' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', marginBottom: 8 }}>Compare plans in detail</h2>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', textAlign: 'center', marginBottom: 32 }}>Everything you need to know about each plan</p>
-        <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                <th style={{ textAlign: 'left', padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Feature</th>
-                <th style={{ textAlign: 'center', padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Free</th>
-                <th style={{ textAlign: 'center', padding: '12px 16px', color: '#00C896', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Pro</th>
-                <th style={{ textAlign: 'center', padding: '12px 16px', color: '#CCFF00', fontWeight: 600, fontSize: 11, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Enterprise</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPARISON.map((row, i) => (
-                <tr key={i} style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                  <td style={{ padding: '12px 16px', color: 'var(--text-primary)' }}>{row.feature}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-muted)' }}>{row.free}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-primary)' }}>{row.pro}</td>
-                  <td style={{ padding: '12px 16px', textAlign: 'center', color: 'var(--text-primary)' }}>{row.enterprise}</td>
-                </tr>
+          <div style={{ background: 'var(--bg-elevated)', borderLeft: '1px solid var(--border-subtle)', padding: '32px', display: 'flex', flexDirection: 'column' }}>
+            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px', display: 'flex', flexDirection: 'column', gap: 10, flex: 1 }}>
+              {['Unlimited members', 'Custom credit limits', 'Dedicated onboarding', 'Access to all models on the platform', 'Volume-based discounts off the best rates', 'Priority queue for faster bulk processing'].map((f, i) => (
+                <li key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-secondary)' }}>
+                  <span style={{ color: '#10b981', fontSize: 16 }}>{'\u2713'}</span>
+                  {f}
+                </li>
               ))}
-            </tbody>
-          </table>
+            </ul>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <button style={{ width: '100%', padding: '12px 0', background: '#ffffff', color: '#000000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'opacity 150ms' }}>Contact Sales</button>
+              <button style={{ width: '100%', padding: '10px 0', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 13, cursor: 'pointer' }}>Learn More</button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 640, margin: '60px auto 0', padding: '0 24px' }}>
-        <h2 style={{ fontSize: 22, fontWeight: 700, color: 'var(--text-primary)', textAlign: 'center', marginBottom: 32 }}>Frequently asked questions</h2>
+      {/* SECTION 6 — Compare Plans Table */}
+      <div style={{ maxWidth: 1400, margin: '40px auto 24px', padding: '0 24px' }}>
+        <h2 style={{ textAlign: 'center', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 32 }}>
+          COMPARE PLANS
+        </h2>
+        <div style={{ overflowX: 'auto' }}>
+          <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 16, overflow: 'hidden', minWidth: 720 }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr>
+                  <th style={{ padding: '16px 20px', textAlign: 'left', background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Monthly</span>
+                      <button onClick={() => setAnnual(a => !a)} style={{ width: 40, height: 22, borderRadius: 100, background: annual ? '#6366f1' : 'var(--bg-input)', border: '1px solid var(--border-default)', position: 'relative', cursor: 'pointer', flexShrink: 0 }}>
+                        <div style={{ position: 'absolute', top: 2, left: annual ? 20 : 2, width: 16, height: 16, borderRadius: '50%', background: '#fff', transition: 'left 200ms' }} />
+                      </button>
+                      <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>Annual</span>
+                      <span style={{ background: '#10b981', color: '#fff', fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 100 }}>20% OFF</span>
+                    </div>
+                  </th>
+                  {COL_KEYS.map(col => (
+                    <th key={col} style={{ padding: '16px 12px', textAlign: 'center', background: 'var(--bg-elevated)', borderBottom: '1px solid var(--border-subtle)', borderRight: '1px solid var(--border-subtle)', minWidth: 120 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: col === 'ultra' ? '#ec4899' : col === 'business' ? '#818cf8' : 'var(--text-primary)', marginBottom: 4 }}>{COL_LABELS[COL_KEYS.indexOf(col)]}</div>
+                      <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>${PriceLabel(col, annual)}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 10 }}>{col === 'free' ? 'Free forever' : '/mo'}</div>
+                      <button style={{ width: '100%', padding: '7px 0', background: CtaColors(col), color: col === 'ultra' || col === 'business' ? '#fff' : 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Get Plan</button>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARE_DATA.categories.map(cat => [
+                  <tr key={cat.name + '_h'}>
+                    <td colSpan={6} style={{ padding: '14px 20px 6px', background: 'var(--bg-elevated)', fontSize: 12, fontWeight: 700, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.07em', borderTop: '1px solid var(--border-subtle)' }}>{cat.name}</td>
+                  </tr>,
+                  ...cat.rows.map((row, i) => (
+                    <tr key={row.feature}
+                      style={{ background: i % 2 === 0 ? 'transparent' : 'var(--bg-hover)' }}
+                      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+                      onMouseLeave={e => e.currentTarget.style.background = i % 2 === 0 ? 'transparent' : 'var(--bg-hover)'}
+                    >
+                      <td style={{ padding: '10px 20px', fontSize: 13, color: 'var(--text-secondary)', borderRight: '1px solid var(--border-subtle)', borderTop: '1px solid var(--border-subtle)' }}>{row.feature}</td>
+                      {COL_KEYS.map(col => (
+                        <td key={col} style={{ padding: '10px 12px', textAlign: 'center', fontSize: 13, color: row[col] === '\u2014' ? 'var(--text-muted)' : 'var(--text-primary)', borderRight: '1px solid var(--border-subtle)', borderTop: '1px solid var(--border-subtle)' }}>
+                          {row[col] === '\u2713' ? <span style={{ color: '#10b981', fontSize: 16 }}>{'\u2713'}</span>
+                            : row[col] === '\u2014' ? <span style={{ color: 'var(--text-muted)' }}>{'\u2014'}</span>
+                            : row[col] === '\u221E' ? <span style={{ color: col === 'ultra' ? '#ec4899' : col === 'business' ? '#818cf8' : 'var(--text-primary)', fontWeight: 700 }}>{'\u221E'}</span>
+                            : row[col]}
+                        </td>
+                      ))}
+                    </tr>
+                  )),
+                ])}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* SECTION 7 — FAQ */}
+      <div style={{ maxWidth: 720, margin: '40px auto', padding: '0 24px' }}>
+        <h2 style={{ textAlign: 'center', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 32 }}>
+          FREQUENTLY ASKED QUESTIONS
+        </h2>
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           {FAQS.map((faq, i) => (
-            <div key={i} style={{
-              background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 12, overflow: 'hidden',
-            }}>
-              <button
-                onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                style={{
-                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '16px 20px', border: 'none', background: 'transparent', cursor: 'pointer',
-                  color: 'var(--text-primary)', fontSize: 13, fontWeight: 500, textAlign: 'left',
-                }}
-              >
+            <div key={i} style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 12, overflow: 'hidden' }}>
+              <button onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                style={{ width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', border: 'none', background: 'transparent', cursor: 'pointer', color: 'var(--text-primary)', fontSize: 13, fontWeight: 500, textAlign: 'left' }}>
                 <span>{faq.q}</span>
                 <ChevronDown size={16} style={{ color: 'var(--text-muted)', transform: openFaq === i ? 'rotate(180deg)' : 'none', transition: 'transform 200ms', flexShrink: 0 }} />
               </button>
-              {openFaq === i && (
-                <div style={{ padding: '0 20px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7 }}>
-                  {faq.a}
-                </div>
-              )}
+              {openFaq === i && <div style={{ padding: '0 20px 16px', fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.7 }}>{faq.a}</div>}
             </div>
           ))}
         </div>
       </div>
 
-      <div style={{ textAlign: 'center', padding: '60px 24px 0' }}>
-        <p style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>Still have questions?</p>
-        <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>Contact our sales team for a custom plan</p>
-        <Link href="/studio/home" style={{
-          display: 'inline-flex', alignItems: 'center', gap: 6,
-          padding: '10px 24px', borderRadius: 8,
-          background: '#00C896', color: '#000', fontSize: 13, fontWeight: 700, textDecoration: 'none',
-        }}>
-          Contact Sales
-        </Link>
-      </div>
     </div>
   );
 }
