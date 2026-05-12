@@ -44,7 +44,9 @@ function getApiKey(request) {
   const headerKey = request.headers.get('x-api-key');
   if (headerKey) return headerKey;
   const cookieKey = request.cookies.get('muapi_key')?.value;
-  return cookieKey || null;
+  if (cookieKey) return cookieKey;
+  const envKey = process.env.MUAPI_API_KEY || process.env.NEXT_PUBLIC_MUAPI_API_KEY;
+  return envKey || null;
 }
 
 export async function middleware(request) {

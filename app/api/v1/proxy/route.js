@@ -1,88 +1,9 @@
 import { NextResponse } from 'next/server';
 
 const PROVIDER_CONFIGS = {
-  'kie-ai': {
-    base: 'https://api.kie.ai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}`, 'x-api-key': key }),
-  },
-  'openrouter': {
-    base: 'https://openrouter.ai/api/v1',
-    auth: (key) => ({
-      'Authorization': `Bearer ${key}`,
-      'HTTP-Referer': 'https://creatify.ai',
-      'X-Title': 'Creatify AI',
-    }),
-  },
-  'elevenlabs': {
-    base: 'https://api.elevenlabs.io/v1',
-    auth: (key) => ({ 'xi-api-key': key }),
-  },
-  'tavily': {
-    base: 'https://api.tavily.com',
-    auth: () => ({}),
-    keyInBody: true,
-  },
-  'serpapi': {
-    base: 'https://serpapi.com',
-    auth: () => ({}),
-    keyInQuery: 'api_key',
-  },
-  'openai': {
-    base: 'https://api.openai.com/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'anthropic': {
-    base: 'https://api.anthropic.com/v1',
-    auth: (key) => ({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }),
-  },
-  'stability': {
-    base: 'https://api.stability.ai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'replicate': {
-    base: 'https://api.replicate.com/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'google-ai': {
-    base: 'https://generativelanguage.googleapis.com/v1',
-    auth: (key) => ({}),
-    keyInQuery: 'key',
-  },
-  'huggingface': {
-    base: 'https://api-inference.huggingface.co',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'together': {
-    base: 'https://api.together.xyz/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'deepseek': {
-    base: 'https://api.deepseek.com/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'mistral': {
-    base: 'https://api.mistral.ai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'cohere': {
-    base: 'https://api.cohere.ai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'perplexity': {
-    base: 'https://api.perplexity.ai',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'groq': {
-    base: 'https://api.groq.com/openai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'fireworks': {
-    base: 'https://api.fireworks.ai/inference/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
-  },
-  'lemonfox': {
-    base: 'https://api.lemonfox.ai/v1',
-    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  'muapi': {
+    base: 'https://api.muapi.ai',
+    auth: (key) => ({ 'x-api-key': key }),
   },
 };
 
