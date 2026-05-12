@@ -26,9 +26,9 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
     const estHeight = Math.min(options.length * perItem + 24, 360)
     const spaceBelow = window.innerHeight - rect.bottom - 20
     const spaceAbove = rect.top - 20
-    const shouldDropUp = spaceBelow < estHeight && spaceAbove > estHeight
+    const shouldDropUp = spaceBelow < estHeight || spaceAbove > spaceBelow
     setPos({
-      top: shouldDropUp ? rect.top - Math.min(estHeight, 360) - 8 : rect.bottom + 8,
+      top: shouldDropUp ? Math.max(rect.top - Math.min(estHeight, 360) - 8, 8) : rect.bottom + 8,
       left: Math.min(rect.left, window.innerWidth - (rect.width + 20)),
       width: Math.max(rect.width, 180),
       dropUp: shouldDropUp,
@@ -56,9 +56,10 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
     const pH = panel.scrollHeight
     const spaceBelow = window.innerHeight - btnRect.bottom - 20
     const spaceAbove = btnRect.top - 20
-    if (spaceBelow < pH && spaceAbove > pH) {
-      setPos(prev => ({ ...prev, top: btnRect.top - Math.min(pH, 360) - 8, dropUp: true }))
-    } else if (spaceBelow >= pH) {
+    if (spaceBelow < pH || spaceAbove > spaceBelow) {
+      const upTop = btnRect.top - Math.min(pH, 360) - 8
+      setPos(prev => ({ ...prev, top: Math.max(upTop, 8), dropUp: true }))
+    } else {
       setPos(prev => ({ ...prev, top: btnRect.bottom + 8, dropUp: false }))
     }
   }, [open, actualHeight])
