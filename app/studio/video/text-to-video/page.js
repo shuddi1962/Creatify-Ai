@@ -5,6 +5,7 @@ import { Video, Image } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import ResultsGrid from '@/components/studio/ResultsGrid';
 import * as muapi from '@/packages/studio/src/muapi';
 
 const ASPECT_PRESETS = [
@@ -56,6 +57,17 @@ export default function TextToVideoPage() {
     }
   };
 
+  const getApiKey = async () => {
+    const local = localStorage.getItem('muapi_key');
+    if (local) return local;
+    try {
+      const res = await fetch('/api/v1/shared-key?provider=muapi');
+      const data = await res.json();
+      if (data.key) return data.key;
+    } catch {}
+    return null;
+  };
+
   const handleGenerate = async () => {
     if (!prompt.trim() && !imageFile) {
       toast.error('Please enter a prompt or upload an image');
@@ -63,7 +75,7 @@ export default function TextToVideoPage() {
     }
     setLoading(true);
     try {
-      const apiKey = localStorage.getItem('muapi_key');
+      const apiKey = await getApiKey();
       if (apiKey) {
         const params = {
           model, prompt: prompt || 'Animate this image',
@@ -81,9 +93,7 @@ export default function TextToVideoPage() {
         }
         toast.success('Video generated successfully!');
       } else {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt, type: 'video' }]);
-        toast.success('Demo: Video generated!');
+        toast.error('No API key configured. Ask the admin to add a Muapi key.');
       }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
@@ -170,6 +180,13 @@ export default function TextToVideoPage() {
                 </div>
               )}
             </div>
+            {results.length > 0 && (
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: 40 }}>
+                <div style={{ width: '100%', maxWidth: 800 }}>
+                  <ResultsGrid results={results} columns={1} />
+                </div>
+              </div>
+            )}
           </StudioCanvas>
         }
         directorBar={

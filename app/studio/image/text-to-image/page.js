@@ -132,9 +132,9 @@ export default function TextToImagePage() {
               </ControlButton>
             </div>
             {results.length > 0 && (
-              <div style={{ position: 'absolute', bottom: 60, left: 0, right: 0, display: 'flex', justifyContent: 'center', zIndex: 2 }}>
-                <div style={{ maxWidth: 500, width: '100%', padding: '0 24px' }}>
-                  <ResultsGrid results={results} columns={parseInt(numImages) > 2 ? 2 : 3} />
+              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: 40 }}>
+                <div style={{ width: '100%', maxWidth: 800 }}>
+                  <ResultsGrid results={results} columns={Math.min(results.length, 2)} />
                 </div>
               </div>
             )}
