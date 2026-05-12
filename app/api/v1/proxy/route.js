@@ -1,61 +1,148 @@
 import { NextResponse } from 'next/server';
 
-const PROVIDERS = {
-  'kie-ai': { base: 'https://api.kie.ai/v1' },
-  'openrouter': { base: 'https://openrouter.ai/api/v1' },
-  'elevenlabs': { base: 'https://api.elevenlabs.io/v1' },
-  'tavily': { base: 'https://api.tavily.com' },
-  'serpapi': { base: 'https://serpapi.com' },
+const PROVIDER_CONFIGS = {
+  'kie-ai': {
+    base: 'https://api.kie.ai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}`, 'x-api-key': key }),
+  },
+  'openrouter': {
+    base: 'https://openrouter.ai/api/v1',
+    auth: (key) => ({
+      'Authorization': `Bearer ${key}`,
+      'HTTP-Referer': 'https://creatify.ai',
+      'X-Title': 'Creatify AI',
+    }),
+  },
+  'elevenlabs': {
+    base: 'https://api.elevenlabs.io/v1',
+    auth: (key) => ({ 'xi-api-key': key }),
+  },
+  'tavily': {
+    base: 'https://api.tavily.com',
+    auth: () => ({}),
+    keyInBody: true,
+  },
+  'serpapi': {
+    base: 'https://serpapi.com',
+    auth: () => ({}),
+    keyInQuery: 'api_key',
+  },
+  'openai': {
+    base: 'https://api.openai.com/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'anthropic': {
+    base: 'https://api.anthropic.com/v1',
+    auth: (key) => ({ 'x-api-key': key, 'anthropic-version': '2023-06-01' }),
+  },
+  'stability': {
+    base: 'https://api.stability.ai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'replicate': {
+    base: 'https://api.replicate.com/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'google-ai': {
+    base: 'https://generativelanguage.googleapis.com/v1',
+    auth: (key) => ({}),
+    keyInQuery: 'key',
+  },
+  'huggingface': {
+    base: 'https://api-inference.huggingface.co',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'together': {
+    base: 'https://api.together.xyz/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'deepseek': {
+    base: 'https://api.deepseek.com/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'mistral': {
+    base: 'https://api.mistral.ai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'cohere': {
+    base: 'https://api.cohere.ai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'perplexity': {
+    base: 'https://api.perplexity.ai',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'groq': {
+    base: 'https://api.groq.com/openai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'fireworks': {
+    base: 'https://api.fireworks.ai/inference/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
+  'lemonfox': {
+    base: 'https://api.lemonfox.ai/v1',
+    auth: (key) => ({ 'Authorization': `Bearer ${key}` }),
+  },
 };
+
+async function getProviderKey(provider) {
+  // 1. Check environment variables first
+  const envKey = process.env[`${provider.toUpperCase().replace(/-/g, '_')}_API_KEY`]
+    || process.env[`NEXT_PUBLIC_${provider.toUpperCase().replace(/-/g, '_')}_API_KEY`];
+  if (envKey) return envKey;
+
+  // 2. Check Supabase admin_provider_keys table
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (supabaseUrl && supabaseKey) {
+    try {
+      const res = await fetch(
+        `${supabaseUrl}/rest/v1/admin_provider_keys?select=encrypted_key&provider=eq.${provider}&is_active=eq.true&limit=1`,
+        { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
+      );
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.length > 0 && data[0].encrypted_key) return data[0].encrypted_key;
+      }
+    } catch { /* db unavailable */ }
+  }
+
+  return '';
+}
 
 export async function POST(request) {
   let body;
   try { body = await request.json(); } catch { body = {}; }
   const { provider, endpoint, method = 'POST', data } = body;
-
   if (!provider || !endpoint) {
     return NextResponse.json({ error: 'Missing provider or endpoint' }, { status: 400 });
   }
 
-  const config = PROVIDERS[provider];
-  if (!config) return NextResponse.json({ error: `Unknown provider: ${provider}` }, { status: 400 });
+  const config = PROVIDER_CONFIGS[provider];
+  if (!config) {
+    return NextResponse.json({ error: `Unknown provider '${provider}'. Available: ${Object.keys(PROVIDER_CONFIGS).join(', ')}` }, { status: 400 });
+  }
 
   try {
-    const apiKey = process.env[`${provider.toUpperCase().replace(/-/g, '_')}_API_KEY`]
-      || process.env[`NEXT_PUBLIC_${provider.toUpperCase().replace(/-/g, '_')}_API_KEY`]
-      || '';
-
-    const headers = { 'Content-Type': 'application/json' };
-    
-    switch (provider) {
-      case 'kie-ai':
-        headers['Authorization'] = `Bearer ${apiKey}`;
-        headers['x-api-key'] = apiKey;
-        break;
-      case 'openrouter':
-        headers['Authorization'] = `Bearer ${apiKey}`;
-        headers['HTTP-Referer'] = 'https://creatify.ai';
-        headers['X-Title'] = 'Creatify AI';
-        break;
-      case 'elevenlabs':
-        headers['xi-api-key'] = apiKey;
-        break;
-      case 'tavily':
-        // API key goes in body for Tavily
-        break;
-      case 'serpapi':
-        // API key goes in query params
-        break;
+    const apiKey = await getProviderKey(provider);
+    if (!apiKey) {
+      return NextResponse.json({
+        error: `No API key configured for ${provider}`,
+        hint: `Add it in Admin Panel → API Keys, or set ${provider.toUpperCase().replace(/-/g, '_')}_API_KEY in .env`,
+      }, { status: 400 });
     }
+
+    const headers = { 'Content-Type': 'application/json', ...config.auth(apiKey) };
 
     let url = `${config.base}${endpoint}`;
     let fetchData = data;
 
-    if (provider === 'tavily' && apiKey) {
+    if (config.keyInBody) {
       fetchData = { ...data, api_key: apiKey };
-    } else if (provider === 'serpapi') {
+    } else if (config.keyInQuery) {
       const sep = url.includes('?') ? '&' : '?';
-      url = `${url}${sep}api_key=${apiKey}`;
+      url = `${url}${sep}${config.keyInQuery}=${apiKey}`;
     }
 
     const response = await fetch(url, {
@@ -65,17 +152,18 @@ export async function POST(request) {
       signal: AbortSignal.timeout(30000),
     });
 
-    const result = await response.json();
-    return NextResponse.json(result, { status: response.status });
+    const contentType = response.headers.get('content-type');
+    if (contentType?.includes('application/json')) {
+      const result = await response.json();
+      return NextResponse.json(result, { status: response.status });
+    }
+    const text = await response.text();
+    return NextResponse.json({ raw: text }, { status: response.status });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
 
 export async function GET(request) {
-  const { searchParams } = new URL(request.url);
-  const provider = searchParams.get('provider');
-  const endpoint = searchParams.get('endpoint');
-
   return POST(request);
 }
