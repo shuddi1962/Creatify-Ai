@@ -264,7 +264,7 @@ export default function StudioShell({ children }) {
         background: 'var(--bg-topbar)',
         borderBottom: '1px solid var(--border-subtle)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px', zIndex: 100, position: 'sticky', top: 0
+        padding: '0 16px', zIndex: 99999, position: 'sticky', top: 0
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
