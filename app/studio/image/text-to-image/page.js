@@ -7,8 +7,8 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import StylePresets from '@/components/studio/StylePresets';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import * as muapi from '@/packages/studio/src/muapi';
 import { IMAGE_MODELS, getModelCost, getModelQuality, getModelBadge } from '@/lib/modelsConfig';
+import { generateImage as proxyGenerate } from '@/lib/generationUtils';
 
 const STYLES = [
   'Photorealistic', 'Cinematic', 'Anime', 'Digital Art',
@@ -61,32 +61,15 @@ export default function TextToImagePage() {
     setLoading(true);
     try {
       const m = getModel(model);
-      let apiKey = localStorage.getItem('muapi_key');
-      if (!apiKey) {
-        const res = await fetch('/api/v1/shared-key?provider=muapi');
-        const data = await res.json();
-        apiKey = data.key;
-      }
-      if (apiKey) {
-        const promises = Array(parseInt(numImages)).fill(null).map((_, i) =>
-          muapi.generateImage(apiKey, {
-            model: m.id,
-            prompt: prompt + (style !== 'Photorealistic' ? `, ${style} style` : ''),
-            aspect_ratio: aspectRatio,
-            quality: quality.toLowerCase(),
-          })
-        );
-        const responses = await Promise.all(promises);
-        setResults(responses.map((r, i) => ({
-          id: `result-${Date.now()}-${i}`,
-          url: r.url,
-          prompt: prompt,
-          type: 'image'
-        })));
-        toast.success('Image generated successfully!');
-      } else {
-        toast.error('No API key configured. Ask admin to add a Muapi key.');
-      }
+      const results = await proxyGenerate({
+        model: m.endpoint || m.id,
+        prompt: prompt + (style !== 'Photorealistic' ? `, ${style} style` : ''),
+        aspect_ratio: aspectRatio,
+        quality: quality.toLowerCase(),
+        numImages: parseInt(numImages),
+      });
+      setResults(results);
+      toast.success('Image generated successfully!');
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {
