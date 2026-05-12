@@ -1,13 +1,12 @@
 'use client'
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 
 export default function StudioDropdown({ label, value, onChange, options, theme }) {
   const [open, setOpen] = useState(false)
-  const [dropUp, setDropUp] = useState(false)
+  const [pos, setPos] = useState({ top: 0, left: 0, width: 160, dropUp: false })
   const ref = useRef(null)
   const btnRef = useRef(null)
-  const panelRef = useRef(null)
 
   useEffect(() => {
     function handleClick(e) {
@@ -17,21 +16,29 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
-  const handleToggle = () => {
-    const next = !open
-    if (next) {
-      requestAnimationFrame(() => {
-        if (btnRef.current) {
-          const rect = btnRef.current.getBoundingClientRect()
-          const spaceBelow = window.innerHeight - rect.bottom - 16
-          const spaceAbove = rect.top - 16
-          const estimatedHeight = Math.min(options.length * 48 + 24, 320)
-          setDropUp(spaceBelow < estimatedHeight && spaceAbove > spaceBelow)
-        }
-      })
+  const measureAndOpen = useCallback(() => {
+    if (!btnRef.current) return
+    const rect = btnRef.current.getBoundingClientRect()
+    const estHeight = Math.min(options.length * 48 + 24, 320)
+    const spaceBelow = window.innerHeight - rect.bottom - 16
+    const spaceAbove = rect.top - 16
+    const shouldDropUp = spaceBelow < estHeight && spaceAbove > spaceBelow
+    setPos({
+      top: shouldDropUp ? rect.top - estHeight - 6 : rect.bottom + 6,
+      left: Math.min(rect.left, window.innerWidth - 320),
+      width: Math.max(rect.width, 160),
+      dropUp: shouldDropUp,
+    })
+    setOpen(true)
+  }, [options])
+
+  useEffect(() => {
+    if (open) {
+      const onScroll = () => measureAndOpen()
+      window.addEventListener('scroll', onScroll, true)
+      return () => window.removeEventListener('scroll', onScroll, true)
     }
-    setOpen(next)
-  }
+  }, [open, measureAndOpen])
 
   const isDark = theme === 'dark' || (!theme && typeof window !== 'undefined' && document.documentElement.getAttribute('data-theme') !== 'light')
 
@@ -51,7 +58,7 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
 
       <button
         ref={btnRef}
-        onClick={handleToggle}
+        onClick={() => open ? setOpen(false) : measureAndOpen()}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -87,13 +94,11 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
 
       {open && (
         <div
-          ref={panelRef}
           style={{
             position: 'fixed',
-            top: dropUp ? undefined : btnRef.current ? btnRef.current.getBoundingClientRect().bottom + 6 : undefined,
-            bottom: dropUp && btnRef.current ? window.innerHeight - btnRef.current.getBoundingClientRect().top + 6 : undefined,
-            left: btnRef.current ? Math.min(btnRef.current.getBoundingClientRect().left, window.innerWidth - 320) : 0,
-            minWidth: Math.max(160, btnRef.current ? btnRef.current.offsetWidth : 160),
+            top: pos.top,
+            left: pos.left,
+            minWidth: pos.width,
             maxWidth: 320,
             maxHeight: 320,
             overflowY: 'auto',
@@ -125,12 +130,10 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
                   transition: 'background 120ms',
                 }}
                 onMouseEnter={e => {
-                  if (!isSelected)
-                    e.currentTarget.style.background = 'var(--bg-hover)'
+                  if (!isSelected) e.currentTarget.style.background = 'var(--bg-hover)'
                 }}
                 onMouseLeave={e => {
-                  if (!isSelected)
-                    e.currentTarget.style.background = 'transparent'
+                  if (!isSelected) e.currentTarget.style.background = 'transparent'
                 }}
               >
                 <div>
