@@ -1,5 +1,7 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
+import { useAuth } from '@/src/lib/AuthProvider';
 import { PanelLeftClose } from 'lucide-react';
 
 export function LeftPanel({ children, title = 'Tools', onHide }) {
@@ -92,6 +94,18 @@ export function DirectorBar({ children, title }) {
 }
 
 export function GenerateButton({ children, ...props }) {
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleClick = (e) => {
+    if (!user) {
+      e.preventDefault();
+      router.push('/studio/signup');
+      return;
+    }
+    if (props.onClick) props.onClick(e);
+  };
+
   return (
     <button style={{
       background: '#CCFF00', border: 'none', borderRadius: 10,
@@ -99,7 +113,7 @@ export function GenerateButton({ children, ...props }) {
       color: '#000', cursor: 'pointer',
       display: 'flex', alignItems: 'center', gap: 6,
       whiteSpace: 'nowrap', flexShrink: 0,
-    }} {...props}>
+    }} {...props} onClick={handleClick}>
       {children || 'GENERATE'}
     </button>
   );

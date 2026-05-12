@@ -5,10 +5,10 @@ import { ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const PLAN_HREF = {
-  'BASIC': '/studio/home',
-  'PLUS': '/studio/checkout?plan=plus',
-  'ULTRA': '/studio/checkout?plan=ultra',
-  'BUSINESS': '/studio/checkout?plan=business',
+  'BASIC': '/studio/signup?plan=free',
+  'PLUS': '/studio/signup?plan=plus',
+  'ULTRA': '/studio/signup?plan=ultra',
+  'BUSINESS': '/studio/signup?plan=business',
 };
 
 const PLANS = [
