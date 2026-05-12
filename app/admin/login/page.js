@@ -6,15 +6,43 @@ import { useAuth } from '@/src/lib/AuthProvider';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const { signIn, user } = useAuth();
+  const { signIn, user, loading: authLoading, signOut } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  if (authLoading) return null;
+
   if (user) {
-    router.replace('/admin/dashboard');
-    return null;
+    return (
+      <div className="h-screen bg-[#0A0F1E] flex items-center justify-center p-4">
+        <div className="w-full max-w-sm text-center">
+          <div className="w-12 h-12 bg-[#7C3AED] rounded-xl flex items-center justify-center mx-auto mb-4">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          </div>
+          <h1 className="text-xl font-bold text-[#F9FAFB] mb-2">Already Signed In</h1>
+          <p className="text-sm text-[#9CA3AF] mb-6">
+            Signed in as <strong>{user.email}</strong>. 
+            You need admin privileges to access this dashboard.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <button
+              onClick={async () => { await signOut(); }}
+              className="px-6 py-2.5 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm font-medium hover:bg-red-500/20 transition-all"
+            >
+              Sign Out
+            </button>
+            <button
+              onClick={() => router.push('/admin/dashboard')}
+              className="px-6 py-2.5 rounded-lg bg-[#7C3AED] text-white text-sm font-bold hover:bg-[#6D28D9] transition-all"
+            >
+              Try Dashboard
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const handleLogin = async (e) => {
