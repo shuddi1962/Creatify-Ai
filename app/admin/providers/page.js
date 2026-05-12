@@ -5,26 +5,166 @@ import { supabase } from '@/src/lib/supabase';
 import toast from 'react-hot-toast';
 
 const PREDEFINED_PROVIDERS = [
-  { name: 'muapi', display_name: 'Muapi AI', base_url: 'https://api.muapi.ai', docs: 'https://muapi.ai/docs', key_placeholder: 'Enter your Muapi API key (mk_...)', key_format: 'mk_' },
-  { name: 'openrouter', display_name: 'OpenRouter', base_url: 'https://openrouter.ai/api/v1', docs: 'https://openrouter.ai/docs', key_placeholder: 'Enter your OpenRouter API key (sk-or-...)', key_format: 'sk-or-' },
-  { name: 'kie-ai', display_name: 'Kie AI', base_url: 'https://api.kie.ai/v1', docs: 'https://kie.ai/docs', key_placeholder: 'Enter your Kie AI API key', key_format: '' },
-  { name: 'elevenlabs', display_name: 'ElevenLabs', base_url: 'https://api.elevenlabs.io/v1', docs: 'https://elevenlabs.io/docs', key_placeholder: 'Enter your ElevenLabs API key', key_format: '' },
-  { name: 'openai', display_name: 'OpenAI', base_url: 'https://api.openai.com/v1', docs: 'https://platform.openai.com/api-keys', key_placeholder: 'Enter your OpenAI API key (sk-...)', key_format: 'sk-' },
-  { name: 'anthropic', display_name: 'Anthropic (Claude)', base_url: 'https://api.anthropic.com/v1', docs: 'https://console.anthropic.com/account/keys', key_placeholder: 'Enter your Anthropic API key (sk-ant-...)', key_format: 'sk-ant-' },
-  { name: 'stability', display_name: 'Stability AI', base_url: 'https://api.stability.ai/v1', docs: 'https://platform.stability.ai/account/keys', key_placeholder: 'Enter your Stability AI API key', key_format: '' },
-  { name: 'replicate', display_name: 'Replicate', base_url: 'https://api.replicate.com/v1', docs: 'https://replicate.com/account/api-tokens', key_placeholder: 'Enter your Replicate API token (r8_...)', key_format: 'r8_' },
-  { name: 'deepseek', display_name: 'DeepSeek', base_url: 'https://api.deepseek.com/v1', docs: 'https://platform.deepseek.com/api_keys', key_placeholder: 'Enter your DeepSeek API key (sk-...)', key_format: 'sk-' },
-  { name: 'mistral', display_name: 'Mistral AI', base_url: 'https://api.mistral.ai/v1', docs: 'https://console.mistral.ai/api-keys/', key_placeholder: 'Enter your Mistral API key', key_format: '' },
-  { name: 'cohere', display_name: 'Cohere', base_url: 'https://api.cohere.ai/v1', docs: 'https://dashboard.cohere.com/api-keys', key_placeholder: 'Enter your Cohere API key', key_format: '' },
-  { name: 'perplexity', display_name: 'Perplexity', base_url: 'https://api.perplexity.ai', docs: 'https://www.perplexity.ai/settings/api', key_placeholder: 'Enter your Perplexity API key (pplx-...)', key_format: 'pplx-' },
-  { name: 'groq', display_name: 'Groq', base_url: 'https://api.groq.com/openai/v1', docs: 'https://console.groq.com/keys', key_placeholder: 'Enter your Groq API key (gsk_...)', key_format: 'gsk_' },
-  { name: 'together', display_name: 'Together AI', base_url: 'https://api.together.xyz/v1', docs: 'https://api.together.xyz/settings/api-keys', key_placeholder: 'Enter your Together AI API key', key_format: '' },
-  { name: 'fireworks', display_name: 'Fireworks AI', base_url: 'https://api.fireworks.ai/inference/v1', docs: 'https://fireworks.ai/api-keys', key_placeholder: 'Enter your Fireworks API key', key_format: '' },
-  { name: 'tavily', display_name: 'Tavily AI', base_url: 'https://api.tavily.com', docs: 'https://tavily.com/docs', key_placeholder: 'Enter your Tavily API key (tvly-...)', key_format: 'tvly-' },
-  { name: 'serpapi', display_name: 'SerpAPI (Google Trends)', base_url: 'https://serpapi.com', docs: 'https://serpapi.com/manage-api-key', key_placeholder: 'Enter your SerpAPI key', key_format: '' },
-  { name: 'huggingface', display_name: 'HuggingFace', base_url: 'https://api-inference.huggingface.co', docs: 'https://huggingface.co/settings/tokens', key_placeholder: 'Enter your HuggingFace token (hf_...)', key_format: 'hf_' },
-  { name: 'google-ai', display_name: 'Google AI (Gemini)', base_url: 'https://generativelanguage.googleapis.com/v1', docs: 'https://makersuite.google.com/app/apikey', key_placeholder: 'Enter your Google AI API key (AIza...)', key_format: 'AIza' },
-  { name: 'lemonfox', display_name: 'LemonFox', base_url: 'https://api.lemonfox.ai/v1', docs: 'https://lemonfox.ai/docs', key_placeholder: 'Enter your LemonFox API key', key_format: '' },
+  {
+    name: 'muapi', display_name: 'Muapi AI',
+    base_url: 'https://api.muapi.ai',
+    get_key_url: 'https://muapi.ai',
+    key_placeholder: 'Paste your Muapi API key (starts with mk_)',
+    key_format: 'mk_',
+    description: 'Primary generation provider — powers all image, video, lipsync, and AI model inference. Required for core generation features.'
+  },
+  {
+    name: 'openrouter', display_name: 'OpenRouter',
+    base_url: 'https://openrouter.ai/api/v1',
+    get_key_url: 'https://openrouter.ai/keys',
+    key_placeholder: 'Paste your OpenRouter API key (starts with sk-or-)',
+    key_format: 'sk-or-',
+    description: 'Unified access to 200+ LLMs (GPT-4, Claude, Gemini, Llama, Mistral). Used for agent conversations, script generation, and AI writing features.'
+  },
+  {
+    name: 'kie-ai', display_name: 'Kie AI',
+    base_url: 'https://api.kie.ai/v1',
+    get_key_url: 'https://kie.ai',
+    key_placeholder: 'Paste your Kie AI API key',
+    key_format: '',
+    description: 'Alternative AI model provider for image and video generation. Used as a fallback generation provider.'
+  },
+  {
+    name: 'openai', display_name: 'OpenAI',
+    base_url: 'https://api.openai.com/v1',
+    get_key_url: 'https://platform.openai.com/api-keys',
+    key_placeholder: 'Paste your OpenAI API key (starts with sk-)',
+    key_format: 'sk-',
+    description: 'GPT-4o, GPT-4, DALL-E 3, and Whisper models. Powers AI chat agents, image generation (GPT Image), and audio transcription.'
+  },
+  {
+    name: 'anthropic', display_name: 'Anthropic (Claude)',
+    base_url: 'https://api.anthropic.com/v1',
+    get_key_url: 'https://console.anthropic.com/settings/keys',
+    key_placeholder: 'Paste your Anthropic API key (starts with sk-ant-)',
+    key_format: 'sk-ant-',
+    description: 'Claude 3.5 Sonnet & Haiku models. Used for AI agent conversations, content analysis, and advanced reasoning tasks.'
+  },
+  {
+    name: 'elevenlabs', display_name: 'ElevenLabs',
+    base_url: 'https://api.elevenlabs.io/v1',
+    get_key_url: 'https://elevenlabs.io/app/settings/api-keys',
+    key_placeholder: 'Paste your ElevenLabs API key',
+    key_format: '',
+    description: 'Industry-leading text-to-speech and voice cloning. Powers voiceover generation, dubbing, and talking avatar voice synthesis.'
+  },
+  {
+    name: 'stability', display_name: 'Stability AI',
+    base_url: 'https://api.stability.ai/v1',
+    get_key_url: 'https://platform.stability.ai/account/keys',
+    key_placeholder: 'Paste your Stability AI API key',
+    key_format: '',
+    description: 'Stable Diffusion models for image generation, image-to-image, and editing. Alternative image generation provider.'
+  },
+  {
+    name: 'replicate', display_name: 'Replicate',
+    base_url: 'https://api.replicate.com/v1',
+    get_key_url: 'https://replicate.com/account/api-tokens',
+    key_placeholder: 'Paste your Replicate API token (starts with r8_)',
+    key_format: 'r8_',
+    description: 'Cloud platform running open-source models. Access to Flux, SDXL, music generation, and hundreds of community models.'
+  },
+  {
+    name: 'deepseek', display_name: 'DeepSeek',
+    base_url: 'https://api.deepseek.com/v1',
+    get_key_url: 'https://platform.deepseek.com/api_keys',
+    key_placeholder: 'Paste your DeepSeek API key (starts with sk-)',
+    key_format: 'sk-',
+    description: 'Powerful open-source LLMs (DeepSeek-V3, DeepSeek-R1). Cost-effective alternative for AI agent conversations and code generation.'
+  },
+  {
+    name: 'mistral', display_name: 'Mistral AI',
+    base_url: 'https://api.mistral.ai/v1',
+    get_key_url: 'https://console.mistral.ai/api-keys/',
+    key_placeholder: 'Paste your Mistral API key',
+    key_format: '',
+    description: 'Mistral Large, Small, and Codestral models. Fast and efficient LLMs for agent tasks and content generation.'
+  },
+  {
+    name: 'cohere', display_name: 'Cohere',
+    base_url: 'https://api.cohere.ai/v1',
+    get_key_url: 'https://dashboard.cohere.com/api-keys',
+    key_placeholder: 'Paste your Cohere API key',
+    key_format: '',
+    description: 'Enterprise-focused LLMs with strong retrieval-augmented generation (RAG). Used for content search and embedding features.'
+  },
+  {
+    name: 'perplexity', display_name: 'Perplexity',
+    base_url: 'https://api.perplexity.ai',
+    get_key_url: 'https://www.perplexity.ai/settings/api',
+    key_placeholder: 'Paste your Perplexity API key (starts with pplx-)',
+    key_format: 'pplx-',
+    description: 'Real-time web search + LLM. Powers the competitor analyzer, trend research, and content research features with up-to-date information.'
+  },
+  {
+    name: 'groq', display_name: 'Groq',
+    base_url: 'https://api.groq.com/openai/v1',
+    get_key_url: 'https://console.groq.com/keys',
+    key_placeholder: 'Paste your Groq API key (starts with gsk_)',
+    key_format: 'gsk_',
+    description: 'Ultra-fast inference API for open-source LLMs (Llama, Mixtral, Gemma). Used for real-time agent responses where speed matters.'
+  },
+  {
+    name: 'together', display_name: 'Together AI',
+    base_url: 'https://api.together.xyz/v1',
+    get_key_url: 'https://api.together.xyz/settings/api-keys',
+    key_placeholder: 'Paste your Together AI API key',
+    key_format: '',
+    description: 'Cloud platform for open-source models. Access to Llama, Mistral, DeepSeek, and image generation models as alternative providers.'
+  },
+  {
+    name: 'fireworks', display_name: 'Fireworks AI',
+    base_url: 'https://api.fireworks.ai/inference/v1',
+    get_key_url: 'https://fireworks.ai/api-keys',
+    key_placeholder: 'Paste your Fireworks API key',
+    key_format: '',
+    description: 'Fast inference for open-source LLMs with prompt caching. Optimized for production agent workloads and high-throughput generation.'
+  },
+  {
+    name: 'tavily', display_name: 'Tavily AI',
+    base_url: 'https://api.tavily.com',
+    get_key_url: 'https://app.tavily.com/home',
+    key_placeholder: 'Paste your Tavily API key (starts with tvly-)',
+    key_format: 'tvly-',
+    description: 'AI-powered web search API. Powers the Content Ideas & Trends feature — fetches real trending topics, news, and viral content from across the web.'
+  },
+  {
+    name: 'serpapi', display_name: 'SerpAPI (Google Trends)',
+    base_url: 'https://serpapi.com',
+    get_key_url: 'https://serpapi.com/manage-api-key',
+    key_placeholder: 'Paste your SerpAPI key',
+    key_format: '',
+    description: 'Google Search & Trends API. Provides Google Trends data for the Content Ideas feature — shows trending searches, regional trends, and interest over time.'
+  },
+  {
+    name: 'huggingface', display_name: 'HuggingFace',
+    base_url: 'https://api-inference.huggingface.co',
+    get_key_url: 'https://huggingface.co/settings/tokens',
+    key_placeholder: 'Paste your HuggingFace token (starts with hf_)',
+    key_format: 'hf_',
+    description: '50,000+ open-source AI models. Access to community models for image generation, text generation, audio processing, and more.'
+  },
+  {
+    name: 'google-ai', display_name: 'Google AI (Gemini)',
+    base_url: 'https://generativelanguage.googleapis.com/v1',
+    get_key_url: 'https://aistudio.google.com/app/apikey',
+    key_placeholder: 'Paste your Google AI API key (starts with AIza)',
+    key_format: 'AIza',
+    description: 'Gemini 2.0 Pro & Flash models. Powers multi-modal AI features — text, image, video, and audio understanding in agent conversations.'
+  },
+  {
+    name: 'lemonfox', display_name: 'LemonFox',
+    base_url: 'https://api.lemonfox.ai/v1',
+    get_key_url: 'https://lemonfox.ai/docs',
+    key_placeholder: 'Paste your LemonFox API key',
+    key_format: '',
+    description: 'Fast and affordable TTS (text-to-speech) and STT (speech-to-text) API. Alternative for voiceover generation and audio transcription.'
+  },
 ];
 
 export default function AdminProvidersPage() {
@@ -55,7 +195,7 @@ export default function AdminProvidersPage() {
     // Upsert the provider
     await supabase.from('api_providers').upsert({
       name: def.name, display_name: def.display_name,
-      base_url: def.base_url, docs_url: def.docs,
+      base_url: def.base_url,
       supported_models: [],
     }, { onConflict: 'name' });
 
@@ -91,7 +231,7 @@ export default function AdminProvidersPage() {
     for (const p of PREDEFINED_PROVIDERS) {
       await supabase.from('api_providers').upsert({
         name: p.name, display_name: p.display_name,
-        base_url: p.base_url, docs_url: p.docs,
+        base_url: p.base_url,
       }, { onConflict: 'name' });
     }
     toast.success('20 default providers added');
@@ -136,13 +276,14 @@ export default function AdminProvidersPage() {
 
               {selectedDef && (
                 <>
-                  <div className="bg-[#0A0F1E] rounded-xl p-3 border border-white/5 space-y-1">
+                  <div className="bg-[#0A0F1E] rounded-xl p-3 border border-white/5 space-y-2">
+                    <p className="text-xs text-[#9CA3AF] leading-relaxed">{selectedDef.description}</p>
                     <div className="text-xs text-[#9CA3AF]">Base URL: <span className="text-[#F9FAFB] font-mono">{selectedDef.base_url}</span></div>
                     {selectedDef.key_format && (
                       <div className="text-xs text-[#9CA3AF]">Key format: <span className="text-[#F9FAFB] font-mono">{selectedDef.key_format}***</span></div>
                     )}
-                    <a href={selectedDef.docs} target="_blank" rel="noopener noreferrer" className="text-xs text-[#7C3AED] hover:underline block">
-                      Get API key →
+                    <a href={selectedDef.get_key_url} target="_blank" rel="noopener noreferrer" className="text-xs text-[#7C3AED] hover:underline font-medium block">
+                      Get API key from {selectedDef.display_name} →
                     </a>
                   </div>
 
