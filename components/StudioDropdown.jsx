@@ -4,7 +4,10 @@ import { useState, useRef, useEffect } from 'react'
 
 export default function StudioDropdown({ label, value, onChange, options, theme }) {
   const [open, setOpen] = useState(false)
+  const [dropUp, setDropUp] = useState(false)
   const ref = useRef(null)
+  const btnRef = useRef(null)
+  const panelRef = useRef(null)
 
   useEffect(() => {
     function handleClick(e) {
@@ -14,10 +17,26 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  const handleToggle = () => {
+    const next = !open
+    if (next) {
+      requestAnimationFrame(() => {
+        if (btnRef.current) {
+          const rect = btnRef.current.getBoundingClientRect()
+          const spaceBelow = window.innerHeight - rect.bottom - 16
+          const spaceAbove = rect.top - 16
+          const estimatedHeight = Math.min(options.length * 48 + 24, 320)
+          setDropUp(spaceBelow < estimatedHeight && spaceAbove > spaceBelow)
+        }
+      })
+    }
+    setOpen(next)
+  }
+
   const isDark = theme === 'dark' || (!theme && typeof window !== 'undefined' && document.documentElement.getAttribute('data-theme') !== 'light')
 
   return (
-    <div ref={ref} style={{ position: 'relative', userSelect: 'none' }}>
+    <div ref={ref} style={{ position: 'relative', userSelect: 'none', zIndex: 600 }}>
       {label && (
         <div style={{
           fontSize: 11, fontWeight: 600,
@@ -31,7 +50,8 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
       )}
 
       <button
-        onClick={() => setOpen(o => !o)}
+        ref={btnRef}
+        onClick={handleToggle}
         style={{
           display: 'flex',
           alignItems: 'center',
@@ -50,7 +70,7 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
           transition: 'border-color 150ms, background 150ms',
         }}
       >
-        <span>{value}</span>
+        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{value}</span>
         <svg
           width="14" height="14" viewBox="0 0 24 24" fill="none"
           stroke="currentColor" strokeWidth="2"
@@ -66,19 +86,26 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
       </button>
 
       {open && (
-        <div style={{
-          position: 'absolute',
-          top: 'calc(100% + 6px)',
-          left: 0,
-          minWidth: '100%',
-          background: 'var(--bg-card)',
-          border: '1px solid var(--border-strong)',
-          borderRadius: 12,
-          padding: '6px',
-          zIndex: 500,
-          boxShadow: '0 8px 32px var(--overlay-bg)',
-          animation: 'dropIn 150ms ease',
-        }}>
+        <div
+          ref={panelRef}
+          style={{
+            position: 'fixed',
+            top: dropUp ? undefined : btnRef.current ? btnRef.current.getBoundingClientRect().bottom + 6 : undefined,
+            bottom: dropUp && btnRef.current ? window.innerHeight - btnRef.current.getBoundingClientRect().top + 6 : undefined,
+            left: btnRef.current ? Math.min(btnRef.current.getBoundingClientRect().left, window.innerWidth - 320) : 0,
+            minWidth: Math.max(160, btnRef.current ? btnRef.current.offsetWidth : 160),
+            maxWidth: 320,
+            maxHeight: 320,
+            overflowY: 'auto',
+            background: 'var(--bg-card)',
+            border: '1px solid var(--border-strong)',
+            borderRadius: 12,
+            padding: '6px',
+            zIndex: 99999,
+            boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
+            animation: 'dropIn 150ms ease',
+          }}
+        >
           {options.map(opt => {
             const isSelected = value === opt.label || value === opt
             const optLabel = typeof opt === 'string' ? opt : opt.label
