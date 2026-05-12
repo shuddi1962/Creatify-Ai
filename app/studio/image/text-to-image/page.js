@@ -8,13 +8,19 @@ import StudioDropdown from '@/components/StudioDropdown';
 import StylePresets from '@/components/studio/StylePresets';
 import ResultsGrid from '@/components/studio/ResultsGrid';
 import * as muapi from '@/packages/studio/src/muapi';
+import { IMAGE_MODELS, getModelCost, getModelQuality, getModelBadge } from '@/lib/modelsConfig';
 
 const STYLES = [
   'Photorealistic', 'Cinematic', 'Anime', 'Digital Art',
   'Oil Painting', 'Watercolor', 'Sketch', '3D Render', 'Fashion', 'Abstract'
 ];
 
-const MODELS = ['flux', 'dalle', 'midjourney', 'stable-diffusion'];
+const MODELS = IMAGE_MODELS.map(m => ({
+  label: m.name,
+  desc: `${getModelCost(m.id) === 'free' ? 'Free' : 'Paid'} — ${getModelQuality(m.id)}${getModelBadge(m.id) ? '  ✦ ' + getModelBadge(m.id) : ''}`,
+  id: m.id,
+  endpoint: m.endpoint,
+}));
 
 const RATIOS = [
   { label: '1:1', desc: 'Square — Instagram, TikTok' },
@@ -38,13 +44,14 @@ export default function TextToImagePage() {
   const [prompt, setPrompt] = useState('');
   const [negativePrompt, setNegativePrompt] = useState('');
   const [showNegative, setShowNegative] = useState(false);
-  const [model, setModel] = useState('flux');
+  const [model, setModel] = useState(MODELS[0].label);
   const [aspectRatio, setAspectRatio] = useState('1:1');
   const [quality, setQuality] = useState('Standard');
   const [numImages, setNumImages] = useState('1');
   const [style, setStyle] = useState('Photorealistic');
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState([]);
+  const getModel = (label) => MODELS.find(m => m.label === label) || MODELS[0];
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -53,11 +60,17 @@ export default function TextToImagePage() {
     }
     setLoading(true);
     try {
-      const apiKey = localStorage.getItem('muapi_key');
+      const m = getModel(model);
+      let apiKey = localStorage.getItem('muapi_key');
+      if (!apiKey) {
+        const res = await fetch('/api/v1/shared-key?provider=muapi');
+        const data = await res.json();
+        apiKey = data.key;
+      }
       if (apiKey) {
         const promises = Array(parseInt(numImages)).fill(null).map((_, i) =>
           muapi.generateImage(apiKey, {
-            model,
+            model: m.id,
             prompt: prompt + (style !== 'Photorealistic' ? `, ${style} style` : ''),
             aspect_ratio: aspectRatio,
             quality: quality.toLowerCase(),
@@ -72,14 +85,7 @@ export default function TextToImagePage() {
         })));
         toast.success('Image generated successfully!');
       } else {
-        await new Promise(resolve => setTimeout(resolve, 2000));
-        setResults(Array(parseInt(numImages)).fill(null).map((_, i) => ({
-          id: `demo-${Date.now()}-${i}`,
-          url: `https://picsum.photos/seed/${Date.now() + i}/1024/1024`,
-          prompt: prompt,
-          type: 'image'
-        })));
-        toast.success('Demo: Image generated!');
+        toast.error('No API key configured. Ask admin to add a Muapi key.');
       }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
