@@ -53,7 +53,10 @@ export default function AdminShell({ children }) {
   const [adminRole, setAdminRole] = useState(null);
   const [checking, setChecking] = useState(true);
 
+  const isLoginPage = pathname === '/admin/login';
+
   useEffect(() => {
+    if (isLoginPage) { setChecking(false); return; }
     if (authLoading) return;
     if (!user) {
       router.replace('/admin/login');
@@ -65,7 +68,7 @@ export default function AdminShell({ children }) {
           .from('admin_roles')
           .select('role')
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
         if (error || !data) {
           const role = user.user_metadata?.admin_role || null;
           if (!role) {
@@ -87,7 +90,7 @@ export default function AdminShell({ children }) {
       setChecking(false);
     };
     checkAdmin();
-  }, [user, authLoading, router]);
+  }, [user, authLoading, router, isLoginPage]);
 
   if (authLoading || checking) {
     return (

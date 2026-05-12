@@ -46,6 +46,7 @@ async function fix() {
       'Authorization': `Bearer ${KEY}`,
     },
     body: JSON.stringify({
+      user_metadata: { admin_role: 'super_admin' },
       app_metadata: {
         admin_role: 'super_admin',
         role: 'super_admin',
