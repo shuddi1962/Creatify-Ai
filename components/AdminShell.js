@@ -92,6 +92,8 @@ export default function AdminShell({ children }) {
     checkAdmin();
   }, [user, authLoading, router, isLoginPage]);
 
+  if (isLoginPage) return children;
+
   if (authLoading || checking) {
     return (
       <div className="h-screen bg-[#0A0F1E] flex items-center justify-center">
