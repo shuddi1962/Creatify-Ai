@@ -92,14 +92,14 @@ async function getProviderKey(provider) {
     || process.env[`NEXT_PUBLIC_${provider.toUpperCase().replace(/-/g, '_')}_API_KEY`];
   if (envKey) return envKey;
 
-  // 2. Check Supabase admin_provider_keys table
+  // 2. Check Supabase admin_provider_keys table using service role key (bypasses RLS)
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (supabaseUrl && supabaseKey) {
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (supabaseUrl && serviceKey) {
     try {
       const res = await fetch(
         `${supabaseUrl}/rest/v1/admin_provider_keys?select=encrypted_key&provider=eq.${provider}&is_active=eq.true&limit=1`,
-        { headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` } }
+        { headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` } }
       );
       if (res.ok) {
         const data = await res.json();
