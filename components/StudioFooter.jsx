@@ -1,6 +1,42 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export default function StudioFooter() {
+  const pathname = usePathname();
+  const segments = pathname?.split('/').filter(Boolean).length || 0;
+  const isSubPage = segments > 2;
+
+  if (isSubPage) {
+    return (
+      <footer style={{
+        borderTop: '1px solid var(--border-subtle)',
+        background: 'var(--bg-card)',
+        padding: '12px 32px',
+      }}>
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            &copy; 2025 Creatify AI. Free and open-source. Powered by Muapi.ai
+          </p>
+          <div style={{ display: 'flex', gap: 16 }}>
+            {[
+              ['Twitter/X', 'https://x.com'],
+              ['GitHub', 'https://github.com'],
+              ['Discord', 'https://discord.com'],
+            ].map(([label, href]) => (
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: 11, color: 'var(--text-muted)', textDecoration: 'none' }}
+                onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
+                onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
+              >{label}</a>
+            ))}
+          </div>
+        </div>
+      </footer>
+    );
+  }
+
   return (
     <footer style={{
       borderTop: '1px solid var(--border-medium)',
@@ -144,7 +180,7 @@ export default function StudioFooter() {
           gap: 12,
         }}>
           <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            © 2025 Creatify AI. Free and open-source. Powered by Muapi.ai
+            &copy; 2025 Creatify AI. Free and open-source. Powered by Muapi.ai
           </p>
           <div style={{ display: 'flex', gap: 16 }}>
             {[
