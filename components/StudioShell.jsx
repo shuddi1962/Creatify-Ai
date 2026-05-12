@@ -311,7 +311,7 @@ export default function StudioShell({ children }) {
         </div>
 
         {/* Share button */}
-        <button style={{
+        {user && <button style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'var(--bg-input)', border: '1px solid var(--border-default)',
           borderRadius: 8, padding: '6px 12px', fontSize: 13,
@@ -321,10 +321,10 @@ export default function StudioShell({ children }) {
           onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-input)'; }}
         >
           <Icons.Share2 size={14} /> Share
-        </button>
+        </button>}
 
         {/* Credits indicator */}
-        <div style={{
+        {user && <div style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'var(--bg-input)', border: '1px solid var(--border-default)',
           borderRadius: 8, padding: '6px 12px', fontSize: 12,
@@ -333,10 +333,10 @@ export default function StudioShell({ children }) {
         }}>
           <Icons.Zap size={12} />
           {credits} credits
-        </div>
+        </div>}
 
         {/* Notifications bell */}
-        <div style={{ position: 'relative', marginRight: 4 }}>
+        {user && <div style={{ position: 'relative', marginRight: 4 }}>
           <button onClick={() => setShowNotifications(!showNotifications)}
             style={{
               width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
@@ -362,7 +362,7 @@ export default function StudioShell({ children }) {
               <NotificationsPanel onClose={() => setShowNotifications(false)} />
             </div>
           )}
-        </div>
+        </div>}
 
         <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
