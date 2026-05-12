@@ -132,11 +132,11 @@ export default function SignupPage() {
           </form>
 
           <div style={{ textAlign: 'center', marginTop: 16, fontSize: 13, color: 'var(--text-muted)' }}>
-            {mode === 'login' ? (
-              <>Don't have an account? <button onClick={() => setMode('signup')} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>Sign up</></>
-            ) : (
-              <>Already have an account? <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>Sign in</></>
-            )}
+              {mode === 'login' ? (
+                <>Don&apos;t have an account? <button onClick={() => setMode('signup')} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>Sign up</></>
+              ) : (
+                <>Already have an account? <button onClick={() => setMode('login')} style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', fontSize: 13, fontWeight: 600, padding: 0 }}>Sign in</></>
+              )}
           </div>
         </div>
 
