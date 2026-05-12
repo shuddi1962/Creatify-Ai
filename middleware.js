@@ -5,6 +5,7 @@ const LOCAL_API_PREFIXES = [
   '/api/v1/notifications',
   '/api/v1/proxy',
   '/api/v1/content-ideas',
+  '/api/v1/shared-key',
   '/api/admin',
 ];
 
