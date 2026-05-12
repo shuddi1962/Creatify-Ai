@@ -7,7 +7,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import StylePresets from '@/components/studio/StylePresets';
 import ResultsGrid from '@/components/studio/ResultsGrid';
-import { IMAGE_MODELS, getModelCost, getModelQuality, getModelBadge } from '@/lib/modelsConfig';
+import { IMAGE_MODELS } from '@/lib/modelsConfig';
 import { generateImage as proxyGenerate } from '@/lib/generationUtils';
 
 const STYLES = [
@@ -17,9 +17,10 @@ const STYLES = [
 
 const MODELS = IMAGE_MODELS.map(m => ({
   label: m.name,
-  desc: `${getModelCost(m.id) === 'free' ? 'Free' : 'Paid'} — ${getModelQuality(m.id)}${getModelBadge(m.id) ? '  ✦ ' + getModelBadge(m.id) : ''}`,
+  desc: `${m.cost === 'free' ? 'Free' : 'Paid'} — via ${m.provider}${m.cost === 'free' ? '  ✓' : ''}`,
   id: m.id,
   endpoint: m.endpoint,
+  provider: m.provider,
 }));
 
 const RATIOS = [
@@ -67,6 +68,7 @@ export default function TextToImagePage() {
         aspect_ratio: aspectRatio,
         quality: quality.toLowerCase(),
         numImages: parseInt(numImages),
+        provider: m.provider,
       });
       setResults(results);
       toast.success('Image generated successfully!');
