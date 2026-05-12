@@ -2182,6 +2182,8 @@ export const t2iModels = [
 
 export const getModelById = (id) => t2iModels.find(m => m.id === id);
 
+export const getModelByEndpoint = (endpoint) => t2iModels.find(m => m.endpoint === endpoint) || null;
+
 export const getAspectRatiosForModel = (modelId) => {
   const model = getModelById(modelId);
   if (!model) return ['1:1'];
