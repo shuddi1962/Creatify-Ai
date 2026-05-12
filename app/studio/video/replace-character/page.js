@@ -5,6 +5,7 @@ import { Video, Image, User } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const METHOD_TABS = ['Upload New Character', 'Describe Character', 'Use Saved Character'];
 const DETECTION_OPTIONS = [{ label: 'Auto-detect', desc: 'AI finds characters automatically' }, { label: 'Manual selection', desc: 'Select characters yourself' }];

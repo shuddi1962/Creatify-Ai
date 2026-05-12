@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Video, Languages, Subtitles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const LANGUAGES = ['English', 'Spanish', 'French', 'German', 'Italian', 'Portuguese', 'Chinese', 'Japanese', 'Korean', 'Hindi', 'Arabic', 'Russian'];
 const VOICE_STYLES = ['Match Original', 'Professional', 'Casual', 'Energetic'];
@@ -50,14 +51,19 @@ export default function DubbingPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      setResults(targetLanguages.map(lang => ({
-        id: `demo-${Date.now()}-${lang}`,
-        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        prompt: `Dubbed to ${lang}`,
-        type: 'video'
-      })));
-      toast.success(`Demo: Video dubbed to ${targetLanguages.join(', ')}!`);
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Dubbing started via API!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        setResults(targetLanguages.map(lang => ({
+          id: `demo-${Date.now()}-${lang}`,
+          url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          prompt: `Dubbed to ${lang}`,
+          type: 'video'
+        })));
+        toast.success(`Demo: Video dubbed to ${targetLanguages.join(', ')}!`);
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

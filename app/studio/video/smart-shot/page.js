@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PanelLeftClose, ChevronDown, Sparkles, Film, Play, Image as ImageIcon, Layout as LayoutIcon } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudioDropdown from '@/components/StudioDropdown';
 
 const VIDEO_LENGTH_OPTIONS = [
@@ -21,6 +22,14 @@ export default function SmartShotPage() {
   const [numShots, setNumShots] = useState('5');
   const [visualStyle, setVisualStyle] = useState('Cinematic');
   const [autoStoryboard, setAutoStoryboard] = useState(true);
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast.error('Please describe your video concept');
+      return;
+    }
+    toast.success('Demo: Smart shot generation started!');
+  };
 
   return (
     <div style={{
@@ -172,14 +181,14 @@ export default function SmartShotPage() {
             position: 'absolute', bottom: 16, left: 16,
             display: 'flex', gap: 4,
           }}>
-            <button style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              background: 'var(--bg-card)', border: '1px solid var(--border-default)',
-              borderRadius: 8, padding: '7px 12px', fontSize: 12,
-              color: 'var(--text-secondary)', cursor: 'pointer',
-            }}>
-              <ImageIcon size={14} /> Add reference
-            </button>
+              <button onClick={() => toast.success('Reference image feature coming soon')} style={{
+                display: 'flex', alignItems: 'center', gap: 6,
+                background: 'var(--bg-card)', border: '1px solid var(--border-default)',
+                borderRadius: 8, padding: '7px 12px', fontSize: 12,
+                color: 'var(--text-secondary)', cursor: 'pointer',
+              }}>
+                <ImageIcon size={14} /> Add reference
+              </button>
           </div>
         </div>
 
@@ -278,7 +287,7 @@ export default function SmartShotPage() {
                 />
               </div>
 
-              <button style={{
+              <button onClick={handleGenerate} style={{
                 background: '#CCFF00',
                 border: 'none',
                 borderRadius: 10,

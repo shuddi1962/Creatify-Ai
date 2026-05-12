@@ -5,6 +5,7 @@ import { Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const EXTENSION_OPTIONS = ['+2s', '+4s', '+6s', '+8s', 'Custom'];
 const DIRECTION_OPTIONS = ['Extend End', 'Extend Beginning', 'Both'];

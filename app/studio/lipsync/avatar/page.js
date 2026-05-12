@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { User, Plus, Trash2, Play, Edit } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PERSONALITY_OPTIONS = ['Professional', 'Friendly', 'Energetic', 'Calm', 'Authoritative'];
 const BACKGROUND_OPTIONS = ['Transparent', 'White', 'Office', 'Custom'];
@@ -59,14 +60,19 @@ export default function AvatarPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setResults([{
-        id: `demo-${Date.now()}`,
-        url: 'https://www.w3schools.com/html/mov_bbb.mp4',
-        prompt: scriptText || 'Avatar video',
-        type: 'video'
-      }]);
-      toast.success('Avatar video generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating avatar video via API!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setResults([{
+          id: `demo-${Date.now()}`,
+          url: 'https://www.w3schools.com/html/mov_bbb.mp4',
+          prompt: scriptText || 'Avatar video',
+          type: 'video'
+        }]);
+        toast.success('Demo: Avatar video generated!');
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

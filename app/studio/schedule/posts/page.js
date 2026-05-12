@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Edit, Trash2, Play, Clock } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
 
@@ -90,8 +91,8 @@ export default function ScheduledPostsPage() {
                       </td>
                       <td style={{ padding: '12px 16px' }}>
                         <div style={{ display: 'flex', gap: 4 }}>
-                          <button style={{ padding: 6, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-muted)', cursor: 'pointer' }}><Edit size={12} /></button>
-                          <button style={{ padding: 6, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-muted)', cursor: 'pointer' }}><Play size={12} /></button>
+                          <button onClick={() => toast.success('Edit post coming soon')} style={{ padding: 6, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-muted)', cursor: 'pointer' }}><Edit size={12} /></button>
+                          <button onClick={() => toast.success('Preview post')} style={{ padding: 6, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: 'var(--text-muted)', cursor: 'pointer' }}><Play size={12} /></button>
                           <button onClick={() => deletePost(post.id)} style={{ padding: 6, background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 6, color: '#ef4444', cursor: 'pointer' }}><Trash2 size={12} /></button>
                         </div>
                       </td>

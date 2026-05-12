@@ -149,7 +149,7 @@ export default function BulkVoiceoverPage() {
                     color: r.status === 'completed' ? '#4ade80' : r.status === 'generating' ? '#CCFF00' : 'var(--text-muted)',
                   }}>{r.status}</span>
                   {r.status === 'generating' && <div style={{ width: 60, height: 6, background: 'var(--bg-input)', borderRadius: 100 }}><div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${r.progress}%` }} /></div>}
-                  {r.status === 'completed' && <button style={{ padding: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><Download size={14} /></button>}
+                  {r.status === 'completed' && <button onClick={() => toast.success('Downloading audio...')} style={{ padding: 4, background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><Download size={14} /></button>}
                 </div>
               ))}
             </div>

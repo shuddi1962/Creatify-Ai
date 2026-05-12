@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Volume2, Library, Grid } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const CATEGORIES = ['Nature', 'Urban', 'Mechanical', 'Human', 'Impact', 'Ambient', 'Foley', 'Sci-Fi'];
 const PRESET_EXAMPLES = ['Glass breaking', 'Thunder', 'Crowd cheering', 'Footsteps', 'Car engine', 'Door creaking', 'Rain', 'Wind', 'Explosion', 'Bird chirping'];

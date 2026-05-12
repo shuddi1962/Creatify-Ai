@@ -9,6 +9,7 @@ import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const TONES = ['Professional', 'Casual', 'Playful', 'Luxury', 'Bold', 'Friendly', 'Minimal'];
 const INDUSTRIES = ['Technology', 'Fashion', 'Beauty', 'Food & Beverage', 'Health & Fitness', 'Finance', 'Real Estate', 'Education', 'Entertainment', 'Retail', 'Travel', 'Automotive'];
@@ -34,9 +35,19 @@ export default function MarketingBrandKitPage() {
   const handleSave = async () => {
     setSaving(true);
     toast.loading('Saving brand kit...', { id: 'save' });
-    await new Promise(r => setTimeout(r, 1500));
-    toast.success('Brand kit saved!', { id: 'save' });
-    setSaving(false);
+    try {
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Brand kit saved!', { id: 'save' });
+      } else {
+        await new Promise(r => setTimeout(r, 1500));
+        toast.success('Demo: Brand kit saved!', { id: 'save' });
+      }
+    } catch (error) {
+      toast.error('Failed to save', { id: 'save' });
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleSocialChange = (platform, value) => setSocial(prev => ({ ...prev, [platform]: value }));
@@ -102,7 +113,7 @@ export default function MarketingBrandKitPage() {
               </div>
             </div>
             <div style={{ marginTop: 16 }}>
-              <label style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer' }}>
+              <label onClick={() => toast.success('Font upload coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '10px 14px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer' }}>
                 <Upload size={14} /> Upload .ttf or .otf font file
                 <input type="file" accept=".ttf,.otf,.woff,.woff2" style={{ display: 'none' }} />
               </label>

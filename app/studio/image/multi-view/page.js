@@ -6,6 +6,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const SUBJECT_TYPES = ['Person', 'Product', 'Object', 'Architecture', 'Character'];
 const BG_STYLES = ['Transparent', 'White Studio', 'Gradient', 'Custom prompt'];
@@ -52,14 +53,29 @@ export default function MultiViewPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      setResults(selectedAngles.map((angle, i) => ({
-        id: `result-${Date.now()}-${i}`,
-        url: `https://picsum.photos/seed/${Date.now() + i}/800/800`,
-        prompt: `${angle} view - ${subjectType}`,
-        type: 'image'
-      })));
-      toast.success(`${selectedAngles.length} angles generated!`);
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const results = await Promise.all(selectedAngles.map(async (angle, i) => {
+          const response = await muapi.generateI2I(apiKey, {
+            model,
+            prompt: `${angle} view of ${subjectType}, ${bgStyle} background, ${customPrompt}`,
+            image_url: sourceImage,
+            strength: 0.7,
+          });
+          return { id: `result-${Date.now()}-${i}`, url: response.url, prompt: `${angle} view - ${subjectType}`, type: 'image' };
+        }));
+        setResults(results);
+        toast.success(`${selectedAngles.length} angles generated!`);
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setResults(selectedAngles.map((angle, i) => ({
+          id: `result-${Date.now()}-${i}`,
+          url: `https://picsum.photos/seed/${Date.now() + i}/800/800`,
+          prompt: `${angle} view - ${subjectType}`,
+          type: 'image'
+        })));
+        toast.success(`Demo: ${selectedAngles.length} angles generated!`);
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

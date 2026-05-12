@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Upload, Send } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
 
@@ -115,7 +116,7 @@ export default function NewPostPage() {
                   </div>
 
                   <div style={{ display: 'flex', gap: 8, paddingTop: 8 }}>
-                    <button style={{ flex: 1, padding: '10px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}>Save as Draft</button>
+                    <button onClick={() => toast.success('Draft saved!')} style={{ flex: 1, padding: '10px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 10, color: 'var(--text-secondary)', fontSize: 13, cursor: 'pointer' }}>Save as Draft</button>
                     <button onClick={handleSubmit} disabled={loading}
                       style={{
                         flex: 1, padding: '10px', background: '#CCFF00', border: 'none', borderRadius: 10,

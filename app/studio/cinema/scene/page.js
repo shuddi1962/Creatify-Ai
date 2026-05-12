@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Layers, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const COMPOSITION_RULES = ['Rule of Thirds', 'Golden Ratio', 'Symmetry', 'Leading Lines', 'Frame in Frame', 'Diagonal'];
 const COLOR_HARMONY = ['Complementary', 'Analogous', 'Triadic', 'Monochromatic'];
@@ -33,9 +34,14 @@ export default function CinemaScenePage() {
     setLoading(true);
     toast.success('Composing scene...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/scene/1280/720', prompt: subject }]);
-      toast.success('Scene composed!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Composing scene via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/scene/1280/720', prompt: subject }]);
+        toast.success('Demo: Scene composed!');
+      }
     } catch (e) {
       toast.error('Failed to compose scene');
     } finally {

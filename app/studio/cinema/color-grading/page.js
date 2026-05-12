@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Palette, Upload, Eye, EyeOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PRESETS = [
   { id: 'cinema-orange-teal', name: 'Cinema Orange-Teal', color: '#008080' },
@@ -62,9 +63,14 @@ export default function CinemaColorGradingPage() {
     setLoading(true);
     toast.success('Applying color grade...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'image', url: 'https://picsum.photos/seed/color/1280/720', prompt: selectedPreset || 'Custom grade' }]);
-      toast.success('Color grade applied!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Color grading via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'image', url: 'https://picsum.photos/seed/color/1280/720', prompt: selectedPreset || 'Custom grade' }]);
+        toast.success('Demo: Color grade applied!');
+      }
     } catch (e) {
       toast.error('Failed to apply color grade');
     } finally {

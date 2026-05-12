@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { FileText, Play, Download, Edit } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const OUTPUT_FORMATS = ['SRT', 'VTT', 'ASS', 'TXT', 'JSON'];
 const MAX_CHARS = ['32', '42', '56'];
@@ -41,11 +42,16 @@ export default function SubtitlesPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
-      const mockSubtitles = `1\n00:00:01,000 --> 00:00:04,500\nThis is the first line of your subtitles.\n\n2\n00:00:05,000 --> 00:00:08,200\nHere's another line of text.\n\n3\n00:00:09,000 --> 00:00:12,500\nAnd this is the third subtitle line.`;
-      setEditableText(mockSubtitles);
-      setResults([{ id: `demo-${Date.now()}`, format: outputFormat, text: mockSubtitles, url: '#' }]);
-      toast.success('Subtitles generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Transcribing via API...');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        const mockSubtitles = `1\n00:00:01,000 --> 00:00:04,500\nThis is the first line of your subtitles.\n\n2\n00:00:05,000 --> 00:00:08,200\nHere's another line of text.\n\n3\n00:00:09,000 --> 00:00:12,500\nAnd this is the third subtitle line.`;
+        setEditableText(mockSubtitles);
+        setResults([{ id: `demo-${Date.now()}`, format: outputFormat, text: mockSubtitles, url: '#' }]);
+        toast.success('Demo: Subtitles generated!');
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

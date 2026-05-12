@@ -9,6 +9,7 @@ import GenerateButton from '@/components/studio/GenerateButton';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn', 'Twitter'];
 const HOOK_TYPES = ['Question', 'Bold Statement', 'Provocative', 'Story Hook', 'Statistic', 'Contrast', 'Curiosity Gap', 'Fear', 'Hope', 'Celebrity', 'ASMR', 'Tutorial'];
@@ -49,14 +50,19 @@ export default function MarketingHooksPage() {
     setLoading(true);
     toast.success('Generating viral hooks...');
     try {
-      await new Promise(r => setTimeout(r, 2000));
-      const generatedHooks = SAMPLE_HOOKS.slice(0, Math.min(count, SAMPLE_HOOKS.length)).map((h, i) => ({
-        ...h,
-        id: Date.now() + i,
-        text: h.text.replace('[topic]', niche),
-      }));
-      setHooks(generatedHooks);
-      toast.success(`${generatedHooks.length} hooks generated!`);
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating hooks via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 2000));
+        const generatedHooks = SAMPLE_HOOKS.slice(0, Math.min(count, SAMPLE_HOOKS.length)).map((h, i) => ({
+          ...h,
+          id: Date.now() + i,
+          text: h.text.replace('[topic]', niche),
+        }));
+        setHooks(generatedHooks);
+        toast.success(`Demo: ${generatedHooks.length} hooks generated!`);
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

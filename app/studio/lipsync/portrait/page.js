@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Image, Mic, Circle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const FACE_DETECTION = ['Auto', 'Manual crop'];
 const HEAD_MOVEMENT = ['Static', 'Natural Head Bob', 'Expressive'];
@@ -52,7 +53,21 @@ export default function PortraitPage() {
     try {
       const apiKey = localStorage.getItem('muapi_key');
       if (apiKey) {
-        toast.success('Animating portrait!');
+        const portraitUrl = await muapi.uploadFile(apiKey, portraitFile);
+        const audioUrl = await muapi.uploadFile(apiKey, audioFile);
+        const response = await muapi.processLipSync(apiKey, {
+          model: 'infinite-talk',
+          image_url: portraitUrl,
+          audio_url: audioUrl,
+          resolution: outputQuality === '1080p' ? '1080p' : '720p',
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          prompt: 'Talking portrait',
+          type: 'video'
+        }]);
+        toast.success('Portrait animated successfully!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
         setResults([{

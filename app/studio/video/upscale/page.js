@@ -5,6 +5,7 @@ import { Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const SCALE_OPTIONS = ['2x', '4x'];
 const RESOLUTION_OPTIONS = ['720p', '1080p', '2K', '4K'];

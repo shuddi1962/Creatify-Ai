@@ -5,6 +5,7 @@ import { Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const STYLE_PRESETS = ['Anime', 'Cyberpunk', 'Film Noir', 'Watercolor', 'Oil Paint', 'Neon', 'Vintage Film', 'Comic Book', 'Claymation', 'Hyperrealistic'];
 const STRENGTH_OPTIONS = ['Low', 'Medium', 'High', 'Extreme'];

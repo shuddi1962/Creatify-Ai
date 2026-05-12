@@ -6,6 +6,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const SCALES = ['2x', '4x', '8x'];
 const ENHANCEMENTS = ['Standard', 'Face Enhancement', 'Detail Boost', 'Noise Reduction'];
@@ -36,15 +37,31 @@ export default function UpscalePage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      const newWidth = scale === '2x' ? 2048 : scale === '4x' ? 4096 : 8192;
-      setResults([{
-        id: `result-${Date.now()}`,
-        url: `https://picsum.photos/seed/${Date.now()}/${newWidth}/${newWidth}`,
-        prompt: `${scale} upscale - ${enhancementMode}`,
-        type: 'image'
-      }]);
-      toast.success('Image upscaled successfully!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const response = await muapi.generateImage(apiKey, {
+          model: 'flux',
+          prompt: `Upscale image to ${scale}`,
+          image_url: sourceImage,
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          prompt: `${scale} upscale - ${enhancementMode}`,
+          type: 'image'
+        }]);
+        toast.success('Image upscaled successfully!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        const newWidth = scale === '2x' ? 2048 : scale === '4x' ? 4096 : 8192;
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: `https://picsum.photos/seed/${Date.now()}/${newWidth}/${newWidth}`,
+          prompt: `${scale} upscale - ${enhancementMode}`,
+          type: 'image'
+        }]);
+        toast.success('Demo: Image upscaled successfully!');
+      }
     } catch (error) {
       toast.error(error.message || 'Upscale failed');
     } finally {

@@ -7,6 +7,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const MEME_TYPES = ['Classic top-bottom text', 'Modern overlay', 'Reaction', 'Deep Fried', 'Wholesome', 'Dank'];
 const FONTS = ['Impact', 'Arial Black', 'Comic Sans', 'Helvetica Bold', 'Custom'];
@@ -43,14 +44,31 @@ export default function MemePage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setResults([{
-        id: `result-${Date.now()}`,
-        url: `https://picsum.photos/seed/${Date.now()}/800/800`,
-        prompt: isClassic ? `${topText} / ${bottomText}` : prompt,
-        type: 'image'
-      }]);
-      toast.success('Meme generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      const memePrompt = isClassic ? `Meme: top text "${topText}", bottom text "${bottomText}"` : prompt;
+      if (apiKey) {
+        const response = await muapi.generateImage(apiKey, {
+          model: 'flux',
+          prompt: memePrompt,
+          aspect_ratio: '1:1',
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          prompt: isClassic ? `${topText} / ${bottomText}` : prompt,
+          type: 'image'
+        }]);
+        toast.success('Meme generated!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: `https://picsum.photos/seed/${Date.now()}/800/800`,
+          prompt: isClassic ? `${topText} / ${bottomText}` : prompt,
+          type: 'image'
+        }]);
+        toast.success('Demo: Meme generated!');
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

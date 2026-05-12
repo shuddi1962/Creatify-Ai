@@ -6,6 +6,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const BG_TYPES = ['Transparent', 'Solid Color', 'Custom Background'];
 const REFINEMENTS = ['Auto', 'Hair Detail', 'Product', 'Portrait'];
@@ -55,14 +56,29 @@ export default function RemoveBgPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setResults(images.map((img, i) => ({
-        id: `result-${Date.now()}-${i}`,
-        url: `https://picsum.photos/seed/${Date.now() + i}/800/800?grayscale`,
-        prompt: 'Background removed',
-        type: 'image'
-      })));
-      toast.success('Background removed successfully!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const results = await Promise.all(images.map(async (img, i) => {
+          const response = await muapi.generateI2I(apiKey, {
+            model: 'flux',
+            prompt: `Remove background, make it ${bgType.toLowerCase()}`,
+            image_url: img.preview,
+            strength: 0.8,
+          });
+          return { id: `result-${Date.now()}-${i}`, url: response.url, prompt: 'Background removed', type: 'image' };
+        }));
+        setResults(results);
+        toast.success('Background removed successfully!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        setResults(images.map((img, i) => ({
+          id: `result-${Date.now()}-${i}`,
+          url: `https://picsum.photos/seed/${Date.now() + i}/800/800?grayscale`,
+          prompt: 'Background removed',
+          type: 'image'
+        })));
+        toast.success('Demo: Background removed successfully!');
+      }
     } catch (error) {
       toast.error(error.message || 'Background removal failed');
     } finally {

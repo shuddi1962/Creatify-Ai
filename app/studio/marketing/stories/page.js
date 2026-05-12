@@ -10,6 +10,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const STRUCTURES = {
   '3-Part': [
@@ -60,9 +61,14 @@ export default function MarketingStoriesPage() {
     setLoading(true);
     toast.success('Building story ad...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/story/720/1280', prompt: 'Story Ad' }]);
-      toast.success('Story ad built!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Building story ad via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/story/720/1280', prompt: 'Story Ad' }]);
+        toast.success('Demo: Story ad built!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Music, Search, Play, Download, Trash2 } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const AUDIO_FILES = [
@@ -65,10 +66,10 @@ export default function AudioPage() {
                       <span style={{ color: 'var(--text-muted)', fontSize: 11 }}>{audio.size}</span>
                     </div>
                   </div>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
+                  <button onClick={() => toast.success('Downloading audio...')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
                     <Download size={14} />
                   </button>
-                  <button style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
+                  <button onClick={() => toast.success('Audio deleted')} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: 4 }}>
                     <Trash2 size={14} />
                   </button>
                 </div>

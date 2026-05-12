@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Mic, Play, Pause, Download } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const VOICES = [
   { id: 'adam', name: 'Adam', language: 'English', gender: 'Male' },
@@ -41,7 +42,20 @@ export default function VoiceoverPage() {
     try {
       const apiKey = localStorage.getItem('muapi_key');
       if (apiKey) {
-        toast.success('Generating voiceover!');
+        const response = await muapi.generateImage(apiKey, {
+          model: 'elevenlabs-tts',
+          prompt: script,
+          voice: selectedVoice,
+          speed: parseFloat(speed),
+          pitch,
+          format: outputFormat.toLowerCase(),
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          duration: '0:45',
+        }]);
+        toast.success('Voiceover generated successfully!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
         setResults([{

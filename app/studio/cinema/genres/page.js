@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Clapperboard } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const GENRES = [
   { id: 'action', name: 'Action', mood: 'High energy, fast-paced', style: 'Dynamic camera, bold colors', sample: 'Car chase sequence' },
@@ -48,9 +49,14 @@ export default function CinemaGenresPage() {
     setLoading(true);
     toast.success('Generating...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/genre/1280/720', prompt }]);
-      toast.success('Video generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/genre/1280/720', prompt }]);
+        toast.success('Demo: Video generated!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

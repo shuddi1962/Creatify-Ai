@@ -11,6 +11,7 @@ import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'Facebook', 'LinkedIn'];
 const HOOK_STYLES = ['Problem/Solution', 'Before/After', 'Testimonial', 'Tutorial', 'Unboxing', 'Transformation', 'Lifestyle'];
@@ -38,19 +39,35 @@ export default function MarketingUGCPage() {
       return;
     }
     setLoading(true);
-    toast.success(`Generating ${variants} UGC ad${variants > 1 ? 's' : ''}...`);
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      const newResults = Array.from({ length: variants }, (_, i) => ({
-        id: Date.now() + i,
-        type: 'video',
-        url: `https://picsum.photos/seed/ugc${i}/720/1280`,
-        prompt: `UGC Ad: ${productDesc.slice(0, 50)}...`,
-      }));
-      setResults(newResults);
-      toast.success('UGC ads generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const imagesList = productImage ? [productImage] : []
+        const response = await muapi.generateMarketingStudioAd(apiKey, {
+          prompt: `[${platform}] ${productDesc}. Hook: ${hookStyle}. Tone: ${tone}. Creator: ${creatorStyle}. Audience: ${audience || 'general'}`,
+          aspect_ratio: '9:16',
+          duration: parseInt(duration),
+          images_list: imagesList,
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          type: 'video', url: response.url,
+          prompt: productDesc.slice(0, 50),
+        }]);
+        toast.success('UGC ad generated successfully!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        const newResults = Array.from({ length: variants }, (_, i) => ({
+          id: Date.now() + i,
+          type: 'video',
+          url: `https://picsum.photos/seed/ugc${i}/720/1280`,
+          prompt: `UGC Ad: ${productDesc.slice(0, 50)}...`,
+        }));
+        setResults(newResults);
+        toast.success('Demo: UGC ads generated!');
+      }
     } catch (e) {
-      toast.error('Generation failed');
+      toast.error(e.message || 'Generation failed');
     } finally {
       setLoading(false);
     }

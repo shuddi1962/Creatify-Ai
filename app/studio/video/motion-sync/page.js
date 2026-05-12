@@ -5,6 +5,7 @@ import { Upload, Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const TRANSFER_TYPES = ['Body Movement', 'Head Movement', 'Camera Movement', 'Full Scene'];
 const PRESERVE_OPTIONS = ['Background', 'Lighting', 'Both'];

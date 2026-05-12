@@ -114,6 +114,19 @@ export default function SettingsPage() {
 }
 
 function ProfileSection({ user }) {
+  const [displayName, setDisplayName] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('profile_display_name') || user?.user_metadata?.full_name || user?.email?.split('@')[0] || '';
+    return '';
+  });
+  const [username, setUsername] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('profile_username') || `@${user?.email?.split('@')[0] || 'user'}`;
+    return '';
+  });
+  const [bio, setBio] = useState(() => {
+    if (typeof window !== 'undefined') return localStorage.getItem('profile_bio') || '';
+    return '';
+  });
+
   return (
     <div style={{ maxWidth: '100%' }}>
       <div style={{
@@ -131,26 +144,16 @@ function ProfileSection({ user }) {
           </div>
           <div>
             <div style={{ fontSize: 18, fontWeight: 600, color: 'var(--text-primary)' }}>
-              {user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'User'}
+              {displayName || user?.email?.split('@')[0] || 'User'}
             </div>
             <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Personal account</div>
           </div>
-          <button style={{
-            marginLeft: 'auto', padding: '8px 16px', fontSize: 13, fontWeight: 500,
-            background: 'transparent', border: '1px solid var(--border-default)',
-            borderRadius: 8, color: 'var(--text-secondary)', cursor: 'pointer',
-          }}
-            onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; }}
-            onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
-          >
-            Edit profile
-          </button>
         </div>
 
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
           <div>
             <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>Display Name</label>
-            <input defaultValue={user?.user_metadata?.full_name || user?.email?.split('@')[0] || ''}
+            <input value={displayName} onChange={e => setDisplayName(e.target.value)}
               style={{
                 width: '100%', padding: '10px 12px', fontSize: 13,
                 background: 'var(--bg-input)', border: '1px solid var(--border-default)',
@@ -160,7 +163,7 @@ function ProfileSection({ user }) {
           </div>
           <div>
             <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>Username</label>
-            <input defaultValue={`@${user?.email?.split('@')[0] || 'user'}`}
+            <input value={username} onChange={e => setUsername(e.target.value)}
               style={{
                 width: '100%', padding: '10px 12px', fontSize: 13,
                 background: 'var(--bg-input)', border: '1px solid var(--border-default)',
@@ -180,7 +183,7 @@ function ProfileSection({ user }) {
           </div>
           <div style={{ gridColumn: '1 / -1' }}>
             <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>Bio</label>
-            <textarea rows={3} placeholder="Tell us about yourself..."
+            <textarea rows={3} value={bio} onChange={e => setBio(e.target.value)} placeholder="Tell us about yourself..."
               style={{
                 width: '100%', padding: '10px 12px', fontSize: 13,
                 background: 'var(--bg-input)', border: '1px solid var(--border-default)',
@@ -195,7 +198,12 @@ function ProfileSection({ user }) {
           background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
           border: 'none', borderRadius: 8, cursor: 'pointer',
         }}
-          onClick={() => toast.success('Profile updated')}
+          onClick={() => {
+            localStorage.setItem('profile_display_name', displayName);
+            localStorage.setItem('profile_username', username);
+            localStorage.setItem('profile_bio', bio);
+            toast.success('Profile saved to local storage');
+          }}
         >
           Save Changes
         </button>

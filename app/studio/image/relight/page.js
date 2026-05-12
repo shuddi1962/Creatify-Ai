@@ -7,6 +7,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const LIGHT_TYPES = ['Point', 'Directional', 'Ambient', 'Rim', 'Fill'];
 const LIGHT_COLORS = [
@@ -56,14 +57,31 @@ export default function RelightPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2500));
-      setResults([{
-        id: `result-${Date.now()}`,
-        url: `https://picsum.photos/seed/${Date.now()}/1024/1024`,
-        prompt: `${lightType} light - ${lightPosition} - ${lightColor} - ${intensity}% intensity`,
-        type: 'image'
-      }]);
-      toast.success('Lighting applied successfully!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const response = await muapi.generateI2I(apiKey, {
+          model: 'flux',
+          prompt: `Relight image with ${lightType} light from ${lightPosition}, ${lightColor} color, ${intensity}% intensity`,
+          image_url: sourceImage,
+          strength: 0.6,
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          prompt: `${lightType} light - ${lightPosition} - ${lightColor} - ${intensity}% intensity`,
+          type: 'image'
+        }]);
+        toast.success('Lighting applied successfully!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: `https://picsum.photos/seed/${Date.now()}/1024/1024`,
+          prompt: `${lightType} light - ${lightPosition} - ${lightColor} - ${intensity}% intensity`,
+          type: 'image'
+        }]);
+        toast.success('Demo: Lighting applied successfully!');
+      }
     } catch (error) {
       toast.error(error.message || 'Relighting failed');
     } finally {

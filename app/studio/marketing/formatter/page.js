@@ -10,6 +10,7 @@ import UploadZone from '@/components/studio/UploadZone';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PLATFORMS = [
   { id: 'tiktok', name: 'TikTok', ratio: '9:16' },
@@ -51,16 +52,21 @@ export default function MarketingFormatterPage() {
     setLoading(true);
     toast.success('Generating all formats...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      const newResults = selectedPlatforms.map(p => ({
-        id: p,
-        platform: p,
-        url: `https://picsum.photos/seed/${p}/720/1280`,
-        type: 'image',
-      }));
-      setResults(newResults);
-      if (newResults.length > 0) setActiveTab(newResults[0].platform);
-      toast.success('All formats generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating formats via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        const newResults = selectedPlatforms.map(p => ({
+          id: p,
+          platform: p,
+          url: `https://picsum.photos/seed/${p}/720/1280`,
+          type: 'image',
+        }));
+        setResults(newResults);
+        if (newResults.length > 0) setActiveTab(newResults[0].platform);
+        toast.success('Demo: All formats generated!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

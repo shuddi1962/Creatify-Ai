@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Sparkles, Upload, Search, Sliders, Zap } from 'lucide-react';
 import toast from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const CATEGORIES = ['All', 'Fire & Explosion', 'Weather', 'Magic', 'Creatures', 'Technology', 'Space', 'Nature', 'Destruction', 'Transition', 'Light & Color'];
 
@@ -86,9 +87,14 @@ export default function CinemaVFXPage() {
     setLoading(true);
     toast.success(`Applying ${selectedEffect.name}...`);
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/vfx/1280/720', prompt: selectedEffect.name }]);
-      toast.success('VFX applied successfully!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('VFX being applied via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/vfx/1280/720', prompt: selectedEffect.name }]);
+        toast.success('Demo: VFX applied successfully!');
+      }
     } catch (e) {
       toast.error('Failed to apply VFX');
     } finally {

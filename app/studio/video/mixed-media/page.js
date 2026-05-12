@@ -5,6 +5,7 @@ import { Video, Layers } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const BLEND_MODES = ['Overlay', 'Replace Background', 'Add Foreground', 'Full Composite'];
 const POSITION_OPTIONS = ['Full Frame', 'Background Only', 'Foreground Only', 'Custom Region'];

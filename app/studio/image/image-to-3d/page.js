@@ -7,6 +7,7 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const OUTPUT_TYPES = ['3D Render', 'Rotating Video', 'GLB File', 'OBJ File'];
 const VIEWING_ANGLES = ['360 Spin', 'Front 3-4', 'Isometric', 'Custom'];
@@ -39,15 +40,32 @@ export default function ImageTo3DPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 4000));
-      const isVideo = outputType === 'Rotating Video';
-      setResults([{
-        id: `result-${Date.now()}`,
-        url: isVideo ? `https://picsum.photos/seed/${Date.now()}/800/600` : `https://picsum.photos/seed/${Date.now()}/1024/1024`,
-        prompt: `${outputType} - ${viewAngle} - ${material}`,
-        type: isVideo ? 'video' : 'image'
-      }]);
-      toast.success('3D generated successfully!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        const response = await muapi.generateI2I(apiKey, {
+          model: 'stable-diffusion',
+          prompt: `3D render of image, ${material} material, ${viewAngle} view, ${background} background`,
+          image_url: sourceImage,
+          strength: 0.8,
+        });
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: response.url,
+          prompt: `${outputType} - ${viewAngle} - ${material}`,
+          type: 'image'
+        }]);
+        toast.success('3D generated successfully!');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 4000));
+        const isVideo = outputType === 'Rotating Video';
+        setResults([{
+          id: `result-${Date.now()}`,
+          url: isVideo ? `https://picsum.photos/seed/${Date.now()}/800/600` : `https://picsum.photos/seed/${Date.now()}/1024/1024`,
+          prompt: `${outputType} - ${viewAngle} - ${material}`,
+          type: isVideo ? 'video' : 'image'
+        }]);
+        toast.success('Demo: 3D generated successfully!');
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

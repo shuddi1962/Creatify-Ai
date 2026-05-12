@@ -11,6 +11,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const VARIANTS = [5, 10, 20];
 const DIMENSIONS = ['Hook', 'Tone', 'Visual Style', 'Creator Type', 'Duration', 'Platform'];
@@ -43,16 +44,21 @@ export default function MarketingBatchPage() {
     setLoading(true);
     toast.success(`Generating ${count} ad variants...`);
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      const variants = Array.from({ length: count }, (_, i) => ({
-        id: Date.now() + i,
-        type: 'video',
-        url: `https://picsum.photos/seed/batch${i}/720/1280`,
-        prompt: `Variant ${i + 1}: ${dimensions[i % dimensions.length]} variation`,
-        model,
-      }));
-      setResults(variants);
-      toast.success('Batch generation complete!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating batch ads via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        const variants = Array.from({ length: count }, (_, i) => ({
+          id: Date.now() + i,
+          type: 'video',
+          url: `https://picsum.photos/seed/batch${i}/720/1280`,
+          prompt: `Variant ${i + 1}: ${dimensions[i % dimensions.length]} variation`,
+          model,
+        }));
+        setResults(variants);
+        toast.success('Demo: Batch generation complete!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

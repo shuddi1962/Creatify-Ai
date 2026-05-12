@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Headphones, Play } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const ASMR_TYPES = ['Whispering', 'Tapping', 'Crinkling', 'Scratching', 'Water', 'Rain', 'Keyboard Typing', 'Hair Brushing', 'Cooking', 'Nature', 'Mouth Sounds', 'Page Turning'];
 const INTENSITY_OPTIONS = ['Very Gentle', 'Gentle', 'Medium'];

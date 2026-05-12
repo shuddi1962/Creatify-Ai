@@ -5,6 +5,7 @@ import { Video } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const EDIT_MODES = ['Replace Content', 'Change Style', 'Remove Object', 'Add Object'];
 
@@ -32,7 +33,14 @@ export default function EditVideoPage() {
     try {
       const apiKey = localStorage.getItem('muapi_key');
       if (apiKey) {
-        toast.success('Video editing started!');
+        const videoUrl = await muapi.uploadFile(apiKey, videoFile);
+        const response = await muapi.processV2V(apiKey, {
+          model: 'kling-3',
+          video_url: videoUrl,
+          prompt: editPrompt || editMode,
+        });
+        setResults([{ id: `result-${Date.now()}`, url: response.url, prompt: editPrompt, type: 'video' }]);
+        toast.success('Video edited successfully!');
       } else {
         await new Promise(resolve => setTimeout(resolve, 3000));
         setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt: editPrompt, type: 'video' }]);

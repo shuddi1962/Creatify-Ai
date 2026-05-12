@@ -6,6 +6,7 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
 import ResultsGrid from '@/components/studio/ResultsGrid';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const STYLE_PRESETS = [
   'Business Professional', 'LinkedIn', 'Creative', 'Executive',
@@ -47,15 +48,29 @@ export default function HeadshotPage() {
     }
     setLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      const apiKey = localStorage.getItem('muapi_key');
       const qty = parseInt(outputQty);
-      setResults(Array(qty).fill(null).map((_, i) => ({
-        id: `result-${Date.now()}-${i}`,
-        url: `https://picsum.photos/seed/${Date.now() + i}/600/800`,
-        prompt: `${stylePreset} - ${attire} - ${expression}`,
-        type: 'image'
-      })));
-      toast.success(`${qty} headshots generated!`);
+      if (apiKey) {
+        const results = await Promise.all(Array(qty).fill(null).map(async (_, i) => {
+          const response = await muapi.generateImage(apiKey, {
+            model: 'flux',
+            prompt: `Professional headshot, ${stylePreset}, ${attire}, ${expression} expression, ${background} background`,
+            aspect_ratio: '3:4',
+          });
+          return { id: `result-${Date.now()}-${i}`, url: response.url, prompt: `${stylePreset} - ${attire} - ${expression}`, type: 'image' };
+        }));
+        setResults(results);
+        toast.success(`${qty} headshots generated!`);
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setResults(Array(qty).fill(null).map((_, i) => ({
+          id: `result-${Date.now()}-${i}`,
+          url: `https://picsum.photos/seed/${Date.now() + i}/600/800`,
+          prompt: `${stylePreset} - ${attire} - ${expression}`,
+          type: 'image'
+        })));
+        toast.success(`Demo: ${qty} headshots generated!`);
+      }
     } catch (error) {
       toast.error(error.message || 'Generation failed');
     } finally {

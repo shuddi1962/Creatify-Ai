@@ -11,6 +11,7 @@ import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import UploadZone from '@/components/studio/UploadZone';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const DEMO_STYLES = ['Unboxing', 'Feature Walkthrough', 'Before-After', 'How It Works', '360 Showcase', 'Lifestyle Use'];
 const SCENE_SETTINGS = ['White Studio', 'Lifestyle Home', 'Office', 'Outdoor', 'Abstract'];
@@ -35,9 +36,14 @@ export default function MarketingDemoPage() {
     setLoading(true);
     toast.success('Generating demo video...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/demo/1280/720', prompt: `Demo: ${demoStyle}` }]);
-      toast.success('Demo video generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating demo via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/demo/1280/720', prompt: `Demo: ${demoStyle}` }]);
+        toast.success('Demo: Demo video generated!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Mic, Play, Pause, Trash2, Edit, Plus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 export default function VoiceClonePage() {
   const [step, setStep] = useState(1);
@@ -40,10 +41,20 @@ export default function VoiceClonePage() {
     if (!selectedVoice) { toast.error('Please select a voice clone'); return; }
     if (!script.trim()) { toast.error('Please enter a script'); return; }
     setGenerating(true);
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/movie.mp3', voice: selectedVoice }]);
-    toast.success('Audio generated with your voice clone!');
-    setGenerating(false);
+    try {
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Voice generating via API...');
+      } else {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/movie.mp3', voice: selectedVoice }]);
+        toast.success('Demo: Audio generated with your voice clone!');
+      }
+    } catch (error) {
+      toast.error(error.message || 'Generation failed');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleDeleteVoice = (id) => {

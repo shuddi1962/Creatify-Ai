@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Music } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const GENRES = ['Hip-Hop', 'Pop', 'Electronic', 'Jazz', 'Classical', 'R&B', 'Rock', 'Lo-Fi', 'Cinematic', 'Reggaeton', 'Afrobeats', 'Country'];
 const MOODS = ['Happy', 'Sad', 'Energetic', 'Calm', 'Romantic', 'Intense', 'Mysterious', 'Playful'];

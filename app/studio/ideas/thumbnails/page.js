@@ -81,7 +81,7 @@ export default function ThumbnailsPage() {
             <div style={{ zIndex: 1, marginTop: 16, width: '100%', maxWidth: 600, padding: '0 16px', maxHeight: '65%', overflowY: 'auto' }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                 <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)' }}>Generated Thumbnails</h3>
-                <button style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer' }}>A/B Compare</button>
+                <button onClick={() => toast.success('A/B Compare coming soon')} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 11, color: 'var(--text-muted)', cursor: 'pointer' }}>A/B Compare</button>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
                 {results.map(thumb => (

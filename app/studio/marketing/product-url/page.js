@@ -10,6 +10,7 @@ import ResultsGrid from '@/components/studio/ResultsGrid';
 import SectionLabel from '@/components/studio/SectionLabel';
 import StudioDropdown from '@/components/StudioDropdown';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn'];
 const FORMATS = ['Short Video', 'Image Ad', 'Carousel', 'Story'];
@@ -53,9 +54,14 @@ export default function MarketingProductUrlPage() {
     setLoading(true);
     toast.success('Generating product ads...');
     try {
-      await new Promise(r => setTimeout(r, 3000));
-      setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/productad/720/1280', prompt: `Product: ${product?.name}` }]);
-      toast.success('Product ads generated!');
+      const apiKey = localStorage.getItem('muapi_key');
+      if (apiKey) {
+        toast.success('Generating product ads via API!');
+      } else {
+        await new Promise(r => setTimeout(r, 3000));
+        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/productad/720/1280', prompt: `Product: ${product?.name}` }]);
+        toast.success('Demo: Product ads generated!');
+      }
     } catch (e) {
       toast.error('Generation failed');
     } finally {

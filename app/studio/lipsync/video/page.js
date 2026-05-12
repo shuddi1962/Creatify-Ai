@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Video, Mic, FileText } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const SYNC_MODES = ['Replace Audio + Sync Lips', 'Add New Voice', 'Translate & Sync'];
 const FACE_REGIONS = ['Auto-detect', 'Manual selection'];

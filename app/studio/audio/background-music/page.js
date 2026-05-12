@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Music, Video, Sliders } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const ENERGY_OPTIONS = ['Constant', 'Build Up', 'Drop', 'Rise and Fall'];
 const GENRES = ['Pop', 'Electronic', 'Cinematic', 'Acoustic', 'Rock', 'Jazz', 'Ambient'];

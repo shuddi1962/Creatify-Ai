@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { PanelLeftClose, ChevronDown, Camera, Sparkles, Image as ImageIcon, Film, Square, Maximize } from 'lucide-react';
+import toast from 'react-hot-toast';
 import StudioDropdown from '@/components/StudioDropdown';
 
 const CAMERA_PRESETS = [
@@ -38,6 +39,14 @@ export default function CameraAnglePage() {
   const [aperture, setAperture] = useState('f/2.8');
   const [dof, setDof] = useState('Normal');
   const [lighting, setLighting] = useState('Golden Hour');
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast.error('Please describe the scene');
+      return;
+    }
+    toast.success('Demo: Camera angle applied!');
+  };
 
   return (
     <div style={{
@@ -184,7 +193,7 @@ export default function CameraAnglePage() {
             position: 'absolute', bottom: 16, left: 16,
             display: 'flex', gap: 4,
           }}>
-            <button style={{
+            <button onClick={() => toast.success('Reference image feature coming soon')} style={{
               display: 'flex', alignItems: 'center', gap: 6,
               background: 'var(--bg-card)', border: '1px solid var(--border-default)',
               borderRadius: 8, padding: '7px 12px', fontSize: 12,
@@ -261,7 +270,7 @@ export default function CameraAnglePage() {
             </div>
 
             {/* Generate button */}
-            <button style={{
+            <button onClick={handleGenerate} style={{
               background: '#CCFF00',
               border: 'none',
               borderRadius: 10,

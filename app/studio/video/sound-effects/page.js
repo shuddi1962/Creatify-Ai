@@ -5,6 +5,7 @@ import { Video, Volume2, Library } from 'lucide-react';
 import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 import StudioDropdown from '@/components/StudioDropdown';
+import * as muapi from '@/packages/studio/src/muapi';
 
 const EFFECT_SOURCE = ['Auto Detect', 'Manual', 'Library'];
 const EFFECT_LIBRARY = ['Rain', 'Explosion', 'Footsteps', 'Crowd', 'Ocean', 'Wind', 'Birds', 'City', 'Thunder', 'Fire', 'Glass Breaking', 'Car Engine', 'Door', 'Applause', 'Gunshot'];
