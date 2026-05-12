@@ -1,71 +1,149 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Image, Search, Download, Trash2 } from 'lucide-react';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, CornerMarkers } from '@/components/studio/StudioEditorLayout';
+import { useState, useEffect } from 'react'
+import { Search, Image, Download, Trash2, ZoomIn, X, Loader2 } from 'lucide-react'
+import { supabase } from '@/src/lib/supabase'
 
-const IMAGES = [
-  { id: 1, url: 'https://picsum.photos/seed/img1/400/300', name: 'hero-banner.png', model: 'Flux', date: 'May 10', size: '2.4 MB' },
-  { id: 2, url: 'https://picsum.photos/seed/img2/400/300', name: 'thumbnail-1.png', model: 'Flux', date: 'May 8', size: '1.2 MB' },
-  { id: 3, url: 'https://picsum.photos/seed/img3/400/300', name: 'social-post.png', model: 'Flux', date: 'May 7', size: '980 KB' },
-  { id: 4, url: 'https://picsum.photos/seed/img4/400/300', name: 'headshot.png', model: 'Realistic', date: 'May 5', size: '1.8 MB' },
-  { id: 5, url: 'https://picsum.photos/seed/img5/400/300', name: 'product-shot.png', model: 'Flux', date: 'May 4', size: '2.1 MB' },
-  { id: 6, url: 'https://picsum.photos/seed/img6/400/300', name: 'banner-2.png', model: 'Flux', date: 'May 3', size: '1.5 MB' },
-];
+function formatDate(d) {
+  if (!d) return ''
+  const date = new Date(d)
+  const now = new Date()
+  const diff = (now - date) / 1000
+  if (diff < 60) return 'just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`
+  return date.toLocaleDateString()
+}
 
-export default function ImagesPage() {
-  const [images] = useState(IMAGES);
-  const [search, setSearch] = useState('');
-  const filtered = images.filter(i => !search || i.name.toLowerCase().includes(search.toLowerCase()));
+export default function MediaImagesPage() {
+  const [search, setSearch] = useState('')
+  const [assets, setAssets] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [lightbox, setLightbox] = useState(null)
+
+  useEffect(() => {
+    setLoading(true)
+    ;(async () => {
+      let session
+      try {
+        const { data: s } = await supabase.auth.getSession()
+        session = s?.session
+      } catch { session = null }
+
+      if (session) {
+        const { data } = await supabase
+          .from('generations')
+          .select('*')
+          .in('type', ['image', 'i2i'])
+          .order('created_at', { ascending: false })
+          .limit(100)
+        setAssets(data || [])
+      } else {
+        try {
+          const images = JSON.parse(localStorage.getItem('muapi_history') || '[]')
+          images.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+          setAssets(images)
+        } catch { setAssets([]) }
+      }
+      setLoading(false)
+    })()
+  }, [])
+
+  const filtered = assets.filter(a => {
+    if (!search) return true
+    const q = search.toLowerCase()
+    return (a.prompt || a.name || '').toLowerCase().includes(q) || (a.model || '').toLowerCase().includes(q)
+  })
+
+  const deleteAsset = async (e, id) => {
+    e.stopPropagation()
+    try { await supabase.from('generations').delete().eq('id', id); setAssets(prev => prev.filter(a => a.id !== id)) } catch {}
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg-page)' }}>
+        <Loader2 size={24} className="animate-spin" style={{ color: 'var(--text-muted)' }} />
+      </div>
+    )
+  }
 
   return (
-    <StudioEditorLayout
-      left={
-        <LeftPanel title="IMAGES">
-          <div style={{ padding: 8, color: 'var(--text-secondary)', fontSize: 12 }}>
-            {images.length} images in library
+    <div className="min-h-screen" style={{ background: 'var(--bg-page)', color: 'var(--text-primary)' }}>
+      <div style={{ maxWidth: 1400, margin: '0 auto', padding: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 700, marginBottom: 16, background: 'linear-gradient(135deg, #a78bfa, #e879f9)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+          Images
+        </h1>
+
+        <div className="relative mb-6" style={{ maxWidth: 400 }}>
+          <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search images..."
+            style={{ width: '100%', background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '10px 14px 10px 36px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
+          />
+        </div>
+
+        {filtered.length === 0 ? (
+          <div className="flex flex-col items-center py-24">
+            <div style={{ width: 64, height: 64, borderRadius: 16, background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+              <Image size={24} style={{ color: 'var(--text-muted)' }} />
+            </div>
+            <p style={{ color: 'var(--text-secondary)', fontSize: 14 }}>No images yet</p>
           </div>
-        </LeftPanel>
-      }
-      canvas={
-        <StudioCanvas overlay={<CornerMarkers />}>
-          <div style={{ zIndex: 1, padding: 24, width: '100%', height: '100%', overflowY: 'auto' }}>
-            <h1 style={{
-              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
-              color: 'transparent',
-              background: 'linear-gradient(135deg, #a78bfa 0%, #e879f9 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              textAlign: 'center', marginBottom: 6,
-            }}>
-              IMAGES
-            </h1>
-            <p style={{ textAlign: 'center', color: 'var(--text-secondary)', fontSize: 13, marginBottom: 20 }}>{filtered.length} images</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: 12 }}>
-              {filtered.map(img => (
-                <div key={img.id} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-                  <div style={{ aspectRatio: '1', background: 'var(--bg-input)' }}>
-                    <img src={img.url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" />
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+            {filtered.map(asset => {
+              const url = asset.image_url || asset.url || ''
+              return (
+                <div key={asset.id || asset._id} onClick={() => setLightbox(asset)}
+                  style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}
+                  className="hover-lift"
+                >
+                  <div style={{ aspectRatio: '1', background: 'var(--bg-page)' }}>
+                    {url ? <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" loading="lazy" /> : (
+                      <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Image size={24} style={{ color: 'var(--text-muted)' }} />
+                      </div>
+                    )}
+                    <div style={{ position: 'absolute', inset: 0, background: 'rgba(0,0,0,0.4)', display: 'flex', alignItems: 'center', justifyContent: 'center', opacity: 0, transition: 'opacity 200ms' }} className="hover-overlay">
+                      <ZoomIn size={20} style={{ color: '#fff' }} />
+                    </div>
                   </div>
-                  <div style={{ padding: 8 }}>
-                    <p style={{ color: 'var(--text-primary)', fontSize: 11, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>{img.name}</p>
-                    <p style={{ color: 'var(--text-muted)', fontSize: 10 }}>{img.date}</p>
+                  <div style={{ padding: '8px 10px' }}>
+                    <p style={{ color: 'var(--text-primary)', fontSize: 11, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: 2 }}>
+                      {(asset.prompt || '').slice(0, 60) || 'Untitled'}
+                    </p>
+                    <div style={{ color: 'var(--text-muted)', fontSize: 10 }}>
+                      {asset.model && <span>{asset.model} · </span>}
+                      <span>{formatDate(asset.created_at)}</span>
+                    </div>
                   </div>
                 </div>
-              ))}
+              )
+            })}
+          </div>
+        )}
+
+        <p style={{ marginTop: 12, color: 'var(--text-muted)', fontSize: 11, textAlign: 'center' }}>{filtered.length} image{filtered.length !== 1 ? 's' : ''}</p>
+      </div>
+
+      {lightbox && (
+        <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, cursor: 'pointer' }}>
+          <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', color: '#fff' }}><X size={20} /></button>
+          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh' }}>
+            <img src={lightbox.image_url || lightbox.url || ''} style={{ maxWidth: '100%', maxHeight: '85vh', borderRadius: 8, objectFit: 'contain' }} alt="" />
+            <div style={{ marginTop: 12, color: '#ccc', fontSize: 12, textAlign: 'center', maxWidth: 500, margin: '12px auto 0' }}>
+              <p style={{ marginBottom: 4 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
+              <p style={{ color: '#888' }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>
             </div>
           </div>
-        </StudioCanvas>
-      }
-      directorBar={
-        <DirectorBar title="Search">
-          <div style={{ position: 'relative', flex: 1, minWidth: 200 }}>
-            <Search size={14} style={{ position: 'absolute', left: 12, top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
-            <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search images..."
-              style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '8px 12px 8px 32px', color: 'var(--text-primary)', fontSize: 13, outline: 'none' }}
-            />
-          </div>
-        </DirectorBar>
-      }
-    />
-  );
+        </div>
+      )}
+
+      <style jsx>{`
+        .hover-lift:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.3); }
+        .hover-lift:hover .hover-overlay { opacity: 1; }
+      `}</style>
+    </div>
+  )
 }
