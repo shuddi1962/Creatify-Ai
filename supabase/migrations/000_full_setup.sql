@@ -441,7 +441,8 @@ do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admin r
 do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admin promo') then create policy "Admin promo" on promo_codes for all using (exists (select 1 from admin_roles where user_id = auth.uid())); end if; end $$;
 do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admin only') then create policy "Admin only" on admin_provider_keys for all using (exists (select 1 from admin_roles where user_id = auth.uid())); end if; end $$;
 do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admin provider manage') then create policy "Admin provider manage" on api_providers for all using (exists (select 1 from admin_roles where user_id = auth.uid())); end if; end $$;
-do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admin roles manage') then create policy "Admin roles manage" on admin_roles for all using (exists (select 1 from admin_roles where user_id = auth.uid() and role in ('admin', 'super_admin'))); end if; end $$;
+do $$ begin if not exists (select 1 from pg_policies where policyname = 'Users can read own admin role') then create policy "Users can read own admin role" on admin_roles for select using (auth.uid() = user_id); end if; end $$;
+do $$ begin if not exists (select 1 from pg_policies where policyname = 'Admins can manage all') then create policy "Admins can manage all" on admin_roles for all using (exists (select 1 from admin_roles where user_id = auth.uid() and role in ('admin', 'super_admin'))); end if; end $$;
 
 -- =============================================
 -- STORAGE BUCKETS (idempotent via on conflict)
