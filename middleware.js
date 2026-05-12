@@ -1,19 +1,29 @@
 import { NextResponse } from 'next/server';
 
+const LOCAL_API_PREFIXES = [
+  '/api/v1/scrape',
+  '/api/v1/notifications',
+  '/api/v1/proxy',
+  '/api/admin',
+];
+
 export function middleware(request) {
     const url = request.nextUrl;
-    
-    // Catch requests to /api/workflow, /api/app, and /api/v1
-    const isMuApi = url.pathname.startsWith('/api/workflow') || 
-                    url.pathname.startsWith('/api/app') || 
-                    url.pathname.startsWith('/api/v1');
+    const pathname = url.pathname;
+
+    // Skip local API routes
+    for (const prefix of LOCAL_API_PREFIXES) {
+      if (pathname.startsWith(prefix)) return NextResponse.next();
+    }
+
+    // Proxy to Muapi for generation endpoints
+    const isMuApi = pathname.startsWith('/api/workflow') ||
+                    pathname.startsWith('/api/app') ||
+                    pathname.startsWith('/api/v1');
 
     if (isMuApi) {
-        // Remap /api/v1 ONLY if it's not handled by a specific route.
-        // Actually, we'll let existing remapping for /api/v1 stay if needed,
-        // but we'll remove app/workflow as they need special handling.
-        if (url.pathname.startsWith('/api/v1')) {
-            const targetUrl = new URL(url.pathname + url.search, 'https://api.muapi.ai');
+        if (pathname.startsWith('/api/v1')) {
+            const targetUrl = new URL(pathname + url.search, 'https://api.muapi.ai');
             return NextResponse.rewrite(targetUrl);
         }
     }
@@ -21,11 +31,11 @@ export function middleware(request) {
     return NextResponse.next();
 }
 
-// Match the paths we want to proxy
 export const config = {
     matcher: [
-        '/api/workflow/:path*', 
+        '/api/workflow/:path*',
         '/api/app/:path*',
-        '/api/v1/:path*'
+        '/api/v1/:path*',
+        '/api/admin/:path*',
     ],
 };
