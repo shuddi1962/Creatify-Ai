@@ -81,7 +81,8 @@ export default function TextToImagePage() {
 
   return (
     <>
-      <Toaster position="top-center" />
+      <Toaster position="top-center" toastOptions={{ style: { zIndex: 9999, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' } }} />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <StudioEditorLayout
         left={
           <LeftPanel title="STYLES">
@@ -139,7 +140,7 @@ export default function TextToImagePage() {
               <StudioDropdown label="RATIO" value={aspectRatio} onChange={setAspectRatio} options={RATIOS} />
               <StudioDropdown label="QUALITY" value={quality} onChange={setQuality} options={QUALITIES} />
               <StudioDropdown label="COUNT" value={`${numImages} image${numImages > 1 ? 's' : ''}`} onChange={v => setNumImages(v.replace(' image', '').replace('s', ''))} options={IMAGE_COUNTS} />
-              <GenerateButton onClick={handleGenerate}>GENERATE</GenerateButton>
+              <GenerateButton onClick={handleGenerate} loading={loading}>{loading ? '' : 'GENERATE'}</GenerateButton>
             </div>
           </DirectorBar>
         }

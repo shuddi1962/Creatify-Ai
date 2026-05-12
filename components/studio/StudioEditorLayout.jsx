@@ -93,11 +93,12 @@ export function DirectorBar({ children, title }) {
   );
 }
 
-export function GenerateButton({ children, ...props }) {
+export function GenerateButton({ children, loading, ...props }) {
   const router = useRouter();
   const { user } = useAuth();
 
   const handleClick = (e) => {
+    if (loading) return;
     if (!user) {
       e.preventDefault();
       router.push('/studio/signup');
@@ -108,13 +109,19 @@ export function GenerateButton({ children, ...props }) {
 
   return (
     <button style={{
-      background: '#CCFF00', border: 'none', borderRadius: 10,
+      background: loading ? 'var(--text-muted)' : '#CCFF00',
+      border: 'none', borderRadius: 10,
       padding: '10px 24px', fontSize: 14, fontWeight: 700,
-      color: '#000', cursor: 'pointer',
+      color: loading ? '#fff' : '#000',
+      cursor: loading ? 'not-allowed' : 'pointer',
       display: 'flex', alignItems: 'center', gap: 6,
       whiteSpace: 'nowrap', flexShrink: 0,
+      opacity: loading ? 0.6 : 1,
+      transition: 'all 200ms',
     }} {...props} onClick={handleClick}>
-      {children || 'GENERATE'}
+      {loading ? (
+        <><span className="spinner" style={{ display: 'inline-block', width: 14, height: 14, border: '2px solid rgba(255,255,255,0.3)', borderTopColor: '#fff', borderRadius: '50%', animation: 'spin 0.6s linear infinite' }} /> GENERATING...</>
+      ) : (children || 'GENERATE')}
     </button>
   );
 }
