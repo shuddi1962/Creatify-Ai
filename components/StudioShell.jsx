@@ -512,7 +512,7 @@ export default function StudioShell({ children }) {
         </div>
       </header>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
         <aside style={{
           width: sidebarCollapsed ? 0 : 160, flexShrink: 0,
           background: 'var(--bg-sidebar)',
