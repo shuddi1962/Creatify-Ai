@@ -147,7 +147,7 @@ export default function CameraMotionPage() {
                 <StudioDropdown value={motionSpeed} onChange={setMotionSpeed} options={SPEED_OPTIONS} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Applying...' : 'GENERATE ✦ 8'}
+                {loading ? 'Applying...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -156,3 +156,4 @@ export default function CameraMotionPage() {
     </>
   );
 }
+

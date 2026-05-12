@@ -150,7 +150,7 @@ export default function UpscaleVideoPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Upscaling...' : 'GENERATE ✦ 12'}
+                {loading ? 'Upscaling...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -159,3 +159,4 @@ export default function UpscaleVideoPage() {
     </>
   );
 }
+

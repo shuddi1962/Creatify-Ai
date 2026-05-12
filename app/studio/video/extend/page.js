@@ -132,7 +132,7 @@ export default function ExtendVideoPage() {
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Loop</span>
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Extending...' : 'GENERATE ✦ 10'}
+                {loading ? 'Extending...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -141,3 +141,4 @@ export default function ExtendVideoPage() {
     </>
   );
 }
+

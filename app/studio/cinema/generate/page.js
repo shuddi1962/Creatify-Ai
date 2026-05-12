@@ -504,7 +504,7 @@ export default function CinemaStudioPage() {
                 whiteSpace: 'nowrap',
                 minWidth: 140,
               }}>
-                GENERATE ✦ 24
+                GENERATE
               </button>
             </div>
           </div>
@@ -527,3 +527,4 @@ export default function CinemaStudioPage() {
     </div>
   );
 }
+

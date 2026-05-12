@@ -273,7 +273,7 @@ export default function CameraAnglePage() {
               whiteSpace: 'nowrap',
               flexShrink: 0,
             }}>
-              GENERATE ✦ 8
+              GENERATE
             </button>
           </div>
 
@@ -311,3 +311,4 @@ export default function CameraAnglePage() {
     </div>
   );
 }
+

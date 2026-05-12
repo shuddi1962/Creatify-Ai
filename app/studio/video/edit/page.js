@@ -119,7 +119,7 @@ export default function EditVideoPage() {
                   style={{ width: 48, padding: '4px 6px', borderRadius: 6, background: 'var(--bg-input)', border: '1px solid var(--border-default)', color: 'var(--text-primary)', fontSize: 12 }} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Editing...' : 'GENERATE ✦ 8'}
+                {loading ? 'Editing...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -128,3 +128,4 @@ export default function EditVideoPage() {
     </>
   );
 }
+

@@ -163,7 +163,7 @@ export default function SoundEffectsPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Adding...' : 'GENERATE ✦ 8'}
+                {loading ? 'Adding...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -172,3 +172,4 @@ export default function SoundEffectsPage() {
     </>
   );
 }
+

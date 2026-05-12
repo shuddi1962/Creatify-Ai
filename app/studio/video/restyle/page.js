@@ -123,7 +123,7 @@ export default function RestyleVideoPage() {
                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>Motion</span>
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Restyling...' : 'GENERATE ✦ 10'}
+                {loading ? 'Restyling...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -132,3 +132,4 @@ export default function RestyleVideoPage() {
     </>
   );
 }
+

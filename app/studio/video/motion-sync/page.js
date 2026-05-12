@@ -142,7 +142,7 @@ export default function MotionSyncPage() {
                 <StudioDropdown value={preserve} onChange={setPreserve} options={PRESERVE_OPTIONS} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Syncing...' : 'GENERATE ✦ 12'}
+                {loading ? 'Syncing...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -151,3 +151,4 @@ export default function MotionSyncPage() {
     </>
   );
 }
+

@@ -208,7 +208,7 @@ export default function TextToVideoPage() {
                 <StudioDropdown value={cameraMovement} onChange={setCameraMovement} options={CAMERA_MOVEMENTS} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Generating...' : `GENERATE ✦ 8`}
+                {loading ? 'Generating...' : `GENERATE`}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -217,3 +217,4 @@ export default function TextToVideoPage() {
     </>
   );
 }
+

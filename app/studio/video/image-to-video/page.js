@@ -130,7 +130,7 @@ export default function ImageToVideoPage() {
                 <StudioDropdown value={motionStrength} onChange={setMotionStrength} options={STRENGTH_OPTIONS} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Animating...' : 'GENERATE ✦ 8'}
+                {loading ? 'Animating...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -139,3 +139,4 @@ export default function ImageToVideoPage() {
     </>
   );
 }
+

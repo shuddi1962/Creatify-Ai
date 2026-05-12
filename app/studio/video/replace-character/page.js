@@ -189,7 +189,7 @@ export default function ReplaceCharacterPage() {
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Replacing...' : 'GENERATE ✦ 12'}
+                {loading ? 'Replacing...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -198,3 +198,4 @@ export default function ReplaceCharacterPage() {
     </>
   );
 }
+

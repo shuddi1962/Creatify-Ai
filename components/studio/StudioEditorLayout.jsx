@@ -91,7 +91,7 @@ export function DirectorBar({ children, title }) {
   );
 }
 
-export function GenerateButton({ children, credits = 8, ...props }) {
+export function GenerateButton({ children, ...props }) {
   return (
     <button style={{
       background: '#CCFF00', border: 'none', borderRadius: 10,
@@ -100,7 +100,7 @@ export function GenerateButton({ children, credits = 8, ...props }) {
       display: 'flex', alignItems: 'center', gap: 6,
       whiteSpace: 'nowrap', flexShrink: 0,
     }} {...props}>
-      {children || `GENERATE ✦ ${credits}`}
+      {children || 'GENERATE'}
     </button>
   );
 }

@@ -145,7 +145,7 @@ export default function MixedMediaPage() {
                 <StudioDropdown value={styleMode} onChange={setStyleMode} options={STYLE_OPTIONS} />
               </div>
               <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Creating...' : 'GENERATE ✦ 10'}
+                {loading ? 'Creating...' : 'GENERATE'}
               </GenerateButton>
             </div>
           </DirectorBar>
@@ -154,3 +154,4 @@ export default function MixedMediaPage() {
     </>
   );
 }
+
