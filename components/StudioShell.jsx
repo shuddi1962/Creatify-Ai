@@ -151,7 +151,8 @@ export default function StudioShell({ children }) {
   }, []);
 
   useEffect(() => {
-    setSidebarCollapsed(pathname.startsWith('/studio/settings'));
+    const segments = pathname.split('/').filter(Boolean).length;
+    setSidebarCollapsed(segments > 2);
   }, [pathname]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
@@ -512,17 +513,17 @@ export default function StudioShell({ children }) {
       </header>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex', overflow: 'hidden' }}>
-        <aside className="hidden lg:flex"
-          style={{
-            width: sidebarCollapsed ? 60 : 160, flexShrink: 0,
-            background: 'var(--bg-sidebar)',
-            borderRight: '1px solid var(--border-subtle)',
-            display: 'flex', flexDirection: 'column',
-            gap: 4,
-            paddingTop: 8, paddingBottom: 8,
-            overflow: 'visible', zIndex: 50,
-            transition: 'width 200ms ease'
-          }}
+        <aside style={{
+          width: sidebarCollapsed ? 0 : 160, flexShrink: 0,
+          background: 'var(--bg-sidebar)',
+          borderRight: sidebarCollapsed ? 'none' : '1px solid var(--border-subtle)',
+          display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column',
+          gap: 4,
+          paddingTop: 8, paddingBottom: 8,
+          overflow: 'hidden', zIndex: 50,
+          transition: 'all 200ms ease',
+          visibility: sidebarCollapsed ? 'hidden' : 'visible',
+        }} className="hidden lg:flex"
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
             const id = getSidebarId(item);
