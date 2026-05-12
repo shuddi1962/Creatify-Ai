@@ -2,6 +2,14 @@
 
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+const PLAN_HREF = {
+  'BASIC': '/studio/home',
+  'PLUS': '/studio/home',
+  'ULTRA': '/studio/home',
+  'BUSINESS': '/studio/home',
+};
 
 const PLANS = [
   {
@@ -176,7 +184,7 @@ function PriceLabel(col, annual) {
   return prices[col];
 }
 
-function PricingCard({ plan, annual }) {
+function PricingCard({ plan, annual, onClick }) {
   const price = annual ? plan.annual : plan.monthly;
   return (
     <div style={{
@@ -206,6 +214,7 @@ function PricingCard({ plan, annual }) {
       }}
         onMouseEnter={e => e.currentTarget.style.opacity = '0.85'}
         onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+        onClick={onClick}
       >{plan.cta}</button>
       <hr style={{ border: 'none', borderTop: '1px solid var(--border-subtle)', margin: '0 0 14px' }} />
       <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 16px', display: 'flex', flexDirection: 'column', gap: 7 }}>
@@ -252,7 +261,7 @@ function PricingCard({ plan, annual }) {
           {plan.payPerUse.map((m, i) => (
             <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12, color: 'var(--text-muted)' }}>
               <span>{m}</span>
-              <button style={{
+              <button onClick={onClick} style={{
                 background: plan.highlight ? '#ec4899' : plan.color === '#6366f1' ? '#6366f1' : 'var(--bg-input)',
                 color: plan.highlight || plan.color === '#6366f1' ? '#fff' : 'var(--text-muted)',
                 border: 'none', borderRadius: 4, padding: '2px 8px', fontSize: 10, fontWeight: 600, cursor: 'pointer',
@@ -268,6 +277,7 @@ function PricingCard({ plan, annual }) {
 export default function PricingPage() {
   const [annual, setAnnual] = useState(true);
   const [openFaq, setOpenFaq] = useState(null);
+  const router = useRouter();
 
   return (
     <div style={{ background: 'var(--bg-page)', color: 'var(--text-primary)', paddingBottom: 60, minHeight: '100%' }}>
@@ -323,7 +333,7 @@ export default function PricingPage() {
 
       {/* SECTION 4 — Pricing Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, padding: '0 24px', maxWidth: 1400, margin: '0 auto' }}>
-        {PLANS.map(plan => <PricingCard key={plan.name} plan={plan} annual={annual} />)}
+        {PLANS.map(plan => <PricingCard key={plan.name} plan={plan} annual={annual} onClick={() => router.push(PLAN_HREF[plan.name])} />)}
       </div>
       <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-muted)', marginTop: 16, padding: '0 24px' }}>
         Prices exclude VAT and local taxes. All plans are billed in USD. Unlimited usage is subject to our fair use policy. Unused credits expire at end of billing period. Early access features may change before general availability.
@@ -366,8 +376,8 @@ export default function PricingPage() {
               ))}
             </ul>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <button style={{ width: '100%', padding: '12px 0', background: '#ffffff', color: '#000000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'opacity 150ms' }}>Contact Sales</button>
-              <button style={{ width: '100%', padding: '10px 0', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 13, cursor: 'pointer' }}>Learn More</button>
+              <button onClick={() => router.push('/studio/home')} style={{ width: '100%', padding: '12px 0', background: '#ffffff', color: '#000000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', transition: 'opacity 150ms' }}>Contact Sales</button>
+              <button onClick={() => router.push('/studio/home')} style={{ width: '100%', padding: '10px 0', background: 'transparent', color: 'var(--text-secondary)', border: '1px solid var(--border-default)', borderRadius: 10, fontSize: 13, cursor: 'pointer' }}>Learn More</button>
             </div>
           </div>
         </div>
@@ -398,7 +408,7 @@ export default function PricingPage() {
                       <div style={{ fontSize: 13, fontWeight: 700, color: col === 'ultra' ? '#ec4899' : col === 'business' ? '#818cf8' : 'var(--text-primary)', marginBottom: 4 }}>{COL_LABELS[COL_KEYS.indexOf(col)]}</div>
                       <div style={{ fontSize: 18, fontWeight: 800, color: 'var(--text-primary)' }}>${PriceLabel(col, annual)}</div>
                       <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 10 }}>{col === 'free' ? 'Free forever' : '/mo'}</div>
-                      <button style={{ width: '100%', padding: '7px 0', background: CtaColors(col), color: col === 'ultra' || col === 'business' ? '#fff' : 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Get Plan</button>
+                      <button onClick={() => router.push(PLAN_HREF[COL_LABELS[COL_KEYS.indexOf(col)]])} style={{ width: '100%', padding: '7px 0', background: CtaColors(col), color: col === 'ultra' || col === 'business' ? '#fff' : 'var(--text-primary)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12, fontWeight: 600, cursor: 'pointer' }}>Get Plan</button>
                     </th>
                   ))}
                 </tr>
