@@ -163,12 +163,14 @@ export default function StudioEditorLayout({ left, canvas, directorBar }) {
   return (
     <div style={{
       display: 'flex', height: '100%',
-      background: 'var(--bg-page)', overflow: 'hidden',
+      background: 'var(--bg-page)',
     }}>
       {left}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', overflow: 'hidden' }}>
+      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', position: 'relative', minWidth: 0 }}>
         {canvas}
-        {directorBar}
+        <div style={{ position: 'relative', zIndex: 100 }}>
+          {directorBar}
+        </div>
       </div>
     </div>
   );
