@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Zap, Check, ArrowLeft, CreditCard } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Check, ArrowLeft, CreditCard } from 'lucide-react';
 import Link from 'next/link';
 
 const PLANS = {
+  'free': { name: 'Free', price: 0, annual: 0 },
   'basic': { name: 'Basic', price: 5, annual: 4 },
   'plus': { name: 'Plus', price: 55, annual: 39 },
   'ultra': { name: 'Ultra', price: 148, annual: 99, popular: true },
@@ -13,10 +13,15 @@ const PLANS = {
 };
 
 export default function CheckoutPage() {
-  const searchParams = useSearchParams();
-  const planId = searchParams.get('plan') || 'ultra';
+  const [planId, setPlanId] = useState('ultra');
   const [annual, setAnnual] = useState(true);
   const [step, setStep] = useState('details');
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const p = params.get('plan');
+    if (p && PLANS[p]) setPlanId(p);
+  }, []);
   const plan = PLANS[planId] || PLANS.ultra;
   const price = annual ? plan.annual : plan.price;
 

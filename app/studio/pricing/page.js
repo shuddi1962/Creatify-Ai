@@ -5,7 +5,7 @@ import { ChevronDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 const PLAN_HREF = {
-  'BASIC': '/studio/checkout?plan=basic',
+  'BASIC': '/studio/home',
   'PLUS': '/studio/checkout?plan=plus',
   'ULTRA': '/studio/checkout?plan=ultra',
   'BUSINESS': '/studio/checkout?plan=business',
@@ -14,23 +14,25 @@ const PLAN_HREF = {
 const PLANS = [
   {
     name: 'BASIC',
-    badge: null, color: null, highlight: false,
-    tagline: 'For those who need more than free',
-    monthly: 5, annual: 4,
-    credits: '90 credits/month',
+    badge: { text: 'FREE', bg: '#10b981', color: '#fff' },
+    color: null, highlight: false,
+    tagline: 'Get started with 20 free credits',
+    monthly: 0, annual: 0,
+    credits: '20 credits on signup',
     saveBadge: null,
-    cta: 'Get Plan',
+    cta: 'Sign Up Free',
     ctaStyle: 'outline',
     features: [
-      '90 credits/month',
-      '480p Resolution for Generations',
-      '1 GB Storage Per Generation',
-      'Basic access to all models',
-      'Standard queue priority',
+      '20 free credits on signup',
+      'Access to 10+ AI models',
+      '480p image resolution',
+      '5-second video duration',
+      'Standard queue',
+      '1 GB storage',
     ],
-    unlimitedModels: ['Seedance Lite', 'Nano Banana', 'Kling Lite'],
-    payPerUseNote: '360 GPU UNLIMITED & PAY-PER-USE:',
-    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'LTX', 'Turbo Nano', 'Nano Banana 2', 'GPT Image'],
+    unlimitedModels: ['SDXL', 'GPT Image', 'Flux Lite'],
+    payPerUseNote: 'PAY-PER-USE MODELS:',
+    payPerUse: ['Seedance 2.0 Cinema', 'Kling 3.0 Cinema', 'Nano Banana Pro'],
   },
   {
     name: 'PLUS',
@@ -43,10 +45,12 @@ const PLANS = [
     cta: 'Get Plan', ctaStyle: 'outline',
     features: [
       '1,500 credits/month',
-      '1,000 Video Generation Pro Generations',
-      '1 GB Storage Per Generation',
-      'Access to all models',
-      '5 TB unlimited unlocked',
+      'HD image generation (up to 4K)',
+      '30-second video duration',
+      'Access to 50+ AI models',
+      'Bulk generate (500 rows)',
+      'Voice cloning (5 voices)',
+      '50 GB storage',
     ],
     unlimitedModels: [
       'Nano Banana 2',
@@ -68,10 +72,13 @@ const PLANS = [
     cta: 'Get Plan', ctaStyle: 'pink',
     features: [
       '5,000 credits/month',
-      'Parallel generations up to 4 Videos, 8 Images',
-      'Access to all models',
-      'Priority 4k unlimited AI features',
-      'Daily Unlimited video model',
+      '4K image generation',
+      '60-second video duration',
+      'Access to all 200+ models',
+      'Parallel generations (4 videos, 8 images)',
+      'Priority queue',
+      'API access',
+      '200 GB storage',
     ],
     unlimitedModels: [
       { name: 'Nano Banana Pro', badge: 'NEW' },
@@ -92,12 +99,14 @@ const PLANS = [
     cta: 'Get Plan', ctaStyle: 'indigo',
     teamNote: '2 seats',
     features: [
-      'Access to all features in studio',
-      'Plus AI-enabled 1-seat workspace',
-      'Parallel generations up to 8 Videos, 16 Images',
-      'Team and pool credit',
-      'API support',
-      'Priority support',
+      '2,000 credits to start + monthly top-ups',
+      'Unlimited generations',
+      'Parallel generations (8 videos, 16 images)',
+      'All 200+ AI models',
+      'Team workspace (2 seats)',
+      'API access with full endpoints',
+      'Priority 24/7 support',
+      '2 TB storage',
     ],
     teamFeatures: [
       'Shareable elements and fixed CTL',
@@ -119,44 +128,33 @@ const PLANS = [
 const COMPARE_DATA = {
   categories: [
     {
-      name: 'Video',
+      name: 'Generations',
       rows: [
-        { feature: 'Concurrent jobs', free: '1', basic: '1', plus: '2', ultra: '4', business: '10' },
-        { feature: 'Seedance 480 720p', free: '—', basic: '20 videos', plus: '50 videos', ultra: '600 videos', business: '600 videos' },
-        { feature: 'Seedance Full HD 720p', free: '—', basic: '—', plus: '30 videos', ultra: '480 videos', business: '480 videos' },
+        { feature: 'Credits per month', free: '20', basic: '90', plus: '1,500', ultra: '5,000', business: '2,000+' },
+        { feature: 'Image resolution', free: '480p', basic: '720p', plus: '4K', ultra: '4K', business: '4K' },
+        { feature: 'Video duration', free: '5s', basic: '10s', plus: '30s', ultra: '60s', business: 'Unlimited' },
+        { feature: 'Parallel generations', free: '1', basic: '1', plus: '2', ultra: '4', business: '8' },
       ],
     },
     {
-      name: 'Image',
+      name: 'Models & Access',
       rows: [
-        { feature: 'GPT Image 2', free: '—', basic: '—', plus: '∞', ultra: '∞', business: '∞' },
-        { feature: 'Nano Banana Pro', free: '—', basic: '—', plus: '∞', ultra: '∞', business: '∞' },
-        { feature: 'Flux Kontext', free: '5', basic: '20', plus: '100', ultra: '∞', business: '∞' },
-        { feature: 'Midjourney v7', free: '—', basic: '10', plus: '50', ultra: '200', business: '∞' },
-        { feature: 'Seedream 5.0', free: '5', basic: '20', plus: '100', ultra: '∞', business: '∞' },
-        { feature: 'SDXL', free: '∞', basic: '∞', plus: '∞', ultra: '∞', business: '∞' },
-        { feature: 'GPT Image', free: '—', basic: '5', plus: '20', ultra: '∞', business: '∞' },
+        { feature: 'AI Models Available', free: '10+', basic: '25+', plus: '50+', ultra: '150+', business: '200+' },
+        { feature: 'Bulk Generate', free: '\u2014', basic: '\u2014', plus: '500 rows', ultra: '2,000 rows', business: '\u221E' },
+        { feature: 'Content Ideas', free: '10/day', basic: '50/day', plus: '\u221E', ultra: '\u221E', business: '\u221E' },
+        { feature: 'Voice Cloning', free: '\u2014', basic: '1 voice', plus: '5 voices', ultra: '10 voices', business: '\u221E' },
+        { feature: 'API Access', free: '\u2014', basic: '\u2014', plus: '\u2713', ultra: '\u2713', business: '\u2713' },
+        { feature: 'Custom Brand Kit', free: '\u2014', basic: '1', plus: '5', ultra: '20', business: '\u221E' },
+        { feature: 'Remove Watermark', free: '\u2014', basic: '\u2713', plus: '\u2713', ultra: '\u2713', business: '\u2713' },
       ],
     },
     {
-      name: 'Audio',
+      name: 'Storage & Support',
       rows: [
-        { feature: 'Text to Voiceover', free: '5 min', basic: '30 min', plus: '120 min', ultra: '∞', business: '∞' },
-        { feature: 'Voice Cloning', free: '—', basic: '—', plus: '3 voices', ultra: '10 voices', business: '∞' },
-        { feature: 'Text to Music', free: '3', basic: '10', plus: '50', ultra: '∞', business: '∞' },
-      ],
-    },
-    {
-      name: 'Features',
-      rows: [
-        { feature: 'Bulk Generate', free: '—', basic: '—', plus: '50 items', ultra: '200 items', business: '∞ items' },
-        { feature: 'Content Ideas', free: '10/day', basic: '50/day', plus: '∞', ultra: '∞', business: '∞' },
-        { feature: 'API Access', free: '—', basic: '—', plus: '✓', ultra: '✓', business: '✓' },
-        { feature: 'Custom Brand Kit', free: '—', basic: '1', plus: '5', ultra: '20', business: '∞' },
         { feature: 'Storage', free: '1 GB', basic: '10 GB', plus: '50 GB', ultra: '200 GB', business: '2 TB' },
-        { feature: 'Priority Queue', free: '—', basic: '—', plus: '—', ultra: '✓', business: '✓' },
+        { feature: 'Queue Priority', free: 'Standard', basic: 'Standard', plus: 'Standard', ultra: 'Priority', business: 'Priority' },
+        { feature: 'Support', free: 'Community', basic: 'Email', plus: 'Email', ultra: 'Priority', business: '24/7 Dedicated' },
         { feature: 'Team Seats', free: '1', basic: '1', plus: '1', ultra: '1', business: '5' },
-        { feature: 'Remove Watermark', free: '—', basic: '✓', plus: '✓', ultra: '✓', business: '✓' },
       ],
     },
   ],
@@ -180,7 +178,7 @@ function CtaColors(col) {
 }
 
 function PriceLabel(col, annual) {
-  const prices = { free: '0', basic: annual ? '4' : '5', plus: annual ? '39' : '55', ultra: annual ? '99' : '148', business: annual ? '162' : '225' };
+  const prices = { free: '0', basic: '5', plus: annual ? '39' : '55', ultra: annual ? '99' : '148', business: annual ? '162' : '225' };
   return prices[col];
 }
 
