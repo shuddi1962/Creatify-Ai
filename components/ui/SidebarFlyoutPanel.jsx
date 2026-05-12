@@ -33,7 +33,7 @@ export function SidebarFlyoutPanel({ title, leftLabel, rightLabel, left, right, 
       padding: '16px 16px 24px',
       width: 640,
       boxShadow: '0 20px 60px var(--overlay-bg)',
-      zIndex: 9999,
+      zIndex: 999999,
       animation: 'flyoutFade 180ms ease forwards',
       ...style,
     }}>

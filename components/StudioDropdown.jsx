@@ -5,8 +5,10 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 export default function StudioDropdown({ label, value, onChange, options, theme }) {
   const [open, setOpen] = useState(false)
   const [pos, setPos] = useState({ top: 0, left: 0, width: 160, dropUp: false })
+  const [actualHeight, setActualHeight] = useState(200)
   const ref = useRef(null)
   const btnRef = useRef(null)
+  const panelRef = useRef(null)
 
   useEffect(() => {
     function handleClick(e) {
@@ -19,31 +21,52 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
   const measureAndOpen = useCallback(() => {
     if (!btnRef.current) return
     const rect = btnRef.current.getBoundingClientRect()
-    const estHeight = Math.min(options.length * 48 + 24, 320)
-    const spaceBelow = window.innerHeight - rect.bottom - 16
-    const spaceAbove = rect.top - 16
-    const shouldDropUp = spaceBelow < estHeight && spaceAbove > spaceBelow
+    const hasDesc = options.some(o => typeof o === 'object' && o.desc)
+    const perItem = hasDesc ? 60 : 44
+    const estHeight = Math.min(options.length * perItem + 24, 360)
+    const spaceBelow = window.innerHeight - rect.bottom - 20
+    const spaceAbove = rect.top - 20
+    const shouldDropUp = spaceBelow < estHeight && spaceAbove > estHeight
     setPos({
-      top: shouldDropUp ? rect.top - estHeight - 6 : rect.bottom + 6,
-      left: Math.min(rect.left, window.innerWidth - 320),
-      width: Math.max(rect.width, 160),
+      top: shouldDropUp ? rect.top - Math.min(estHeight, 360) - 8 : rect.bottom + 8,
+      left: Math.min(rect.left, window.innerWidth - (rect.width + 20)),
+      width: Math.max(rect.width, 180),
       dropUp: shouldDropUp,
     })
     setOpen(true)
   }, [options])
 
   useEffect(() => {
-    if (open) {
-      const onScroll = () => measureAndOpen()
-      window.addEventListener('scroll', onScroll, true)
-      return () => window.removeEventListener('scroll', onScroll, true)
-    }
+    if (!open) return
+    const onScroll = () => measureAndOpen()
+    window.addEventListener('scroll', onScroll, true)
+    return () => window.removeEventListener('scroll', onScroll, true)
   }, [open, measureAndOpen])
+
+  useEffect(() => {
+    if (!open || !panelRef.current) return
+    const h = panelRef.current.scrollHeight
+    if (h > 0 && h !== actualHeight) setActualHeight(h)
+  }, [open, actualHeight])
+
+  useEffect(() => {
+    if (!open || !panelRef.current || !btnRef.current) return
+    const panel = panelRef.current
+    const btnRect = btnRef.current.getBoundingClientRect()
+    const pH = panel.scrollHeight
+    const spaceBelow = window.innerHeight - btnRect.bottom - 20
+    const spaceAbove = btnRect.top - 20
+    if (spaceBelow < pH && spaceAbove > pH) {
+      setPos(prev => ({ ...prev, top: btnRect.top - Math.min(pH, 360) - 8, dropUp: true }))
+    } else if (spaceBelow >= pH) {
+      setPos(prev => ({ ...prev, top: btnRect.bottom + 8, dropUp: false }))
+    }
+  }, [open, actualHeight])
 
   const isDark = theme === 'dark' || (!theme && typeof window !== 'undefined' && document.documentElement.getAttribute('data-theme') !== 'light')
 
   return (
-    <div ref={ref} style={{ position: 'relative', userSelect: 'none', zIndex: 600 }}>
+    <div ref={ref} style={{ position: 'relative', userSelect: 'none' }}>
       {label && (
         <div style={{
           fontSize: 11, fontWeight: 600,
@@ -65,13 +88,13 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
           justifyContent: 'space-between',
           gap: 8,
           width: '100%',
-          minWidth: 160,
-          padding: '10px 14px',
+          minWidth: 140,
+          padding: '8px 12px',
           background: 'var(--bg-elevated)',
           border: '1px solid var(--border-strong)',
           borderRadius: 10,
           color: 'var(--text-primary)',
-          fontSize: 14,
+          fontSize: 13,
           fontWeight: 500,
           cursor: 'pointer',
           transition: 'border-color 150ms, background 150ms',
@@ -94,19 +117,20 @@ export default function StudioDropdown({ label, value, onChange, options, theme 
 
       {open && (
         <div
+          ref={panelRef}
           style={{
             position: 'fixed',
             top: pos.top,
             left: pos.left,
             minWidth: pos.width,
-            maxWidth: 320,
-            maxHeight: 320,
+            maxWidth: 360,
+            maxHeight: 360,
             overflowY: 'auto',
             background: 'var(--bg-card)',
             border: '1px solid var(--border-strong)',
             borderRadius: 12,
             padding: '6px',
-            zIndex: 99999,
+            zIndex: 999999,
             boxShadow: '0 16px 48px rgba(0,0,0,0.5)',
             animation: 'dropIn 150ms ease',
           }}
