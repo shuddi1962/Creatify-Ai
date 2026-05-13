@@ -11,7 +11,7 @@ import { generateVideo } from '@/lib/generationUtils'
 import { VIDEO_MODELS } from '@/lib/modelsConfig'
 
 const I2V_MODELS = VIDEO_MODELS.filter(m => m.type === 'i2v')
-const DURATIONS = ['3', '5', '8', '10', '15']
+const DURATIONS = ['6', '8', '10', '12', '14', '16', '18', '20']
 const QUALITIES = [{ label: '480p', desc: 'Fast' }, { label: '720p', desc: 'HD' }, { label: '1080p', desc: 'Full HD' }]
 
 export default function ImageToVideoPage() {
