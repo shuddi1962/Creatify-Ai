@@ -32,23 +32,20 @@ export default function MediaAudioPage() {
   useEffect(() => {
     setLoading(true)
     ;(async () => {
-      let session
+      const all = []
       try {
-        const { data: s } = await supabase.auth.getSession()
-        session = s?.session
-      } catch { session = null }
-
-      if (session) {
         const { data } = await supabase
           .from('generations')
           .select('*')
           .in('type', ['audio', 'lipsync'])
           .order('created_at', { ascending: false })
           .limit(100)
-        setAssets(data || [])
-      } else {
-        setAssets([])
-      }
+        if (data) all.push(...data)
+      } catch {}
+      const seen = new Set()
+      const merged = all.filter(a => { const k = a.url || a.audio_url || a.id || Math.random(); if (seen.has(k)) return false; seen.add(k); return true })
+      merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      setAssets(merged)
       setLoading(false)
     })()
   }, [])

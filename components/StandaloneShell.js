@@ -40,10 +40,10 @@ const ALL_ITEMS = (() => {
   return map;
 })();
 
-const TOP_IDS = ['image', 'video', 'lipsync', 'audio', 'cinema', 'marketing', 'media'];
+const TOP_IDS = ['image', 'video', 'lipsync', 'audio', 'cinema', 'marketing'];
 
 const topNavId = (label) => {
-  const m = { 'Image Studio': 'image', 'Video Studio': 'video', 'Lip Sync': 'lipsync', 'Audio Studio': 'audio', 'Cinema Studio': 'cinema', 'Marketing Studio': 'marketing', 'Media Library': 'media' };
+  const m = { 'Image Studio': 'image', 'Video Studio': 'video', 'Lip Sync': 'lipsync', 'Audio Studio': 'audio', 'Cinema Studio': 'cinema', 'Marketing Studio': 'marketing' };
   return m[label] || label.toLowerCase().replace(/\s+/g, '-');
 };
 

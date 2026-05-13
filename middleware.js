@@ -84,10 +84,17 @@ export async function middleware(request) {
         requestHeaders.delete('connection');
         requestHeaders.delete('cookie');
 
+        let body = null;
+        if (!['GET', 'HEAD'].includes(request.method)) {
+          try {
+            body = await request.text();
+          } catch { body = null; }
+        }
+
         const response = await fetch(targetUrl, {
           headers: requestHeaders,
           method: request.method,
-          body: ['GET', 'HEAD'].includes(request.method) ? null : request.body,
+          body,
         });
 
         return new Response(response.body, {

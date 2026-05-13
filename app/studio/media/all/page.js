@@ -42,30 +42,35 @@ export default function MediaAllPage() {
   useEffect(() => {
     setLoading(true)
     ;(async () => {
-      let session
-      try {
-        const { data: s } = await supabase.auth.getSession()
-        session = s?.session
-      } catch { session = null }
+      const all = []
 
-      if (session) {
+      try {
         const { data } = await supabase
           .from('generations')
           .select('*')
           .order('created_at', { ascending: false })
           .limit(100)
-        setAssets(data || [])
-      } else {
-        const all = []
-        try {
-          const images = JSON.parse(localStorage.getItem('muapi_history') || '[]')
-          all.push(...images.map(i => ({ ...i, _type: 'image' })))
-          const videos = JSON.parse(localStorage.getItem('video_history') || '[]')
-          all.push(...videos.map(i => ({ ...i, _type: 'video' })))
-        } catch {}
-        all.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-        setAssets(all)
-      }
+        if (data) all.push(...data)
+      } catch {}
+
+      try {
+        const images = JSON.parse(localStorage.getItem('muapi_history') || '[]')
+        all.push(...images.map(i => ({ ...i, _local: true })))
+      } catch {}
+      try {
+        const videos = JSON.parse(localStorage.getItem('video_history') || '[]')
+        all.push(...videos.map(i => ({ ...i, _local: true })))
+      } catch {}
+
+      const seen = new Set()
+      const merged = all.filter(a => {
+        const key = a.url || a.image_url || a.video_url || a.id || Math.random()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+      merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      setAssets(merged)
       setLoading(false)
     })()
   }, [])

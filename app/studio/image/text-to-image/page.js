@@ -81,7 +81,11 @@ export default function TextToImagePage() {
 
   return (
     <>
-      <Toaster position="top-center" toastOptions={{ style: { zIndex: 9999, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' } }} />
+      <Toaster position="top-right" toastOptions={{ duration: 4000, style: { zIndex: 9999, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', marginTop: 60 } }} />
+      <style>{`
+        @keyframes spin { to { transform: rotate(360deg); } }
+        div[role="status"] { z-index: 9999 !important; }
+      `}</style>
       <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       <StudioEditorLayout
         left={

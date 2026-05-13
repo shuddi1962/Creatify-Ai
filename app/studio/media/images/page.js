@@ -25,27 +25,24 @@ export default function MediaImagesPage() {
   useEffect(() => {
     setLoading(true)
     ;(async () => {
-      let session
+      const all = []
       try {
-        const { data: s } = await supabase.auth.getSession()
-        session = s?.session
-      } catch { session = null }
-
-      if (session) {
         const { data } = await supabase
           .from('generations')
           .select('*')
           .in('type', ['image', 'i2i'])
           .order('created_at', { ascending: false })
           .limit(100)
-        setAssets(data || [])
-      } else {
-        try {
-          const images = JSON.parse(localStorage.getItem('muapi_history') || '[]')
-          images.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
-          setAssets(images)
-        } catch { setAssets([]) }
-      }
+        if (data) all.push(...data)
+      } catch {}
+      try {
+        const images = JSON.parse(localStorage.getItem('muapi_history') || '[]')
+        all.push(...images.map(i => ({ ...i, _local: true })))
+      } catch {}
+      const seen = new Set()
+      const merged = all.filter(a => { const k = a.url || a.image_url || a.id || Math.random(); if (seen.has(k)) return false; seen.add(k); return true })
+      merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
+      setAssets(merged)
       setLoading(false)
     })()
   }, [])
