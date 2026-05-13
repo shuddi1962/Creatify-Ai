@@ -148,13 +148,13 @@ export default function MediaVideosPage() {
       </div>
 
       {player && (
-        <div onClick={() => setPlayer(null)} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, cursor: 'pointer' }}>
-          <button onClick={() => setPlayer(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', color: '#fff' }}><X size={20} /></button>
-          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw' }}>
-            <video controls autoPlay style={{ maxWidth: '100%', maxHeight: '80vh', borderRadius: 8 }} src={player.video_url || player.image_url || player.url || ''} />
-            <div style={{ marginTop: 12, color: '#ccc', fontSize: 12, textAlign: 'center' }}>
+        <div onClick={() => setPlayer(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button onClick={() => setPlayer(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
+          <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
+            <video controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} src={player.video_url || player.image_url || player.url || ''} />
+            <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p>{(player.prompt || '').slice(0, 200)}</p>
-              <p style={{ color: '#888', marginTop: 4 }}>{player.model || ''} · {formatDate(player.created_at)}</p>
+              <p style={{ color: '#888', fontSize: 12, marginTop: 2 }}>{player.model || ''} · {formatDate(player.created_at)}</p>
             </div>
           </div>
         </div>

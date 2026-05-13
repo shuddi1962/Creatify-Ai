@@ -51,11 +51,12 @@ export default function ResultsGrid({ results, columns = 2 }) {
 
       {/* Full-screen lightbox */}
       {fullView && (
-        <div className="fixed inset-0 z-[9999] bg-black/90 backdrop-blur-md flex items-center justify-center"
+        <div className="fixed inset-0 z-[9999] bg-black/92 flex items-center justify-center p-0"
           onClick={() => setFullView(null)}>
-          <div className="relative max-w-[90vw] max-h-[90vh] flex flex-col items-center"
+          <div className="flex flex-col items-center gap-4"
+            style={{ maxWidth: '95vw', maxHeight: '95vh' }}
             onClick={e => e.stopPropagation()}>
-            <div className="absolute -top-12 right-0 flex gap-2">
+            <div className="flex gap-3 self-end">
               <button onClick={() => { if (fullView.url) { const a = document.createElement('a'); a.href = fullView.url; a.download = `creatify-${fullView.id || fullView.index}.${fullView.type === 'video' ? 'mp4' : 'png'}`; a.click(); } }}
                 className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium backdrop-blur-sm transition-all">
                 Download
@@ -66,12 +67,12 @@ export default function ResultsGrid({ results, columns = 2 }) {
               </button>
             </div>
             {fullView.type === 'video' ? (
-              <video src={fullView.url} controls autoPlay className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl" />
+              <video src={fullView.url} controls autoPlay className="rounded-2xl shadow-2xl" style={{ maxWidth: '95vw', maxHeight: '80vh' }} />
             ) : (
-              <img src={fullView.url} alt="" className="max-w-full max-h-[85vh] rounded-2xl shadow-2xl object-contain" />
+              <img src={fullView.url} alt="" className="rounded-2xl shadow-2xl object-contain" style={{ maxWidth: '95vw', maxHeight: '80vh' }} />
             )}
             {fullView.prompt && (
-              <div className="mt-4 text-sm text-[#aaa] text-center max-w-lg">{fullView.prompt}</div>
+              <div className="text-sm text-[#aaa] text-center max-w-lg">{fullView.prompt}</div>
             )}
           </div>
         </div>

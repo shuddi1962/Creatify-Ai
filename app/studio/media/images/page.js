@@ -125,13 +125,13 @@ export default function MediaImagesPage() {
       </div>
 
       {lightbox && (
-        <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, zIndex: 1000, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 40, cursor: 'pointer' }}>
-          <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 20, right: 20, background: 'rgba(255,255,255,0.1)', border: 'none', borderRadius: 8, padding: 8, cursor: 'pointer', color: '#fff' }}><X size={20} /></button>
-          <div onClick={e => e.stopPropagation()} style={{ maxWidth: '90vw', maxHeight: '90vh' }}>
-            <img src={lightbox.image_url || lightbox.url || ''} style={{ maxWidth: '100%', maxHeight: '85vh', borderRadius: 8, objectFit: 'contain' }} alt="" />
-            <div style={{ marginTop: 12, color: '#ccc', fontSize: 12, textAlign: 'center', maxWidth: 500, margin: '12px auto 0' }}>
-              <p style={{ marginBottom: 4 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
-              <p style={{ color: '#888' }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>
+        <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
+          <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
+            <img src={lightbox.image_url || lightbox.url || ''} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+            <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
+              <p style={{ marginBottom: 2 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
+              <p style={{ color: '#888', fontSize: 12 }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>
             </div>
           </div>
         </div>
