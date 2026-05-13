@@ -57,21 +57,23 @@ export async function getGenerations(type) {
 }
 
 export async function saveGeneration(entry, type) {
-  if (await useLocal()) {
-    const key = type === 'video' ? 'video_history' : 'muapi_history'
-    const history = JSON.parse(localStorage.getItem(key) || '[]')
-    history.unshift(entry)
-    localStorage.setItem(key, JSON.stringify(history.slice(0, 30)))
-    return
+  const key = type === 'video' ? 'video_history' : 'muapi_history'
+  const history = JSON.parse(localStorage.getItem(key) || '[]')
+  history.unshift({ ...entry, type, created_at: new Date().toISOString() })
+  localStorage.setItem(key, JSON.stringify(history.slice(0, 50)))
+
+  if (!(await useLocal())) {
+    try {
+      await supabase.from('generations').insert({
+        type,
+        model: entry.model || '',
+        prompt: entry.prompt || '',
+        image_url: entry.image_url || entry.url || null,
+        video_url: entry.video_url || null,
+        status: 'completed',
+      })
+    } catch {}
   }
-  await supabase.from('generations').insert({
-    type,
-    model: entry.model || '',
-    prompt: entry.prompt || '',
-    image_url: entry.image_url || entry.url || null,
-    video_url: entry.video_url || null,
-    status: 'completed',
-  })
 }
 
 export async function getUploads() {

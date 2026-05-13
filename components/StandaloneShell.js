@@ -106,6 +106,16 @@ export default function StandaloneShell() {
   const [showSettings, setShowSettings] = useState(false);
   const [showApiKeyModal, setShowApiKeyModal] = useState(false);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAccountMenu, setShowAccountMenu] = useState(false);
+  const accountRef = useRef(null);
+
+  useEffect(() => {
+    function handleClick(e) {
+      if (accountRef.current && !accountRef.current.contains(e.target)) setShowAccountMenu(false);
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
 
   useEffect(() => {
     const info = getWorkflowInfo();
@@ -575,18 +585,45 @@ export default function StandaloneShell() {
             </div>
 
             {user ? (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
-                </div>
-                <button onClick={() => setShowSettings(true)} title="Settings"
-                  style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '6px 12px', borderRadius: 6, border: '1px solid var(--border-strong)', background: 'var(--glass-bg)', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600, transition: 'all 150ms ease' }}
-                  onMouseEnter={e => { e.target.style.color = 'var(--text-primary)'; e.target.style.background = 'var(--bg-hover)'; }}
-                  onMouseLeave={e => { e.target.style.color = 'var(--text-secondary)'; e.target.style.background = 'var(--glass-bg)'; }}
+              <div ref={accountRef} style={{ position: 'relative' }}>
+                <button onClick={() => setShowAccountMenu(!showAccountMenu)}
+                  style={{ width: 32, height: 32, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms' }}
                 >
-                  <Icons.Settings size={14} />
-                  <span className="hidden sm:inline">Settings</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: showAccountMenu ? '#fff' : 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                 </button>
+                {showAccountMenu && (
+                  <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, minWidth: 200, background: 'var(--bg-card)', border: '1px solid var(--border-strong)', borderRadius: 12, padding: 6, zIndex: 9999, boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}>
+                    <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-subtle)', marginBottom: 4 }}>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{user.email}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Signed in</div>
+                    </div>
+                    {[
+                      { icon: Icons.LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
+                      { icon: Icons.UserCircle, label: 'Profile', href: '/studio/settings' },
+                      { icon: Icons.Folder, label: 'Assets', href: '/studio/media/all' },
+                      { icon: Icons.Settings, label: 'Settings', href: '/studio/settings' },
+                    ].map(item => (
+                      <button key={item.label} onClick={() => { setShowAccountMenu(false); router.push(item.href); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left', transition: 'all 120ms' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'none'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                      >
+                        <item.icon size={15} />
+                        {item.label}
+                      </button>
+                    ))}
+                    <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 4, paddingTop: 4 }}>
+                      <button onClick={async () => { setShowAccountMenu(false); await signOut(); resetStorageMode(); handleKeyChange(); }}
+                        style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: '#F87171', fontSize: 13, textAlign: 'left' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.1)'; }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'none'; }}
+                      >
+                        <Icons.LogOut size={15} />
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             ) : (
               <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>

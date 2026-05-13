@@ -112,23 +112,25 @@ export default function TextToImagePage() {
         }
         canvas={
           <StudioCanvas overlay={<CornerMarkers />}>
-            <h1 style={{
-              fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
-              color: 'transparent',
-              background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-              textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
-              padding: '0 24px', zIndex: 1,
-            }}>
-              Text to Image
-            </h1>
+            {results.length === 0 && (
+              <h1 style={{
+                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
+                color: 'transparent',
+                background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
+                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+                textAlign: 'center', maxWidth: '70%', lineHeight: 1.2,
+                padding: '0 24px', zIndex: 1,
+              }}>
+                Text to Image
+              </h1>
+            )}
             <div style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', gap: 6 }}>
               <ControlButton onClick={() => setShowNegative(!showNegative)}>
                 {showNegative ? '− Negative' : '+ Negative'}
               </ControlButton>
             </div>
             {results.length > 0 && (
-              <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 2, padding: 40 }}>
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 40px', overflow: 'auto' }}>
                 <div style={{ width: '100%', maxWidth: 800 }}>
                   <ResultsGrid results={results} columns={Math.min(results.length, 2)} />
                 </div>
