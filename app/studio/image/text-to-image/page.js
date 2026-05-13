@@ -17,7 +17,7 @@ const STYLES = [
 
 const MODELS = IMAGE_MODELS.map(m => ({
   label: m.name,
-  desc: `${m.cost === 'free' ? 'Free' : 'Paid'} — via ${m.provider}${m.cost === 'free' ? '  ✓' : ''}`,
+  desc: '',
   id: m.id,
   endpoint: m.endpoint,
   provider: m.provider,
