@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useMemo } from 'react'
-import { Video, Image, Loader2 } from 'lucide-react'
+import { useState } from 'react'
+import { Video, Image } from 'lucide-react'
 import { Toaster, toast } from 'react-hot-toast'
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout'
 import StudioDropdown from '@/components/StudioDropdown'
 import ResultsGrid from '@/components/studio/ResultsGrid'
-import { saveGeneration } from '@/src/lib/storage'
 import * as muapi from '@/packages/studio/src/muapi'
+import { generateVideo } from '@/lib/generationUtils'
 import { VIDEO_MODELS } from '@/lib/modelsConfig'
 
 const T2V_MODELS = VIDEO_MODELS.filter(m => m.type === 't2v')
@@ -36,7 +36,7 @@ export default function TextToVideoPage() {
   const [results, setResults] = useState([])
 
   const activeModels = inputMode === 'image' ? I2V_MODELS : T2V_MODELS
-  const modelOpts = activeModels.map(m => ({ label: m.name, desc: m.badge || '', id: m.id, cost: m.cost }))
+  const modelOpts = activeModels.map(m => ({ label: m.name, desc: m.badge || '', id: m.id }))
   const getModelId = (label) => activeModels.find(m => m.name === label)?.id || activeModels[0]?.id || ''
 
   const handleImageUpload = (file) => {
@@ -55,28 +55,28 @@ export default function TextToVideoPage() {
     if (!prompt.trim() && !imageFile) { toast.error('Enter a prompt or upload an image'); return }
     setLoading(true)
     try {
-      const apiKey = await getApiKey()
-      if (!apiKey) { toast.error('No API key configured'); setLoading(false); return }
-
       const modelId = getModelId(model)
-      const params = { model: modelId, prompt: prompt || 'Animate this', aspect_ratio: aspectRatio, duration: parseInt(duration), quality: quality.toLowerCase() }
 
-      let response
       if (inputMode === 'image' && imageFile) {
+        const apiKey = await getApiKey()
+        if (!apiKey) { toast.error('No API key configured'); setLoading(false); return }
         const uploaded = await muapi.uploadFile(imageFile)
-        params.image_url = uploaded
-        response = await muapi.generateI2V(apiKey, params)
+        const response = await muapi.generateI2V(apiKey, {
+          model: modelId, prompt: prompt || 'Animate this', image_url: uploaded,
+          duration: parseInt(duration), quality: quality.toLowerCase(), aspect_ratio: aspectRatio,
+        })
+        const url = response.url || ''
+        if (url) {
+          setResults([{ id: `result-${Date.now()}`, url, prompt, type: 'video', model: modelId }])
+          toast.success('Video generated!')
+        } else { toast.error('No URL in response') }
       } else {
-        response = await muapi.generateVideo(apiKey, params)
-      }
-
-      const url = response.url || ''
-      if (url) {
-        setResults([{ id: `result-${Date.now()}`, url, prompt, type: 'video', model: modelId }])
-        saveGeneration({ url, prompt, model: modelId, video_url: url }, 'video').catch(() => {})
+        const results = await generateVideo({
+          model: modelId, prompt,
+          aspect_ratio: aspectRatio, duration, quality,
+        })
+        setResults(results)
         toast.success('Video generated!')
-      } else {
-        toast.error('No URL in response')
       }
     } catch (error) {
       toast.error(error.message || 'Generation failed')
@@ -108,13 +108,9 @@ export default function TextToVideoPage() {
             <div style={{ height: 1, background: 'var(--border-subtle)', margin: '12px 0' }} />
             {QUALITIES.map(q => (
               <button key={q.label} onClick={() => setQuality(q.label)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
-                  background: quality === q.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
-                  color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
-                }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', background: quality === q.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 13, textAlign: 'left' }}
               >
-                <span style={{ fontWeight: 600, fontSize: 13 }}>{q.label}</span>
+                <span>{q.label}</span>
                 <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{q.desc}</span>
               </button>
             ))}

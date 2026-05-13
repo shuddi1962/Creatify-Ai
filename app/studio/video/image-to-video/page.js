@@ -6,8 +6,8 @@ import { Toaster, toast } from 'react-hot-toast'
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout'
 import StudioDropdown from '@/components/StudioDropdown'
 import ResultsGrid from '@/components/studio/ResultsGrid'
-import { saveGeneration } from '@/src/lib/storage'
 import * as muapi from '@/packages/studio/src/muapi'
+import { generateVideo } from '@/lib/generationUtils'
 import { VIDEO_MODELS } from '@/lib/modelsConfig'
 
 const I2V_MODELS = VIDEO_MODELS.filter(m => m.type === 'i2v')
@@ -58,11 +58,8 @@ export default function ImageToVideoPage() {
       const url = response.url || ''
       if (url) {
         setResults([{ id: `result-${Date.now()}`, url, prompt, type: 'video', model: modelId }])
-        saveGeneration({ url, prompt, model: modelId, video_url: url }, 'video').catch(() => {})
         toast.success('Video generated!')
-      } else {
-        toast.error('No URL in response')
-      }
+      } else { toast.error('No URL in response') }
     } catch (error) {
       toast.error(error.message || 'Generation failed')
     } finally {
@@ -78,11 +75,7 @@ export default function ImageToVideoPage() {
           <LeftPanel title="MODELS">
             {modelOpts.map(m => (
               <button key={m.id} onClick={() => setModel(m.label)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
-                  background: model === m.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
-                  color: model === m.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 12, textAlign: 'left',
-                }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', background: model === m.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: model === m.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 12, textAlign: 'left' }}
                 onMouseEnter={e => { if (model !== m.label) e.currentTarget.style.background = 'var(--bg-hover)' }}
                 onMouseLeave={e => { if (model !== m.label) e.currentTarget.style.background = 'none' }}
               >
@@ -93,11 +86,7 @@ export default function ImageToVideoPage() {
             <div style={{ height: 1, background: 'var(--border-subtle)', margin: '12px 0' }} />
             {QUALITIES.map(q => (
               <button key={q.label} onClick={() => setQuality(q.label)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
-                  background: quality === q.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
-                  color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
-                }}
+                style={{ display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px', background: quality === q.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8, color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 13, textAlign: 'left' }}
               >
                 <span>{q.label}</span>
                 <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{q.desc}</span>
