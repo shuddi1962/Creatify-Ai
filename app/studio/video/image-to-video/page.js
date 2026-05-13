@@ -1,142 +1,158 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import { Upload } from 'lucide-react';
-import { Toaster, toast } from 'react-hot-toast';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
-import StudioDropdown from '@/components/StudioDropdown';
+import { useState } from 'react'
+import { Upload } from 'lucide-react'
+import { Toaster, toast } from 'react-hot-toast'
+import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout'
+import StudioDropdown from '@/components/StudioDropdown'
+import ResultsGrid from '@/components/studio/ResultsGrid'
+import { saveGeneration } from '@/src/lib/storage'
+import * as muapi from '@/packages/studio/src/muapi'
+import { VIDEO_MODELS } from '@/lib/modelsConfig'
 
-const MOTION_PRESETS = ['Zoom In', 'Zoom Out', 'Pan Right', 'Pan Left', 'Orbit', 'Float', 'Shake', 'Cinematic Drift', 'Breathing', 'Subtle Motion'];
-const DURATION_OPTIONS = ['3s', '5s', '8s', '10s', '15s'];
-const ASPECT_OPTIONS = ['Keep Original', '16:9', '9:16', '1:1'];
-const STRENGTH_OPTIONS = ['Low', 'Medium', 'High'];
+const I2V_MODELS = VIDEO_MODELS.filter(m => m.type === 'i2v')
+const DURATIONS = ['3', '5', '8', '10', '15']
+const QUALITIES = [{ label: '480p', desc: 'Fast' }, { label: '720p', desc: 'HD' }, { label: '1080p', desc: 'Full HD' }]
 
 export default function ImageToVideoPage() {
-  const [imageFile, setImageFile] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [motionPrompt, setMotionPrompt] = useState('');
-  const [motionPreset, setMotionPreset] = useState('Zoom In');
-  const [duration, setDuration] = useState('5s');
-  const [aspectRatio, setAspectRatio] = useState('Keep Original');
-  const [motionStrength, setMotionStrength] = useState('Medium');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
+  const [imageFile, setImageFile] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [prompt, setPrompt] = useState('')
+  const [model, setModel] = useState(I2V_MODELS[0].name)
+  const [duration, setDuration] = useState('5')
+  const [quality, setQuality] = useState('720p')
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState([])
+
+  const modelOpts = I2V_MODELS.map(m => ({ label: m.name, desc: m.badge || '', id: m.id }))
+  const getModelId = (label) => I2V_MODELS.find(m => m.name === label)?.id || I2V_MODELS[0]?.id || ''
 
   const handleImageUpload = (file) => {
-    if (file) {
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
-    } else {
-      setImageFile(null);
-      setImagePreview(null);
-    }
-  };
+    if (file) { setImageFile(file); setImagePreview(URL.createObjectURL(file)) }
+    else { setImageFile(null); setImagePreview(null) }
+  }
+
+  const getApiKey = async () => {
+    const local = localStorage.getItem('muapi_key')
+    if (local) return local
+    try { const r = await fetch('/api/v1/shared-key?provider=muapi'); const d = await r.json(); if (d.key) return d.key } catch {}
+    return null
+  }
 
   const handleGenerate = async () => {
-    if (!imageFile) {
-      toast.error('Please upload an image to animate');
-      return;
-    }
-    setLoading(true);
+    if (!imageFile) { toast.error('Upload an image to animate'); return }
+    if (!prompt.trim()) { toast.error('Enter a motion prompt'); return }
+    setLoading(true)
     try {
-      const apiKey = localStorage.getItem('muapi_key');
-      if (apiKey) {
-        toast.success('Image animation started!');
+      const apiKey = await getApiKey()
+      if (!apiKey) { toast.error('No API key configured'); setLoading(false); return }
+
+      const modelId = getModelId(model)
+      const uploaded = await muapi.uploadFile(imageFile)
+      const response = await muapi.generateI2V(apiKey, {
+        model: modelId, prompt, image_url: uploaded,
+        duration: parseInt(duration), quality: quality.toLowerCase(),
+        aspect_ratio: '16:9',
+      })
+
+      const url = response.url || ''
+      if (url) {
+        setResults([{ id: `result-${Date.now()}`, url, prompt, type: 'video', model: modelId }])
+        saveGeneration({ url, prompt, model: modelId, video_url: url }, 'video').catch(() => {})
+        toast.success('Video generated!')
       } else {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        setResults([{ id: `demo-${Date.now()}`, url: 'https://www.w3schools.com/html/mov_bbb.mp4', prompt: motionPrompt || motionPreset, type: 'video' }]);
-        toast.success('Demo: Image animated!');
+        toast.error('No URL in response')
       }
     } catch (error) {
-      toast.error(error.message || 'Generation failed');
+      toast.error(error.message || 'Generation failed')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
     <>
-      <Toaster position="top-center" />
+      <Toaster position="top-right" toastOptions={{ style: { zIndex: 9999, background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)', marginTop: 60 } }} />
       <StudioEditorLayout
         left={
-          <LeftPanel title="MOTION PRESETS">
-            {MOTION_PRESETS.map(p => (
-              <button key={p} onClick={() => setMotionPreset(p)}
+          <LeftPanel title="MODELS">
+            {modelOpts.map(m => (
+              <button key={m.id} onClick={() => setModel(m.label)}
                 style={{
-                  display: 'flex', alignItems: 'center', gap: 8,
-                  width: '100%', padding: '8px 12px',
-                  background: motionPreset === p ? 'var(--accent-bg)' : 'none',
-                  border: 'none', cursor: 'pointer', borderRadius: 8,
-                  color: motionPreset === p ? 'var(--accent-text)' : 'var(--text-secondary)',
-                  fontSize: 13, textAlign: 'left', transition: 'all 100ms',
+                  display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
+                  background: model === m.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: model === m.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 12, textAlign: 'left',
                 }}
-                onMouseEnter={e => { if (motionPreset !== p) e.currentTarget.style.background = 'var(--bg-hover)'; }}
-                onMouseLeave={e => { if (motionPreset !== p) e.currentTarget.style.background = 'none'; }}
+                onMouseEnter={e => { if (model !== m.label) e.currentTarget.style.background = 'var(--bg-hover)' }}
+                onMouseLeave={e => { if (model !== m.label) e.currentTarget.style.background = 'none' }}
               >
-                {p}
+                <span style={{ fontWeight: model === m.label ? 600 : 400 }}>{m.label}</span>
+                {m.desc && <span style={{ fontSize: 10, padding: '1px 6px', borderRadius: 4, background: 'var(--accent-bg)', color: 'var(--accent-text)', marginLeft: 'auto' }}>{m.desc}</span>}
+              </button>
+            ))}
+            <div style={{ height: 1, background: 'var(--border-subtle)', margin: '12px 0' }} />
+            {QUALITIES.map(q => (
+              <button key={q.label} onClick={() => setQuality(q.label)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 8, width: '100%', padding: '8px 12px',
+                  background: quality === q.label ? 'var(--accent-bg)' : 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
+                  color: quality === q.label ? 'var(--accent-text)' : 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
+                }}
+              >
+                <span>{q.label}</span>
+                <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{q.desc}</span>
               </button>
             ))}
           </LeftPanel>
         }
         canvas={
           <StudioCanvas overlay={<CornerMarkers />}>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, zIndex: 1, width: '100%', maxWidth: 500, padding: '0 24px' }}>
-              <h1 style={{
-                fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
-                color: 'transparent',
-                background: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)',
-                WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-                textAlign: 'center', lineHeight: 1.2,
-              }}>
-                IMAGE TO VIDEO
-              </h1>
-              <p style={{ fontSize: 14, color: 'var(--text-muted)', textAlign: 'center' }}>
-                Animate any still image into a smooth, cinematic video
-              </p>
-              {imagePreview ? (
-                <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)', width: '100%' }}>
-                  <img src={imagePreview} alt="Preview" style={{ width: '100%', height: 240, objectFit: 'contain', background: '#000' }} />
-                  <button onClick={() => handleImageUpload(null)}
-                    style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', cursor: 'pointer', fontSize: 14, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    ×
-                  </button>
+            {!loading && results.length === 0 && (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 24, zIndex: 1, width: '100%', maxWidth: 500, padding: '0 24px' }}>
+                <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent', background: 'linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', textAlign: 'center', lineHeight: 1.2 }}>
+                  IMAGE TO VIDEO
+                </h1>
+                <p style={{ fontSize: 14, color: 'var(--text-muted)', textAlign: 'center' }}>Animate any still image into a smooth, cinematic video</p>
+                {imagePreview ? (
+                  <div style={{ position: 'relative', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)', width: '100%' }}>
+                    <img src={imagePreview} alt="Preview" style={{ width: '100%', height: 240, objectFit: 'contain', background: '#000' }} />
+                    <button onClick={() => handleImageUpload(null)} style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.6)', border: 'none', color: '#fff', cursor: 'pointer' }}>×</button>
+                  </div>
+                ) : (
+                  <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 40, borderRadius: 12, border: '2px dashed var(--border-subtle)', cursor: 'pointer', background: 'var(--bg-card)', width: '100%' }}>
+                    <div style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Upload size={28} style={{ color: 'var(--text-muted)' }} />
+                    </div>
+                    <div style={{ textAlign: 'center' }}>
+                      <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Upload image to animate</p>
+                      <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Drag & drop or click to browse</p>
+                    </div>
+                    <input type="file" accept="image/*" onChange={e => handleImageUpload(e.target.files?.[0])} style={{ display: 'none' }} />
+                  </label>
+                )}
+              </div>
+            )}
+            {results.length > 0 && (
+              <div style={{ flex: 1, width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 40px', overflow: 'auto' }}>
+                <div style={{ width: '100%', maxWidth: 800 }}>
+                  <ResultsGrid results={results} columns={1} />
                 </div>
-              ) : (
-                <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, padding: 40, borderRadius: 12, border: '2px dashed var(--border-subtle)', cursor: 'pointer', background: 'var(--bg-card)', width: '100%' }}>
-                  <div style={{ width: 56, height: 56, borderRadius: 12, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Upload size={28} style={{ color: 'var(--text-muted)' }} />
-                  </div>
-                  <div style={{ textAlign: 'center' }}>
-                    <p style={{ fontSize: 14, fontWeight: 500, color: 'var(--text-primary)' }}>Upload image to animate</p>
-                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 4 }}>Drag & drop or click to browse</p>
-                  </div>
-                  <input type="file" accept="image/*" onChange={e => handleImageUpload(e.target.files?.[0])} style={{ display: 'none' }} />
-                </label>
-              )}
-            </div>
+              </div>
+            )}
           </StudioCanvas>
         }
         directorBar={
           <DirectorBar title="Image to Video">
-            <PromptInput value={motionPrompt} onChange={e => setMotionPrompt(e.target.value)} placeholder="Describe how the image should move..." />
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0, flexWrap: 'wrap' }}>
-              <div style={{ minWidth: 80 }}>
-                <StudioDropdown value={duration} onChange={setDuration} options={DURATION_OPTIONS} />
-              </div>
-              <div style={{ minWidth: 100 }}>
-                <StudioDropdown value={aspectRatio} onChange={setAspectRatio} options={ASPECT_OPTIONS} />
-              </div>
-              <div style={{ minWidth: 80 }}>
-                <StudioDropdown value={motionStrength} onChange={setMotionStrength} options={STRENGTH_OPTIONS} />
-              </div>
-              <GenerateButton onClick={handleGenerate}>
-                {loading ? 'Animating...' : 'GENERATE'}
-              </GenerateButton>
+            <PromptInput value={prompt} onChange={e => setPrompt(e.target.value)} placeholder="Describe how the image should move..." />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+              <div style={{ minWidth: 140 }}><StudioDropdown value={model} onChange={setModel} options={modelOpts} /></div>
+              <div style={{ minWidth: 80 }}><StudioDropdown value={`${duration}s`} onChange={v => setDuration(v.replace('s', ''))} options={DURATIONS.map(d => `${d}s`)} /></div>
+              <GenerateButton onClick={handleGenerate} loading={loading}>{loading ? '' : 'GENERATE'}</GenerateButton>
             </div>
           </DirectorBar>
         }
       />
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
     </>
-  );
+  )
 }
-
