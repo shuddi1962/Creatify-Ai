@@ -20,15 +20,15 @@ function formatDate(d) {
 }
 
 function getUrl(row) {
-  return row.image_url || row.video_url || row.audio_url || ''
+  return row.image_url || row.video_url || row.audio_url || row.url || ''
 }
 
 function getType(row) {
-  const t = (row.type || '').toLowerCase()
+  const t = (row.type || row._type || '').toLowerCase()
   if (['image', 'i2i'].includes(t)) return 'image'
   if (['video', 'i2v', 'v2v'].includes(t)) return 'video'
   if (['audio', 'lipsync'].includes(t)) return 'audio'
-  return 'image'
+  return t || 'image'
 }
 
 export default function MediaAllPage() {

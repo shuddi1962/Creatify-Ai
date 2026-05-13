@@ -47,6 +47,8 @@ export default function MediaImagesPage() {
     })()
   }, [])
 
+  function getUrl(row) { return row.image_url || row.url || '' }
+
   const filtered = assets.filter(a => {
     if (!search) return true
     const q = search.toLowerCase()
@@ -90,7 +92,7 @@ export default function MediaImagesPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
             {filtered.map(asset => {
-              const url = asset.image_url || asset.url || ''
+              const url = getUrl(asset)
               return (
                 <div key={asset.id || asset._id} onClick={() => setLightbox(asset)}
                   style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}
@@ -128,7 +130,7 @@ export default function MediaImagesPage() {
         <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
-            <img src={lightbox.image_url || lightbox.url || ''} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+              <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p style={{ marginBottom: 2 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
               <p style={{ color: '#888', fontSize: 12 }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>

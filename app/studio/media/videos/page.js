@@ -46,6 +46,8 @@ export default function MediaVideosPage() {
     })()
   }, [])
 
+  function getUrl(row) { return row.video_url || row.image_url || row.url || '' }
+
   const filtered = assets.filter(a => {
     if (!search) return true
     const q = search.toLowerCase()
@@ -89,7 +91,7 @@ export default function MediaVideosPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {filtered.map(asset => {
-              const thumb = asset.image_url || asset.url || ''
+              const thumb = getUrl(asset)
               const videoUrl = asset.video_url || ''
               return (
                 <div key={asset.id || asset._id}

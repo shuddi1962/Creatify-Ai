@@ -310,18 +310,7 @@ export default function StudioShell({ children }) {
           </div>
         </div>
 
-        {/* Share button */}
-        {user && <button style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'var(--bg-input)', border: '1px solid var(--border-default)',
-          borderRadius: 8, padding: '6px 12px', fontSize: 13,
-          color: 'var(--text-secondary)', cursor: 'pointer', marginRight: 8,
-        }}
-          onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; }}
-          onMouseLeave={e => { e.currentTarget.style.background = 'var(--bg-input)'; }}
-        >
-          <Icons.Share2 size={14} /> Share
-        </button>}
+
 
         {/* Credits indicator */}
         {user && <div style={{
@@ -492,6 +481,14 @@ export default function StudioShell({ children }) {
                   <Icons.Settings size={15} />
                   Settings
                 </Link>
+                <button onClick={() => { setShowAccountMenu(false); navigator.clipboard?.writeText?.(window.location.href); }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', width: '100%', border: 'none', cursor: 'pointer', background: 'transparent', textAlign: 'left', transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >
+                  <Icons.Share2 size={15} />
+                  Share
+                </button>
 
                 <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 4, paddingTop: 4 }}>
                   <button onClick={async () => { setShowAccountMenu(false); await signOut(); resetStorageMode(); handleKeyChange(); }}
