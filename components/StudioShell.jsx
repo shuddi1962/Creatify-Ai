@@ -413,21 +413,20 @@ export default function StudioShell({ children }) {
             Pricing
           </Link>
 
-          <div ref={accountMenuRef} style={{ position: 'relative' }}>
-            <button onClick={() => setShowAccountMenu(!showAccountMenu)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 6,
-                padding: '6px 14px', borderRadius: 6,
-                border: 'none', cursor: 'pointer',
-                background: '#00C896', color: '#000',
-                fontSize: 12, fontWeight: 700,
-                transition: 'background 150ms ease',
-              }}
-              onMouseEnter={e => e.currentTarget.style.background = '#00b380'}
-              onMouseLeave={e => e.currentTarget.style.background = '#00C896'}
-            >
+          <div ref={accountMenuRef} style={{ position: 'relative' }}
+            onMouseEnter={() => setShowAccountMenu(true)}
+            onMouseLeave={() => setShowAccountMenu(false)}
+          >
+            <button style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '6px 14px', borderRadius: 6,
+              border: 'none', cursor: 'pointer',
+              background: showAccountMenu ? '#00b380' : '#00C896', color: '#000',
+              fontSize: 12, fontWeight: 700,
+              transition: 'background 150ms ease',
+            }}>
               <Icons.User size={14} />
-              Account
+              Dashboard
             </button>
 
             {showAccountMenu && (
@@ -455,72 +454,55 @@ export default function StudioShell({ children }) {
                       {user.email?.charAt(0).toUpperCase() || 'U'}
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{user.email}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Signed in</div>
+                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{user.email}</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Dashboard</div>
                     </div>
                   </div>
                 )}
 
+                <Link href="/studio/dashboard" onClick={() => setShowAccountMenu(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >
+                  <Icons.LayoutDashboard size={15} />
+                  Dashboard
+                </Link>
                 <Link href="/studio/settings" onClick={() => setShowAccountMenu(false)}
-                  style={{
-                    display: 'flex', alignItems: 'center', gap: 10,
-                    padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                    color: 'var(--text-secondary)', textDecoration: 'none',
-                    transition: 'all 150ms ease',
-                  }}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >
+                  <Icons.UserCircle size={15} />
+                  Manage Profile
+                </Link>
+                <Link href="/studio/media/all" onClick={() => setShowAccountMenu(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'all 150ms ease' }}
+                  onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                >
+                  <Icons.Folder size={15} />
+                  Assets
+                </Link>
+                <Link href="/studio/settings" onClick={() => setShowAccountMenu(false)}
+                  style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: 'var(--text-secondary)', textDecoration: 'none', transition: 'all 150ms ease' }}
                   onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
                   onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
                 >
                   <Icons.Settings size={15} />
                   Settings
                 </Link>
-                {isAdmin && (
-                  <Link href="/admin/dashboard" onClick={() => setShowAccountMenu(false)}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                      color: 'var(--text-secondary)', textDecoration: 'none',
-                      transition: 'all 150ms ease',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                  >
-                    <Icons.Shield size={15} />
-                    Admin Panel
-                  </Link>
-                )}
 
-                {user ? (
-                  <button onClick={async () => { await signOut(); resetStorageMode(); handleKeyChange(); setShowAccountMenu(false); }}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                      color: '#F87171', width: '100%', border: 'none', cursor: 'pointer',
-                      background: 'transparent', textAlign: 'left',
-                      transition: 'all 150ms ease',
-                    }}
+                <div style={{ borderTop: '1px solid var(--border-subtle)', marginTop: 4, paddingTop: 4 }}>
+                  <button onClick={async () => { setShowAccountMenu(false); await signOut(); resetStorageMode(); handleKeyChange(); }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 6, fontSize: 13, color: '#F87171', width: '100%', border: 'none', cursor: 'pointer', background: 'transparent', textAlign: 'left', transition: 'all 150ms ease' }}
                     onMouseEnter={e => { e.currentTarget.style.background = 'rgba(248,113,113,0.08)'; }}
                     onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; }}
                   >
                     <Icons.LogOut size={15} />
                     Sign Out
                   </button>
-                ) : (
-                  <button onClick={() => { setShowAccountMenu(false); setShowAuthModal(true); }}
-                    style={{
-                      display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '8px 10px', borderRadius: 6, fontSize: 13,
-                      color: 'var(--text-secondary)', width: '100%', border: 'none', cursor: 'pointer',
-                      background: 'transparent', textAlign: 'left',
-                      transition: 'all 150ms ease',
-                    }}
-                    onMouseEnter={e => { e.currentTarget.style.background = 'var(--bg-hover)'; e.currentTarget.style.color = 'var(--text-primary)'; }}
-                    onMouseLeave={e => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
-                  >
-                    <Icons.LogIn size={15} />
-                    Sign In
-                  </button>
-                )}
+                </div>
               </div>
             )}
           </div>
@@ -528,6 +510,7 @@ export default function StudioShell({ children }) {
       </header>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+        {!pathname.startsWith('/studio/dashboard') && (
         <aside style={{
           width: sidebarCollapsed ? 0 : 160, flexShrink: 0,
           background: 'var(--bg-sidebar)',
@@ -611,6 +594,7 @@ export default function StudioShell({ children }) {
             );
           })}
         </aside>
+        )}
 
         {mobileDrawerOpen && (
           <div className="fixed inset-0 z-50 lg:hidden">

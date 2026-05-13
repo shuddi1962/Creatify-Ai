@@ -112,7 +112,7 @@ export default function TextToImagePage() {
         }
         canvas={
           <StudioCanvas overlay={<CornerMarkers />}>
-            {results.length === 0 && (
+            {!loading && results.length === 0 && (
               <h1 style={{
                 fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
                 color: 'transparent',
