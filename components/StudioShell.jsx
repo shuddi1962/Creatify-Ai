@@ -60,6 +60,7 @@ export default function StudioShell({ children }) {
   const [showSearch, setShowSearch] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [credits, setCredits] = useState(0);
+  const [flyoutTop, setFlyoutTop] = useState(0);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -165,7 +166,7 @@ export default function StudioShell({ children }) {
     setHoveredTopNav(id);
   };
   const topNavHoverLeave = () => {
-    topNavTimeoutRef.current = setTimeout(() => setHoveredTopNav(null), 150);
+    topNavTimeoutRef.current = setTimeout(() => setHoveredTopNav(null), 200);
   };
 
   const handleSidebarEnter = (item, index) => {
@@ -179,11 +180,16 @@ export default function StudioShell({ children }) {
       const maxTop = Math.max(8, window.innerHeight - estimatedHeight - 16);
       const top = Math.min(Math.max(rect.top - 10, 8), maxTop);
       setFlyoutStyle({ top });
+      setFlyoutTop(rect.top);
     }
     setFlyoutItem(item.label);
   };
 
-  const handleSidebarLeave = () => {
+  const cancelFlyoutClose = () => {
+    if (flyoutCloseTimer.current) clearTimeout(flyoutCloseTimer.current);
+  };
+
+  const handleFlyoutClose = () => {
     flyoutCloseTimer.current = setTimeout(() => setFlyoutItem(null), 200);
   };
 
@@ -196,8 +202,11 @@ export default function StudioShell({ children }) {
   const renderTopNavItem = (item) => {
     const id = topNavId(item.label);
     const isActive = pathname.startsWith(`/studio/${id}`);
+    const isHovered = hoveredTopNav === id;
+
     return (
-      <div key={id} className="relative"
+      <div key={id}
+        style={{ position: 'relative', height: '100%' }}
         onMouseEnter={() => topNavHoverEnter(id)}
         onMouseLeave={topNavHoverLeave}
       >
@@ -206,34 +215,50 @@ export default function StudioShell({ children }) {
           style={{
             padding: '6px 14px', borderRadius: 8, border: 'none', cursor: 'pointer',
             fontSize: 13, fontWeight: isActive ? 600 : 500,
-            color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+            color: isActive ? 'var(--text-active)' : 'var(--text-secondary)',
             background: isActive ? 'var(--accent-bg)' : 'transparent',
-            transition: 'all 150ms ease', whiteSpace: 'nowrap'
+            transition: 'all 150ms ease', whiteSpace: 'nowrap',
+            display: 'flex', alignItems: 'center', gap: 4,
           }}
           className={!isActive ? 'top-nav-btn' : ''}
         >
           {item.label}
+          <Icons.ChevronDown size={12} style={{
+            transform: isHovered ? 'rotate(180deg)' : 'rotate(0)',
+            transition: 'transform 200ms',
+          }} />
         </button>
-        {hoveredTopNav === id && (
-          <div
-            onMouseEnter={() => { if (topNavTimeoutRef.current) clearTimeout(topNavTimeoutRef.current); setHoveredTopNav(id); }}
-            onMouseLeave={topNavHoverLeave}
-          >
-            <NavDropdownPanel>
-              <NavPanelColumns
-                left={item.features.map((f, i) => (
-                  <NavMenuItem key={i} icon={f.icon} name={f.name} description={f.description} badge={f.badge} onClick={() => router.push(f.href)} />
-                ))}
-                right={item.models.map((m, i) => (
-                  <NavMenuItem key={i} icon={m.icon} name={m.name} description={m.description} badge={m.badge} onClick={() => router.push(m.href)} />
-                ))}
-              />
-            </NavDropdownPanel>
-          </div>
+
+        {isHovered && (
+          <>
+            <div style={{
+              position: 'absolute',
+              top: '100%', left: 0,
+              width: '100%', height: 8,
+              background: 'transparent',
+            }} />
+            <div
+              onMouseEnter={() => { if (topNavTimeoutRef.current) clearTimeout(topNavTimeoutRef.current); }}
+              onMouseLeave={topNavHoverLeave}
+            >
+              <NavDropdownPanel>
+                <NavPanelColumns
+                  left={item.features.map((f, i) => (
+                    <NavMenuItem key={i} icon={f.icon} name={f.name} description={f.description} badge={f.badge} onClick={() => router.push(f.href)} />
+                  ))}
+                  right={item.models.map((m, i) => (
+                    <NavMenuItem key={i} icon={m.icon} name={m.name} description={m.description} badge={m.badge} onClick={() => router.push(m.href)} />
+                  ))}
+                />
+              </NavDropdownPanel>
+            </div>
+          </>
         )}
       </div>
     );
   };
+
+  const sidebarWidth = sidebarCollapsed ? 0 : 160;
 
   return (
     <div className="flex flex-col relative"
@@ -242,13 +267,13 @@ export default function StudioShell({ children }) {
     >
       <Toaster position="top-center" toastOptions={{
         style: { background: 'var(--toast-bg)', color: 'var(--text-primary)', border: '1px solid var(--border-strong)', backdropFilter: 'blur(10px)', fontSize: '13px' },
-        success: { iconTheme: { primary: '#00C896', secondary: '#fff' } },
+        success: { iconTheme: { primary: '#00C2FF', secondary: '#fff' } },
       }} />
 
       {isDragging && (
-        <div className="fixed inset-0 z-[100] backdrop-blur-md border-4 border-dashed flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,200,150,0.1)', borderColor: 'rgba(0,200,150,0.5)' }}>
+        <div className="fixed inset-0 z-[100] backdrop-blur-md border-4 border-dashed flex items-center justify-center pointer-events-none" style={{ background: 'rgba(0,194,255,0.1)', borderColor: 'rgba(0,194,255,0.5)' }}>
           <div className="p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 scale-110 animate-pulse" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)' }}>
-            <div className="w-20 h-20 bg-[#00C896] rounded-2xl flex items-center justify-center">
+            <div className="w-20 h-20 rounded-2xl flex items-center justify-center" style={{ background: 'var(--accent-primary)' }}>
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
             </div>
             <div className="flex flex-col items-center">
@@ -269,11 +294,12 @@ export default function StudioShell({ children }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
             style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <Icons.PanelLeft size={20} />
           </button>
           <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
-            <div style={{ width: 32, height: 32, background: '#6366f1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ width: 32, height: 32, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
             <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Creatify AI</span>
@@ -310,9 +336,6 @@ export default function StudioShell({ children }) {
           </div>
         </div>
 
-
-
-        {/* Credits indicator */}
         {user && <div style={{
           display: 'flex', alignItems: 'center', gap: 6,
           background: 'var(--bg-input)', border: '1px solid var(--border-default)',
@@ -324,7 +347,6 @@ export default function StudioShell({ children }) {
           {credits} credits
         </div>}
 
-        {/* Notifications bell */}
         {user && <div style={{ position: 'relative', marginRight: 4 }}>
           <button onClick={() => setShowNotifications(!showNotifications)}
             style={{
@@ -358,8 +380,8 @@ export default function StudioShell({ children }) {
           style={{
             width: 40, height: 22,
             borderRadius: 100,
-            border: `1px solid ${theme === 'dark' ? 'var(--border-default)' : 'var(--border-default)'}`,
-            background: theme === 'dark' ? 'var(--bg-input)' : 'var(--bg-input)',
+            border: `1px solid var(--border-default)`,
+            background: 'var(--bg-input)',
             position: 'relative',
             cursor: 'pointer',
             transition: 'background 200ms',
@@ -374,7 +396,7 @@ export default function StudioShell({ children }) {
             width: 16, height: 16,
             borderRadius: '50%',
             background: theme === 'dark' ? 'var(--accent-primary)' : '#fbbf24',
-            boxShadow: theme === 'dark' ? '0 1px 4px rgba(0,0,0,0.3)' : '0 1px 4px rgba(0,0,0,0.15)',
+            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
             transition: 'left 200ms ease',
             display: 'flex',
             alignItems: 'center',
@@ -410,7 +432,8 @@ export default function StudioShell({ children }) {
               display: 'flex', alignItems: 'center', gap: 6,
               padding: '6px 14px', borderRadius: 6,
               border: 'none', cursor: 'pointer',
-              background: showAccountMenu ? '#00b380' : '#00C896', color: '#000',
+              background: showAccountMenu ? 'var(--btn-generate-hover)' : 'var(--btn-generate-bg)',
+              color: 'var(--btn-generate-text)',
               fontSize: 12, fontWeight: 700,
               transition: 'background 150ms ease',
             }}>
@@ -436,7 +459,7 @@ export default function StudioShell({ children }) {
                   }}>
                     <div style={{
                       width: 32, height: 32, borderRadius: '50%',
-                      background: '#00C896', color: '#000',
+                      background: 'var(--accent-primary)', color: '#000',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       fontSize: 13, fontWeight: 700, flexShrink: 0,
                     }}>
@@ -509,15 +532,15 @@ export default function StudioShell({ children }) {
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
         {!pathname.startsWith('/studio/dashboard') && (
         <aside style={{
-          width: sidebarCollapsed ? 0 : 160, flexShrink: 0,
+          width: sidebarCollapsed ? 64 : 200,
+          flexShrink: 0,
           background: 'var(--bg-sidebar)',
-          borderRight: sidebarCollapsed ? 'none' : '1px solid var(--border-subtle)',
-          display: sidebarCollapsed ? 'none' : 'flex', flexDirection: 'column',
-          gap: 4,
-          paddingTop: 8, paddingBottom: 8,
+          borderRight: '1px solid var(--border-subtle)',
+          display: 'none', flexDirection: 'column',
+          gap: 2,
+          paddingTop: 12, paddingBottom: 12,
           overflow: 'hidden', zIndex: 50,
-          transition: 'all 200ms ease',
-          visibility: sidebarCollapsed ? 'hidden' : 'visible',
+          transition: 'all 250ms ease',
         }} className="hidden lg:flex"
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
@@ -530,66 +553,97 @@ export default function StudioShell({ children }) {
               <div key={item.label}
                 ref={el => iconRefs.current[idx] = el}
                 onMouseEnter={() => handleSidebarEnter(item, idx)}
-                onMouseLeave={handleSidebarLeave}
+                onMouseLeave={handleFlyoutClose}
                 style={{ position: 'relative', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}
               >
                 <Link href={item.href}
                   style={{
-                    width: '100%', display: 'flex', flexDirection: sidebarCollapsed ? 'column' : 'row',
-                    alignItems: 'center', justifyContent: sidebarCollapsed ? 'center' : 'flex-start', gap: sidebarCollapsed ? 6 : 10,
-                    padding: sidebarCollapsed ? '10px 0' : '8px 12px', border: 'none', cursor: 'pointer',
+                    width: '100%', display: 'flex',
+                    alignItems: 'center', gap: sidebarCollapsed ? 0 : 10,
+                    padding: sidebarCollapsed ? '12px 0' : '10px 14px',
+                    justifyContent: sidebarCollapsed ? 'center' : 'flex-start',
+                    border: 'none', cursor: 'pointer',
                     background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
                     textDecoration: 'none',
                     position: 'relative',
-                    transition: 'all 150ms ease'
+                    borderLeft: isActive ? '3px solid var(--sidebar-indicator)' : '3px solid transparent',
+                    transition: 'all 150ms ease',
                   }}
                   className={!isActive ? 'sidebar-link' : 'sidebar-link-active'}
                 >
                   <div style={{
-                    position: 'relative',
-                    width: 54, height: 54, borderRadius: 14,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    background: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
                     color: isActive ? 'var(--sidebar-icon-active)' : 'var(--sidebar-icon)',
+                    transition: 'color 150ms ease',
                     flexShrink: 0,
-                    transition: 'background 150ms ease, color 150ms ease'
                   }}>
-                    <IconComp size={26} />
+                    <IconComp size={20} />
                   </div>
-                  <span style={{
-                    fontSize: 11, fontWeight: 600,
-                    color: isActive ? 'var(--sidebar-label-active)' : 'var(--sidebar-label)',
-                    lineHeight: 1.2,
-                    whiteSpace: 'nowrap',
-                    transition: 'color 150ms ease'
-                  }}>{item.label}</span>
+                  {!sidebarCollapsed && (
+                    <span style={{
+                      fontSize: 13, fontWeight: 500,
+                      color: isActive ? 'var(--sidebar-label-active)' : 'var(--sidebar-label)',
+                      whiteSpace: 'nowrap',
+                      transition: 'color 150ms ease',
+                      opacity: sidebarCollapsed ? 0 : 1,
+                    }}>{item.label}</span>
+                  )}
                 </Link>
-                {isActive && (
+
+                {isActive && !sidebarCollapsed && (
                   <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: 'var(--sidebar-indicator)', borderRadius: '0 3px 3px 0' }} />
                 )}
 
                 {showFlyout && (
-                  <div
-                    onMouseEnter={() => { if (flyoutCloseTimer.current) clearTimeout(flyoutCloseTimer.current); }}
-                    onMouseLeave={handleSidebarLeave}
-                  >
-                    <SidebarFlyoutPanel
-                      title={item.flyout.title}
-                      leftLabel={item.flyout.leftLabel}
-                      rightLabel={item.flyout.rightLabel}
-                      left={item.flyout.left.map((f, i) => (
-                        <NavMenuItem key={i} icon={f.icon} name={f.name} description={f.description} badge={f.badge} onClick={() => router.push(f.href)} />
-                      ))}
-                      right={item.flyout.right.map((r, i) => (
-                        <NavMenuItem key={i} icon={r.icon} name={r.name} description={r.description} badge={r.badge} onClick={() => router.push(r.href)} />
-                      ))}
-                      style={{ top: flyoutStyle.top, left: sidebarCollapsed ? 60 : 160 }}
+                  <>
+                    <div style={{
+                      position: 'fixed',
+                      left: sidebarWidth,
+                      top: flyoutTop,
+                      width: 12, height: 60,
+                      background: 'transparent',
+                      zIndex: 299,
+                    }}
+                      onMouseEnter={cancelFlyoutClose}
                     />
-                  </div>
+                    <div
+                      onMouseEnter={cancelFlyoutClose}
+                      onMouseLeave={handleFlyoutClose}
+                    >
+                      <SidebarFlyoutPanel
+                        title={item.flyout.title}
+                        leftLabel={item.flyout.leftLabel}
+                        rightLabel={item.flyout.rightLabel}
+                        left={item.flyout.left.map((f, i) => (
+                          <NavMenuItem key={i} icon={f.icon} name={f.name} description={f.description} badge={f.badge} onClick={() => router.push(f.href)} />
+                        ))}
+                        right={item.flyout.right.map((r, i) => (
+                          <NavMenuItem key={i} icon={r.icon} name={r.name} description={r.description} badge={r.badge} onClick={() => router.push(r.href)} />
+                        ))}
+                        style={{ top: flyoutStyle.top, left: sidebarWidth + 8 }}
+                      />
+                    </div>
+                  </>
                 )}
               </div>
             );
           })}
+
+          {/* Collapse toggle at bottom */}
+          <div style={{ flex: 1 }} />
+          <button
+            onClick={() => setSidebarCollapsed(c => !c)}
+            style={{
+              width: 40, height: 40, borderRadius: 10,
+              background: 'none', border: 'none', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              color: 'var(--icon-default)',
+              margin: '0 auto',
+            }}
+            title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            {sidebarCollapsed ? <Icons.ChevronRight size={18} /> : <Icons.ChevronLeft size={18} />}
+          </button>
         </aside>
         )}
 
@@ -603,7 +657,7 @@ export default function StudioShell({ children }) {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, background: '#6366f1', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 32, height: 32, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   </div>
                   <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Creatify AI</span>
@@ -688,8 +742,8 @@ export default function StudioShell({ children }) {
                 <label className="block text-xs font-bold mb-2" style={{ color: 'var(--text-secondary)' }}>Account</label>
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(0,200,150,0.2)', border: '1px solid rgba(0,200,150,0.3)' }}>
-                      <span className="text-xs font-bold text-[#00C896]">{user.email?.charAt(0).toUpperCase() || 'U'}</span>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(0,194,255,0.2)', border: '1px solid rgba(0,194,255,0.3)' }}>
+                      <span className="text-xs font-bold" style={{ color: 'var(--accent-primary)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="text-[13px] font-medium truncate" style={{ color: 'var(--text-primary)' }}>{user.email}</div>
@@ -702,7 +756,7 @@ export default function StudioShell({ children }) {
                   <div className="flex items-center justify-between">
                     <span className="text-[13px]" style={{ color: 'var(--text-secondary)' }}>Not signed in</span>
                     <button onClick={() => { setShowSettings(false); setShowAuthModal(true); }}
-                      className="text-xs font-medium transition-colors" style={{ color: '#00C896' }} onMouseEnter={e => e.currentTarget.style.color = 'rgba(0,200,150,0.8)'} onMouseLeave={e => e.currentTarget.style.color = '#00C896'}>Sign In</button>
+                      className="text-xs font-medium transition-colors" style={{ color: 'var(--accent-primary)' }} onMouseEnter={e => e.currentTarget.style.color = 'rgba(0,194,255,0.8)'} onMouseLeave={e => e.currentTarget.style.color = 'var(--accent-primary)'}>Sign In</button>
                   </div>
                 )}
               </div>

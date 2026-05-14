@@ -1,7 +1,9 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { ChevronRight, ArrowRight } from 'lucide-react';
+import { supabase } from '../../../src/lib/supabase';
 import SpotlightRow from '@/components/home/SpotlightRow';
 import FeatureBlock from '@/components/home/FeatureBlock';
 import ToolCard from '@/components/home/ToolCard';
@@ -74,6 +76,97 @@ const COMM_STRIPS = [
     ],
   },
 ];
+
+function CommunityGallery({ type, title, href }) {
+  const [items, setItems] = useState([])
+
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from('generations')
+        .select('id, output_url, thumbnail_url, prompt, model_id, created_at')
+        .eq('is_public', true)
+        .eq('type', type)
+        .order('created_at', { ascending: false })
+        .limit(10)
+      if (data) setItems(data)
+    }
+    load()
+
+    const channel = supabase
+      .channel(`public-${type}`)
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'generations',
+        filter: `type=eq.${type} AND is_public=eq.true`,
+      }, (payload) => {
+        setItems(prev => [payload.new, ...prev].slice(0, 10))
+      })
+      .subscribe()
+    return () => supabase.removeChannel(channel)
+  }, [type])
+
+  return (
+    <div style={{ marginBottom: 24 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+        <div>
+          <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)' }}>{title}</h3>
+        </div>
+        <a href={href} style={{ fontSize: 13, color: 'var(--accent-primary)' }}>View all →</a>
+      </div>
+      <div style={{ display: 'flex', gap: 12, overflowX: 'auto', paddingBottom: 8 }}>
+        {items.length === 0 ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} style={{
+              width: 200, height: 220, flexShrink: 0,
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--border-subtle)',
+              borderRadius: 12,
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <span style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+                Be the first to share
+              </span>
+            </div>
+          ))
+        ) : items.map(item => (
+          <div key={item.id} style={{
+            width: 200, flexShrink: 0, borderRadius: 12,
+            overflow: 'hidden', border: '1px solid var(--border-subtle)',
+            cursor: 'pointer',
+          }}>
+            {type === 'video' ? (
+              <video
+                src={item.output_url}
+                style={{ width: '100%', height: 180, objectFit: 'cover' }}
+                muted autoPlay loop playsInline
+              />
+            ) : (
+              <img
+                src={item.thumbnail_url || item.output_url}
+                alt={item.prompt}
+                style={{ width: '100%', height: 180, objectFit: 'cover' }}
+                loading="lazy"
+              />
+            )}
+            <div style={{ padding: '8px 10px', background: 'var(--bg-card)' }}>
+              <div style={{
+                fontSize: 11, color: 'var(--text-secondary)',
+                overflow: 'hidden',
+                display: '-webkit-box',
+                WebkitLineClamp: 2,
+                WebkitBoxOrient: 'vertical',
+              }}>
+                {item.prompt}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 export default function HomePage() {
   return (
@@ -405,7 +498,13 @@ export default function HomePage() {
           <EffectsStrip />
         </section>
 
-        {/********* SECTION 12: Community Gallery Strips *********/}
+        {/********* SECTION 12: LIVE Community Feed from Supabase *********/}
+        <section className="py-8 space-y-6">
+          <CommunityGallery type="image" title="Latest Image Generations" href="/studio/image/text-to-image" />
+          <CommunityGallery type="video" title="Latest Video Generations" href="/studio/video/text-to-video" />
+        </section>
+
+        {/********* SECTION 13: Community Showcase *********/}
         <section className="py-8 space-y-10">
           {COMM_STRIPS.map((strip, i) => (
             <CommunityStrip

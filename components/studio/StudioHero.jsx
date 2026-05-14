@@ -1,53 +1,62 @@
-'use client';
+'use client'
 
-import { Sparkles } from 'lucide-react';
-import Image from 'next/image';
-
-export default function StudioHero({ icon: Icon, badge, title, subtitle, backgroundImage }) {
+export default function StudioHero({ icon: Icon, featureName, subtitle }) {
   return (
-    <div className="relative text-center py-12 px-4 overflow-hidden">
-      {backgroundImage && (
-        <div className="absolute inset-0 z-0">
-          <Image 
-            src={backgroundImage}
-            alt=""
-            fill
-            className="object-cover opacity-20"
-            priority={false}
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[var(--bg-page)]" />
+    <div style={{
+      position: 'relative',
+      textAlign: 'center',
+      padding: '64px 24px 48px',
+      overflow: 'hidden',
+    }}>
+      <div style={{
+        position: 'absolute', inset: 0,
+        background: `
+          radial-gradient(ellipse 600px 300px at 50% 0%,
+            rgba(0,194,255,0.08) 0%, transparent 70%)
+        `,
+        pointerEvents: 'none',
+      }} />
+
+      {Icon && (
+        <div style={{
+          position: 'relative',
+          width: 72, height: 72, borderRadius: 20,
+          background: 'var(--bg-elevated)',
+          border: '1px solid var(--border-default)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          margin: '0 auto 24px',
+          boxShadow: '0 0 0 1px rgba(0,194,255,0.1), 0 8px 24px rgba(0,0,0,0.2)',
+        }}>
+          <Icon size={32} style={{ color: 'var(--accent-primary)' }} />
+          <div style={{
+            position: 'absolute', top: -4, right: -4,
+            width: 14, height: 14, borderRadius: '50%',
+            background: 'var(--accent-primary)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: 8, color: '#000',
+          }}>✦</div>
         </div>
       )}
-      <div className="relative z-10">
-        <div className="inline-flex flex-col items-center">
-          <div className="relative">
-            <div className="w-20 h-20 rounded-2xl flex items-center justify-center border" style={{ background: 'var(--bg-input)', borderColor: 'var(--border-subtle)' }}>
-              {Icon && <Icon size={36} style={{ color: 'var(--text-primary)' }} />}
-            </div>
-            <div className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full flex items-center justify-center" style={{ background: 'var(--btn-generate-bg)' }}>
-              <Sparkles size={10} style={{ color: 'var(--btn-generate-text)' }} />
-            </div>
-          </div>
-          {badge && (
-            <span className="mt-2 px-2 py-0.5 text-[10px] font-bold tracking-wider uppercase rounded-sm" style={{ background: 'rgba(0,200,150,0.2)', color: '#00c896' }}>
-              {badge}
-            </span>
-          )}
-        </div>
-        <div className="mt-6">
-          <h1 className="text-[clamp(28px,5vw,48px)] font-light uppercase leading-tight" style={{ color: 'var(--text-muted)', letterSpacing: '0.02em' }}>
-            START CREATING WITH
-          </h1>
-          <h2 className="text-[clamp(28px,5vw,48px)] font-extrabold uppercase leading-tight" style={{ color: 'var(--text-primary)', letterSpacing: '0.02em' }}>
-            {title}
-          </h2>
-        </div>
-        {subtitle && (
-          <p className="mt-3 text-sm max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
-            {subtitle}
-          </p>
-        )}
-      </div>
+
+      {featureName && (
+        <h1 style={{
+          fontSize: 'clamp(28px, 4vw, 48px)',
+          fontWeight: 900, color: 'var(--text-primary)',
+          textTransform: 'uppercase', letterSpacing: '0.02em',
+          lineHeight: 1.1, marginBottom: 12,
+        }}>
+          {featureName}
+        </h1>
+      )}
+
+      {subtitle && (
+        <p style={{
+          fontSize: 16, color: 'var(--text-secondary)',
+          maxWidth: 500, margin: '0 auto',
+        }}>
+          {subtitle}
+        </p>
+      )}
     </div>
-  );
+  )
 }
