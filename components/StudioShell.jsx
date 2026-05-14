@@ -536,7 +536,7 @@ export default function StudioShell({ children }) {
           flexShrink: 0,
           background: 'var(--bg-sidebar)',
           borderRight: '1px solid var(--border-subtle)',
-          display: 'none', flexDirection: 'column',
+          flexDirection: 'column',
           gap: 2,
           paddingTop: 12, paddingBottom: 12,
           overflow: 'hidden', zIndex: 50,
