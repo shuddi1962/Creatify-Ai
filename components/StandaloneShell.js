@@ -110,14 +110,6 @@ export default function StandaloneShell() {
   const accountRef = useRef(null);
 
   useEffect(() => {
-    function handleClick(e) {
-      if (accountRef.current && !accountRef.current.contains(e.target)) setShowAccountMenu(false);
-    }
-    document.addEventListener('mousedown', handleClick);
-    return () => document.removeEventListener('mousedown', handleClick);
-  }, []);
-
-  useEffect(() => {
     const info = getWorkflowInfo();
     if (info.id) setActiveTab('workflows');
     else if (slug.includes('agents')) setActiveTab('agents');
@@ -585,8 +577,11 @@ export default function StandaloneShell() {
             </div>
 
             {user ? (
-              <div ref={accountRef} style={{ position: 'relative' }}>
-                <button onClick={() => setShowAccountMenu(!showAccountMenu)}
+              <div ref={accountRef} style={{ position: 'relative' }}
+                onMouseEnter={() => setShowAccountMenu(true)}
+                onMouseLeave={() => setShowAccountMenu(false)}
+              >
+                <button
                   style={{ width: 32, height: 32, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms' }}
                 >
                   <span style={{ fontSize: 12, fontWeight: 700, color: showAccountMenu ? '#fff' : 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
@@ -595,13 +590,13 @@ export default function StandaloneShell() {
                   <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, minWidth: 200, background: 'var(--bg-card)', border: '1px solid var(--border-strong)', borderRadius: 12, padding: 6, zIndex: 9999, boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}>
                     <div style={{ padding: '10px 12px', borderBottom: '1px solid var(--border-subtle)', marginBottom: 4 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{user.email}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Signed in</div>
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>Dashboard</div>
                     </div>
                     {[
-                      { icon: Icons.LayoutDashboard, label: 'Dashboard', href: '/admin/dashboard' },
-                      { icon: Icons.UserCircle, label: 'Profile', href: '/studio/settings' },
-                      { icon: Icons.Folder, label: 'Assets', href: '/studio/media/all' },
+                      { icon: Icons.LayoutDashboard, label: 'Dashboard', href: '/studio/dashboard' },
+                      { icon: Icons.UserCircle, label: 'Manage Profile', href: '/studio/settings' },
                       { icon: Icons.Settings, label: 'Settings', href: '/studio/settings' },
+                      { icon: Icons.Folder, label: 'Assets', href: '/studio/media/all' },
                     ].map(item => (
                       <button key={item.label} onClick={() => { setShowAccountMenu(false); router.push(item.href); }}
                         style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%', padding: '9px 12px', borderRadius: 8, border: 'none', background: 'none', cursor: 'pointer', color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left', transition: 'all 120ms' }}
