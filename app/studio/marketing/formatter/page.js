@@ -1,150 +1,89 @@
-'use client';
-
-import { useState } from 'react';
-import { Smartphone, Download, Image as ImageIcon } from 'lucide-react';
-import toast from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import GenerateButton from '@/components/studio/GenerateButton';
-import UploadZone from '@/components/studio/UploadZone';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
-import * as muapi from '@/packages/studio/src/muapi';
+'use client'
+import { useState, useRef } from 'react'
+import { Upload, X, Download } from 'lucide-react'
 
 const PLATFORMS = [
-  { id: 'tiktok', name: 'TikTok', ratio: '9:16' },
-  { id: 'instagram-feed', name: 'Instagram Feed', ratio: '1:1' },
-  { id: 'instagram-reel', name: 'Instagram Reel', ratio: '9:16' },
-  { id: 'youtube', name: 'YouTube', ratio: '16:9' },
-  { id: 'youtube-short', name: 'YouTube Short', ratio: '9:16' },
-  { id: 'twitter', name: 'Twitter/X', ratio: '16:9' },
-  { id: 'linkedin', name: 'LinkedIn', ratio: '1.91:1' },
-  { id: 'facebook', name: 'Facebook', ratio: '1:1' },
-  { id: 'pinterest', name: 'Pinterest', ratio: '2:3' },
-  { id: 'snapchat', name: 'Snapchat', ratio: '9:16' },
-];
-const CROP_MODES = ['Smart Crop', 'Center', 'Custom'];
-const BG_FILLS = ['Blur', 'Black', 'White', 'Brand Color', 'Mirror'];
+  { id: 'tiktok', label: 'TikTok', ratio: '9:16', w: 1080, h: 1920 },
+  { id: 'instagram-square', label: 'Instagram Square', ratio: '1:1', w: 1080, h: 1080 },
+  { id: 'instagram-portrait', label: 'Instagram Portrait', ratio: '4:5', w: 1080, h: 1350 },
+  { id: 'youtube', label: 'YouTube', ratio: '16:9', w: 1920, h: 1080 },
+  { id: 'facebook', label: 'Facebook', ratio: '16:9', w: 1920, h: 1080 },
+  { id: 'linkedin', label: 'LinkedIn', ratio: '1:1', w: 1080, h: 1080 },
+  { id: 'twitter', label: 'Twitter/X', ratio: '16:9', w: 1280, h: 720 },
+  { id: 'pinterest', label: 'Pinterest', ratio: '2:3', w: 1000, h: 1500 },
+]
 
-export default function MarketingFormatterPage() {
-  const [file, setFile] = useState(null);
-  const [selectedPlatforms, setSelectedPlatforms] = useState(['tiktok', 'instagram-reel', 'youtube']);
-  const [cropMode, setCropMode] = useState('Smart Crop');
-  const [bgFill, setBgFill] = useState('Blur');
-  const [captions, setCaptions] = useState(false);
-  const [watermark, setWatermark] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
-  const [activeTab, setActiveTab] = useState('tiktok');
+export default function FormatterPage() {
+  const [uploadedFile, setUploadedFile] = useState(null)
+  const [selectedPlatforms, setSelectedPlatforms] = useState(['tiktok'])
+  const [loading, setLoading] = useState(false)
+  const [results, setResults] = useState([])
+  const fileRef = useRef()
 
-  const togglePlatform = (id) => {
-    setSelectedPlatforms(prev =>
-      prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]
-    );
-  };
+  function toggle(id) { setSelectedPlatforms(prev => prev.includes(id) ? prev.filter(p => p !== id) : [...prev, id]) }
 
-  const handleGenerate = async () => {
-    if (!file) {
-      toast.error('Please upload a video or image');
-      return;
-    }
-    setLoading(true);
-    toast.success('Generating all formats...');
-    try {
-      const apiKey = localStorage.getItem('muapi_key');
-      if (apiKey) {
-        toast.success('Generating formats via API!');
-      } else {
-        await new Promise(r => setTimeout(r, 3000));
-        const newResults = selectedPlatforms.map(p => ({
-          id: p,
-          platform: p,
-          url: `https://picsum.photos/seed/${p}/720/1280`,
-          type: 'image',
-        }));
-        setResults(newResults);
-        if (newResults.length > 0) setActiveTab(newResults[0].platform);
-        toast.success('Demo: All formats generated!');
-      }
-    } catch (e) {
-      toast.error('Generation failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  async function handleUpload(e) {
+    const file = e.target.files?.[0]
+    if (file) setUploadedFile(URL.createObjectURL(file))
+  }
 
-  const handleDownloadAll = () => toast.success('Downloading ZIP...');
+  async function handleFormat() {
+    if (!uploadedFile) return
+    setLoading(true)
+    await new Promise(r => setTimeout(r, 2000))
+    const formats = selectedPlatforms.map(id => {
+      const p = PLATFORMS.find(pl => pl.id === id)
+      return { id: p.id, label: p.label, ratio: p.ratio, url: uploadedFile }
+    })
+    setResults(formats)
+    setLoading(false)
+  }
 
   return (
-    <StudioEditorLayout
-      left={
-        <LeftPanel title="PLATFORMS">
-          {PLATFORMS.map(p => (
-            <button key={p.id} onClick={() => togglePlatform(p.id)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                width: '100%', padding: '8px 12px',
-                background: selectedPlatforms.includes(p.id) ? 'var(--accent-bg)' : 'none',
-                border: 'none', cursor: 'pointer', borderRadius: 8,
-                color: selectedPlatforms.includes(p.id) ? 'var(--accent-text)' : 'var(--text-secondary)',
-                fontSize: 13, textAlign: 'left',
-              }}
-            >{p.name} <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>({p.ratio})</span></button>
-          ))}
-        </LeftPanel>
-      }
-      canvas={
-        <StudioCanvas overlay={<CornerMarkers />}>
-          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
-            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            textAlign: 'center', zIndex: 1,
-          }}>
-            PLATFORM FORMATTER
-          </h1>
-          {results.length > 0 && (
-            <div style={{ zIndex: 1, marginTop: 24, maxWidth: 500, width: '100%', padding: 16 }}>
-              <div style={{ display: 'flex', gap: 8, marginBottom: 12, overflowX: 'auto' }}>
-                {results.map(r => (
-                  <button key={r.platform} onClick={() => setActiveTab(r.platform)}
-                    style={{
-                      padding: '6px 12px', borderRadius: 8, fontSize: 11, fontWeight: 600,
-                      background: activeTab === r.platform ? 'var(--accent-bg)' : 'var(--bg-input)',
-                      border: '1px solid var(--border-default)', cursor: 'pointer',
-                      color: activeTab === r.platform ? 'var(--accent-text)' : 'var(--text-secondary)',
-                      textTransform: 'capitalize',
-                    }}
-                  >{r.platform.replace('-', ' ')}</button>
-                ))}
-              </div>
-              <div style={{ borderRadius: 12, overflow: 'hidden', background: 'var(--bg-card)' }}>
-                <img src={results.find(r => r.platform === activeTab)?.url} alt="" style={{ width: '100%', maxHeight: 300, objectFit: 'contain' }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 12 }}>
-                <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>{selectedPlatforms.length} formats ready</span>
-                <button onClick={handleDownloadAll} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '8px 16px', background: '#CCFF00', color: '#000', fontSize: 12, fontWeight: 700, border: 'none', borderRadius: 10, cursor: 'pointer' }}>
-                  <Download size={14} /> Download All
-                </button>
-              </div>
+    <div style={{ padding: '32px 24px', maxWidth: 1000, margin: '0 auto' }}>
+      <div style={{ marginBottom: 32 }}><div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>MARKETING STUDIO</div>
+        <h1 style={{ fontSize: 'clamp(24px,3vw,40px)', fontWeight: 900, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 8 }}>PLATFORM FORMATTER</h1>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Auto-resize content to any platform format</p>
+      </div>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, padding: '24px' }}>
+        <input ref={fileRef} type="file" accept="video/*,image/*" style={{ display: 'none' }} onChange={handleUpload} />
+        {uploadedFile ? (
+          <div style={{ position: 'relative', marginBottom: 20 }}>
+            <video src={uploadedFile} controls style={{ width: '100%', maxHeight: 300, borderRadius: 10 }} />
+            <button onClick={() => { setUploadedFile(null); setResults([]) }} style={{ position: 'absolute', top: 8, right: 8, width: 28, height: 28, borderRadius: '50%', background: 'rgba(0,0,0,0.7)', border: 'none', color: '#fff', cursor: 'pointer' }}><X size={14} /></button>
+          </div>
+        ) : (
+          <div onClick={() => fileRef.current?.click()} style={{ height: 160, border: '2px dashed var(--border-default)', borderRadius: 12, cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 10, background: 'var(--bg-input)', marginBottom: 20 }}
+            onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+            onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-default)'}>
+            <Upload size={28} style={{ color: 'var(--text-muted)' }} /><span style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Upload video or image</span>
+          </div>
+        )}
+        <div style={{ marginBottom: 20 }}><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>FORMATS</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {PLATFORMS.map(p => (
+              <button key={p.id} onClick={() => toggle(p.id)} style={{ padding: '7px 14px', borderRadius: 100, fontSize: 12, fontWeight: 500, cursor: 'pointer', border: 'none', background: selectedPlatforms.includes(p.id) ? 'var(--accent-primary)' : 'var(--bg-elevated)', color: selectedPlatforms.includes(p.id) ? '#000' : 'var(--text-secondary)' }}>{p.label} ({p.ratio})</button>
+            ))}
+          </div>
+        </div>
+        <button onClick={handleFormat} disabled={loading || !uploadedFile || selectedPlatforms.length === 0} style={{ padding: '12px 24px', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
+          {loading ? 'Processing...' : `✦ Generate ${selectedPlatforms.length} Format${selectedPlatforms.length > 1 ? 's' : ''}`}
+        </button>
+        {results.length > 0 && (
+          <div style={{ marginTop: 20 }}>
+            <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 12 }}>Results</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
+              {results.map(r => (
+                <div key={r.id} style={{ background: 'var(--bg-input)', borderRadius: 12, padding: 12, border: '1px solid var(--border-subtle)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{r.label}</div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8 }}>{r.ratio}</div>
+                  <a href={r.url} download style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--accent-primary)', textDecoration: 'none' }}><Download size={12} /> Download</a>
+                </div>
+              ))}
             </div>
-          )}
-        </StudioCanvas>
-      }
-      directorBar={
-        <DirectorBar title="Format Settings">
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <UploadZone onFile={setFile} accept="video/*,image/*" label="Upload" icon={ImageIcon} preview={file ? URL.createObjectURL(file) : null} />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            <StudioDropdown label="Crop" options={CROP_MODES} value={cropMode} onChange={setCropMode} />
-            <StudioDropdown label="BG" options={BG_FILLS} value={bgFill} onChange={setBgFill} />
-            <ControlButton onClick={() => setCaptions(!captions)}>{captions ? 'Captions: On' : 'Captions: Off'}</ControlButton>
-            <ControlButton onClick={() => setWatermark(!watermark)}>{watermark ? 'WM: On' : 'WM: Off'}</ControlButton>
-            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
-          </div>
-        </DirectorBar>
-      }
-    />
-  );
+        )}
+      </div>
+    </div>
+  )
 }

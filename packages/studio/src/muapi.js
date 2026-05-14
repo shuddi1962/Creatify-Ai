@@ -528,3 +528,85 @@ export async function getAppInterests(apiKey) {
   if (!response.ok) throw new Error(`Failed to fetch interests: ${response.status}`);
   return await response.json();
 }
+
+// ============================================================
+// Cinema & Marketing API helpers
+// ============================================================
+
+export async function pollResult(apiKey, jobId, maxAttempts = 120) {
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise(r => setTimeout(r, 2500))
+    const res = await fetch(`${MUAPI_BASE}/api/v1/predict/results/${jobId}`, {
+      headers: { 'Authorization': `Bearer ${apiKey}` }
+    })
+    if (!res.ok) continue
+    const data = await res.json()
+    if (data.status === 'succeeded' || data.output || data.url) {
+      return { url: data.url || data.output?.url || data.output?.[0], thumbnail: data.thumbnail_url }
+    }
+    if (data.status === 'failed') throw new Error('Generation failed')
+  }
+  throw new Error('Timed out')
+}
+
+export async function uploadFileV2(apiKey, file) {
+  const fd = new FormData()
+  fd.append('file', file)
+  const res = await fetch(`${MUAPI_BASE}/api/v1/upload`, {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${apiKey}` },
+    body: fd,
+  })
+  if (!res.ok) throw new Error('Upload failed')
+  const data = await res.json()
+  return data.url || data.file_url
+}
+
+export async function applyVFX(apiKey, { effectName, imageUrl, prompt, aspectRatio, duration, quality }) {
+  const body = {
+    prompt: prompt ? `${effectName}: ${prompt}` : effectName,
+    image_url: imageUrl,
+    name: effectName,
+    aspect_ratio: aspectRatio || '16:9',
+    duration: duration || 5,
+    quality: quality || 'medium',
+  }
+  const res = await fetch(`${MUAPI_BASE}/api/v1/vfx`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'VFX failed') }
+  const data = await res.json()
+  const jobId = data.id || data.request_id
+  if (!jobId) return { url: data.url }
+  return await pollResult(apiKey, jobId)
+}
+
+export async function generateVideoAd(apiKey, { modelId, prompt, aspectRatio, duration, quality }) {
+  const body = { prompt, aspect_ratio: aspectRatio, duration, quality: quality || 'high' }
+  const res = await fetch(`${MUAPI_BASE}/api/v1/${modelId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.message || 'Failed') }
+  const data = await res.json()
+  const jobId = data.id || data.request_id
+  if (!jobId) return { url: data.url }
+  return await pollResult(apiKey, jobId)
+}
+
+export async function applyColorGrade(apiKey, { videoUrl, gradeStyle, customParams }) {
+  const body = { video_url: videoUrl, style: gradeStyle, ...customParams }
+  const res = await fetch(`${MUAPI_BASE}/api/v1/ai-video-effects`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) throw new Error('Color grade failed')
+  const data = await res.json()
+  const jobId = data.id || data.request_id
+  if (!jobId) return { url: data.url }
+  return await pollResult(apiKey, jobId)
+}

@@ -1,138 +1,51 @@
-'use client';
-
-import { useState } from 'react';
-import { Clapperboard } from 'lucide-react';
-import toast from 'react-hot-toast';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
-import * as muapi from '@/packages/studio/src/muapi';
+'use client'
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const GENRES = [
-  { id: 'action', name: 'Action', mood: 'High energy, fast-paced', style: 'Dynamic camera, bold colors', sample: 'Car chase sequence' },
-  { id: 'horror', name: 'Horror', mood: 'Tense, unsettling, dark', style: 'Low-key lighting, desaturated tones', sample: 'Haunted mansion reveal' },
-  { id: 'romance', name: 'Romance', mood: 'Warm, emotional, intimate', style: 'Soft focus, warm tones', sample: 'Sunset beach confession' },
-  { id: 'sci-fi', name: 'Sci-Fi', mood: 'Futuristic, awe-inspiring', style: 'Cool tones, clean lines, FX', sample: 'Space station docking' },
-  { id: 'drama', name: 'Drama', mood: 'Emotional, character-driven', style: 'Natural lighting, intimate close-ups', sample: 'Family dinner confrontation' },
-  { id: 'comedy', name: 'Comedy', mood: 'Light, humorous, relatable', style: 'Bright colors, wide shots for reactions', sample: 'Wedding speech disaster' },
-  { id: 'thriller', name: 'Thriller', mood: 'Suspenseful, edge-of-seat', style: 'High contrast, tight framing', sample: 'Interrogation scene' },
-  { id: 'documentary', name: 'Documentary', mood: 'Authentic, informative', style: 'Natural light, handheld', sample: 'Market street vendor' },
-  { id: 'western', name: 'Western', mood: 'Rugged, timeless', style: 'Warm earth tones, wide landscapes', sample: 'Desert showdown at noon' },
-  { id: 'fantasy', name: 'Fantasy', mood: 'Magical, otherworldly', style: 'Rich colors, epic scale', sample: 'Dragon emergence' },
-  { id: 'animation', name: 'Animation', mood: 'Creative, playful', style: 'Vibrant, stylized', sample: 'Enchanted forest creatures' },
-  { id: 'music-video', name: 'Music Video', mood: 'Stylized, rhythmic', style: 'Bold visuals, dynamic cuts', sample: 'Concert performance' },
-  { id: 'commercial', name: 'Commercial', mood: 'Persuasive, polished', style: 'High production, clear messaging', sample: 'Product reveal' },
-  { id: 'art-film', name: 'Art Film', mood: 'Minimalist, contemplative', style: 'Long takes, muted palette', sample: 'Train window journey' },
-  { id: 'k-drama', name: 'K-Drama', mood: 'Emotional, cinematic', style: 'Soft lighting, vibrant', sample: 'Rainy street reunion' },
-  { id: 'bollywood', name: 'Bollywood', mood: 'Vibrant, musical', style: 'Bold colors, dance sequences', sample: 'Color festival dance' },
-  { id: 'anime', name: 'Anime', mood: 'Dynamic, stylized', style: 'Cel-shaded, bold outlines', sample: 'Training montage' },
-  { id: 'game-cinematic', name: 'Game Cinematic', mood: 'Epic, immersive', style: 'Cinematic, game-like quality', sample: 'Boss fight intro' },
-  { id: 'fashion-film', name: 'Fashion Film', mood: 'Stylish, editorial', style: 'High fashion, artistic', sample: 'Runway collection reveal' },
-  { id: 'sports-highlight', name: 'Sports Highlight', mood: 'Intense, celebratory', style: 'Dynamic, high contrast', sample: 'Championship winning goal' },
-];
+  { id: 'action', name: 'Action', emoji: '💥', desc: 'Explosions, chases, and high-octane thrills', styles: 'fast-paced, quick cuts, intense, dramatic lighting, explosive' },
+  { id: 'horror', name: 'Horror', emoji: '👻', desc: 'Fear, tension, and supernatural suspense', styles: 'dark, eerie, shadowy, suspenseful, unsettling atmosphere' },
+  { id: 'romance', name: 'Romance', emoji: '💕', desc: 'Love stories and emotional connections', styles: 'warm, soft lighting, intimate, dreamy, golden hour' },
+  { id: 'scifi', name: 'Sci-Fi', emoji: '🚀', desc: 'Futuristic worlds and advanced technology', styles: 'neon, metallic, futuristic, cyberpunk, high-tech, sleek' },
+  { id: 'drama', name: 'Drama', emoji: '🎭', desc: 'Character-driven emotional storytelling', styles: 'emotional, intimate, character-focused, naturalistic lighting' },
+  { id: 'comedy', name: 'Comedy', emoji: '😄', desc: 'Humorous content and light-hearted fun', styles: 'bright, vibrant, energetic, colorful, upbeat' },
+  { id: 'thriller', name: 'Thriller', emoji: '🔪', desc: 'Suspenseful tension and twists', styles: 'tense, mysterious, shadowy, rapid editing, close-ups' },
+  { id: 'documentary', name: 'Documentary', emoji: '📽️', desc: 'Factual storytelling and real-world subjects', styles: 'natural, authentic, interview-style, verite, real footage feel' },
+  { id: 'fantasy', name: 'Fantasy', emoji: '🧙', desc: 'Magical realms and mythical creatures', styles: 'enchanted, ethereal, mystical, vibrant, epic' },
+  { id: 'animation', name: 'Animation', emoji: '🎨', desc: 'Animated visual storytelling', styles: 'stylized, colorful, illustrated, cartoon, artistic' },
+  { id: 'music-video', name: 'Music Video', emoji: '🎵', desc: 'Visual storytelling set to music', styles: 'rhythmic editing, stylized, artistic, experimental, beat-synced' },
+  { id: 'commercial', name: 'Commercial', emoji: '📺', desc: 'Product and brand advertising', styles: 'polished, product-focused, professional, bright, clean' },
+]
 
-export default function CinemaGenresPage() {
-  const [selectedGenre, setSelectedGenre] = useState(null);
-  const [prompt, setPrompt] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
+export default function GenresPage() {
+  const router = useRouter()
+  const [selectedGenre, setSelectedGenre] = useState(null)
 
-  const handleSelect = (genre) => {
-    setSelectedGenre(genre.id);
-    setPrompt(`${genre.name} scene: ${genre.mood}`);
-    toast.success(`${genre.name} selected`);
-  };
-
-  const handleGenerate = async () => {
-    if (!prompt.trim()) {
-      toast.error('Please describe your scene');
-      return;
-    }
-    setLoading(true);
-    toast.success('Generating...');
-    try {
-      const apiKey = localStorage.getItem('muapi_key');
-      if (apiKey) {
-        toast.success('Generating via API!');
-      } else {
-        await new Promise(r => setTimeout(r, 3000));
-        setResults([{ id: Date.now(), type: 'video', url: 'https://picsum.photos/seed/genre/1280/720', prompt }]);
-        toast.success('Demo: Video generated!');
-      }
-    } catch (e) {
-      toast.error('Generation failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  function handleSelect(genre) {
+    setSelectedGenre(genre)
+    localStorage.setItem('cinema_genre_style', genre.styles)
+    router.push(`/studio/cinema/generate?genre=${genre.id}`)
+  }
 
   return (
-    <StudioEditorLayout
-      left={
-        <LeftPanel title="GENRES">
-          {GENRES.map(g => (
-            <button key={g.id} onClick={() => handleSelect(g)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                width: '100%', padding: '8px 12px',
-                background: selectedGenre === g.id ? 'var(--accent-bg)' : 'none',
-                border: 'none', cursor: 'pointer', borderRadius: 8,
-                color: selectedGenre === g.id ? 'var(--accent-text)' : 'var(--text-secondary)',
-                fontSize: 13, textAlign: 'left', transition: 'all 100ms',
-              }}
-            >{g.name}</button>
-          ))}
-        </LeftPanel>
-      }
-      canvas={
-        <StudioCanvas overlay={<CornerMarkers />}>
-          <h1 style={{
-            fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700,
-            color: 'transparent',
-            background: 'linear-gradient(135deg, #c084fc 0%, #f472b6 100%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            textAlign: 'center', zIndex: 1,
-          }}>
-            GENRE PRESETS
-          </h1>
-          <div style={{
-            display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(130px, 1fr))',
-            gap: 8, marginTop: 24, zIndex: 1, maxWidth: 500, width: '100%', padding: '0 16px',
-          }}>
-            {GENRES.map(g => (
-              <button key={g.id} onClick={() => handleSelect(g)}
-                style={{
-                  background: selectedGenre === g.id ? 'var(--accent-bg)' : 'var(--bg-card)',
-                  borderRadius: 10, border: selectedGenre === g.id ? '1px solid var(--accent-primary)' : '1px solid var(--border-subtle)',
-                  padding: '10px 12px', cursor: 'pointer', textAlign: 'left',
-                }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: selectedGenre === g.id ? 'var(--accent-text)' : 'var(--text-primary)' }}>{g.name}</div>
-                <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>{g.style}</div>
-              </button>
-            ))}
+    <div style={{ padding: '32px 24px', maxWidth: 1200, margin: '0 auto' }}>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>CINEMA STUDIO — GENRES</div>
+        <h1 style={{ fontSize: 'clamp(24px,3vw,40px)', fontWeight: 900, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 8 }}>GENRE PRESETS</h1>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>One-click style presets for every cinematic genre — click to start generating</p>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+        {GENRES.map(g => (
+          <div key={g.id} onClick={() => handleSelect(g)} style={{ background: 'var(--bg-card)', border: selectedGenre?.id === g.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)', borderRadius: 20, padding: '24px', cursor: 'pointer', transition: 'all 200ms', position: 'relative' }}
+            onMouseEnter={e => { if (selectedGenre?.id !== g.id) e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.borderColor = 'var(--border-default)' }}
+            onMouseLeave={e => { if (selectedGenre?.id !== g.id) { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.borderColor = 'var(--border-subtle)' } }}>
+            <div style={{ fontSize: 36, marginBottom: 12 }}>{g.emoji}</div>
+            <div style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 6 }}>{g.name}</div>
+            <div style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.4 }}>{g.desc}</div>
+            <div style={{ marginTop: 12, fontSize: 10, color: 'var(--accent-primary)', fontWeight: 600 }}>Click to start →</div>
           </div>
-          {selectedGenre && (
-            <div style={{ marginTop: 16, zIndex: 1, width: '60%' }}>
-              <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Scene Description</div>
-              <textarea value={prompt} onChange={e => setPrompt(e.target.value)}
-                style={{
-                  width: '100%', height: 80, borderRadius: 10,
-                  border: '1px solid var(--border-default)', background: 'var(--bg-input)',
-                  color: 'var(--text-primary)', padding: 10, fontSize: 13, resize: 'none',
-                }}
-              />
-            </div>
-          )}
-        </StudioCanvas>
-      }
-      directorBar={
-        <DirectorBar title="Controls">
-          <PromptInput value={''} placeholder="Select a genre preset and describe your scene..." />
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            <GenerateButton onClick={handleGenerate} disabled={loading || !selectedGenre} style={{ opacity: loading || !selectedGenre ? 0.6 : 1 }}>
-              {loading ? 'Generating...' : 'Generate Video'}
-            </GenerateButton>
-          </div>
-        </DirectorBar>
-      }
-    />
-  );
+        ))}
+      </div>
+    </div>
+  )
 }

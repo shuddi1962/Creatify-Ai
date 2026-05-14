@@ -1,136 +1,105 @@
-'use client';
+'use client'
+import { useState } from 'react'
+import { Download } from 'lucide-react'
 
-import { useState } from 'react';
-import { Package, Download, Play } from 'lucide-react';
-import toast from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import GenerateButton from '@/components/studio/GenerateButton';
-import ResultsGrid from '@/components/studio/ResultsGrid';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, PromptInput, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
-import * as muapi from '@/packages/studio/src/muapi';
+const BATCH_MODELS = [{ id: 'kling-v2.6-pro-t2v', name: 'Kling 3.0 Pro', creditCost: 30 }, { id: 'wan2.5-text-to-video', name: 'WAN 2.5', creditCost: 12 }]
 
-const VARIANTS = [5, 10, 20];
-const DIMENSIONS = ['Hook', 'Tone', 'Visual Style', 'Creator Type', 'Duration', 'Platform'];
-const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Facebook', 'LinkedIn'];
+export default function BatchPage() {
+  const apiKey = typeof window !== 'undefined' ? localStorage.getItem('muapi_key') : ''
+  const [product, setProduct] = useState('')
+  const [count, setCount] = useState('5')
+  const [model, setModel] = useState(BATCH_MODELS[0])
+  const [loading, setLoading] = useState(false)
+  const [progress, setProgress] = useState([])
+  const [results, setResults] = useState([])
+  const [error, setError] = useState('')
 
-export default function MarketingBatchPage() {
-  const [inputType, setInputType] = useState('description');
-  const [description, setDescription] = useState('');
-  const [url, setUrl] = useState('');
-  const [count, setCount] = useState(10);
-  const [dimensions, setDimensions] = useState(['Hook', 'Tone', 'Visual Style']);
-  const [platforms, setPlatforms] = useState(['TikTok', 'Instagram']);
-  const [model, setModel] = useState('seedance-2');
-  const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
+  async function handleBatch() {
+    if (!apiKey) { setError('Add API key'); return }
+    if (!product.trim()) { setError('Describe product'); return }
+    setError(''); setLoading(true); setProgress([]); setResults([])
+    const total = parseInt(count)
+    setProgress(Array(total).fill('queued'))
 
-  const toggleDimension = (d) => setDimensions(prev => prev.includes(d) ? prev.filter(x => x !== d) : [...prev, d]);
-  const togglePlatform = (p) => setPlatforms(prev => prev.includes(p) ? prev.filter(x => x !== p) : [...prev, p]);
-
-  const handleScan = async () => {
-    if (!url.trim()) { toast.error('Enter a URL'); return; }
-    toast.loading('Scanning...', { id: 'scan' });
-    await new Promise(r => setTimeout(r, 1500));
-    setDescription('Scanned product: premium wireless headphones with active noise cancellation');
-    toast.success('Product scanned!', { id: 'scan' });
-  };
-
-  const handleGenerate = async () => {
-    if (!description.trim()) { toast.error('Enter a product description'); return; }
-    setLoading(true);
-    toast.success(`Generating ${count} ad variants...`);
-    try {
-      const apiKey = localStorage.getItem('muapi_key');
-      if (apiKey) {
-        toast.success('Generating batch ads via API!');
-      } else {
-        await new Promise(r => setTimeout(r, 3000));
-        const variants = Array.from({ length: count }, (_, i) => ({
-          id: Date.now() + i,
-          type: 'video',
-          url: `https://picsum.photos/seed/batch${i}/720/1280`,
-          prompt: `Variant ${i + 1}: ${dimensions[i % dimensions.length]} variation`,
-          model,
-        }));
-        setResults(variants);
-        toast.success('Demo: Batch generation complete!');
-      }
-    } catch (e) {
-      toast.error('Generation failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+    const variants = ['hook style', 'fast cuts', 'emotional angle', 'humor twist', 'testimonial style',
+      'comparison angle', 'problem focus', 'lifestyle focus', 'urgent cta', 'educational angle']
+    const jobs = Array.from({ length: total }, async (_, i) => {
+      const desc = `${product} — ${variants[i % variants.length]}`
+      setProgress(prev => { const n = [...prev]; n[i] = 'generating'; return n })
+      try {
+        const body = { prompt: `UGC ad for ${desc}. High quality, cinematic, ${i % 2 === 0 ? '9:16 vertical' : '16:9 landscape'}, 30 seconds.`, aspect_ratio: i % 2 === 0 ? '9:16' : '16:9', duration: 30, quality: 'high' }
+        const response = await fetch(`https://api.muapi.ai/v1/${model.id}`, {
+          method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` }, body: JSON.stringify(body),
+        })
+        if (!response.ok) { setProgress(prev => { const n = [...prev]; n[i] = 'failed'; return n }); return null }
+        const data = await response.json()
+        const jobId = data.id || data.request_id
+        if (jobId) {
+          for (let a = 0; a < 120; a++) {
+            await new Promise(r => setTimeout(r, 2500))
+            const poll = await fetch(`https://api.muapi.ai/v1/predict/results/${jobId}`, { headers: { 'Authorization': `Bearer ${apiKey}` } })
+            if (!poll.ok) continue
+            const pd = await poll.json()
+            if (pd.status === 'succeeded' || pd.output || pd.url) { setProgress(prev => { const n = [...prev]; n[i] = 'done'; return n }); return { url: pd.url || pd.output?.url || pd.output?.[0], variant: i + 1 } }
+            if (pd.status === 'failed') { setProgress(prev => { const n = [...prev]; n[i] = 'failed'; return n }); return null }
+          }
+        } else if (data.url) { setProgress(prev => { const n = [...prev]; n[i] = 'done'; return n }); return { url: data.url, variant: i + 1 } }
+      } catch { setProgress(prev => { const n = [...prev]; n[i] = 'failed'; return n }) }
+      return null
+    })
+    const done = await Promise.all(jobs)
+    setResults(done.filter(Boolean))
+    setLoading(false)
+  }
 
   return (
-    <StudioEditorLayout
-      left={
-        <LeftPanel title="DIMENSIONS">
-          {DIMENSIONS.map(d => (
-            <button key={d} onClick={() => toggleDimension(d)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8,
-                width: '100%', padding: '8px 12px',
-                background: dimensions.includes(d) ? 'var(--accent-bg)' : 'none',
-                border: 'none', cursor: 'pointer', borderRadius: 8,
-                color: dimensions.includes(d) ? 'var(--accent-text)' : 'var(--text-secondary)',
-                fontSize: 13, textAlign: 'left',
-              }}
-            >{d}</button>
-          ))}
-        </LeftPanel>
-      }
-      canvas={
-        <StudioCanvas overlay={<CornerMarkers />}>
-          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
-            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            textAlign: 'center', zIndex: 1,
-          }}>
-            BATCH AD GENERATOR
-          </h1>
-          {results.length > 0 && (
-            <div style={{ zIndex: 1, marginTop: 24, maxWidth: 600, width: '100%', padding: 16, display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+    <div style={{ padding: '32px 24px', maxWidth: 900, margin: '0 auto' }}>
+      <div style={{ marginBottom: 32 }}><div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.12em', marginBottom: 6 }}>MARKETING STUDIO</div>
+        <h1 style={{ fontSize: 'clamp(24px,3vw,40px)', fontWeight: 900, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 8 }}>BATCH AD GENERATOR</h1>
+        <p style={{ fontSize: 14, color: 'var(--text-secondary)' }}>Create multiple ad variants from one product in one click</p>
+      </div>
+      <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, padding: '24px', display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <div><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>PRODUCT DESCRIPTION</div>
+          <textarea value={product} onChange={e => setProduct(e.target.value)} placeholder="Describe the product you're advertising..." rows={3} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '10px 14px', color: 'var(--text-primary)', fontSize: 14, resize: 'vertical', outline: 'none', fontFamily: 'inherit' }} /></div>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+          <div><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>VARIANTS</div>
+            <select value={count} onChange={e => setCount(e.target.value)} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}>
+              {['5', '10', '20'].map(c => <option key={c}>{c}</option>)}</select></div>
+          <div><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 6 }}>MODEL</div>
+            <select value={model.id} onChange={e => setModel(BATCH_MODELS.find(m => m.id === e.target.value))} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 10, padding: '10px 14px', fontSize: 13, color: 'var(--text-primary)', outline: 'none', cursor: 'pointer' }}>
+              {BATCH_MODELS.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select></div>
+        </div>
+        {error && <div style={{ background: 'rgba(239,68,68,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fca5a5' }}>{error}</div>}
+        <button onClick={handleBatch} disabled={loading} style={{ padding: '12px 0', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
+          {loading ? `Generating ${count} ads...` : `✦ Generate ${count} Ad Variants`}
+        </button>
+        {progress.length > 0 && (
+          <div><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>PROGRESS</div>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {progress.map((p, i) => (
+                <div key={i} style={{ padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600, background: p === 'done' ? 'rgba(0,255,148,0.2)' : p === 'failed' ? 'rgba(239,68,68,0.2)' : p === 'generating' ? 'rgba(0,194,255,0.2)' : 'var(--bg-input)', color: p === 'done' ? '#00FF94' : p === 'failed' ? '#fca5a5' : p === 'generating' ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
+                  #{i + 1} {p === 'done' ? '✓' : p === 'failed' ? '✗' : p === 'generating' ? '◌' : '○'}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        {results.length > 0 && (
+          <div><div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>Results ({results.length})</div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: 12 }}>
               {results.map((r, i) => (
-                <div key={r.id} style={{ background: 'var(--bg-card)', borderRadius: 10, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
-                  <div style={{ aspectRatio: '9/16', background: 'var(--bg-input)', position: 'relative' }}>
-                    <img src={r.url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    <span style={{ position: 'absolute', top: 4, left: 4, padding: '2px 6px', background: 'rgba(0,0,0,0.6)', borderRadius: 4, fontSize: 9, color: '#fff' }}>{i + 1}</span>
-                  </div>
-                  <div style={{ padding: 6, display: 'flex', gap: 4 }}>
-                    <button style={{ flex: 1, padding: '4px 0', background: 'var(--bg-input)', border: 'none', borderRadius: 6, fontSize: 10, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><Play size={10} />Preview</button>
-                    <button style={{ flex: 1, padding: '4px 0', background: 'var(--bg-input)', border: 'none', borderRadius: 6, fontSize: 10, color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 4 }}><Download size={10} />DL</button>
+                <div key={i} style={{ background: 'var(--bg-input)', borderRadius: 12, overflow: 'hidden', border: '1px solid var(--border-subtle)' }}>
+                  <video src={r.url} style={{ width: '100%', height: 160, objectFit: 'cover' }} muted />
+                  <div style={{ padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <span style={{ fontSize: 11, color: 'var(--text-primary)' }}>Variant {r.variant}</span>
+                    <a href={r.url} download style={{ color: 'var(--accent-primary)', fontSize: 11, textDecoration: 'none' }}><Download size={12} /></a>
                   </div>
                 </div>
               ))}
             </div>
-          )}
-        </StudioCanvas>
-      }
-      directorBar={
-        <DirectorBar title="Batch Settings">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
-            <ControlButton onClick={() => setInputType('description')}>{inputType === 'description' ? 'Description' : 'URL'}</ControlButton>
-            {inputType === 'description' ? (
-              <PromptInput value={description} onChange={e => setDescription(e.target.value)} placeholder="Describe your product..." />
-            ) : (
-              <div style={{ display: 'flex', alignItems: 'center', gap: 4, flex: 1 }}>
-                <PromptInput value={url} onChange={e => setUrl(e.target.value)} placeholder="Product URL..." />
-                <ControlButton onClick={handleScan}>Scan</ControlButton>
-              </div>
-            )}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            <StudioDropdown label="Variants" options={VARIANTS.map(String)} value={String(count)} onChange={v => setCount(parseInt(v))} />
-            <ModelSelector value={model} onChange={setModel} type="video" />
-            <GenerateButton onClick={handleGenerate} loading={loading}>GENERATE</GenerateButton>
-          </div>
-        </DirectorBar>
-      }
-    />
-  );
+        )}
+      </div>
+    </div>
+  )
 }
