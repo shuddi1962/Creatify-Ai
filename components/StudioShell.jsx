@@ -541,6 +541,7 @@ export default function StudioShell({ children }) {
           paddingTop: 12, paddingBottom: 12,
           overflow: 'hidden', zIndex: 50,
           transition: 'all 250ms ease',
+          display: sidebarCollapsed ? 'none' : 'flex',
         }} className="hidden lg:flex"
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
