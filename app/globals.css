@@ -131,6 +131,9 @@
 
   --accent-primary: #0099CC;
   --accent-secondary: #00B8A9;
+  --btn-generate-bg: #00FF94;
+  --btn-generate-text: #000000;
+  --btn-generate-hover: #00E085;
   --accent-bg: rgba(0,153,204,0.08);
   --accent-border: rgba(0,153,204,0.35);
   --accent-text: #0099CC;
@@ -735,4 +738,25 @@ img, video, svg, canvas,
 .chip-inactive {
   border-color: var(--border-default);
   color: var(--text-secondary);
+}
+
+/* CRITICAL — makes ALL placeholder text visible on both themes */
+textarea::placeholder,
+input::placeholder {
+  color: var(--text-placeholder) !important;
+  opacity: 1 !important;
+}
+
+/* Make select options visible on both themes */
+select option {
+  background: var(--bg-dropdown);
+  color: var(--text-primary);
+}
+
+/* Remove default focus ring — use custom border instead */
+textarea:focus,
+input:focus,
+select:focus {
+  outline: none !important;
+  box-shadow: none !important;
 }

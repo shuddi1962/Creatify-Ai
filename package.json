@@ -96,6 +96,7 @@
     }
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.96.0",
     "@reactflow/background": "^11.3.14",
     "@reactflow/controls": "^11.2.14",
     "@reactflow/core": "^11.11.4",
