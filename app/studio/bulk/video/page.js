@@ -57,17 +57,28 @@ export default function BulkVideoPage() {
   const [started, setStarted] = useState(false);
 
   useEffect(() => {
-    fetch('/api/v1/env-key')
-      .then(r => r.json())
-      .then(data => {
+    async function loadApiKey() {
+      try {
+        const res = await fetch('/api/v1/shared-key?provider=muapi');
+        const data = await res.json();
         if (data.key) {
           setApiKey(data.key);
-        } else {
-          toast.error('No API key configured. Contact the platform owner.');
+          return;
         }
-      })
-      .catch(() => toast.error('Failed to load API key'))
-      .finally(() => setApiKeyLoading(false));
+        const fallback = await fetch('/api/v1/env-key');
+        const fb = await fallback.json();
+        if (fb.key) {
+          setApiKey(fb.key);
+          return;
+        }
+        toast.error('No API key configured. Contact the platform owner.');
+      } catch {
+        toast.error('Failed to load API key');
+      } finally {
+        setApiKeyLoading(false);
+      }
+    }
+    loadApiKey();
   }, []);
 
   const handleCSV = (file) => {
