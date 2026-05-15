@@ -44,7 +44,7 @@ export function StudioCanvas({ children, overlay }) {
   return (
     <div style={{
       flex: 1,
-      background: 'radial-gradient(ellipse at center, #1a0a2e 0%, #0a0014 40%, #000000 100%)',
+      background: '#000000',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       position: 'relative', overflow: 'hidden',

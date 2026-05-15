@@ -19,12 +19,12 @@
 /* Dark theme (default) CSS variables */
 :root[data-theme="dark"],
 :root:not([data-theme="light"]) {
-  --bg-page: #080C10;
-  --bg-card: #0D1117;
-  --bg-elevated: #131920;
-  --bg-input: #1A2230;
-  --bg-topbar: #0A0E14;
-  --bg-sidebar: #0A0E14;
+  --bg-page: #000000;
+  --bg-card: #050505;
+  --bg-elevated: #0A0A0A;
+  --bg-input: #111111;
+  --bg-topbar: #000000;
+  --bg-sidebar: #000000;
   --bg-dropdown: #0D1117;
   --bg-modal: rgba(0,0,0,0.85);
   --bg-overlay: rgba(0,0,0,0.6);

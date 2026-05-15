@@ -151,10 +151,18 @@ export default function StudioShell({ children }) {
     return () => document.removeEventListener('keydown', handler);
   }, []);
 
+  const SECTIONS_WITH_SUBNAV = [
+    'ideas', 'bulk', 'characters', 'workflows', 'agents',
+    'media', 'schedule', 'settings', 'image', 'video',
+    'lipsync', 'audio', 'cinema', 'marketing',
+  ]
+  const sectionRoot = pathname.split('/')[2]
+  const hasOwnSidebar = SECTIONS_WITH_SUBNAV.includes(sectionRoot)
+
   useEffect(() => {
     const segments = pathname.split('/').filter(Boolean).length;
-    setSidebarCollapsed(segments > 2);
-  }, [pathname]);
+    setSidebarCollapsed(segments > 2 || hasOwnSidebar);
+  }, [pathname, hasOwnSidebar]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
   const handleDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.items?.length) setIsDragging(true); }, []);
@@ -530,7 +538,7 @@ export default function StudioShell({ children }) {
       </header>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
-        {!pathname.startsWith('/studio/dashboard') && (
+        {!pathname.startsWith('/studio/dashboard') && !hasOwnSidebar && (
         <aside style={{
           width: sidebarCollapsed ? 64 : 200,
           flexShrink: 0,
