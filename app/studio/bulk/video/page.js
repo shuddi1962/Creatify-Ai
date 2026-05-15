@@ -43,6 +43,30 @@ export default function BulkVideoPage() {
   const [generating, setGenerating] = useState(false);
   const [started, setStarted] = useState(false);
 
+  const updatePendingRows = useCallback((field, value) => {
+    setRows(prev => prev.map(r =>
+      r.status === 'pending' ? { ...r, [field]: value } : r
+    ));
+  }, []);
+
+  const handleModelChange = (e) => {
+    const val = e.target.value;
+    setModel(val);
+    updatePendingRows('model', val);
+  };
+
+  const handleDurationChange = (e) => {
+    const val = e.target.value;
+    setDuration(val);
+    updatePendingRows('duration', val);
+  };
+
+  const handleRatioChange = (e) => {
+    const val = e.target.value;
+    setAspectRatio(val);
+    updatePendingRows('aspect_ratio', val);
+  };
+
   const handleCSV = (file) => {
     setRows([
       { id: 1, prompt: 'Epic mountain drone shot', model: defaultModel, duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
@@ -143,7 +167,7 @@ export default function BulkVideoPage() {
           </label>
           <select
             value={model}
-            onChange={e => setModel(e.target.value)}
+            onChange={handleModelChange}
             style={{
               width: '100%', background: 'var(--bg-input)',
               border: '1px solid var(--border-default)', borderRadius: 10,
@@ -163,7 +187,7 @@ export default function BulkVideoPage() {
           </label>
           <select
             value={duration}
-            onChange={e => setDuration(e.target.value)}
+            onChange={handleDurationChange}
             style={{
               width: '100%', background: 'var(--bg-input)',
               border: '1px solid var(--border-default)', borderRadius: 10,
@@ -182,7 +206,7 @@ export default function BulkVideoPage() {
           </label>
           <select
             value={aspectRatio}
-            onChange={e => setAspectRatio(e.target.value)}
+            onChange={handleRatioChange}
             style={{
               width: '100%', background: 'var(--bg-input)',
               border: '1px solid var(--border-default)', borderRadius: 10,
