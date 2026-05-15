@@ -1,26 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { Video, Upload, Download } from 'lucide-react';
+import { useState, useCallback } from 'react';
+import { Video, Upload, Download, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
-import StudioHero from '@/components/studio/StudioHero';
-import GenerationPanel from '@/components/studio/GenerationPanel';
-import ModelSelector from '@/components/studio/ModelSelector';
-import AspectRatioPicker from '@/components/studio/AspectRatioPicker';
-import SectionLabel from '@/components/studio/SectionLabel';
-import StudioDropdown from '@/components/StudioDropdown';
-import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, ControlButton, CornerMarkers } from '@/components/studio/StudioEditorLayout';
-
-const SAMPLE_ROWS = [
-  { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-2', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0 },
-  { id: 2, prompt: 'City street timelapse at night', model: 'kling-3', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0 },
-  { id: 3, prompt: 'Product reveal animation', model: 'seedance-2', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0 },
-];
+import { generateVideo } from 'studio';
 
 const STORYBOARD_BATCH_KEY = 'storyboard_batch';
+const API_KEY_STORAGE_KEY = 'muapi_key';
 
 export default function BulkVideoPage() {
-  const [csvFile, setCsvFile] = useState(null);
   const [rows, setRows] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -38,6 +26,7 @@ export default function BulkVideoPage() {
               aspect_ratio: item.aspect_ratio || '16:9',
               status: 'pending',
               progress: 0,
+              resultUrl: null,
             }));
           }
         }
@@ -50,109 +39,385 @@ export default function BulkVideoPage() {
   const [model, setModel] = useState('seedance-2');
   const [duration, setDuration] = useState('5');
   const [aspectRatio, setAspectRatio] = useState('16:9');
-  const [naming, setNaming] = useState('Sequential');
   const [generating, setGenerating] = useState(false);
   const [started, setStarted] = useState(false);
 
+  const getApiKey = useCallback(() => {
+    if (typeof window === 'undefined') return null;
+    return localStorage.getItem(API_KEY_STORAGE_KEY);
+  }, []);
+
   const handleCSV = (file) => {
-    setCsvFile(file);
-    setRows(SAMPLE_ROWS);
+    setRows([
+      { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-2', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 2, prompt: 'City street timelapse at night', model: 'kling-3', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 3, prompt: 'Product reveal animation', model: 'seedance-2', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0, resultUrl: null },
+    ]);
     toast.success('CSV loaded — 3 videos in batch');
+  };
+
+  const handleCSVUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) handleCSV(file);
   };
 
   const handleStart = async () => {
     if (rows.length === 0) { toast.error('No videos to generate'); return; }
+
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      toast.error('Add your Muapi API key in Settings first');
+      return;
+    }
+
     setStarted(true);
     setGenerating(true);
-    toast.success('Bulk video generation started!');
-    for (const row of rows) {
-      setRows(prev => prev.map(r => r.id === row.id ? { ...r, status: 'generating', progress: 0 } : r));
-      for (let p = 0; p <= 100; p += 10) {
-        await new Promise(r => setTimeout(r, 400));
-        setRows(prev => prev.map(r => r.id === row.id ? { ...r, progress: p } : r));
+
+    const updatedRows = [...rows];
+    let allResults = [];
+
+    for (let i = 0; i < updatedRows.length; i++) {
+      const row = updatedRows[i];
+      setRows(prev => prev.map(r => r.id === row.id ? { ...r, status: 'generating', progress: 5 } : r));
+
+      try {
+        setRows(prev => prev.map(r => r.id === row.id ? { ...r, progress: 15 } : r));
+
+        const result = await generateVideo(apiKey, {
+          model: row.model,
+          prompt: row.prompt,
+          aspect_ratio: row.aspect_ratio,
+          duration: parseInt(row.duration) || 5,
+        });
+
+        const videoUrl = result.url || result.output?.url || result.output?.[0] || result.video_url || '';
+        allResults.push({ id: row.id, url: videoUrl, prompt: row.prompt });
+
+        setRows(prev => prev.map(r =>
+          r.id === row.id ? {
+            ...r,
+            status: 'completed',
+            progress: 100,
+            resultUrl: videoUrl,
+          } : r
+        ));
+      } catch (err) {
+        setRows(prev => prev.map(r =>
+          r.id === row.id ? {
+            ...r,
+            status: 'failed',
+            progress: 0,
+            error: err.message,
+          } : r
+        ));
+        console.error(`Row ${row.id} failed:`, err);
       }
-      setRows(prev => prev.map(r => r.id === row.id ? { ...r, status: 'completed', progress: 100, url: `https://picsum.photos/seed/videobulk${row.id}/640/360` } : r));
     }
+
+    sessionStorage.setItem('bulk_video_results', JSON.stringify(allResults));
     setGenerating(false);
-    toast.success('Bulk video generation complete!');
+
+    const completedCount = allResults.filter(r => r.url).length;
+    if (completedCount > 0) {
+      toast.success(`${completedCount}/${updatedRows.length} videos generated!`);
+    } else {
+      toast.error('All generations failed. Check your API key.');
+    }
   };
 
+  const handleDownloadAll = useCallback(() => {
+    const completed = rows.filter(r => r.status === 'completed' && r.resultUrl);
+    if (completed.length === 0) {
+      toast.error('No completed videos to download');
+      return;
+    }
+
+    completed.forEach((row, index) => {
+      const link = document.createElement('a');
+      link.href = row.resultUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.download = `video_${row.id}_${row.prompt.substring(0, 30).replace(/\s+/g, '_')}.mp4`;
+      setTimeout(() => {
+        link.click();
+        link.remove();
+      }, index * 500);
+    });
+
+    toast.success(`Opening ${completed.length} video download(s)`);
+  }, [rows]);
+
   const completed = rows.filter(r => r.status === 'completed').length;
+  const hasResults = rows.some(r => r.status === 'completed' && r.resultUrl);
 
   return (
-    <StudioEditorLayout
-      left={
-        <LeftPanel title="CSV UPLOAD">
-          <label style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 24, border: '2px dashed var(--border-subtle)', borderRadius: 12, cursor: 'pointer', background: 'var(--bg-card)' }}>
-            <Upload size={24} style={{ color: 'var(--text-muted)' }} />
-            <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'center' }}>Drag & drop CSV<br />Columns: prompt, model, duration</p>
-            <input type="file" accept=".csv" onChange={e => e.target.files?.[0] && handleCSV(e.target.files[0])} style={{ display: 'none' }} />
-          </label>
-        </LeftPanel>
-      }
-      canvas={
-        <StudioCanvas overlay={<CornerMarkers />}>
-          <h1 style={{ fontSize: 'clamp(28px, 4vw, 48px)', fontWeight: 700, color: 'transparent',
-            background: 'linear-gradient(135deg, #f472b6 0%, #fb923c 100%)',
-            WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
-            textAlign: 'center', zIndex: 1,
-          }}>
-            BULK VIDEO
+    <div style={{ padding: '28px', maxWidth: 1000, margin: '0 auto' }}>
+      <div style={{ marginBottom: 28 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <Video size={22} style={{ color: 'var(--accent-primary)' }} />
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
+            Bulk Video Generator
           </h1>
-          {rows.length > 0 && !started && (
-            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
-              <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8, display: 'block' }}>{rows.length} Videos in Batch</span>
-              {rows.map(r => (
-                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: 'var(--bg-card)', borderRadius: 8, marginBottom: 4 }}>
-                  <span style={{ fontSize: 11, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.prompt}</span>
-                  <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{r.model}</span>
-                </div>
-              ))}
-            </div>
-          )}
-          {started && (
-            <div style={{ zIndex: 1, marginTop: 24, width: '100%', maxWidth: 500, padding: 16, maxHeight: '50%', overflowY: 'auto' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-                <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>{completed}/{rows.length}</span>
-                <div style={{ flex: 1, height: 8, background: 'var(--bg-input)', borderRadius: 100 }}>
-                  <div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%` }} />
-                </div>
+        </div>
+        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+          Generate multiple videos at once via AI models — Seedance, Kling, Sora, Veo and more
+        </p>
+      </div>
+
+      <div style={{
+        background: 'var(--bg-card)',
+        border: '1px solid var(--border-default)',
+        borderRadius: 16, padding: '20px 24px',
+        marginBottom: 24,
+        display: 'flex', alignItems: 'flex-end', gap: 14, flexWrap: 'wrap',
+      }}>
+        <div style={{ flex: '1 1 200px' }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
+            MODEL
+          </label>
+          <select
+            value={model}
+            onChange={e => setModel(e.target.value)}
+            style={{
+              width: '100%', background: 'var(--bg-input)',
+              border: '1px solid var(--border-default)', borderRadius: 10,
+              padding: '9px 12px', color: 'var(--text-primary)', fontSize: 13,
+              outline: 'none', cursor: 'pointer',
+            }}
+          >
+            <option value="seedance-2">Seedance 2.0</option>
+            <option value="kling-3">Kling 3.0</option>
+            <option value="sora-2">Sora 2</option>
+            <option value="veo-3">Veo 3.1</option>
+            <option value="wan-2.6">WAN 2.6</option>
+            <option value="minimax-hailuo-02">MiniMax Hailuo</option>
+            <option value="runway-gen3">Runway Gen-3</option>
+            <option value="hunyuan-video">Hunyuan Video</option>
+          </select>
+        </div>
+
+        <div style={{ flex: '0 0 120px' }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
+            DURATION
+          </label>
+          <select
+            value={duration}
+            onChange={e => setDuration(e.target.value)}
+            style={{
+              width: '100%', background: 'var(--bg-input)',
+              border: '1px solid var(--border-default)', borderRadius: 10,
+              padding: '9px 12px', color: 'var(--text-primary)', fontSize: 13,
+              outline: 'none', cursor: 'pointer',
+            }}
+          >
+            <option value="5">5 sec</option>
+            <option value="10">10 sec</option>
+          </select>
+        </div>
+
+        <div style={{ flex: '0 0 120px' }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
+            ASPECT RATIO
+          </label>
+          <select
+            value={aspectRatio}
+            onChange={e => setAspectRatio(e.target.value)}
+            style={{
+              width: '100%', background: 'var(--bg-input)',
+              border: '1px solid var(--border-default)', borderRadius: 10,
+              padding: '9px 12px', color: 'var(--text-primary)', fontSize: 13,
+              outline: 'none', cursor: 'pointer',
+            }}
+          >
+            <option value="16:9">16:9</option>
+            <option value="1:1">1:1</option>
+            <option value="9:16">9:16</option>
+            <option value="4:5">4:5</option>
+          </select>
+        </div>
+
+        <div style={{ flex: '0 0 160px' }}>
+          <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
+            BATCH SOURCE
+          </label>
+          <label style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            background: 'var(--bg-input)',
+            border: '1px solid var(--border-default)', borderRadius: 10,
+            padding: '9px 14px', cursor: 'pointer',
+            fontSize: 13, color: 'var(--text-secondary)', fontWeight: 500,
+          }}>
+            <Upload size={14} /> Upload CSV
+            <input type="file" accept=".csv" onChange={handleCSVUpload} style={{ display: 'none' }} />
+          </label>
+        </div>
+
+        {rows.length > 0 && !started && (
+          <button
+            onClick={handleStart}
+            style={{
+              padding: '10px 24px',
+              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
+              border: 'none', borderRadius: 10,
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              alignSelf: 'flex-end',
+            }}
+          >
+            Generate {rows.length} Videos
+          </button>
+        )}
+
+        {started && hasResults && (
+          <button
+            onClick={handleDownloadAll}
+            style={{
+              display: 'flex', alignItems: 'center', gap: 6,
+              padding: '10px 24px',
+              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
+              border: 'none', borderRadius: 10,
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              alignSelf: 'flex-end',
+            }}
+          >
+            <Download size={14} /> Download All
+          </button>
+        )}
+      </div>
+
+      {rows.length === 0 && (
+        <div style={{
+          background: 'var(--bg-card)', border: '2px dashed var(--border-default)',
+          borderRadius: 20, padding: '60px 32px', textAlign: 'center',
+        }}>
+          <Video size={40} style={{ color: 'var(--text-muted)', margin: '0 auto 16px' }} />
+          <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>
+            No videos in batch
+          </div>
+          <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+            Upload a CSV or generate scenes from the Storyboard Pipeline to get started
+          </div>
+        </div>
+      )}
+
+      {rows.length > 0 && (
+        <div style={{
+          background: 'var(--bg-card)',
+          border: '1px solid var(--border-default)',
+          borderRadius: 16, overflow: 'hidden',
+        }}>
+          <div style={{
+            padding: '14px 20px',
+            borderBottom: '1px solid var(--border-subtle)',
+            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          }}>
+            <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>
+              Batch Queue ({rows.length} videos)
+            </span>
+            {started && (
+              <span style={{ fontSize: 12, fontWeight: 600, color: completed === rows.length ? '#22c55e' : 'var(--text-muted)' }}>
+                {completed}/{rows.length} completed
+              </span>
+            )}
+          </div>
+
+          <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {started && (
+              <div style={{ height: 6, background: 'var(--bg-elevated)', borderRadius: 100, marginBottom: 4 }}>
+                <div style={{
+                  height: '100%', borderRadius: 100,
+                  background: 'var(--accent-primary)',
+                  width: `${rows.length > 0 ? (completed / rows.length) * 100 : 0}%`,
+                  transition: 'width 400ms ease',
+                }} />
               </div>
-              {rows.map(r => (
-                <div key={r.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 12px', background: 'var(--bg-card)', borderRadius: 10, marginBottom: 4, border: '1px solid var(--border-subtle)' }}>
-                  <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 24 }}>#{r.id}</span>
-                  <span style={{ fontSize: 12, color: 'var(--text-primary)', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.prompt}</span>
-                  <span style={{ fontSize: 10, fontWeight: 600, padding: '2px 6px', borderRadius: 4,
-                    background: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'generating' ? 'rgba(204,255,0,0.2)' : 'var(--bg-input)',
-                    color: r.status === 'completed' ? '#4ade80' : r.status === 'generating' ? '#CCFF00' : 'var(--text-muted)',
-                  }}>{r.status}</span>
-                  {r.status === 'generating' && <div style={{ width: 60, height: 6, background: 'var(--bg-input)', borderRadius: 100 }}><div style={{ height: '100%', background: '#CCFF00', borderRadius: 100, width: `${r.progress}%` }} /></div>}
-                  {r.status === 'completed' && r.url && <img src={r.url} alt="" style={{ width: 40, height: 24, borderRadius: 4, objectFit: 'cover' }} />}
+            )}
+
+            {rows.map(r => (
+              <div key={r.id} style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '10px 14px',
+                background: r.status === 'failed' ? 'rgba(239,68,68,0.05)' : 'var(--bg-elevated)',
+                border: '1px solid',
+                borderColor: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'failed' ? 'rgba(239,68,68,0.2)' : r.status === 'generating' ? 'rgba(0,194,255,0.2)' : 'var(--border-subtle)',
+                borderRadius: 10,
+                transition: 'border-color 200ms',
+              }}>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 28, flexShrink: 0 }}>
+                  #{r.id}
+                </span>
+
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {r.prompt}
+                  </div>
+                  <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                    {r.model} | {r.duration}s | {r.aspect_ratio}
+                  </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </StudioCanvas>
-      }
-      directorBar={
-        <DirectorBar title="Settings">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-            <ModelSelector value={model} onChange={setModel} type="video" />
-            <StudioDropdown label="Ratio" options={['16:9', '1:1', '9:16']} value={aspectRatio} onChange={setAspectRatio} />
-            <StudioDropdown label="Duration" options={['5', '10']} value={duration} onChange={setDuration} />
-            <StudioDropdown label="Naming" options={['Sequential', 'Row Number', 'Custom Prefix']} value={naming} onChange={setNaming} />
+
+                {r.status === 'generating' && (
+                  <div style={{ width: 80, height: 6, background: 'var(--bg-input)', borderRadius: 100, flexShrink: 0 }}>
+                    <div style={{ width: `${r.progress}%`, height: '100%', background: 'var(--accent-primary)', borderRadius: 100, transition: 'width 300ms' }} />
+                  </div>
+                )}
+
+                <span style={{
+                  fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 100,
+                  flexShrink: 0,
+                  background: r.status === 'completed' ? 'rgba(74,222,128,0.15)' : r.status === 'generating' ? 'rgba(0,194,255,0.15)' : r.status === 'failed' ? 'rgba(239,68,68,0.15)' : 'var(--bg-input)',
+                  color: r.status === 'completed' ? '#22c55e' : r.status === 'generating' ? 'var(--accent-primary)' : r.status === 'failed' ? '#ef4444' : 'var(--text-muted)',
+                }}>
+                  {r.status === 'generating' ? `GENERATING` : r.status.toUpperCase()}
+                </span>
+
+                {r.status === 'completed' && r.resultUrl && (
+                  <a
+                    href={r.resultUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: 32, height: 32, borderRadius: 6, flexShrink: 0,
+                      background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+                      color: 'var(--text-secondary)', cursor: 'pointer', textDecoration: 'none',
+                    }}
+                    title="Open video"
+                  >
+                    <ExternalLink size={13} />
+                  </a>
+                )}
+
+                {r.status === 'completed' && r.resultUrl && (
+                  <button
+                    onClick={() => {
+                      const a = document.createElement('a');
+                      a.href = r.resultUrl;
+                      a.download = `video_${r.id}.mp4`;
+                      a.click();
+                      a.remove();
+                    }}
+                    style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      width: 32, height: 32, borderRadius: 6, flexShrink: 0,
+                      background: 'var(--btn-generate-bg)', border: 'none',
+                      color: 'var(--btn-generate-text)', cursor: 'pointer',
+                    }}
+                    title="Download video"
+                  >
+                    <Download size={13} />
+                  </button>
+                )}
+
+                {r.status === 'failed' && r.error && (
+                  <span style={{ fontSize: 10, color: '#ef4444', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={r.error}>
+                    {r.error}
+                  </span>
+                )}
+              </div>
+            ))}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
-            {rows.length > 0 && !started && (
-              <button onClick={handleStart} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer' }}>START BULK</button>
-            )}
-            {started && completed > 0 && (
-              <button onClick={() => toast.success('Downloading ZIP...')} style={{ padding: '10px 24px', background: '#CCFF00', color: '#000', border: 'none', borderRadius: 10, fontSize: 14, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}><Download size={14} /> Download</button>
-            )}
-          </div>
-        </DirectorBar>
-      }
-    />
-  );
+        </div>
+      )}
+    </div>
+  )
 }
