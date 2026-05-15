@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { Video, Upload, Download, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { generateVideo } from 'studio';
+import { generateVideo } from '@/lib/generationUtils';
 
 const STORYBOARD_BATCH_KEY = 'storyboard_batch';
 
@@ -23,8 +23,6 @@ const T2V_MODELS = [
 ];
 
 export default function BulkVideoPage() {
-  const [apiKey, setApiKey] = useState(null);
-  const [apiKeyLoading, setApiKeyLoading] = useState(true);
   const [rows, setRows] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -56,31 +54,6 @@ export default function BulkVideoPage() {
   const [generating, setGenerating] = useState(false);
   const [started, setStarted] = useState(false);
 
-  useEffect(() => {
-    async function loadApiKey() {
-      try {
-        const res = await fetch('/api/v1/shared-key?provider=muapi');
-        const data = await res.json();
-        if (data.key) {
-          setApiKey(data.key);
-          return;
-        }
-        const fallback = await fetch('/api/v1/env-key');
-        const fb = await fallback.json();
-        if (fb.key) {
-          setApiKey(fb.key);
-          return;
-        }
-        toast.error('No API key configured. Contact the platform owner.');
-      } catch {
-        toast.error('Failed to load API key');
-      } finally {
-        setApiKeyLoading(false);
-      }
-    }
-    loadApiKey();
-  }, []);
-
   const handleCSV = (file) => {
     setRows([
       { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-v2.0-t2v', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
@@ -97,7 +70,6 @@ export default function BulkVideoPage() {
 
   const handleStart = async () => {
     if (rows.length === 0) { toast.error('No videos to generate'); return; }
-    if (!apiKey) { toast.error('Platform API key not loaded. Try again.'); return; }
 
     setStarted(true);
     setGenerating(true);
@@ -111,14 +83,14 @@ export default function BulkVideoPage() {
       try {
         setRows(prev => prev.map(r => r.id === row.id ? { ...r, progress: 15 } : r));
 
-        const result = await generateVideo(apiKey, {
+        const results = await generateVideo({
           model: row.model,
           prompt: row.prompt,
           aspect_ratio: row.aspect_ratio,
           duration: parseInt(row.duration) || 5,
         });
 
-        const videoUrl = result.url || result.output?.url || result.output?.[0] || result.video_url || '';
+        const videoUrl = results?.[0]?.url || '';
         setRows(prev => prev.map(r =>
           r.id === row.id ? { ...r, status: 'completed', progress: 100, resultUrl: videoUrl } : r
         ));
@@ -126,6 +98,7 @@ export default function BulkVideoPage() {
         setRows(prev => prev.map(r =>
           r.id === row.id ? { ...r, status: 'failed', progress: 0, error: err.message } : r
         ));
+        console.error(`Row ${row.id} failed:`, err);
       }
     }
 
@@ -154,14 +127,6 @@ export default function BulkVideoPage() {
   const completed = rows.filter(r => r.status === 'completed').length;
   const hasResults = rows.some(r => r.status === 'completed' && r.resultUrl);
 
-  if (apiKeyLoading) {
-    return (
-      <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>
-        Loading platform configuration...
-      </div>
-    );
-  }
-
   return (
     <div style={{ padding: '28px', maxWidth: 1100, margin: '0 auto' }}>
       <div style={{ marginBottom: 28 }}>
@@ -170,15 +135,9 @@ export default function BulkVideoPage() {
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
             Bulk Video Generator
           </h1>
-          {apiKey && (
-            <span style={{
-              fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 100,
-              background: '#22c55e', color: '#fff',
-            }}>API CONNECTED</span>
-          )}
         </div>
         <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-          Generate multiple videos at once via AI models \u2014 uses the platform API key automatically
+          Generate multiple videos at once via AI models
         </p>
       </div>
 
@@ -268,17 +227,15 @@ export default function BulkVideoPage() {
         {rows.length > 0 && !started && (
           <button
             onClick={handleStart}
-            disabled={!apiKey}
             style={{
               padding: '10px 24px',
-              background: apiKey ? 'var(--btn-generate-bg)' : 'var(--bg-elevated)',
-              color: apiKey ? 'var(--btn-generate-text)' : 'var(--text-muted)',
+              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
               border: 'none', borderRadius: 10,
-              fontSize: 13, fontWeight: 700, cursor: apiKey ? 'pointer' : 'not-allowed',
+              fontSize: 13, fontWeight: 700, cursor: 'pointer',
               alignSelf: 'flex-end',
             }}
           >
-            {apiKey ? `Generate ${rows.length} Videos` : 'No API Key'}
+            Generate {rows.length} Videos
           </button>
         )}
 
