@@ -1,14 +1,30 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import { Video, Upload, Download, ExternalLink } from 'lucide-react';
+import { useState, useCallback, useEffect } from 'react';
+import { Video, Upload, Download, ExternalLink, DollarSign } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { generateVideo } from 'studio';
 
 const STORYBOARD_BATCH_KEY = 'storyboard_batch';
-const API_KEY_STORAGE_KEY = 'muapi_key';
+
+const T2V_MODELS = [
+  { id: 'seedance-v2.0-t2v', name: 'Seedance 2.0', provider: 'ByteDance', tier: 'premium', badge: 'TOP', creditCost: 25 },
+  { id: 'kling-v2.6-pro-t2v', name: 'Kling 3.0 Pro', provider: 'Kuaishou', tier: 'premium', badge: 'TOP', creditCost: 30 },
+  { id: 'veo3.1-text-to-video', name: 'Veo 3.1', provider: 'Google', tier: 'premium', badge: 'NEW', creditCost: 40 },
+  { id: 'grok-imagine-text-to-video', name: 'Grok T2V', provider: 'xAI', tier: 'standard', badge: 'NEW', creditCost: 20 },
+  { id: 'hunyuan-text-to-video', name: 'Hunyuan Video', provider: 'Tencent', tier: 'standard', creditCost: 15 },
+  { id: 'minimax-hailuo-02-pro-t2v', name: 'MiniMax Hailuo 02 Pro', provider: 'MiniMax', tier: 'standard', creditCost: 15 },
+  { id: 'veo3.1-lite-text-to-video', name: 'Veo 3.1 Lite', provider: 'Google', tier: 'standard', creditCost: 15 },
+  { id: 'wan2.5-text-to-video', name: 'WAN 2.5', provider: 'Alibaba', tier: 'standard', creditCost: 12 },
+  { id: 'pixverse-v6-t2v', name: 'PixVerse v6', provider: 'PixVerse', tier: 'standard', creditCost: 12 },
+  { id: 'vidu-q3-turbo-text-to-video', name: 'Vidu Q3 Turbo', provider: 'Vidu', tier: 'standard', creditCost: 10 },
+  { id: 'ltx-2.3-text-to-video', name: 'LTX 2.3 T2V', provider: 'LightTricks', tier: 'standard', creditCost: 8 },
+  { id: 'vidu-q2-turbo-text-to-video', name: 'Vidu Q2 Turbo', provider: 'Vidu', tier: 'fast', creditCost: 5 },
+];
 
 export default function BulkVideoPage() {
+  const [apiKey, setApiKey] = useState(null);
+  const [apiKeyLoading, setApiKeyLoading] = useState(true);
   const [rows, setRows] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -17,11 +33,10 @@ export default function BulkVideoPage() {
           sessionStorage.removeItem(STORYBOARD_BATCH_KEY);
           const parsed = JSON.parse(stored);
           if (Array.isArray(parsed) && parsed.length > 0) {
-            toast.success(`Loaded ${parsed.length} scenes from storyboard`);
             return parsed.map((item, i) => ({
               id: i + 1,
               prompt: item.prompt || 'Scene ' + (i + 1),
-              model: item.model || 'seedance-2',
+              model: item.model || 'seedance-v2.0-t2v',
               duration: String(item.duration || 5),
               aspect_ratio: item.aspect_ratio || '16:9',
               status: 'pending',
@@ -30,30 +45,40 @@ export default function BulkVideoPage() {
             }));
           }
         }
-      } catch (e) {
-        console.error('Failed to load storyboard batch:', e);
-      }
+      } catch (e) { console.error(e); }
     }
     return [];
   });
-  const [model, setModel] = useState('seedance-2');
+
+  const [model, setModel] = useState('seedance-v2.0-t2v');
   const [duration, setDuration] = useState('5');
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [generating, setGenerating] = useState(false);
   const [started, setStarted] = useState(false);
 
-  const getApiKey = useCallback(() => {
-    if (typeof window === 'undefined') return null;
-    return localStorage.getItem(API_KEY_STORAGE_KEY);
+  useEffect(() => {
+    fetch('/api/v1/env-key')
+      .then(r => r.json())
+      .then(data => {
+        if (data.key) {
+          setApiKey(data.key);
+        } else {
+          toast.error('No API key configured. Contact the platform owner.');
+        }
+      })
+      .catch(() => toast.error('Failed to load API key'))
+      .finally(() => setApiKeyLoading(false));
   }, []);
+
+  const selectedModel = T2V_MODELS.find(m => m.id === model);
 
   const handleCSV = (file) => {
     setRows([
-      { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-2', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
-      { id: 2, prompt: 'City street timelapse at night', model: 'kling-3', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
-      { id: 3, prompt: 'Product reveal animation', model: 'seedance-2', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0, resultUrl: null },
+      { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-v2.0-t2v', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 2, prompt: 'City street timelapse at night', model: 'kling-v2.6-pro-t2v', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 3, prompt: 'Product reveal animation', model: 'seedance-v2.0-t2v', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0, resultUrl: null },
     ]);
-    toast.success('CSV loaded — 3 videos in batch');
+    toast.success('CSV loaded \u2014 3 videos in batch');
   };
 
   const handleCSVUpload = (e) => {
@@ -63,18 +88,12 @@ export default function BulkVideoPage() {
 
   const handleStart = async () => {
     if (rows.length === 0) { toast.error('No videos to generate'); return; }
-
-    const apiKey = getApiKey();
-    if (!apiKey) {
-      toast.error('Add your Muapi API key in Settings first');
-      return;
-    }
+    if (!apiKey) { toast.error('Platform API key not loaded. Try again.'); return; }
 
     setStarted(true);
     setGenerating(true);
 
     const updatedRows = [...rows];
-    let allResults = [];
 
     for (let i = 0; i < updatedRows.length; i++) {
       const row = updatedRows[i];
@@ -91,46 +110,26 @@ export default function BulkVideoPage() {
         });
 
         const videoUrl = result.url || result.output?.url || result.output?.[0] || result.video_url || '';
-        allResults.push({ id: row.id, url: videoUrl, prompt: row.prompt });
-
         setRows(prev => prev.map(r =>
-          r.id === row.id ? {
-            ...r,
-            status: 'completed',
-            progress: 100,
-            resultUrl: videoUrl,
-          } : r
+          r.id === row.id ? { ...r, status: 'completed', progress: 100, resultUrl: videoUrl } : r
         ));
       } catch (err) {
         setRows(prev => prev.map(r =>
-          r.id === row.id ? {
-            ...r,
-            status: 'failed',
-            progress: 0,
-            error: err.message,
-          } : r
+          r.id === row.id ? { ...r, status: 'failed', progress: 0, error: err.message } : r
         ));
-        console.error(`Row ${row.id} failed:`, err);
       }
     }
 
-    sessionStorage.setItem('bulk_video_results', JSON.stringify(allResults));
     setGenerating(false);
-
-    const completedCount = allResults.filter(r => r.url).length;
+    const completedCount = rows.filter(r => r.status === 'completed').length;
     if (completedCount > 0) {
       toast.success(`${completedCount}/${updatedRows.length} videos generated!`);
-    } else {
-      toast.error('All generations failed. Check your API key.');
     }
   };
 
   const handleDownloadAll = useCallback(() => {
     const completed = rows.filter(r => r.status === 'completed' && r.resultUrl);
-    if (completed.length === 0) {
-      toast.error('No completed videos to download');
-      return;
-    }
+    if (completed.length === 0) { toast.error('No completed videos to download'); return; }
 
     completed.forEach((row, index) => {
       const link = document.createElement('a');
@@ -138,29 +137,39 @@ export default function BulkVideoPage() {
       link.target = '_blank';
       link.rel = 'noopener noreferrer';
       link.download = `video_${row.id}_${row.prompt.substring(0, 30).replace(/\s+/g, '_')}.mp4`;
-      setTimeout(() => {
-        link.click();
-        link.remove();
-      }, index * 500);
+      setTimeout(() => { link.click(); link.remove(); }, index * 500);
     });
-
     toast.success(`Opening ${completed.length} video download(s)`);
   }, [rows]);
 
   const completed = rows.filter(r => r.status === 'completed').length;
   const hasResults = rows.some(r => r.status === 'completed' && r.resultUrl);
 
+  if (apiKeyLoading) {
+    return (
+      <div style={{ padding: 60, textAlign: 'center', color: 'var(--text-muted)' }}>
+        Loading platform configuration...
+      </div>
+    );
+  }
+
   return (
-    <div style={{ padding: '28px', maxWidth: 1000, margin: '0 auto' }}>
+    <div style={{ padding: '28px', maxWidth: 1100, margin: '0 auto' }}>
       <div style={{ marginBottom: 28 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
           <Video size={22} style={{ color: 'var(--accent-primary)' }} />
           <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
             Bulk Video Generator
           </h1>
+          {apiKey && (
+            <span style={{
+              fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 100,
+              background: '#22c55e', color: '#fff',
+            }}>API CONNECTED</span>
+          )}
         </div>
         <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-          Generate multiple videos at once via AI models — Seedance, Kling, Sora, Veo and more
+          Generate multiple videos at once via AI models \u2014 uses the platform API key automatically
         </p>
       </div>
 
@@ -171,9 +180,9 @@ export default function BulkVideoPage() {
         marginBottom: 24,
         display: 'flex', alignItems: 'flex-end', gap: 14, flexWrap: 'wrap',
       }}>
-        <div style={{ flex: '1 1 200px' }}>
+        <div style={{ flex: '1 1 280px' }}>
           <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
-            MODEL
+            VIDEO MODEL
           </label>
           <select
             value={model}
@@ -185,15 +194,45 @@ export default function BulkVideoPage() {
               outline: 'none', cursor: 'pointer',
             }}
           >
-            <option value="seedance-2">Seedance 2.0</option>
-            <option value="kling-3">Kling 3.0</option>
-            <option value="sora-2">Sora 2</option>
-            <option value="veo-3">Veo 3.1</option>
-            <option value="wan-2.6">WAN 2.6</option>
-            <option value="minimax-hailuo-02">MiniMax Hailuo</option>
-            <option value="runway-gen3">Runway Gen-3</option>
-            <option value="hunyuan-video">Hunyuan Video</option>
+            <optgroup label="\u2014\u2014 PREMIUM (higher cost, best quality) \u2014\u2014">
+              {T2V_MODELS.filter(m => m.tier === 'premium').map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="\u2014\u2014 STANDARD (good quality, medium cost) \u2014\u2014">
+              {T2V_MODELS.filter(m => m.tier === 'standard').map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
+                </option>
+              ))}
+            </optgroup>
+            <optgroup label="\u2014\u2014 FAST (cheapest, quick previews) \u2014\u2014">
+              {T2V_MODELS.filter(m => m.tier === 'fast').map(m => (
+                <option key={m.id} value={m.id}>
+                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
+                </option>
+              ))}
+            </optgroup>
           </select>
+          {selectedModel && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
+              <DollarSign size={11} style={{ color: 'var(--text-muted)' }} />
+              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+                {selectedModel.creditCost} credits/video \u00b7 {selectedModel.provider}
+              </span>
+              {selectedModel.badge && (
+                <span style={{
+                  fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
+                  background: selectedModel.badge === 'TOP' ? '#FF6B35' : 'var(--accent-primary)',
+                  color: '#fff',
+                }}>
+                  {selectedModel.badge}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         <div style={{ flex: '0 0 120px' }}>
@@ -230,13 +269,13 @@ export default function BulkVideoPage() {
             }}
           >
             <option value="16:9">16:9</option>
-            <option value="1:1">1:1</option>
             <option value="9:16">9:16</option>
+            <option value="1:1">1:1</option>
             <option value="4:5">4:5</option>
           </select>
         </div>
 
-        <div style={{ flex: '0 0 160px' }}>
+        <div style={{ flex: '0 0 150px' }}>
           <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 6 }}>
             BATCH SOURCE
           </label>
@@ -255,15 +294,17 @@ export default function BulkVideoPage() {
         {rows.length > 0 && !started && (
           <button
             onClick={handleStart}
+            disabled={!apiKey}
             style={{
               padding: '10px 24px',
-              background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)',
+              background: apiKey ? 'var(--btn-generate-bg)' : 'var(--bg-elevated)',
+              color: apiKey ? 'var(--btn-generate-text)' : 'var(--text-muted)',
               border: 'none', borderRadius: 10,
-              fontSize: 13, fontWeight: 700, cursor: 'pointer',
+              fontSize: 13, fontWeight: 700, cursor: apiKey ? 'pointer' : 'not-allowed',
               alignSelf: 'flex-end',
             }}
           >
-            Generate {rows.length} Videos
+            {apiKey ? `Generate ${rows.length} Videos` : 'No API Key'}
           </button>
         )}
 
@@ -336,22 +377,20 @@ export default function BulkVideoPage() {
               <div key={r.id} style={{
                 display: 'flex', alignItems: 'center', gap: 10,
                 padding: '10px 14px',
-                background: r.status === 'failed' ? 'rgba(239,68,68,0.05)' : 'var(--bg-elevated)',
+                background: 'var(--bg-elevated)',
                 border: '1px solid',
                 borderColor: r.status === 'completed' ? 'rgba(74,222,128,0.2)' : r.status === 'failed' ? 'rgba(239,68,68,0.2)' : r.status === 'generating' ? 'rgba(0,194,255,0.2)' : 'var(--border-subtle)',
                 borderRadius: 10,
                 transition: 'border-color 200ms',
               }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 28, flexShrink: 0 }}>
-                  #{r.id}
-                </span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', width: 28, flexShrink: 0 }}>#{r.id}</span>
 
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontSize: 13, color: 'var(--text-primary)', fontWeight: 500, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {r.prompt}
                   </div>
                   <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
-                    {r.model} | {r.duration}s | {r.aspect_ratio}
+                    {T2V_MODELS.find(m => m.id === r.model)?.name || r.model} | {r.duration}s | {r.aspect_ratio}
                   </div>
                 </div>
 
@@ -362,50 +401,38 @@ export default function BulkVideoPage() {
                 )}
 
                 <span style={{
-                  fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 100,
-                  flexShrink: 0,
+                  fontSize: 10, fontWeight: 600, padding: '3px 8px', borderRadius: 100, flexShrink: 0,
                   background: r.status === 'completed' ? 'rgba(74,222,128,0.15)' : r.status === 'generating' ? 'rgba(0,194,255,0.15)' : r.status === 'failed' ? 'rgba(239,68,68,0.15)' : 'var(--bg-input)',
                   color: r.status === 'completed' ? '#22c55e' : r.status === 'generating' ? 'var(--accent-primary)' : r.status === 'failed' ? '#ef4444' : 'var(--text-muted)',
                 }}>
-                  {r.status === 'generating' ? `GENERATING` : r.status.toUpperCase()}
+                  {r.status === 'generating' ? 'GENERATING' : r.status.toUpperCase()}
                 </span>
 
                 {r.status === 'completed' && r.resultUrl && (
-                  <a
-                    href={r.resultUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
+                  <>
+                    <a href={r.resultUrl} target="_blank" rel="noopener noreferrer" style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       width: 32, height: 32, borderRadius: 6, flexShrink: 0,
                       background: 'var(--bg-input)', border: '1px solid var(--border-default)',
                       color: 'var(--text-secondary)', cursor: 'pointer', textDecoration: 'none',
-                    }}
-                    title="Open video"
-                  >
-                    <ExternalLink size={13} />
-                  </a>
-                )}
-
-                {r.status === 'completed' && r.resultUrl && (
-                  <button
-                    onClick={() => {
+                    }} title="Open video">
+                      <ExternalLink size={13} />
+                    </a>
+                    <button onClick={() => {
                       const a = document.createElement('a');
                       a.href = r.resultUrl;
                       a.download = `video_${r.id}.mp4`;
                       a.click();
                       a.remove();
-                    }}
-                    style={{
+                    }} style={{
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
                       width: 32, height: 32, borderRadius: 6, flexShrink: 0,
                       background: 'var(--btn-generate-bg)', border: 'none',
                       color: 'var(--btn-generate-text)', cursor: 'pointer',
-                    }}
-                    title="Download video"
-                  >
-                    <Download size={13} />
-                  </button>
+                    }} title="Download video">
+                      <Download size={13} />
+                    </button>
+                  </>
                 )}
 
                 {r.status === 'failed' && r.error && (
@@ -419,5 +446,5 @@ export default function BulkVideoPage() {
         </div>
       )}
     </div>
-  )
+  );
 }
