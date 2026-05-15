@@ -2,11 +2,28 @@ import { NextResponse } from 'next/server';
 
 const MUAPI_BASE = 'https://api.muapi.ai';
 
-function getApiKey(request) {
+async function getApiKey(request) {
     const headerKey = request.headers.get('x-api-key');
     if (headerKey) return headerKey;
     const cookieKey = request.cookies.get('muapi_key')?.value;
-    return cookieKey;
+    if (cookieKey) return cookieKey;
+    const envKey = process.env.MUAPI_API_KEY || process.env.NEXT_PUBLIC_MUAPI_API_KEY;
+    if (envKey) return envKey;
+    try {
+        const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+        const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+        if (supabaseUrl && serviceKey) {
+            const res = await fetch(
+                `${supabaseUrl}/rest/v1/admin_provider_keys?select=encrypted_key&provider=eq.muapi&is_active=eq.true&limit=1`,
+                { headers: { 'apikey': serviceKey, 'Authorization': `Bearer ${serviceKey}` } }
+            );
+            if (res.ok) {
+                const data = await res.json();
+                if (data?.length > 0 && data[0].encrypted_key) return data[0].encrypted_key;
+            }
+        }
+    } catch {}
+    return '';
 }
 
 function cleanHeaders(request) {
@@ -28,9 +45,7 @@ export async function GET(request, { params }) {
     const targetUrl = `${MUAPI_BASE}/api/v1/${path}${search}`;
 
     const headers = cleanHeaders(request);
-    const apiKey = getApiKey(request);
-    
-    console.log(`[double-api proxy GET] ${targetUrl} | apiKey: ${apiKey ? apiKey.slice(0,8)+'...' : 'MISSING'}`);
+    const apiKey = await getApiKey(request);
     if (apiKey) headers.set('x-api-key', apiKey);
 
     try {
@@ -51,7 +66,7 @@ export async function POST(request, { params }) {
     const targetUrl = `${MUAPI_BASE}/api/v1/${path}${search}`;
 
     const headers = cleanHeaders(request);
-    const apiKey = getApiKey(request);
+    const apiKey = await getApiKey(request);
     if (apiKey) headers.set('x-api-key', apiKey);
 
     try {
