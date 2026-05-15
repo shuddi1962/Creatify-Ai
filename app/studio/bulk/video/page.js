@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useCallback, useEffect } from 'react';
-import { Video, Upload, Download, ExternalLink, DollarSign } from 'lucide-react';
+import { Video, Upload, Download, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { generateVideo } from 'studio';
 
@@ -69,8 +69,6 @@ export default function BulkVideoPage() {
       .catch(() => toast.error('Failed to load API key'))
       .finally(() => setApiKeyLoading(false));
   }, []);
-
-  const selectedModel = T2V_MODELS.find(m => m.id === model);
 
   const handleCSV = (file) => {
     setRows([
@@ -194,45 +192,10 @@ export default function BulkVideoPage() {
               outline: 'none', cursor: 'pointer',
             }}
           >
-            <optgroup label="\u2014\u2014 PREMIUM (higher cost, best quality) \u2014\u2014">
-              {T2V_MODELS.filter(m => m.tier === 'premium').map(m => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="\u2014\u2014 STANDARD (good quality, medium cost) \u2014\u2014">
-              {T2V_MODELS.filter(m => m.tier === 'standard').map(m => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
-                </option>
-              ))}
-            </optgroup>
-            <optgroup label="\u2014\u2014 FAST (cheapest, quick previews) \u2014\u2014">
-              {T2V_MODELS.filter(m => m.tier === 'fast').map(m => (
-                <option key={m.id} value={m.id}>
-                  {m.name} ({m.provider}) \u2014 {m.creditCost} cr
-                </option>
-              ))}
-            </optgroup>
+            {T2V_MODELS.map(m => (
+              <option key={m.id} value={m.id}>{m.name}</option>
+            ))}
           </select>
-          {selectedModel && (
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 6 }}>
-              <DollarSign size={11} style={{ color: 'var(--text-muted)' }} />
-              <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>
-                {selectedModel.creditCost} credits/video \u00b7 {selectedModel.provider}
-              </span>
-              {selectedModel.badge && (
-                <span style={{
-                  fontSize: 8, fontWeight: 700, padding: '1px 5px', borderRadius: 3,
-                  background: selectedModel.badge === 'TOP' ? '#FF6B35' : 'var(--accent-primary)',
-                  color: '#fff',
-                }}>
-                  {selectedModel.badge}
-                </span>
-              )}
-            </div>
-          )}
         </div>
 
         <div style={{ flex: '0 0 120px' }}>
