@@ -58,7 +58,7 @@ function StoryboardInner() {
       prompt: `${s.action}. Camera: ${s.camera}. Visual style: ${s.visuals}`,
       duration: parseInt(s.duration) || 5,
       aspect_ratio: '16:9',
-      model: 'seedance-2',
+      model: 'seedance-v2.0-t2v',
     }))
 
     sessionStorage.setItem('storyboard_batch', JSON.stringify(batchData))

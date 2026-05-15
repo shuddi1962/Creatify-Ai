@@ -4,25 +4,14 @@ import { useState, useCallback } from 'react';
 import { Video, Upload, Download, ExternalLink } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { generateVideo } from '@/lib/generationUtils';
+import { VIDEO_MODELS } from '@/lib/modelsConfig';
 
 const STORYBOARD_BATCH_KEY = 'storyboard_batch';
-
-const T2V_MODELS = [
-  { id: 'seedance-v2.0-t2v', name: 'Seedance 2.0', provider: 'ByteDance', tier: 'premium', badge: 'TOP', creditCost: 25 },
-  { id: 'kling-v2.6-pro-t2v', name: 'Kling 3.0 Pro', provider: 'Kuaishou', tier: 'premium', badge: 'TOP', creditCost: 30 },
-  { id: 'veo3.1-text-to-video', name: 'Veo 3.1', provider: 'Google', tier: 'premium', badge: 'NEW', creditCost: 40 },
-  { id: 'grok-imagine-text-to-video', name: 'Grok T2V', provider: 'xAI', tier: 'standard', badge: 'NEW', creditCost: 20 },
-  { id: 'hunyuan-text-to-video', name: 'Hunyuan Video', provider: 'Tencent', tier: 'standard', creditCost: 15 },
-  { id: 'minimax-hailuo-02-pro-t2v', name: 'MiniMax Hailuo 02 Pro', provider: 'MiniMax', tier: 'standard', creditCost: 15 },
-  { id: 'veo3.1-lite-text-to-video', name: 'Veo 3.1 Lite', provider: 'Google', tier: 'standard', creditCost: 15 },
-  { id: 'wan2.5-text-to-video', name: 'WAN 2.5', provider: 'Alibaba', tier: 'standard', creditCost: 12 },
-  { id: 'pixverse-v6-t2v', name: 'PixVerse v6', provider: 'PixVerse', tier: 'standard', creditCost: 12 },
-  { id: 'vidu-q3-turbo-text-to-video', name: 'Vidu Q3 Turbo', provider: 'Vidu', tier: 'standard', creditCost: 10 },
-  { id: 'ltx-2.3-text-to-video', name: 'LTX 2.3 T2V', provider: 'LightTricks', tier: 'standard', creditCost: 8 },
-  { id: 'vidu-q2-turbo-text-to-video', name: 'Vidu Q2 Turbo', provider: 'Vidu', tier: 'fast', creditCost: 5 },
-];
+const T2V_MODELS = VIDEO_MODELS.filter(m => m.type === 't2v');
 
 export default function BulkVideoPage() {
+  const defaultModel = T2V_MODELS[0]?.id || 'seedance-v2.0-t2v';
+
   const [rows, setRows] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -34,7 +23,7 @@ export default function BulkVideoPage() {
             return parsed.map((item, i) => ({
               id: i + 1,
               prompt: item.prompt || 'Scene ' + (i + 1),
-              model: item.model || 'seedance-v2.0-t2v',
+              model: T2V_MODELS.find(m => m.id === item.model) ? item.model : defaultModel,
               duration: String(item.duration || 5),
               aspect_ratio: item.aspect_ratio || '16:9',
               status: 'pending',
@@ -48,7 +37,7 @@ export default function BulkVideoPage() {
     return [];
   });
 
-  const [model, setModel] = useState('seedance-v2.0-t2v');
+  const [model, setModel] = useState(defaultModel);
   const [duration, setDuration] = useState('5');
   const [aspectRatio, setAspectRatio] = useState('16:9');
   const [generating, setGenerating] = useState(false);
@@ -56,9 +45,9 @@ export default function BulkVideoPage() {
 
   const handleCSV = (file) => {
     setRows([
-      { id: 1, prompt: 'Epic mountain drone shot', model: 'seedance-v2.0-t2v', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
-      { id: 2, prompt: 'City street timelapse at night', model: 'kling-v2.6-pro-t2v', duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
-      { id: 3, prompt: 'Product reveal animation', model: 'seedance-v2.0-t2v', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0, resultUrl: null },
+      { id: 1, prompt: 'Epic mountain drone shot', model: defaultModel, duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 2, prompt: 'City street timelapse at night', model: defaultModel, duration: '5', aspect_ratio: '16:9', status: 'pending', progress: 0, resultUrl: null },
+      { id: 3, prompt: 'Product reveal animation', model: defaultModel, duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0, resultUrl: null },
     ]);
     toast.success('CSV loaded \u2014 3 videos in batch');
   };
