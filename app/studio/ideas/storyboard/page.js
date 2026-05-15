@@ -1,37 +1,69 @@
 'use client'
-import { useState, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
-import { Layout, ChevronRight, ChevronLeft, Play, FileText } from 'lucide-react'
+import { useState, Suspense, useCallback } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
+import { Layout, ChevronRight, ChevronLeft, Play, FileText, Loader } from 'lucide-react'
 import Link from 'next/link'
 import PromptArea from '@/components/ideas/PromptArea'
 
 function StoryboardInner() {
+  const router = useRouter()
   const searchParams = useSearchParams()
   const [step, setStep] = useState(1)
   const [script, setScript] = useState(searchParams.get('script') || '')
   const [scenes, setScenes] = useState([])
   const [loading, setLoading] = useState(false)
+  const [generating, setGenerating] = useState(false)
+  const [genProgress, setGenProgress] = useState({ current: 0, total: 0 })
   const [selectedScene, setSelectedScene] = useState(null)
 
   const handleGenerateStoryboard = () => {
     if (!script.trim()) return
     setLoading(true)
+
+    const lines = script.split('\n').filter(l => l.trim())
+    const generatedScenes = lines.length >= 3
+      ? lines.map((line, i) => ({
+          id: i + 1,
+          scene: line.length > 80 ? line.substring(0, 80) + '...' : line,
+          duration: '5s',
+          camera: 'Medium shot',
+          action: line,
+          visuals: 'Generated from script context',
+        }))
+      : [
+          { id: 1, scene: 'Opening shot - establishing the setting', duration: '3s', camera: 'Wide angle', action: 'Subject walks into frame', visuals: 'Morning light through window' },
+          { id: 2, scene: 'Hook moment - direct to camera', duration: '5s', camera: 'Medium close-up', action: 'Eye contact, confident tone', visuals: 'Neutral background, clean lighting' },
+          { id: 3, scene: 'Main content - demonstration', duration: '20s', camera: 'POV / over shoulder', action: 'Hands showing the process', visuals: 'Product/material in focus' },
+          { id: 4, scene: 'Key insight callout', duration: '4s', camera: 'Close-up', action: 'Pointing at visual element', visuals: 'Text overlay on screen' },
+          { id: 5, scene: 'CTA and outro', duration: '8s', camera: 'Medium shot', action: 'Clear call to action, friendly tone', visuals: 'Subscribe button visible' },
+        ]
+
     setTimeout(() => {
-      setScenes([
-        { id: 1, scene: 'Opening shot - establishing the setting', duration: '3s', camera: 'Wide angle', action: 'Subject walks into frame', visuals: 'Morning light through window' },
-        { id: 2, scene: 'Hook moment - direct to camera', duration: '5s', camera: 'Medium close-up', action: 'Eye contact, confident tone', visuals: 'Neutral background, clean lighting' },
-        { id: 3, scene: 'Main content - demonstration', duration: '20s', camera: 'POV / over shoulder', action: 'Hands showing the process', visuals: 'Product/material in focus' },
-        { id: 4, scene: 'Key insight callout', duration: '4s', camera: 'Close-up', action: 'Pointing at visual element', visuals: 'Text overlay on screen' },
-        { id: 5, scene: 'CTA and outro', duration: '8s', camera: 'Medium shot', action: 'Clear call to action, friendly tone', visuals: 'Subscribe button visible' },
-      ])
+      setScenes(generatedScenes)
       setStep(2)
       setLoading(false)
-    }, 2000)
+    }, 1500)
   }
 
   const updateScene = (id, field, value) => {
     setScenes(scenes.map(s => s.id === id ? { ...s, [field]: value } : s))
   }
+
+  const handleSendToBulk = useCallback(() => {
+    if (scenes.length === 0) return
+    setGenerating(true)
+    setGenProgress({ current: 0, total: scenes.length })
+
+    const batchData = scenes.map(s => ({
+      prompt: `${s.action}. Camera: ${s.camera}. Visual style: ${s.visuals}`,
+      duration: parseInt(s.duration) || 5,
+      aspect_ratio: '16:9',
+      model: 'seedance-2',
+    }))
+
+    sessionStorage.setItem('storyboard_batch', JSON.stringify(batchData))
+    router.push('/studio/bulk/video')
+  }, [scenes, router])
 
   return (
     <div style={{ padding: '28px', maxWidth: 1000, margin: '0 auto' }}>
@@ -223,35 +255,71 @@ function StoryboardInner() {
           background: 'var(--bg-card)', border: '1px solid var(--border-default)',
           borderRadius: 20, padding: '40px', textAlign: 'center',
         }}>
-          <Play size={48} color="var(--accent-primary)" style={{ marginBottom: 20 }} />
-          <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
-            {scenes.length} Scenes Ready
-          </h3>
-          <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 24 }}>
-            All scenes will be sent to the Bulk Video Generator
-          </p>
-          <button
-            onClick={() => {}}
-            style={{
-              padding: '12px 32px', borderRadius: 12,
-              border: 'none', fontSize: 14, fontWeight: 700,
-              background: '#CCFF00', color: '#000', cursor: 'pointer',
-            }}
-          >
-            Send All to Bulk Video Generator
-          </button>
-          <div style={{ marginTop: 12 }}>
-            <button
-              onClick={() => setStep(2)}
-              style={{
-                padding: '8px 16px', borderRadius: 8,
-                background: 'none', border: 'none',
-                fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer',
-              }}
-            >
-              <ChevronLeft size={14} /> Back to edit storyboard
-            </button>
-          </div>
+          {generating ? (
+            <>
+              <div style={{ width: 48, height: 48, borderRadius: '50%', border: '3px solid var(--border-default)', borderTopColor: 'var(--accent-primary)', animation: 'spin 600ms linear infinite', margin: '0 auto 20px' }} />
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
+                Preparing {genProgress.total} scenes...
+              </h3>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+                Building prompts for each scene and redirecting to Bulk Video Generator...
+              </p>
+              <div style={{ maxWidth: 300, margin: '16px auto 0', height: 6, background: 'var(--bg-elevated)', borderRadius: 100 }}>
+                <div style={{ width: `${(genProgress.current / genProgress.total) * 100}%`, height: '100%', background: 'var(--accent-primary)', borderRadius: 100, transition: 'width 300ms' }} />
+              </div>
+            </>
+          ) : (
+            <>
+              <Play size={48} color="var(--accent-primary)" style={{ marginBottom: 20 }} />
+              <h3 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>
+                {scenes.length} Scenes Ready
+              </h3>
+              <p style={{ fontSize: 13, color: 'var(--text-secondary)', marginBottom: 16, maxWidth: 400, margin: '0 auto 16px' }}>
+                Each scene will be passed as a video generation prompt to the Bulk Video Generator.
+                AI video models like Seedance, Kling, or Sora will generate each clip.
+              </p>
+              <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap', marginBottom: 24 }}>
+                {['Seedance 2.0', 'Kling 3.0', 'Sora 2'].map(m => (
+                  <span key={m} style={{
+                    fontSize: 10, fontWeight: 600, padding: '4px 10px', borderRadius: 100,
+                    background: 'var(--bg-active)', color: 'var(--text-active)',
+                  }}>
+                    {m}
+                  </span>
+                ))}
+              </div>
+              <button
+                onClick={handleSendToBulk}
+                style={{
+                  padding: '12px 32px', borderRadius: 12,
+                  border: 'none', fontSize: 14, fontWeight: 700,
+                  background: '#CCFF00', color: '#000', cursor: 'pointer',
+                  transition: 'opacity 150ms',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.88'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
+              >
+                Send All to Bulk Video Generator
+              </button>
+              <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 10 }}>
+                Uses your Muapi API key to generate each scene via AI video models
+              </p>
+            </>
+          )}
+          {!generating && (
+            <div style={{ marginTop: 12 }}>
+              <button
+                onClick={() => setStep(2)}
+                style={{
+                  padding: '8px 16px', borderRadius: 8,
+                  background: 'none', border: 'none',
+                  fontSize: 12, color: 'var(--text-muted)', cursor: 'pointer',
+                }}
+              >
+                <ChevronLeft size={14} /> Back to edit storyboard
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

@@ -17,9 +17,36 @@ const SAMPLE_ROWS = [
   { id: 3, prompt: 'Product reveal animation', model: 'seedance-2', duration: '10', aspect_ratio: '1:1', status: 'pending', progress: 0 },
 ];
 
+const STORYBOARD_BATCH_KEY = 'storyboard_batch';
+
 export default function BulkVideoPage() {
   const [csvFile, setCsvFile] = useState(null);
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = sessionStorage.getItem(STORYBOARD_BATCH_KEY);
+        if (stored) {
+          sessionStorage.removeItem(STORYBOARD_BATCH_KEY);
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            toast.success(`Loaded ${parsed.length} scenes from storyboard`);
+            return parsed.map((item, i) => ({
+              id: i + 1,
+              prompt: item.prompt || 'Scene ' + (i + 1),
+              model: item.model || 'seedance-2',
+              duration: String(item.duration || 5),
+              aspect_ratio: item.aspect_ratio || '16:9',
+              status: 'pending',
+              progress: 0,
+            }));
+          }
+        }
+      } catch (e) {
+        console.error('Failed to load storyboard batch:', e);
+      }
+    }
+    return [];
+  });
   const [model, setModel] = useState('seedance-2');
   const [duration, setDuration] = useState('5');
   const [aspectRatio, setAspectRatio] = useState('16:9');
