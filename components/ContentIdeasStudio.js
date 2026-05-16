@@ -525,13 +525,13 @@ export default function ContentIdeasStudio({ initialTab }) {
             )}
 
             {ideas.length === 0 && !loading && (
-              <div className="flex items-center justify-center py-20">
+              <div className="flex items-center justify-center py-16">
                 <div className="text-center max-w-sm">
-                  <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/20 flex items-center justify-center">
-                    <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/20 flex items-center justify-center">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.21 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   </div>
-                  <h3 className="text-lg font-bold text-[#F9FAFB] mb-2">{error ? 'No Data Available' : 'Discover Content Ideas'}</h3>
-                  <p className="text-sm text-[#9CA3AF]">{error ? 'Configure Tavily or SerpAPI keys in Admin > API Providers to fetch real trend data.' : 'Select a niche and platform, then generate AI-powered content ideas with virality scores.'}</p>
+                  <h3 className="text-base font-bold text-[#F9FAFB] mb-1">Discover Content Ideas</h3>
+                  <p className="text-sm text-[#9CA3AF]">Select a niche and platform, then click Generate Ideas to get trending content.</p>
                 </div>
               </div>
             )}

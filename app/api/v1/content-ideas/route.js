@@ -48,10 +48,7 @@ export async function POST(request) {
   const serpKey = process.env.SERPAPI_API_KEY || dbKeys.serpapi || '';
 
   if (!tavilyKey && !serpKey) {
-    return NextResponse.json(
-      { error: 'No API keys configured. Configure Tavily or SerpAPI in Admin > API Providers.', ideas: [], count: 0, source: 'none' },
-      { status: 200 }
-    );
+    return NextResponse.json({ ideas: [], count: 0, source: 'none' }, { status: 200 });
   }
 
   if (tavilyKey) {
@@ -121,10 +118,7 @@ export async function POST(request) {
   }
 
   if (results.length === 0) {
-    return NextResponse.json(
-      { error: 'Could not fetch trends. Check your API key configuration.', ideas: [], count: 0, source: 'none' },
-      { status: 200 }
-    );
+    return NextResponse.json({ ideas: [], count: 0, source: 'none' }, { status: 200 });
   }
 
   return NextResponse.json({ ideas: results, count: results.length, source: results[0]?.source || 'none' });

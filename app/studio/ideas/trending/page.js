@@ -550,14 +550,13 @@ export default function TrendingPage() {
       )}
 
       {!loading && trends.length === 0 && (
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 20px' }}>
-          <div style={{ textAlign: 'center', maxWidth: 400 }}>
-            <div style={{ width: 64, height: 64, margin: '0 auto 16px', borderRadius: 16, background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <TrendingUp size={28} style={{ color: 'var(--text-muted)' }} />
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+          <div style={{ textAlign: 'center', maxWidth: 360 }}>
+            <div style={{ width: 48, height: 48, margin: '0 auto 12px', borderRadius: 12, background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <TrendingUp size={22} style={{ color: 'var(--text-muted)' }} />
             </div>
-            <h3 style={{ fontSize: 16, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 8 }}>No Trends Found</h3>
-            <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
-              No trending data available for the selected filters. Make sure Tavily or SerpAPI keys are configured in Admin &gt; API Providers.
+            <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
+              Select filters above and click refresh to discover trending content ideas.
             </p>
           </div>
         </div>
