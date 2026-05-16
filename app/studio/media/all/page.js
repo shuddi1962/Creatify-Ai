@@ -287,7 +287,13 @@ export default function MediaAllPage() {
           </button>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
             {getUrl(lightbox) ? (
-              <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+              getType(lightbox) === 'video' ? (
+                <video src={getUrl(lightbox)} controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} />
+              ) : getType(lightbox) === 'audio' ? (
+                <audio src={getUrl(lightbox)} controls style={{ width: '100%', maxWidth: 400 }} />
+              ) : (
+                <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+              )
             ) : null}
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p style={{ marginBottom: 2 }}>{(lightbox.prompt || '').slice(0, 200)}</p>

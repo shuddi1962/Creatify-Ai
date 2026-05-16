@@ -22,31 +22,48 @@ export default function DashboardPage() {
       const todayStart = new Date()
       todayStart.setHours(0, 0, 0, 0)
 
-      const { data: gens, error: genErr } = await supabase
-        .from('generations')
-        .select('type, created_at')
-        .eq('user_id', session.user.id)
-        .order('created_at', { ascending: false })
+      // Merge Supabase generations + localStorage history
+      let supabaseGens = [], localMuapi = [], localVideo = [], localLipsync = []
+      try {
+        const { data: gens } = await supabase
+          .from('generations')
+          .select('type, created_at, prompt, status')
+          .eq('user_id', session.user.id)
+          .order('created_at', { ascending: false })
+        supabaseGens = gens || []
+      } catch {}
 
-      if (genErr) throw genErr
+      try { localMuapi = JSON.parse(localStorage.getItem('muapi_history') || '[]') } catch {}
+      try { localVideo = JSON.parse(localStorage.getItem('video_history') || '[]') } catch {}
+      try { localLipsync = JSON.parse(localStorage.getItem('lipsync_history') || '[]') } catch {}
 
-      const images = gens?.filter(g => ['image', 'i2i'].includes(g.type)).length || 0
-      const videos = gens?.filter(g => ['video', 'i2v', 'v2v'].includes(g.type)).length || 0
-      const audio = gens?.filter(g => ['audio', 'lipsync'].includes(g.type)).length || 0
-      const today = gens?.filter(g => new Date(g.created_at) >= todayStart).length || 0
+      const localMuapiNorm = localMuapi.map(g => ({ ...g, type: g.type || 'image', prompt: g.prompt || '', status: g.status || 'completed' }))
+      const localVideoNorm = localVideo.map(g => ({ ...g, type: g.type || 'video', prompt: g.prompt || '', status: g.status || 'completed' }))
+      const localLipsyncNorm = localLipsync.map(g => ({ ...g, type: g.type || 'lipsync', prompt: g.prompt || '', status: g.status || 'completed' }))
 
-      setStats({ images, videos, audio, total: gens?.length || 0, today })
-      setRecentGens(gens?.slice(0, 10) || [])
+      const allGens = [...supabaseGens, ...localMuapiNorm, ...localVideoNorm, ...localLipsyncNorm]
+        .sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
 
+      const images = allGens.filter(g => ['image', 'i2i'].includes(g.type)).length
+      const videos = allGens.filter(g => ['video', 'i2v', 'v2v'].includes(g.type)).length
+      const audio = allGens.filter(g => ['audio', 'lipsync'].includes(g.type)).length
+      const today = allGens.filter(g => new Date(g.created_at || 0) >= todayStart).length
+
+      setStats({ images, videos, audio, total: allGens.length, today })
+      setRecentGens(allGens.slice(0, 10))
+
+      // Credits from localStorage + subscriptions
+      let plan = 'free', used = 0
+      try { plan = localStorage.getItem('plan_tier') || 'free' } catch {}
+      try { used = parseInt(localStorage.getItem('credits_used') || '0') } catch {}
       const { data: sub } = await supabase
         .from('subscriptions')
         .select('plan_tier, credits_used_monthly')
         .eq('user_id', session.user.id)
         .maybeSingle()
-      if (sub) {
-        const limits = { free: 100, plus: 45000, ultra: 150000, business: 600000 }
-        setCredits({ plan: sub.plan_tier || 'free', used: sub.credits_used_monthly || 0, limit: limits[sub.plan_tier] || 100 })
-      }
+      if (sub) { plan = sub.plan_tier || plan; used = sub.credits_used_monthly || used }
+      const limits = { free: 100, plus: 45000, ultra: 150000, business: 600000 }
+      setCredits({ plan, used, limit: limits[plan] || 100 })
     } catch (err) {
       setError(err.message)
     } finally {

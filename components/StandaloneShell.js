@@ -199,7 +199,7 @@ export default function StandaloneShell() {
     setHoveredTopNav(id);
   };
   const topNavHoverLeave = () => {
-    topNavTimeoutRef.current = setTimeout(() => setHoveredTopNav(null), 150);
+    topNavTimeoutRef.current = setTimeout(() => setHoveredTopNav(null), 300);
   };
 
   const handleSidebarEnter = (item, index) => {
@@ -526,14 +526,14 @@ export default function StandaloneShell() {
           <div style={{ display: 'flex', alignItems: 'center', gap: 0, minWidth: 0, flexShrink: 0 }}>
             <button onClick={() => setMobileDrawerOpen(true)}
               className="flex lg:hidden"
-              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center', flexShrink: 0, position: 'relative', zIndex: 110 }}
               title="Open menu"
             >
               <Icons.Menu size={20} />
             </button>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
               className="hidden lg:flex"
-              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             >
               <Icons.PanelLeft size={20} />
             </button>

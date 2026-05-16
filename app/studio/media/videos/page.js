@@ -153,7 +153,15 @@ export default function MediaVideosPage() {
         <div onClick={() => setPlayer(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <button onClick={() => setPlayer(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
-            <video controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} src={player.video_url || player.image_url || player.url || ''} />
+            <video controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} src={player.video_url || player.image_url || player.url || ''}
+              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
+            />
+            <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 40, color: '#9CA3AF' }}>
+              <span style={{ fontSize: 32 }}>&#9654;&#65039;</span>
+              <span style={{ fontSize: 13 }}>Video unavailable — file may have expired or been moved.</span>
+              <a href={player.video_url || player.image_url || player.url || '#'} target="_blank" rel="noopener noreferrer"
+                style={{ fontSize: 12, color: '#7C3AED', textDecoration: 'underline' }}>Open directly</a>
+            </div>
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p>{(player.prompt || '').slice(0, 200)}</p>
               <p style={{ color: '#888', fontSize: 12, marginTop: 2 }}>{player.model || ''} · {formatDate(player.created_at)}</p>

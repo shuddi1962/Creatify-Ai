@@ -64,7 +64,9 @@ export async function saveGeneration(entry, type) {
 
   if (!(await useLocal())) {
     try {
+      const { data: { session } } = await supabase.auth.getSession()
       await supabase.from('generations').insert({
+        user_id: session?.user?.id || null,
         type,
         model: entry.model || '',
         prompt: entry.prompt || '',

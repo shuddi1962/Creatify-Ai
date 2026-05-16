@@ -1,184 +1,151 @@
 'use client'
-import { useState } from 'react'
-import { Calendar, ChevronLeft, ChevronRight, Plus } from 'lucide-react'
+import { useState, useEffect, useCallback } from 'react'
+import { supabase } from '@/src/lib/supabase'
+import { ChevronLeft, ChevronRight, Plus, Loader2 } from 'lucide-react'
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
-const STATUS_COLORS = { Idea: '#7C3AED', Script: '#00C2FF', Generated: '#10B981', Scheduled: '#F59E0B', Published: '#22C55E' }
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December']
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat']
+const STATUS_COLORS = { idea: '#7C3AED', script: '#06B6D4', generated: '#22c55e', scheduled: '#f59e0b', published: '#3b82f6' }
 
-const SAMPLE_CALENDAR = {
-  '2026-05-12': [{ id: 1, title: 'Morning routine', platform: 'TikTok', status: 'Generated' }],
-  '2026-05-14': [{ id: 2, title: 'Budget makeover', platform: 'Instagram', status: 'Scheduled' }],
-  '2026-05-18': [{ id: 3, title: 'Side hustle reveal', platform: 'LinkedIn', status: 'Idea' }],
-  '2026-05-21': [{ id: 4, title: 'Pet grooming', platform: 'TikTok', status: 'Script' }],
-  '2026-05-28': [{ id: 5, title: 'Fitness challenge', platform: 'YouTube', status: 'Scheduled' }],
-}
-
-export default function IdeasCalendarPage() {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 10))
+export default function CalendarPage() {
+  const [events, setEvents] = useState([])
+  const [loading, setLoading] = useState(true)
   const [view, setView] = useState('month')
-  const [events, setEvents] = useState(SAMPLE_CALENDAR)
+  const [today] = useState(new Date())
+  const [cursor, setCursor] = useState(new Date(today.getFullYear(), today.getMonth(), 1))
 
-  const year = currentDate.getFullYear()
-  const month = currentDate.getMonth()
+  const year = cursor.getFullYear()
+  const month = cursor.getMonth()
   const firstDay = new Date(year, month, 1).getDay()
   const daysInMonth = new Date(year, month + 1, 0).getDate()
-  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1))
-  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1))
+  const todayStr = today.toISOString().slice(0, 10)
 
-  const formatDate = (day) => `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`
+  const fetchEvents = useCallback(async () => {
+    setLoading(true)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) { setLoading(false); return }
+      const start = new Date(year, month, 1).toISOString()
+      const end = new Date(year, month + 1, 0, 23, 59, 59).toISOString()
+      const { data: cal } = await supabase
+        .from('content_calendar')
+        .select('id, scheduled_date, status, idea_id')
+        .eq('user_id', session.user.id)
+        .gte('scheduled_date', start)
+        .lte('scheduled_date', end)
+      const { data: saved } = await supabase
+        .from('saved_ideas')
+        .select('id, created_at, idea_id')
+        .eq('user_id', session.user.id)
+      const items = []
+      for (const c of cal || []) {
+        items.push({ id: c.id, date: c.scheduled_date.slice(0, 10), title: c.idea_id || 'Scheduled', status: c.status || 'scheduled', source: 'calendar' })
+      }
+      for (const s of saved || []) {
+        const d = s.created_at?.slice(0, 10)
+        if (!items.find(i => i.date === d && i.id === s.id)) {
+          items.push({ id: s.id, date: d, title: `Idea ${s.idea_id ? `#${s.idea_id}` : ''}`, status: 'idea', source: 'saved' })
+        }
+      }
+      setEvents(items)
+    } catch {} finally { setLoading(false) }
+  }, [year, month])
 
-  const handleAddEvent = (day) => {
-    const date = formatDate(day)
-    const newEvent = { id: Date.now(), title: 'New Idea', platform: 'TikTok', status: 'Idea' }
-    setEvents({ ...events, [date]: [...(events[date] || []), newEvent] })
+  useEffect(() => { fetchEvents() }, [fetchEvents])
+
+  const eventsByDate = {}
+  for (const ev of events) {
+    if (!eventsByDate[ev.date]) eventsByDate[ev.date] = []
+    eventsByDate[ev.date].push(ev)
   }
 
-  return (
-    <div style={{ padding: '28px', maxWidth: 1000, margin: '0 auto' }}>
+  function prev() { setCursor(new Date(year, month - 1, 1)) }
+  function next() { setCursor(new Date(year, month + 1, 1)) }
 
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
-          <Calendar size={20} style={{ color: '#06b6d4' }} />
-          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>
-            Content Calendar
-          </h1>
+  const grid = []
+  for (let i = 0; i < firstDay; i++) grid.push(null)
+  for (let d = 1; d <= daysInMonth; d++) grid.push(d)
+
+  return (
+    <div style={{ padding: '24px 24px 40px', maxWidth: 960, margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+        <div>
+          <h1 style={{ fontSize: 22, fontWeight: 800, color: 'var(--text-primary)', margin: 0 }}>Content Calendar</h1>
+          <p style={{ fontSize: 12, color: 'var(--text-secondary)', margin: 0 }}>{events.length} event{events.length !== 1 ? 's' : ''} this month</p>
         </div>
-        <p style={{ fontSize: 13, color: 'var(--text-secondary)' }}>
-          Plan and schedule your content creation pipeline
-        </p>
+        <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', border: '1px solid var(--border-default)' }}>
+            {['month', 'week'].map(v => (
+              <button key={v} onClick={() => setView(v)}
+                style={{ padding: '6px 14px', border: 'none', cursor: 'pointer', fontSize: 12, fontWeight: 600,
+                  background: view === v ? 'var(--accent-primary)' : 'var(--bg-card)', color: view === v ? '#000' : 'var(--text-secondary)' }}>
+                {v.charAt(0).toUpperCase() + v.slice(1)}
+              </button>
+            ))}
+          </div>
+          <button onClick={fetchEvents} style={{ padding: '6px 12px', borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-card)', color: 'var(--text-secondary)', fontSize: 12, cursor: 'pointer' }}>
+            Refresh
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <button onClick={prevMonth} style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', color: 'var(--text-muted)',
-          }}>
-            <ChevronLeft size={16} />
-          </button>
-          <h2 style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)' }}>
-            {MONTHS[month]} {year}
-          </h2>
-          <button onClick={nextMonth} style={{
-            width: 32, height: 32, borderRadius: 8,
-            background: 'var(--bg-card)', border: '1px solid var(--border-subtle)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            cursor: 'pointer', color: 'var(--text-muted)',
-          }}>
-            <ChevronRight size={16} />
-          </button>
-        </div>
-
-        <div style={{ display: 'flex', gap: 6 }}>
-          {['month', 'week'].map(v => (
-            <button
-              key={v}
-              onClick={() => setView(v)}
-              style={{
-                padding: '6px 14px', borderRadius: 8, fontSize: 12,
-                fontWeight: view === v ? 600 : 400,
-                border: '1px solid',
-                borderColor: view === v ? 'var(--border-active)' : 'var(--border-default)',
-                background: view === v ? 'var(--bg-active)' : 'transparent',
-                color: view === v ? 'var(--text-active)' : 'var(--text-secondary)',
-                cursor: 'pointer', textTransform: 'capitalize',
-              }}
-            >
-              {v} View
-            </button>
-          ))}
-        </div>
+        <button onClick={prev} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-card)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+          <ChevronLeft size={16} />
+        </button>
+        <h2 style={{ fontSize: 18, fontWeight: 700, color: 'var(--text-primary)', margin: 0 }}>{MONTHS[month]} {year}</h2>
+        <button onClick={next} style={{ width: 32, height: 32, borderRadius: 8, border: '1px solid var(--border-default)', background: 'var(--bg-card)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+          <ChevronRight size={16} />
+        </button>
       </div>
 
-      <div style={{ background: 'var(--bg-card)', borderRadius: 16, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: '1px solid var(--border-subtle)' }}>
-          {DAYS.map(d => (
-            <div key={d} style={{
-              padding: '10px 0', textAlign: 'center',
-              fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
-              textTransform: 'uppercase', letterSpacing: '0.08em',
-            }}>
-              {d}
-            </div>
-          ))}
+      {loading ? (
+        <div style={{ display: 'flex', justifyContent: 'center', padding: 60 }}>
+          <Loader2 size={24} style={{ animation: 'spin 700ms linear infinite', color: 'var(--text-muted)' }} />
         </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)' }}>
-          {[...Array(firstDay)].map((_, i) => (
-            <div key={`e-${i}`} style={{ height: 110, border: '1px solid var(--border-subtle)', background: 'var(--bg-elevated)' }} />
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', gap: 4 }}>
+          {DAYS.map(d => (
+            <div key={d} style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textAlign: 'center', padding: '6px 0', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{d}</div>
           ))}
-
-          {[...Array(daysInMonth)].map((_, i) => {
-            const day = i + 1
-            const dateKey = formatDate(day)
-            const dayEvents = events[dateKey] || []
-            const isToday = day === 10 && month === 4 && year === 2026
-
+          {grid.map((d, i) => {
+            if (d === null) return <div key={`e-${i}`} />
+            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`
+            const dayEvents = eventsByDate[dateStr] || []
+            const isToday = dateStr === todayStr
             return (
-              <div key={day} style={{
-                height: 110, border: '1px solid var(--border-subtle)',
-                padding: 4, position: 'relative', display: 'flex', flexDirection: 'column',
-                background: isToday ? 'var(--bg-active)' : 'transparent',
+              <div key={dateStr} style={{
+                minHeight: 80, borderRadius: 8, padding: 4,
+                background: isToday ? 'rgba(124,58,237,0.12)' : 'var(--bg-card)',
+                border: `1px solid ${isToday ? 'rgba(124,58,237,0.3)' : 'var(--border-subtle)'}`,
               }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <span style={{
-                    fontSize: 11, fontWeight: 600,
-                    padding: '2px 6px', borderRadius: 4,
-                    background: isToday ? 'var(--accent-primary)' : 'transparent',
-                    color: isToday ? '#000' : 'var(--text-muted)',
+                <div style={{ fontSize: 12, fontWeight: isToday ? 700 : 500, color: isToday ? '#7C3AED' : 'var(--text-primary)', marginBottom: 4, textAlign: 'right', paddingRight: 4 }}>
+                  {d}
+                </div>
+                {dayEvents.slice(0, 3).map((ev, j) => (
+                  <div key={j} style={{
+                    fontSize: 10, padding: '2px 5px', borderRadius: 4, marginBottom: 2,
+                    background: `${STATUS_COLORS[ev.status] || '#6b7280'}20`,
+                    color: STATUS_COLORS[ev.status] || '#6b7280',
+                    overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
                   }}>
-                    {day}
-                  </span>
-                  <button
-                    onClick={() => handleAddEvent(day)}
-                    style={{
-                      width: 20, height: 20, background: 'var(--bg-elevated)',
-                      border: 'none', borderRadius: 4, cursor: 'pointer',
-                      color: 'var(--text-muted)', display: 'flex',
-                      alignItems: 'center', justifyContent: 'center',
-                      fontSize: 12,
-                    }}
-                  >
-                    <Plus size={12} />
-                  </button>
-                </div>
-
-                <div style={{ marginTop: 4, overflow: 'hidden', flex: 1 }}>
-                  {dayEvents.slice(0, 3).map(ev => (
-                    <div key={ev.id} style={{
-                      fontSize: 9, padding: '2px 4px', borderRadius: 4,
-                      marginBottom: 2, overflow: 'hidden', textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap', display: 'flex', alignItems: 'center', gap: 4,
-                      background: STATUS_COLORS[ev.status] + '20',
-                      color: STATUS_COLORS[ev.status],
-                    }}>
-                      <span style={{
-                        width: 5, height: 5, borderRadius: '50%',
-                        background: STATUS_COLORS[ev.status], flexShrink: 0,
-                      }} />
-                      {ev.title}
-                    </div>
-                  ))}
-                  {dayEvents.length > 3 && (
-                    <div style={{ fontSize: 9, color: 'var(--text-muted)', paddingLeft: 4 }}>
-                      +{dayEvents.length - 3} more
-                    </div>
-                  )}
-                </div>
+                    {ev.title}
+                  </div>
+                ))}
+                {dayEvents.length > 3 && (
+                  <div style={{ fontSize: 9, color: 'var(--text-muted)', textAlign: 'center' }}>+{dayEvents.length - 3} more</div>
+                )}
               </div>
             )
           })}
         </div>
-      </div>
+      )}
 
-      <div style={{ display: 'flex', gap: 16, marginTop: 16, flexWrap: 'wrap' }}>
-        {Object.entries(STATUS_COLORS).map(([status, color]) => (
-          <div key={status} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-            <span style={{ width: 8, height: 8, borderRadius: '50%', background: color }} />
-            <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{status}</span>
+      <div style={{ display: 'flex', gap: 16, marginTop: 24, flexWrap: 'wrap' }}>
+        {Object.entries(STATUS_COLORS).map(([s, c]) => (
+          <div key={s} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: 'var(--text-secondary)' }}>
+            <div style={{ width: 8, height: 8, borderRadius: 2, background: c }} />
+            {s.charAt(0).toUpperCase() + s.slice(1)}
           </div>
         ))}
       </div>
