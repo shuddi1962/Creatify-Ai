@@ -27,7 +27,7 @@ async function fetchKeysFromDB() {
     const { data } = await supabase
       .from('admin_provider_keys')
       .select('provider, encrypted_key')
-      .in('provider', ['tavily', 'serpapi'])
+      .in('provider', ['tavily', 'google-trends'])
       .eq('is_active', true);
     const keys = {};
     for (const k of data || []) keys[k.provider] = k.encrypted_key;
@@ -47,7 +47,7 @@ export async function GET(request) {
 
   const dbKeys = await fetchKeysFromDB();
   const tavilyKey = process.env.TAVILY_API_KEY || dbKeys.tavily || '';
-  const serpKey = process.env.SERPAPI_API_KEY || dbKeys.serpapi || '';
+  const serpKey = process.env.SERPAPI_API_KEY || dbKeys['google-trends'] || '';
 
   const trends = [];
 
