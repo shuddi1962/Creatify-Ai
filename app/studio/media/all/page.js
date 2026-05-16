@@ -61,11 +61,15 @@ export default function MediaAllPage() {
         const videos = JSON.parse(localStorage.getItem('video_history') || '[]')
         all.push(...videos.map(i => ({ ...i, _local: true })))
       } catch {}
+      try {
+        const audio = JSON.parse(localStorage.getItem('lipsync_history') || '[]')
+        all.push(...audio.map(i => ({ ...i, _local: true })))
+      } catch {}
 
       const seen = new Set()
       const merged = all.filter(a => {
-        const key = a.url || a.image_url || a.video_url || a.id || Math.random()
-        if (seen.has(key)) return false
+        const key = a.url || a.image_url || a.video_url || a.audio_url || a.id
+        if (!key || seen.has(key)) return false
         seen.add(key)
         return true
       })
@@ -86,12 +90,18 @@ export default function MediaAllPage() {
     return true
   })
 
-  const deleteAsset = async (e, id) => {
+  const deleteAsset = async (e, asset) => {
     e.stopPropagation()
-    try {
-      await supabase.from('generations').delete().eq('id', id)
-      setAssets(prev => prev.filter(a => a.id !== id))
-    } catch {}
+    setAssets(prev => prev.filter(a => (a.id || a._id) !== (asset.id || asset._id)))
+    if (asset._local) {
+      try {
+        const key = asset.type === 'video' || asset.type === 'i2v' ? 'video_history' : asset.type === 'audio' || asset.type === 'lipsync' ? 'lipsync_history' : 'muapi_history'
+        const raw = JSON.parse(localStorage.getItem(key) || '[]')
+        localStorage.setItem(key, JSON.stringify(raw.filter(i => i.id !== asset._id && i._id !== asset._id)))
+      } catch {}
+    } else if (asset.id) {
+      try { await supabase.from('generations').delete().eq('id', asset.id) } catch {}
+    }
   }
 
   if (loading) {
@@ -170,9 +180,11 @@ export default function MediaAllPage() {
                   className="hover-lift"
                 >
                   <div style={{ aspectRatio: type === 'video' ? '16/9' : '1', background: 'var(--bg-page)', position: 'relative' }}>
-                    {url ? (
-                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" loading="lazy" />
+                    {url ? (type === 'video' ? (
+                      <video src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted autoPlay loop playsInline />
                     ) : (
+                      <img src={url} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" loading="lazy" />
+                    )) : (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         {type === 'audio' ? <Music size={24} style={{ color: 'var(--text-muted)' }} /> : <Image size={24} style={{ color: 'var(--text-muted)' }} />}
                       </div>
@@ -223,9 +235,11 @@ export default function MediaAllPage() {
                         className="hover-row"
                       >
                         <td style={{ padding: '8px 14px' }}>
-                          {url ? (
-                            <img src={url} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} alt="" loading="lazy" />
+                          {url ? (type === 'video' ? (
+                            <video src={url} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} muted autoPlay loop playsInline />
                           ) : (
+                            <img src={url} style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }} alt="" loading="lazy" />
+                          )) : (
                             <div style={{ width: 40, height: 40, borderRadius: 6, background: 'var(--bg-page)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                               {type === 'audio' ? <Music size={14} style={{ color: 'var(--text-muted)' }} /> : <Image size={14} style={{ color: 'var(--text-muted)' }} />}
                             </div>
@@ -249,8 +263,8 @@ export default function MediaAllPage() {
                                 <Download size={13} />
                               </a>
                             )}
-                            {asset.id && (
-                              <button onClick={e => deleteAsset(e, asset.id)}
+                            {(asset.id || asset._local) && (
+                              <button onClick={e => deleteAsset(e, asset)}
                                 style={{ padding: 4, borderRadius: 4, border: 'none', background: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
                                 title="Delete"
                               >
@@ -288,13 +302,19 @@ export default function MediaAllPage() {
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
             {getUrl(lightbox) ? (
               getType(lightbox) === 'video' ? (
-                <video src={getUrl(lightbox)} controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} />
+                <video src={getUrl(lightbox)} controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }}
+                  onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} />
               ) : getType(lightbox) === 'audio' ? (
-                <audio src={getUrl(lightbox)} controls style={{ width: '100%', maxWidth: 400 }} />
+                <audio src={getUrl(lightbox)} controls style={{ width: '100%', maxWidth: 400 }}
+                  onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} />
               ) : (
-                <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+                <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt=""
+                  onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} />
               )
             ) : null}
+            <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 40, color: '#9CA3AF' }}>
+              <span style={{ fontSize: 13 }}>Media unavailable — file may have expired or been moved.</span>
+            </div>
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p style={{ marginBottom: 2 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
               <p style={{ color: '#888', fontSize: 12 }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>

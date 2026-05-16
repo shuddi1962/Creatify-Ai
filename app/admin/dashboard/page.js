@@ -16,25 +16,32 @@ export default function AdminDashboard() {
   const [recentGens, setRecentGens] = useState([]);
   const [systemStatus, setSystemStatus] = useState([
     { name: 'Supabase DB', status: 'checking' },
-    { name: 'Muapi API', status: 'checking' },
     { name: 'Storage', status: 'checking' },
   ]);
+  const [dataLoading, setDataLoading] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (authLoading) return;
+    if (!user) { router.replace('/admin/login'); return; }
+    (async () => {
+      const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+      if (!profile || !['admin', 'super_admin'].includes(profile.role)) {
+        router.replace('/studio/dashboard');
+        return;
+      }
+      setIsAdmin(true);
+    })();
+  }, [user, authLoading, router]);
 
   const fetchStats = useCallback(async () => {
     try {
+      setError('')
       const todayStart = new Date()
       todayStart.setHours(0, 0, 0, 0)
-      const todayEnd = new Date()
-      todayEnd.setHours(23, 59, 59, 999)
 
-      const [
-        { count: userCount },
-        { count: activeCount, error: activeErr },
-        { count: genCount },
-        { data: gens, error: genErr },
-        { count: failedCount },
-      ] = await Promise.all([
+      const results = await Promise.allSettled([
         supabase.from('profiles').select('id', { count: 'exact', head: true }),
         supabase.from('profiles').select('id', { count: 'exact', head: true }).gte('updated_at', todayStart.toISOString()),
         supabase.from('generations').select('id', { count: 'exact', head: true }).gte('created_at', todayStart.toISOString()),
@@ -42,8 +49,15 @@ export default function AdminDashboard() {
         supabase.from('generations').select('id', { count: 'exact', head: true }).eq('status', 'failed').gte('created_at', todayStart.toISOString()),
       ])
 
-      if (activeErr && activeErr.message?.includes('relation')) {
+      const userCount = results[0].status === 'fulfilled' ? results[0].value.count : 0
+      const activeCount = results[1].status === 'fulfilled' ? results[1].value.count : 0
+      const genCount = results[2].status === 'fulfilled' ? results[2].value.count : 0
+      const gens = results[3].status === 'fulfilled' ? results[3].value.data : []
+      const failedCount = results[4].status === 'fulfilled' ? results[4].value.count : 0
+
+      if (results[1].status === 'rejected' && results[1].reason?.message?.includes('relation')) {
         setError('Database tables not fully configured. Run setup.')
+        setDataLoading(false)
         return
       }
 
@@ -57,18 +71,10 @@ export default function AdminDashboard() {
       })
       setRecentGens(gens || [])
       setSystemStatus(prev => prev.map(s => s.name === 'Supabase DB' ? { ...s, status: 'connected' } : s))
-      setError('')
     } catch (err) {
       if (err.message?.includes('relation') || err.message?.includes('does not exist')) {
         setError('Database needs setup')
       }
-    }
-
-    try {
-      await fetch('https://api.muapi.ai/v1/models', { method: 'HEAD' })
-      setSystemStatus(prev => prev.map(s => s.name === 'Muapi API' ? { ...s, status: 'connected' } : s))
-    } catch {
-      setSystemStatus(prev => prev.map(s => s.name === 'Muapi API' ? { ...s, status: 'error' } : s))
     }
 
     try {
@@ -77,18 +83,20 @@ export default function AdminDashboard() {
     } catch {
       setSystemStatus(prev => prev.map(s => s.name === 'Storage' ? { ...s, status: 'error' } : s))
     }
+
+    setDataLoading(false)
   }, []);
 
   useEffect(() => {
-    if (authLoading) return;
-    if (!user) { router.replace('/admin/login'); return; }
+    if (!isAdmin) return;
     fetchStats();
     const interval = setInterval(fetchStats, 15_000);
     return () => clearInterval(interval);
-  }, [user, authLoading, router, fetchStats]);
+  }, [isAdmin, fetchStats]);
 
   if (authLoading) return <div style={{ color: '#9CA3AF', textAlign: 'center', padding: 48 }}>Loading...</div>;
   if (!user) return null;
+  if (dataLoading) return <div style={{ color: '#9CA3AF', textAlign: 'center', padding: 80 }}>Loading dashboard...</div>;
 
   const statCards = [
     { label: 'Total Users', value: stats.totalUsers, change: `${stats.activeToday} active today` },

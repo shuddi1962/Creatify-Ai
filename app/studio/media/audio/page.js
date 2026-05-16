@@ -42,8 +42,12 @@ export default function MediaAudioPage() {
           .limit(100)
         if (data) all.push(...data)
       } catch {}
+      try {
+        const audio = JSON.parse(localStorage.getItem('lipsync_history') || '[]')
+        all.push(...audio.map(i => ({ ...i, _local: true })))
+      } catch {}
       const seen = new Set()
-      const merged = all.filter(a => { const k = a.url || a.audio_url || a.id || Math.random(); if (seen.has(k)) return false; seen.add(k); return true })
+      const merged = all.filter(a => { const k = a.url || a.audio_url || a.id; if (!k || seen.has(k)) return false; seen.add(k); return true })
       merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
       setAssets(merged)
       setLoading(false)
@@ -51,12 +55,14 @@ export default function MediaAudioPage() {
   }, [])
 
   useEffect(() => {
-    if (!audioRef.current) return
-    if (!playing) { audioRef.current.pause(); return }
+    const audio = audioRef.current
+    if (!audio) return
+    if (!playing) { audio.pause(); return }
     const url = playing.audio_url || ''
     if (!url) return
-    audioRef.current.src = url
-    audioRef.current.play().catch(() => {})
+    audio.src = url
+    audio.play().catch(() => {})
+    return () => { audio.pause(); audio.src = '' }
   }, [playing])
 
   const filtered = assets.filter(a => {
@@ -65,9 +71,17 @@ export default function MediaAudioPage() {
     return (a.prompt || a.name || '').toLowerCase().includes(q) || (a.model || '').toLowerCase().includes(q)
   })
 
-  const deleteAsset = async (e, id) => {
+  const deleteAsset = async (e, asset) => {
     e.stopPropagation()
-    try { await supabase.from('generations').delete().eq('id', id); setAssets(prev => prev.filter(a => a.id !== id)) } catch {}
+    setAssets(prev => prev.filter(a => (a.id || a._id) !== (asset.id || asset._id)))
+    if (asset._local) {
+      try {
+        const raw = JSON.parse(localStorage.getItem('lipsync_history') || '[]')
+        localStorage.setItem('lipsync_history', JSON.stringify(raw.filter(i => i.id !== asset._id && i._id !== asset._id)))
+      } catch {}
+    } else if (asset.id) {
+      try { await supabase.from('generations').delete().eq('id', asset.id) } catch {}
+    }
   }
 
   if (loading) {
@@ -141,8 +155,8 @@ export default function MediaAudioPage() {
                         <Download size={13} />
                       </a>
                     )}
-                    {asset.id && (
-                      <button onClick={e => deleteAsset(e, asset.id)}
+                    {(asset.id || asset._local) && (
+                      <button onClick={e => deleteAsset(e, asset)}
                         style={{ padding: 4, borderRadius: 4, border: 'none', background: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
                       >
                         <Trash2 size={13} />

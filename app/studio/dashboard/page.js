@@ -15,6 +15,7 @@ export default function DashboardPage() {
 
   const fetchData = useCallback(async () => {
     try {
+      setError('')
       const { data: { session } } = await supabase.auth.getSession()
       if (!session?.user) { setLoading(false); return }
       setUser(session.user)

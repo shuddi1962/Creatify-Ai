@@ -40,7 +40,7 @@ export default function MediaImagesPage() {
         all.push(...images.map(i => ({ ...i, _local: true })))
       } catch {}
       const seen = new Set()
-      const merged = all.filter(a => { const k = a.url || a.image_url || a.id || Math.random(); if (seen.has(k)) return false; seen.add(k); return true })
+      const merged = all.filter(a => { const k = a.url || a.image_url || a.id; if (!k || seen.has(k)) return false; seen.add(k); return true })
       merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
       setAssets(merged)
       setLoading(false)
@@ -55,9 +55,17 @@ export default function MediaImagesPage() {
     return (a.prompt || a.name || '').toLowerCase().includes(q) || (a.model || '').toLowerCase().includes(q)
   })
 
-  const deleteAsset = async (e, id) => {
+  const deleteAsset = async (e, asset) => {
     e.stopPropagation()
-    try { await supabase.from('generations').delete().eq('id', id); setAssets(prev => prev.filter(a => a.id !== id)) } catch {}
+    setAssets(prev => prev.filter(a => (a.id || a._id) !== (asset.id || asset._id)))
+    if (asset._local) {
+      try {
+        const raw = JSON.parse(localStorage.getItem('muapi_history') || '[]')
+        localStorage.setItem('muapi_history', JSON.stringify(raw.filter(i => i.id !== asset._id && i._id !== asset._id)))
+      } catch {}
+    } else if (asset.id) {
+      try { await supabase.from('generations').delete().eq('id', asset.id) } catch {}
+    }
   }
 
   if (loading) {
@@ -95,7 +103,7 @@ export default function MediaImagesPage() {
               const url = getUrl(asset)
               return (
                 <div key={asset.id || asset._id} onClick={() => setLightbox(asset)}
-                  style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden', cursor: 'pointer', position: 'relative' }}
+                  style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden', cursor: 'pointer', position: 'relative', display: 'flex', flexDirection: 'column' }}
                   className="hover-lift"
                 >
                   <div style={{ aspectRatio: '1', background: 'var(--bg-page)' }}>
@@ -108,13 +116,29 @@ export default function MediaImagesPage() {
                       <ZoomIn size={20} style={{ color: '#fff' }} />
                     </div>
                   </div>
-                  <div style={{ padding: '8px 10px' }}>
+                  <div style={{ padding: '8px 10px', flex: 1 }}>
                     <p style={{ color: 'var(--text-primary)', fontSize: 11, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', marginBottom: 2 }}>
                       {(asset.prompt || '').slice(0, 60) || 'Untitled'}
                     </p>
-                    <div style={{ color: 'var(--text-muted)', fontSize: 10 }}>
-                      {asset.model && <span>{asset.model} · </span>}
-                      <span>{formatDate(asset.created_at)}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div style={{ color: 'var(--text-muted)', fontSize: 10 }}>
+                        {asset.model && <span>{asset.model} · </span>}
+                        <span>{formatDate(asset.created_at)}</span>
+                      </div>
+                      <div className="flex items-center gap-1" onClick={e => e.stopPropagation()}>
+                        {url && (
+                          <a href={url} target="_blank" rel="noopener noreferrer"
+                            style={{ padding: 4, borderRadius: 4, color: 'var(--text-muted)', cursor: 'pointer' }}>
+                            <Download size={13} />
+                          </a>
+                        )}
+                        {(asset.id || asset._local) && (
+                          <button onClick={e => deleteAsset(e, asset)}
+                            style={{ padding: 4, borderRadius: 4, border: 'none', background: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -130,7 +154,13 @@ export default function MediaImagesPage() {
         <div onClick={() => setLightbox(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
           <button onClick={() => setLightbox(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
-              <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt="" />
+            {getUrl(lightbox) ? (
+              <img src={getUrl(lightbox)} style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12, objectFit: 'contain' }} alt=""
+                onError={e => { e.target.style.display = 'none'; e.target.nextElementSibling.style.display = 'flex' }} />
+            ) : null}
+            <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 20, color: '#9CA3AF' }}>
+              <span style={{ fontSize: 13 }}>Image unavailable — file may have expired or been moved.</span>
+            </div>
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p style={{ marginBottom: 2 }}>{(lightbox.prompt || '').slice(0, 200)}</p>
               <p style={{ color: '#888', fontSize: 12 }}>{lightbox.model || ''} · {formatDate(lightbox.created_at)}</p>

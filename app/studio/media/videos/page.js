@@ -20,6 +20,7 @@ export default function MediaVideosPage() {
   const [assets, setAssets] = useState([])
   const [loading, setLoading] = useState(true)
   const [player, setPlayer] = useState(null)
+  const [playerError, setPlayerError] = useState(false)
 
   useEffect(() => {
     setLoading(true)
@@ -39,14 +40,15 @@ export default function MediaVideosPage() {
         all.push(...videos.map(i => ({ ...i, _local: true })))
       } catch {}
       const seen = new Set()
-      const merged = all.filter(a => { const k = a.url || a.video_url || a.image_url || a.id || Math.random(); if (seen.has(k)) return false; seen.add(k); return true })
+      const merged = all.filter(a => { const k = a.url || a.video_url || a.image_url || a.id; if (!k || seen.has(k)) return false; seen.add(k); return true })
       merged.sort((a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0))
       setAssets(merged)
       setLoading(false)
     })()
   }, [])
 
-  function getUrl(row) { return row.video_url || row.image_url || row.url || '' }
+  function getVideoUrl(row) { return row.video_url || row.url || '' }
+  function getThumbnail(row) { return row.image_url || row.video_url || '' }
 
   const filtered = assets.filter(a => {
     if (!search) return true
@@ -91,8 +93,8 @@ export default function MediaVideosPage() {
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 16 }}>
             {filtered.map(asset => {
-              const thumb = getUrl(asset)
-              const videoUrl = asset.video_url || ''
+              const thumb = getThumbnail(asset)
+              const videoUrl = getVideoUrl(asset)
               return (
                 <div key={asset.id || asset._id}
                   style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', overflow: 'hidden' }}
@@ -100,7 +102,9 @@ export default function MediaVideosPage() {
                   <div style={{ position: 'relative', aspectRatio: '16/9', background: 'var(--bg-page)', cursor: 'pointer' }}
                     onClick={() => setPlayer(asset)}
                   >
-                    {thumb ? (
+                    {videoUrl ? (
+                      <video src={videoUrl} style={{ width: '100%', height: '100%', objectFit: 'cover' }} muted autoPlay loop playsInline />
+                    ) : thumb ? (
                       <img src={thumb} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="" loading="lazy" />
                     ) : (
                       <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -150,18 +154,20 @@ export default function MediaVideosPage() {
       </div>
 
       {player && (
-        <div onClick={() => setPlayer(null)} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-          <button onClick={() => setPlayer(null)} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
+        <div onClick={() => { setPlayer(null); setPlayerError(false) }} style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.92)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+          <button onClick={() => { setPlayer(null); setPlayerError(false) }} style={{ position: 'absolute', top: 24, right: 24, zIndex: 10, background: 'rgba(255,255,255,0.15)', border: 'none', borderRadius: 10, padding: 10, cursor: 'pointer', color: '#fff', backdropFilter: 'blur(8px)' }}><X size={22} /></button>
           <div onClick={e => e.stopPropagation()} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 16, maxWidth: '95vw', maxHeight: '95vh' }}>
-            <video controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }} src={player.video_url || player.image_url || player.url || ''}
-              onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex' }}
-            />
-            <div style={{ display: 'none', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 40, color: '#9CA3AF' }}>
-              <span style={{ fontSize: 32 }}>&#9654;&#65039;</span>
-              <span style={{ fontSize: 13 }}>Video unavailable — file may have expired or been moved.</span>
-              <a href={player.video_url || player.image_url || player.url || '#'} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 12, color: '#7C3AED', textDecoration: 'underline' }}>Open directly</a>
-            </div>
+            {playerError ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, padding: 40, color: '#9CA3AF' }}>
+                <span style={{ fontSize: 32 }}>&#9654;&#65039;</span>
+                <span style={{ fontSize: 13 }}>Video unavailable — file may have expired or been moved.</span>
+                <a href={getVideoUrl(player) || '#'} target="_blank" rel="noopener noreferrer"
+                  style={{ fontSize: 12, color: '#7C3AED', textDecoration: 'underline' }}>Open directly</a>
+              </div>
+            ) : (
+              <video controls autoPlay style={{ maxWidth: '95vw', maxHeight: '85vh', borderRadius: 12 }}
+                src={getVideoUrl(player)} onError={() => setPlayerError(true)} />
+            )}
             <div style={{ color: '#ccc', fontSize: 13, textAlign: 'center', maxWidth: 600 }}>
               <p>{(player.prompt || '').slice(0, 200)}</p>
               <p style={{ color: '#888', fontSize: 12, marginTop: 2 }}>{player.model || ''} · {formatDate(player.created_at)}</p>
