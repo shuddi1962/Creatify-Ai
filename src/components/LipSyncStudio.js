@@ -45,7 +45,7 @@ export function LipSyncStudio() {
                         <line x1="8" y1="23" x2="16" y2="23"/>
                     </svg>
                 </div>
-                <div class="absolute top-4 right-4 text-primary animate-pulse">🎙</div>
+                <div class="absolute top-4 right-4 text-primary animate-pulse"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
             </div>
         </div>
         <h1 class="text-2xl sm:text-4xl md:text-7xl font-black text-white tracking-widest uppercase mb-4 selection:bg-primary selection:text-black text-center px-4">Lip Sync</h1>
@@ -74,12 +74,12 @@ export function LipSyncStudio() {
     const imageModeBtn = document.createElement('button');
     imageModeBtn.type = 'button';
     imageModeBtn.className = 'px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-primary bg-primary/10 text-primary';
-    imageModeBtn.textContent = '🖼 Portrait Image';
+    imageModeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-1.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Portrait Image';
 
     const videoModeBtn = document.createElement('button');
     videoModeBtn.type = 'button';
     videoModeBtn.className = 'px-4 py-1.5 rounded-xl text-xs font-bold transition-all border border-white/10 text-muted hover:border-white/30 hover:text-white';
-    videoModeBtn.textContent = '🎬 Video';
+    videoModeBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-1.5"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>Video';
 
     modeToggleRow.appendChild(modeLabel);
     modeToggleRow.appendChild(imageModeBtn);
@@ -301,7 +301,7 @@ export function LipSyncStudio() {
     generateBtn.id = 'ls-generate-btn';
     generateBtn.type = 'button';
     generateBtn.className = 'ml-auto px-6 py-2.5 bg-primary text-black font-black text-sm rounded-2xl hover:scale-105 active:scale-95 transition-all shadow-glow disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100';
-    generateBtn.textContent = 'Generate ✨';
+    generateBtn.innerHTML = 'Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>';
 
     bottomRow.appendChild(modelBtn);
     bottomRow.appendChild(resolutionBtn);
@@ -720,10 +720,10 @@ export function LipSyncStudio() {
             console.error(e);
             hero.classList.remove('opacity-0', 'scale-95', '-translate-y-10', 'pointer-events-none');
             generateBtn.innerHTML = `Error: ${e.message.slice(0, 60)}`;
-            setTimeout(() => { generateBtn.innerHTML = `Generate ✨`; }, 4000);
+            setTimeout(() => { generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`; }, 4000);
         } finally {
             generateBtn.disabled = false;
-            if (!hadError) generateBtn.innerHTML = `Generate ✨`;
+            if (!hadError) generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
         }
     };
 

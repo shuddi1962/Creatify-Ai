@@ -259,7 +259,7 @@ function ModelCard(model, onStateChange) {
             <div class="flex flex-col gap-1 min-w-0">
                 <div class="flex items-center gap-2 flex-wrap">
                     <span class="text-sm font-bold text-white truncate">${model.name}</span>
-                    ${model.featured ? `<span class="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-primary/20 text-primary border border-primary/30">⚡ Featured</span>` : ''}
+                    ${model.featured ? `<span class="px-1.5 py-0.5 rounded-md text-[10px] font-black bg-primary/20 text-primary border border-primary/30"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-0.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Featured</span>` : ''}
                     ${fullyReady ? `<span class="text-green-400">${CheckIcon}</span>` : ''}
                 </div>
                 <p class="text-[11px] text-muted leading-relaxed">${model.description}</p>

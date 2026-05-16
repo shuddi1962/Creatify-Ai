@@ -236,7 +236,7 @@ export function CinemaStudio() {
     const generateBtn = document.createElement('button');
     generateBtn.className = 'h-[56px] px-8 bg-[#d9ff00] text-black rounded-xl font-black text-xs uppercase hover:bg-white transition-colors shadow-lg disabled:opacity-50 disabled:cursor-not-allowed';
     generateBtn.setAttribute('data-tooltip', 'Generate cinema shot');
-    generateBtn.innerHTML = `GENERATE ✨`;
+    generateBtn.innerHTML = `GENERATE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
 
     rightGroup.appendChild(summaryCard);
     rightGroup.appendChild(generateBtn);
@@ -586,7 +586,7 @@ export function CinemaStudio() {
             alert('Generation Failed: ' + e.message);
         } finally {
             generateBtn.disabled = false;
-            generateBtn.innerHTML = `GENERATE ✨`;
+            generateBtn.innerHTML = `GENERATE <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
         }
     };
 

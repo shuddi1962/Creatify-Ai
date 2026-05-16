@@ -14,7 +14,9 @@ import { savePendingJob, removePendingJob, getPendingJobs } from '../lib/pending
 function createInlineInstructions(type) {
     const el = document.createElement('div');
     el.className = 'w-full text-center text-white/30 text-sm flex flex-col items-center gap-2 py-2';
-    const icon = type === 'image' ? '🖼️' : '🎬';
+    const icon = type === 'image'
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+        : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>';
     el.innerHTML = `
         <p>${icon} Enter a prompt above and click <span class="text-primary font-semibold">Generate</span> to create your ${type}.</p>
         <p class="text-xs text-white/20">Tip: Be descriptive — include style, lighting, mood, and subject for best results.</p>
@@ -87,7 +89,7 @@ export function ImageStudio() {
                     </svg>
                 </div>
                 <!-- Sparkles -->
-                <div class="absolute top-4 right-4 text-primary animate-pulse">✨</div>
+                <div class="absolute top-4 right-4 text-primary animate-pulse"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg></div>
              </div>
         </div>
         <h1 class="text-2xl sm:text-4xl md:text-7xl font-black text-white tracking-widest uppercase mb-4 selection:bg-primary selection:text-black text-center px-4">Image Studio</h1>
@@ -206,10 +208,10 @@ export function ImageStudio() {
         const updateLocalToggleStyle = () => {
             if (useLocalModel) {
                 localToggleBtn.className = 'flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all border text-xs font-bold whitespace-nowrap bg-primary/20 border-primary/40 text-primary';
-                localToggleBtn.textContent = '⚡ Local';
+                localToggleBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-1"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Local';
             } else {
                 localToggleBtn.className = 'flex items-center gap-1.5 px-3 py-2 rounded-xl transition-all border text-xs font-bold whitespace-nowrap bg-white/5 border-white/5 text-white/60 hover:bg-white/10';
-                localToggleBtn.textContent = '☁ API';
+                localToggleBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block mr-1"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9z"/></svg>API';
             }
         };
         updateLocalToggleStyle();
@@ -254,7 +256,7 @@ export function ImageStudio() {
     const generateBtn = document.createElement('button');
     generateBtn.className = 'bg-primary text-black px-6 md:px-8 py-3 md:py-3.5 rounded-xl md:rounded-[1.5rem] font-black text-sm md:text-base hover:shadow-glow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2.5 w-full sm:w-auto shadow-lg';
     generateBtn.setAttribute('data-tooltip', 'Generate AI image from prompt');
-    generateBtn.innerHTML = `Generate ✨`;
+    generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
 
     bottomRow.appendChild(controlsLeft);
     bottomRow.appendChild(generateBtn);
@@ -289,7 +291,7 @@ export function ImageStudio() {
         localProgressWrap.classList.remove('flex');
         localProgressWrap.classList.add('hidden');
         generateBtn.disabled = false;
-        generateBtn.innerHTML = `Generate ✨`;
+        generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
     });
 
     // ==========================================
@@ -747,7 +749,7 @@ export function ImageStudio() {
                         item.className = `flex items-center justify-between p-3.5 hover:bg-white/5 rounded-2xl cursor-pointer transition-all border border-transparent hover:border-white/5 ${selectedLocalModel === m.id ? 'bg-white/5 border-white/5' : ''}`;
                         item.innerHTML = `
                             <div class="flex items-center gap-3.5">
-                                <div class="w-10 h-10 ${m.featured ? 'bg-primary/10 text-primary' : 'bg-green-500/10 text-green-400'} border border-white/5 rounded-xl flex items-center justify-center font-black text-sm shadow-inner uppercase">${m.featured ? '⚡' : m.name.charAt(0)}</div>
+                                <div class="w-10 h-10 ${m.featured ? 'bg-primary/10 text-primary' : 'bg-green-500/10 text-green-400'} border border-white/5 rounded-xl flex items-center justify-center font-black text-sm shadow-inner uppercase">${m.featured ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>' : m.name.charAt(0)}</div>
                                 <div class="flex flex-col gap-0.5">
                                     <div class="flex items-center gap-1.5">
                                         <span class="text-xs font-bold text-white tracking-tight">${m.name}</span>
@@ -1226,10 +1228,10 @@ export function ImageStudio() {
                 hero.classList.remove('opacity-0', 'scale-95', '-translate-y-10', 'pointer-events-none');
                 console.error('[Local] full error:', e.message);
                 generateBtn.innerHTML = `Error: ${e.message.slice(0, 120)}`;
-                setTimeout(() => { generateBtn.innerHTML = `Generate ✨`; }, 6000);
+                setTimeout(() => { generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`; }, 6000);
             } finally {
                 generateBtn.disabled = false;
-                if (!hadError) generateBtn.innerHTML = `Generate ✨`;
+                if (!hadError) generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
             }
             return;
         }
@@ -1307,12 +1309,12 @@ export function ImageStudio() {
             hero.classList.remove('opacity-0', 'scale-95', '-translate-y-10', 'pointer-events-none');
             generateBtn.innerHTML = `Error: ${e.message.slice(0, 60)}`;
             setTimeout(() => {
-                generateBtn.innerHTML = `Generate ✨`;
+                generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
             }, 4000);
         } finally {
             generateBtn.disabled = false;
             // Only reset the label on success; the catch timeout handles the error case
-            if (!hadError) generateBtn.innerHTML = `Generate ✨`;
+            if (!hadError) generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
         }
     };
 

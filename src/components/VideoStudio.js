@@ -97,7 +97,7 @@ export function VideoStudio() {
                         <rect x="1" y="5" width="15" height="14" rx="2" ry="2"/>
                     </svg>
                 </div>
-                <div class="absolute top-4 right-4 text-primary animate-pulse">✨</div>
+                <div class="absolute top-4 right-4 text-primary animate-pulse"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg></div>
              </div>
         </div>
         <h1 class="text-2xl sm:text-4xl md:text-7xl font-black text-white tracking-widest uppercase mb-4 selection:bg-primary selection:text-black text-center px-4">Video Studio</h1>
@@ -128,7 +128,7 @@ export function VideoStudio() {
                 textarea.disabled = false;
                 textarea.placeholder = uploadedVideoUrl
                     ? (getCurrentModel()?.promptRequired ? 'Describe the motion' : 'Describe the motion (optional)')
-                    : 'Now upload a reference video using the 🎥 button';
+                    : 'Upload a reference video';
                 return;
             }
             // Clear video mode if active
@@ -272,7 +272,7 @@ export function VideoStudio() {
         showVideoIcon();
         // Motion-control v2v: keep the model and image; user can re-upload a video
         if (isMotionControlV2V()) {
-            textarea.placeholder = 'Upload a reference video using the 🎥 button';
+            textarea.placeholder = 'Upload a reference video';
             return;
         }
         v2vMode = false;
@@ -314,7 +314,7 @@ export function VideoStudio() {
                 textarea.disabled = false;
                 textarea.placeholder = uploadedImageUrl
                     ? (getCurrentModel()?.promptRequired ? 'Describe the motion' : 'Describe the motion (optional)')
-                    : 'Now upload a reference image using the 🖼 button';
+                    : 'Upload a reference image';
             } else {
                 // Default v2v flow (e.g. watermark remover) — auto-pick the first v2v model
                 if (imageMode) {
@@ -437,7 +437,7 @@ export function VideoStudio() {
     const generateBtn = document.createElement('button');
     generateBtn.className = 'bg-primary text-black px-6 md:px-8 py-3 md:py-3.5 rounded-xl md:rounded-[1.5rem] font-black text-sm md:text-base hover:shadow-glow hover:scale-105 active:scale-95 transition-all flex items-center justify-center gap-2.5 w-full sm:w-auto shadow-lg';
     generateBtn.setAttribute('data-tooltip', 'Generate AI video from prompt');
-    generateBtn.innerHTML = `Generate ✨`;
+    generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
 
     bottomRow.appendChild(controlsLeft);
     bottomRow.appendChild(generateBtn);
@@ -601,7 +601,7 @@ export function VideoStudio() {
                                 : 'Upload a reference video and image, then describe the motion (optional)';
                             textarea.disabled = false;
                         } else {
-                            textarea.placeholder = 'Upload a video using the 🎥 button, then click Generate';
+                            textarea.placeholder = 'Upload a video, then click Generate';
                             textarea.disabled = true;
                         }
                     } else {
@@ -1170,7 +1170,7 @@ export function VideoStudio() {
                     throw new Error('No video URL returned by Wan2GP');
                 }
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = `Generate ✨`;
+                generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
                 return;
             }
 
@@ -1191,7 +1191,7 @@ export function VideoStudio() {
                     throw new Error('No video URL returned by API');
                 }
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = `Generate ✨`;
+                generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
                 return;
             }
 
@@ -1233,7 +1233,7 @@ export function VideoStudio() {
                     throw new Error('No video URL returned by API');
                 }
                 generateBtn.disabled = false;
-                generateBtn.innerHTML = `Generate ✨`;
+                generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
                 return;
             }
 
@@ -1295,13 +1295,13 @@ export function VideoStudio() {
             hero.classList.remove('opacity-0', 'scale-95', '-translate-y-10', 'pointer-events-none');
             generateBtn.innerHTML = `Error: ${e.message.slice(0, 60)}`;
             setTimeout(() => {
-                generateBtn.innerHTML = `Generate ✨`;
+                generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
             }, 4000);
         } finally {
             generateBtn.disabled = false;
             if (typeof unsubscribeProgress === 'function') unsubscribeProgress();
             // Only reset the label on success; the catch timeout handles the error case
-            if (!hadError) generateBtn.innerHTML = `Generate ✨`;
+            if (!hadError) generateBtn.innerHTML = `Generate <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="inline-block"><path d="M12 3l1.5 6L18 9l-4.5 3.75L15 18l-3-4.5L9 18l1.5-5.25L6 9l4.5-.75z"/></svg>`;
         }
     };
 

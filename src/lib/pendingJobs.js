@@ -1,4 +1,4 @@
-import { getPendingJobs, savePendingJob as storageSave, removePendingJob as storageRemove } from './storage.js'
+import { getPendingJobs as fetchPendingJobs, savePendingJob as storageSave, removePendingJob as storageRemove } from './storage.js'
 
 export async function savePendingJob(job) {
   try { await storageSave(job) } catch {}
@@ -19,7 +19,7 @@ export async function removePendingJob(requestId) {
 
 export async function getPendingJobs(studioType) {
   try {
-    const fromStorage = await getPendingJobs(studioType)
+    const fromStorage = await fetchPendingJobs(studioType)
     if (fromStorage.length > 0) return fromStorage
   } catch {}
   const all = getAllLocal()
