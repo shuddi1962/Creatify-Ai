@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import {
   TrendingUp, RefreshCw, Bookmark, BookmarkCheck,
@@ -101,6 +101,29 @@ export default function TrendingPage() {
   }, [niche, platform, region, timeframe])
 
   useEffect(() => { loadTrends() }, [niche, platform, region, timeframe])
+
+  const sortedTrends = useMemo(() => {
+    const arr = [...trends]
+    switch (sort) {
+      case 'Virality Score':
+        return arr.sort((a, b) => (b.viralityScore || 0) - (a.viralityScore || 0))
+      case 'Newest':
+        return arr.sort((a, b) => (b.id || '').localeCompare(a.id || ''))
+      case 'Most Saved':
+        return arr.sort((a, b) => Number(saved.has(b.id)) - Number(saved.has(a.id)))
+      case 'Platform Match': {
+        if (platform === 'all') return arr
+        const sel = platform
+        return arr.sort((a, b) => {
+          const ma = (a.platform || '').toLowerCase() === sel ? 1 : 0
+          const mb = (b.platform || '').toLowerCase() === sel ? 1 : 0
+          return mb - ma
+        })
+      }
+      default:
+        return arr
+    }
+  }, [trends, sort, saved, platform])
 
   function toggleSave(id) {
     setSaved(prev => {
@@ -383,7 +406,7 @@ export default function TrendingPage() {
         </div>
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))', gap: 16 }}>
-          {trends.map((trend, idx) => (
+          {sortedTrends.map((trend, idx) => (
             <div
               key={trend.id}
               style={{
@@ -549,7 +572,7 @@ export default function TrendingPage() {
         </div>
       )}
 
-      {!loading && trends.length === 0 && (
+      {!loading && sortedTrends.length === 0 && (
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
           <div style={{ textAlign: 'center', maxWidth: 360 }}>
             <div style={{ width: 48, height: 48, margin: '0 auto 12px', borderRadius: 12, background: 'var(--bg-elevated)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
