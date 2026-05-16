@@ -42,6 +42,7 @@ export default function StudioShell({ children }) {
   const topNavTimeoutRef = useRef(null);
   const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const userToggledSidebarRef = useRef(false);
   const { user, loading: authLoading, signOut, isAdmin } = useAuth();
   const [balance, setBalance] = useState(null);
   const [showSettings, setShowSettings] = useState(false);
@@ -156,13 +157,20 @@ export default function StudioShell({ children }) {
     'media', 'schedule', 'settings', 'image', 'video',
     'lipsync', 'audio', 'cinema', 'marketing',
   ]
-  const sectionRoot = pathname.split('/')[2]
+  const sectionRoot = pathname.split('/')[2] || ''
   const hasOwnSidebar = SECTIONS_WITH_SUBNAV.includes(sectionRoot)
+  const prevSectionRef = useRef('')
 
   useEffect(() => {
-    const segments = pathname.split('/').filter(Boolean).length;
-    setSidebarCollapsed(segments > 2 || hasOwnSidebar);
-  }, [pathname, hasOwnSidebar]);
+    if (userToggledSidebarRef.current) return
+    if (sectionRoot && sectionRoot !== prevSectionRef.current) {
+      const segments = pathname.split('/').filter(Boolean).length
+      setSidebarCollapsed(segments > 2)
+      prevSectionRef.current = sectionRoot
+    } else if (!sectionRoot) {
+      setSidebarCollapsed(false)
+    }
+  }, [pathname, sectionRoot]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
   const handleDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.items?.length) setIsDragging(true); }, []);
@@ -308,7 +316,7 @@ export default function StudioShell({ children }) {
           >
             <Icons.Menu size={20} />
           </button>
-          <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+          <button onClick={() => { userToggledSidebarRef.current = true; setSidebarCollapsed(!sidebarCollapsed) }}
             className="hidden lg:flex"
             style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
@@ -655,7 +663,7 @@ export default function StudioShell({ children }) {
           {/* Collapse toggle at bottom */}
           <div style={{ flex: 1 }} />
           <button
-            onClick={() => setSidebarCollapsed(c => !c)}
+            onClick={() => { userToggledSidebarRef.current = true; setSidebarCollapsed(c => !c) }}
             style={{
               width: 40, height: 40, borderRadius: 10,
               background: 'none', border: 'none', cursor: 'pointer',
