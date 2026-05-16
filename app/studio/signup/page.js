@@ -120,6 +120,12 @@ export default function SignupPage() {
             </div>
             <div>
               <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', display: 'block', marginBottom: 4 }}>Password</label>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <label style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em' }}>Password</label>
+                {mode === 'login' && (
+                  <Link href="/auth/forgot-password" style={{ fontSize: 11, color: '#818cf8', textDecoration: 'none' }}>Forgot password?</Link>
+                )}
+              </div>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="At least 6 characters" required minLength={6}
                 style={{ width: '100%', padding: '9px 12px', fontSize: 12, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, color: 'var(--text-primary)', outline: 'none', maxWidth: '100%' }} />
             </div>

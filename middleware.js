@@ -8,8 +8,26 @@ const LOCAL_API_PREFIXES = [
   '/api/v1/ideas',
   '/api/v1/shared-key',
   '/api/v1/models',
+  '/api/v1/analytics',
+  '/api/v1/logs',
+  '/api/v1/health',
+  '/api/v1/env-key',
+  '/api/auth',
   '/api/admin',
 ];
+
+const rateLimitStore = new Map();
+function checkRateLimit(ip, route, maxReqs, windowSec) {
+  const now = Date.now();
+  const key = `${ip}:${route}`;
+  let entry = rateLimitStore.get(key);
+  if (!entry || entry.resetAt <= now) {
+    entry = { count: 0, resetAt: now + windowSec * 1000 };
+    rateLimitStore.set(key, entry);
+  }
+  entry.count++;
+  return { allowed: entry.count <= maxReqs, remaining: Math.max(0, maxReqs - entry.count), resetAt: entry.resetAt };
+}
 
 // Cache shared key
 let sharedKeyCache = null;
@@ -54,10 +72,27 @@ export async function middleware(request) {
     const url = request.nextUrl;
     const pathname = url.pathname;
 
+    // Rate limiting
+    const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim()
+      || request.headers.get('x-real-ip')
+      || 'anonymous';
+    const authRoutes = ['/api/v1/env-key', '/api/auth', '/api/v1/shared-key'];
+    const isAuthRoute = authRoutes.some(r => pathname.startsWith(r));
+    const rl = checkRateLimit(ip, pathname, isAuthRoute ? 10 : 60, isAuthRoute ? 60 : 10);
+    if (!rl.allowed) {
+      return new Response(JSON.stringify({ error: 'Too many requests', retryAfter: Math.ceil((rl.resetAt - Date.now()) / 1000) }), {
+        status: 429,
+        headers: { 'Content-Type': 'application/json', 'Retry-After': String(Math.ceil((rl.resetAt - Date.now()) / 1000)), 'X-RateLimit-Remaining': '0' },
+      });
+    }
+
     // Skip local API routes
     for (const prefix of LOCAL_API_PREFIXES) {
       if (pathname === prefix || pathname.startsWith(prefix + '/')) {
-        return NextResponse.next();
+        const response = NextResponse.next();
+        response.headers.set('X-RateLimit-Remaining', String(rl.remaining));
+        response.headers.set('X-RateLimit-Reset', String(rl.resetAt));
+        return response;
       }
     }
 
