@@ -163,14 +163,16 @@ export default function StudioShell({ children }) {
 
   useEffect(() => {
     if (userToggledSidebarRef.current) return
-    if (sectionRoot && sectionRoot !== prevSectionRef.current) {
-      const segments = pathname.split('/').filter(Boolean).length
-      setSidebarCollapsed(segments > 2)
+    if (sectionRoot !== prevSectionRef.current) {
+      if (!sectionRoot) {
+        setSidebarCollapsed(false)
+      } else {
+        const segments = pathname.split('/').filter(Boolean).length
+        setSidebarCollapsed(segments > 2 || hasOwnSidebar)
+      }
       prevSectionRef.current = sectionRoot
-    } else if (!sectionRoot) {
-      setSidebarCollapsed(false)
     }
-  }, [pathname, sectionRoot]);
+  }, [pathname, sectionRoot, hasOwnSidebar]);
 
   const handleDragOver = useCallback((e) => { e.preventDefault(); e.stopPropagation(); }, []);
   const handleDragEnter = useCallback((e) => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.items?.length) setIsDragging(true); }, []);
@@ -558,18 +560,19 @@ export default function StudioShell({ children }) {
       </header>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
-        {!pathname.startsWith('/studio/dashboard') && !hasOwnSidebar && (
+        {!pathname.startsWith('/studio/dashboard') && (
         <aside style={{
-          width: sidebarCollapsed ? 64 : 200,
-          flexShrink: 0,
+          width: sidebarCollapsed ? 0 : 200,
+          flexShrink: 0, minWidth: 0,
           background: 'var(--bg-sidebar)',
-          borderRight: '1px solid var(--border-subtle)',
+          borderRight: sidebarCollapsed ? 'none' : '1px solid var(--border-subtle)',
           flexDirection: 'column',
           gap: 2,
           paddingTop: 12, paddingBottom: 12,
-          overflowY: 'auto', overflowX: 'hidden', zIndex: 50,
-          transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
-          display: sidebarCollapsed ? 'none' : 'flex',
+          overflowX: 'hidden', overflowY: sidebarCollapsed ? 'hidden' : 'auto',
+          zIndex: 50,
+          transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1), border 250ms ease',
+          display: 'flex',
           position: 'sticky', top: 56, alignSelf: 'flex-start',
           height: 'calc(100vh - 56px)',
         }} className="hidden lg:flex"
