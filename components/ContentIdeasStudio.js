@@ -67,22 +67,9 @@ const REGIONS = [
   'Switzerland', 'Austria', 'Belgium', 'New Zealand', 'Pakistan', 'Bangladesh',
 ];
 
-const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'LinkedIn', 'Twitter/X', 'Pinterest'];
+import { PLATFORMS, PLATFORM_ICONS, PLATFORM_COLORS } from '@/components/ui/PlatformIcons'
 
-const SAMPLE_IDEAS = [
-  { hook: 'Stop overcomplicating your mornings — this 5-minute routine changed everything', angle: 'Transformational', style: 'Talking head + B-roll', score: 94, audio: 'Upbeat lo-fi', hashtags: '#morningroutine #productivity #lifehack' },
-  { hook: 'My therapist said I should try this one thing and I was NOT prepared', angle: 'Personal story', style: 'Cinematic', score: 97, audio: 'Viral trending sound', hashtags: '#mentalhealth #therapy #selfcare' },
-  { hook: 'The 3-second rule that doubled my income this year', angle: 'Educational', style: 'Text overlay + voiceover', score: 91, audio: 'Motivational speech', hashtags: '#money #success #mindset' },
-  { hook: 'I let AI plan my entire week and here is what happened', angle: 'Experimental', style: 'Reaction + split screen', score: 88, audio: 'AI generated', hashtags: '#ai #productivity #future' },
-  { hook: 'This kitchen gadget is a total game-changer (under $20)', angle: 'Review', style: 'Product showcase', score: 85, audio: 'ASMR kitchen sounds', hashtags: '#kitchenhacks #amazonfinds #budget' },
-  { hook: 'We tried every diet for 30 days so you don\'t have to', angle: 'Comparison', style: 'Split screen montage', score: 93, audio: 'Upbeat electronic', hashtags: '#diet #health #experiment' },
-  { hook: 'Your resume is getting rejected because of THIS mistake', angle: 'Expert advice', style: 'Screen recording + talking head', score: 90, audio: 'Professional podcast', hashtags: '#career #jobsearch #resume' },
-  { hook: 'I transformed my backyard into a paradise for $200', angle: 'DIY tutorial', style: 'Timelapse + reveal', score: 96, audio: 'Satisfying music', hashtags: '#diy #gardening #transformation' },
-  { hook: 'The hidden meaning behind this movie scene changes everything', angle: 'Analysis', style: 'Video essay format', score: 87, audio: 'Mysterious cinematic', hashtags: '#movies #filmanalysis #mindblown' },
-  { hook: '10 minutes of this exercise burns more than an hour at the gym', angle: 'Science based', style: 'Demonstration + text overlay', score: 92, audio: 'Energetic workout music', hashtags: '#fitness #workout #science' },
-  { hook: 'My grandma\'s secret recipe that no one knows about 🤫', angle: 'Cultural heritage', style: 'Cooking footage + interview', score: 95, audio: 'Traditional music', hashtags: '#cooking #family #secretrecipe' },
-  { hook: 'Travel hack that saved me $5000 on my last trip', angle: 'Money saving', style: 'Listicle format', score: 89, audio: 'Wanderlust vibes', hashtags: '#travel #hacks #savemoney' },
-];
+const PLATFORM_NAMES = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter/X', 'Pinterest', 'Facebook'];
 
 const IDEAS_TABS = [
   { id: 'discover', label: 'Trending Now' },
@@ -112,6 +99,7 @@ export default function ContentIdeasStudio({ initialTab }) {
   const [showNicheDropdown, setShowNicheDropdown] = useState(false);
   const [ideas, setIdeas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
   const filteredNiches = useMemo(() => {
     if (!searchQuery) return NICHES;
@@ -127,6 +115,7 @@ export default function ContentIdeasStudio({ initialTab }) {
   const generateIdeas = async () => {
     if (!selectedNiche) return;
     setLoading(true);
+    setError('');
 
     try {
       const response = await fetch('/api/v1/content-ideas', {
@@ -142,13 +131,17 @@ export default function ContentIdeasStudio({ initialTab }) {
 
       if (response.ok) {
         const data = await response.json();
-        setIdeas(data.ideas || []);
+        if (data.error) {
+          setError(data.error);
+          setIdeas([]);
+        } else {
+          setIdeas(data.ideas || []);
+        }
       } else {
-        throw new Error('API not available');
+        setIdeas([]);
       }
     } catch {
-      const shuffled = [...SAMPLE_IDEAS].sort(() => Math.random() - 0.5);
-      setIdeas(shuffled.slice(0, 12));
+      setIdeas([]);
     }
     setLoading(false);
   };
@@ -186,25 +179,25 @@ export default function ContentIdeasStudio({ initialTab }) {
           <p className="text-xs text-[#9CA3AF]">Filter trending content by TikTok, Instagram, YouTube, LinkedIn, and more</p>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        {[
-          { name: 'TikTok', color: '#000', bg: 'bg-black/30', icon: '♪' },
-          { name: 'Instagram', color: '#E1306C', bg: 'bg-pink-500/10' },
-          { name: 'YouTube', color: '#FF0000', bg: 'bg-red-500/10' },
-          { name: 'LinkedIn', color: '#0077B5', bg: 'bg-blue-500/10' },
-          { name: 'Twitter/X', color: '#fff', bg: 'bg-white/5' },
-          { name: 'Pinterest', color: '#E60023', bg: 'bg-red-500/10' },
-        ].map(p => (
-          <div key={p.name} className={`p-4 rounded-xl ${p.bg} border border-white/5`}>
-            <h4 className="text-sm font-bold text-[#F9FAFB] mb-1">{p.name}</h4>
-            <p className="text-xs text-[#9CA3AF] mb-3">Top trends on {p.name}</p>
-            {[
-              `${Math.random() > 0.5 ? '#' : ''}${['Viral', 'Trending', 'Popular', 'Hot'][Math.floor(Math.random() * 4)]} ${['Challenge', 'Sound', 'Format', 'Style'][Math.floor(Math.random() * 4)]}`,
-            ].map((t, i) => (
-              <div key={i} className="text-xs text-[#F9FAFB] py-1">• {t}</div>
-            ))}
-          </div>
-        ))}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        {['tiktok', 'instagram', 'youtube', 'linkedin', 'twitter', 'facebook', 'pinterest'].map(id => {
+          const platform = PLATFORMS.find(p => p.id === id);
+          const Icon = PLATFORM_ICONS[id];
+          const color = PLATFORM_COLORS[id] || '#fff';
+          if (!platform) return null;
+          return (
+            <div key={id} className="p-4 rounded-xl border border-white/10 bg-[rgba(17,24,39,0.8)]">
+              <div className="flex items-center gap-2 mb-2">
+                {Icon && <Icon width={18} height={18} />}
+                <h4 className="text-sm font-bold text-[#F9FAFB]">{platform.label}</h4>
+              </div>
+              <p className="text-xs text-[#9CA3AF] mb-3">Top trends on {platform.label}</p>
+              {['Viral Challenge', 'Trending Sound', 'Popular Format', 'Hot Style'].map((t, i) => (
+                <div key={i} className="text-xs text-[#F9FAFB] py-1">• {t}</div>
+              ))}
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -457,19 +450,24 @@ export default function ContentIdeasStudio({ initialTab }) {
               <div>
                 <label className="block text-xs font-medium text-[#9CA3AF] mb-2">Platforms</label>
                 <div className="flex flex-wrap gap-2">
-                  {PLATFORMS.map((p) => (
-                    <button
-                      key={p}
-                      onClick={() => togglePlatform(p)}
-                      className={`px-4 py-2 rounded-full text-xs font-medium border transition-all ${
-                        selectedPlatforms.includes(p)
-                          ? 'bg-[#7C3AED]/20 border-[#7C3AED]/30 text-[#7C3AED]'
-                          : 'border-white/10 text-[#9CA3AF] hover:bg-white/5'
-                      }`}
-                    >
-                      {p}
-                    </button>
-                  ))}
+                  {PLATFORM_NAMES.map((p) => {
+                    const platId = Object.keys(PLATFORM_ICONS).find(k => PLATFORMS.find(pf => pf.id === k)?.label?.toLowerCase().startsWith(p.toLowerCase().split('/')[0].split(' ')[0])) || p.toLowerCase().split('/')[0].split(' ')[0];
+                    const Icon = PLATFORM_ICONS[platId];
+                    return (
+                      <button
+                        key={p}
+                        onClick={() => togglePlatform(p)}
+                        className={`px-4 py-2 rounded-full text-xs font-medium border transition-all inline-flex items-center gap-1.5 ${
+                          selectedPlatforms.includes(p)
+                            ? 'bg-[#7C3AED]/20 border-[#7C3AED]/30 text-[#7C3AED]'
+                            : 'border-white/10 text-[#9CA3AF] hover:bg-white/5'
+                        }`}
+                      >
+                        {Icon && <Icon width={14} height={14} />}
+                        {p}
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -532,8 +530,8 @@ export default function ContentIdeasStudio({ initialTab }) {
                   <div className="w-20 h-20 mx-auto mb-6 rounded-2xl bg-[#7C3AED]/10 border border-[#7C3AED]/20 flex items-center justify-center">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
                   </div>
-                  <h3 className="text-lg font-bold text-[#F9FAFB] mb-2">Discover Content Ideas</h3>
-                  <p className="text-sm text-[#9CA3AF]">Select a niche and platform, then generate AI-powered content ideas with virality scores.</p>
+                  <h3 className="text-lg font-bold text-[#F9FAFB] mb-2">{error ? 'No Data Available' : 'Discover Content Ideas'}</h3>
+                  <p className="text-sm text-[#9CA3AF]">{error ? 'Configure Tavily or SerpAPI keys in Admin > API Providers to fetch real trend data.' : 'Select a niche and platform, then generate AI-powered content ideas with virality scores.'}</p>
                 </div>
               </div>
             )}

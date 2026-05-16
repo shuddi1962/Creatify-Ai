@@ -4,7 +4,7 @@ import { Image, Download } from 'lucide-react'
 import Link from 'next/link'
 import PromptArea from '@/components/ideas/PromptArea'
 
-const PLATFORMS = ['YouTube', 'TikTok', 'Instagram', 'LinkedIn']
+const PLATFORMS = ['YouTube', 'TikTok', 'Instagram', 'LinkedIn', 'Facebook', 'Twitter/X', 'Pinterest']
 const STYLES = ['Clickbait', 'Educational', 'Minimalist', 'Bold Text', 'Face Reaction', 'Split']
 const NUM_OPTIONS = ['3', '5', '8', '10']
 

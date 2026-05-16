@@ -19,7 +19,7 @@ const TONES = [
   'Inspirational & Motivational', 'Educational & Clear', 'Dramatic & Intense',
 ]
 
-const PLATFORMS = ['TikTok', 'Instagram Reels', 'YouTube Shorts', 'YouTube', 'LinkedIn']
+const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter/X', 'Facebook', 'Pinterest']
 const DURATIONS = ['15s', '30s', '60s', '3 min', '5 min', '10 min']
 const NICHES_SHORT = [
   'Lifestyle', 'Business', 'Finance', 'Tech / AI', 'Fitness', 'Food',

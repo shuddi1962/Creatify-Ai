@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Search, TrendingUp, Eye, Heart, Copy, AtSign } from 'lucide-react'
 import Link from 'next/link'
 
-const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Twitter']
+const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'Twitter/X', 'Facebook', 'LinkedIn', 'Pinterest']
 const DEPTHS = [
   { value: '10', label: 'Quick (10 posts)' },
   { value: '20', label: 'Standard (20 posts)' },

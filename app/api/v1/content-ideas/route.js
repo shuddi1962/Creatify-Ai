@@ -1,36 +1,59 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+function generateHashtags(niche) {
+  const n = niche?.toLowerCase().replace(/\s+/g, '') || 'content';
+  return [`#${n}`, `#${n}tips`, '#viral', '#trending', '#fyp'];
+}
+
+async function fetchKeysFromDB() {
+  if (!SUPABASE_URL || !SERVICE_KEY) return {};
+  try {
+    const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
+    const { data } = await supabase
+      .from('admin_provider_keys')
+      .select('provider, encrypted_key')
+      .in('provider', ['tavily', 'serpapi'])
+      .eq('is_active', true);
+    const keys = {};
+    for (const k of data || []) keys[k.provider] = k.encrypted_key;
+    return keys;
+  } catch { return {}; }
+}
+
+function getAudioForNiche(niche) {
+  const map = {
+    Fitness: 'Energetic workout music', Fashion: 'Trendy pop',
+    Food: 'Cooking beats', Travel: 'Wanderlust vibes',
+    Gaming: 'Epic gaming soundtrack', Tech: 'Electronic futuristic',
+    Comedy: 'Funny sound effects', Motivation: 'Inspirational speech',
+    Education: 'Lo-fi study beats', Pets: 'Cute and playful',
+    Beauty: 'Soft glam vibes', Finance: 'Professional podcast',
+    Business: 'Corporate motivational',
+  };
+  return map[niche] || 'Trending viral sound';
+}
 
 export async function POST(request) {
   let body;
   try { body = await request.json(); } catch { body = {}; }
   const { niche, region, platforms, count = 12 } = body;
-
   const results = [];
 
-  // Try to use admin-configured keys from the database
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const dbKeys = await fetchKeysFromDB();
+  const tavilyKey = process.env.TAVILY_API_KEY || dbKeys.tavily || '';
+  const serpKey = process.env.SERPAPI_API_KEY || dbKeys.serpapi || '';
 
-  let tavilyKey = process.env.TAVILY_API_KEY || '';
-  let serpKey = process.env.SERPAPI_API_KEY || '';
-
-  // Try fetching from Supabase admin_provider_keys if no env vars set
-  if ((!tavilyKey || !serpKey) && supabaseUrl && supabaseKey) {
-    try {
-      const res = await fetch(`${supabaseUrl}/rest/v1/admin_provider_keys?select=provider,encrypted_key&is_active=eq.true`, {
-        headers: { 'apikey': supabaseKey, 'Authorization': `Bearer ${supabaseKey}` },
-      });
-      if (res.ok) {
-        const keys = await res.json();
-        for (const k of keys || []) {
-          if (k.provider === 'tavily' && !tavilyKey) tavilyKey = k.encrypted_key;
-          if (k.provider === 'serpapi' && !serpKey) serpKey = k.encrypted_key;
-        }
-      }
-    } catch { /* db unavailable, use env fallback */ }
+  if (!tavilyKey && !serpKey) {
+    return NextResponse.json(
+      { error: 'No API keys configured. Configure Tavily or SerpAPI in Admin > API Providers.', ideas: [], count: 0, source: 'none' },
+      { status: 200 }
+    );
   }
 
-  // Try Tavily API for real trend data
   if (tavilyKey) {
     try {
       const query = niche
@@ -52,21 +75,22 @@ export async function POST(request) {
         const tavilyData = await tavilyRes.json();
         for (const r of (tavilyData.results || []).slice(0, count)) {
           results.push({
-            niche: niche || 'general', platform: (platforms || ['TikTok'])[0],
+            niche: niche || 'general',
+            platform: (platforms || ['TikTok'])[0],
             region: region || 'Global',
             hook: r.title || '',
             script_outline: r.content?.slice(0, 500) || '',
             virality_score: Math.floor(Math.random() * 30) + 70,
             trending_audio: '',
             hashtags: generateHashtags(niche || 'general'),
-            source_url: r.url, source: 'tavily',
+            source_url: r.url,
+            source: 'tavily',
           });
         }
       }
     } catch { /* tavily fallback */ }
   }
 
-  // Try Google Trends via SerpAPI
   if (serpKey && results.length < count) {
     try {
       const trendsRes = await fetch(
@@ -78,7 +102,8 @@ export async function POST(request) {
         const topics = trendsData?.interest_over_time?.timeline_data || [];
         for (const topic of topics.slice(0, count - results.length)) {
           results.push({
-            niche: niche || 'trending', platform: (platforms || ['TikTok'])[0],
+            niche: niche || 'trending',
+            platform: (platforms || ['TikTok'])[0],
             region: region || 'Global',
             hook: `${topic.title || niche || 'Trend Topic'} — surging in interest`,
             script_outline: topic.values?.[0]?.extracted_value
@@ -95,58 +120,16 @@ export async function POST(request) {
     } catch { /* serpapi fallback */ }
   }
 
-  // Fallback: generate diverse AI ideas based on niche
   if (results.length === 0) {
-    const niches = niche ? [niche] : [
-      'Fitness', 'Fashion', 'Finance', 'Food', 'Travel', 'Gaming', 'Beauty',
-      'Tech', 'Crypto', 'Parenting', 'Pets', 'Comedy', 'Motivation', 'Education',
-    ];
-    const hooks = [
-      'Stop doing this if you want results in {niche}',
-      'The {niche} hack that changed everything for me',
-      'Why everyone is switching to this {niche} method',
-      'I tried this for 30 days — here\'s what happened',
-      'The one thing nobody tells you about {niche}',
-      'This {niche} tip will save you hours',
-      'The truth about {niche} that no one talks about',
-      'How I mastered {niche} in 7 days',
-    ];
-    for (let i = 0; i < Math.min(count, 12); i++) {
-      const n = niches[i % niches.length];
-      results.push({
-        niche: n, platform: (platforms || ['TikTok', 'Instagram', 'YouTube'])[i % 3],
-        region: region || 'Global',
-        hook: hooks[i % hooks.length].replace('{niche}', n.toLowerCase()),
-        script_outline: `Content strategy for ${n} audience focusing on trending topics and viral angles`,
-        virality_score: Math.floor(Math.random() * 25) + 75,
-        trending_audio: getAudioForNiche(n),
-        hashtags: generateHashtags(n),
-        source: 'ai-generated',
-      });
-    }
+    return NextResponse.json(
+      { error: 'Could not fetch trends. Check your API key configuration.', ideas: [], count: 0, source: 'none' },
+      { status: 200 }
+    );
   }
 
-  return NextResponse.json({ ideas: results, count: results.length, source: results[0]?.source || 'fallback' });
+  return NextResponse.json({ ideas: results, count: results.length, source: results[0]?.source || 'none' });
 }
 
-function generateHashtags(niche) {
-  const n = niche?.toLowerCase().replace(/\s+/g, '') || 'content';
-  return [`#${n}`, `#${n}tips`, '#viral', '#trending', '#fyp'];
-}
-
-function getAudioForNiche(niche) {
-  const map = {
-    Fitness: 'Energetic workout music',
-    Fashion: 'Trendy pop', Food: 'Cooking beats',
-    Travel: 'Wanderlust vibes', Gaming: 'Epic gaming soundtrack',
-    Tech: 'Electronic futuristic', Comedy: 'Funny sound effects',
-    Motivation: 'Inspirational speech', Education: 'Lo-fi study beats',
-    Pets: 'Cute and playful', Beauty: 'Soft glam vibes',
-    Finance: 'Professional podcast', Business: 'Corporate motivational',
-  };
-  return map[niche] || 'Trending viral sound';
-}
-
-export async function GET(request) {
-  return NextResponse.json({ ideas: [], count: 0, source: 'use POST method' });
+export async function GET() {
+  return NextResponse.json({ ideas: [], count: 0, message: 'Use POST method with niche, region, and platforms' });
 }

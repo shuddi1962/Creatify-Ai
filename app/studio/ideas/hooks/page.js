@@ -17,7 +17,7 @@ const HOOK_TYPES = [
 ]
 
 const TONES = ['Casual', 'Bold', 'Provocative', 'Curious', 'Inspirational', 'Humorous']
-const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter']
+const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter', 'Facebook', 'Pinterest']
 const COUNT_OPTIONS = ['5', '10', '15', '20']
 
 function HooksPageInner() {
