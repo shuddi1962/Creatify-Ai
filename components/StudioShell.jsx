@@ -313,14 +313,14 @@ export default function StudioShell({ children }) {
         <div style={{ display: 'flex', alignItems: 'center', gap: 0, minWidth: 0, flexShrink: 0 }}>
           <button onClick={() => setMobileDrawerOpen(true)}
             className="flex lg:hidden"
-            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             title="Open menu"
           >
             <Icons.Menu size={20} />
           </button>
           <button onClick={() => { userToggledSidebarRef.current = true; setSidebarCollapsed(!sidebarCollapsed) }}
             className="hidden lg:flex"
-            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <Icons.PanelLeft size={20} />
