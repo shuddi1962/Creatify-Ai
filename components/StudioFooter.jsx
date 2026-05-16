@@ -13,20 +13,21 @@ export default function StudioFooter() {
       <footer style={{
         borderTop: '1px solid var(--border-subtle)',
         background: 'var(--bg-card)',
-        padding: '12px 32px',
+        padding: '10px 16px',
+        width: '100%', maxWidth: '100vw',
       }}>
-        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
-            &copy; 2025 Creatify AI. Free and open-source. Powered by Muapi.ai
+        <div style={{ maxWidth: 1280, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 8 }}>
+          <p style={{ fontSize: 10, color: 'var(--text-muted)' }}>
+            &copy; 2025 Creatify AI. Free and open-source.
           </p>
-          <div style={{ display: 'flex', gap: 16 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             {[
               ['Twitter/X', 'https://x.com'],
               ['GitHub', 'https://github.com'],
               ['Discord', 'https://discord.com'],
             ].map(([label, href]) => (
               <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 11, color: 'var(--text-muted)', textDecoration: 'none' }}
+                style={{ fontSize: 10, color: 'var(--text-muted)', textDecoration: 'none' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
                 onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
               >{label}</a>
@@ -41,41 +42,42 @@ export default function StudioFooter() {
     <footer style={{
       borderTop: '1px solid var(--border-medium)',
       background: 'var(--bg-card)',
-      padding: '40px 32px 24px',
+      padding: '32px 16px 20px',
       marginTop: 'auto',
+      width: '100%', maxWidth: '100vw',
     }}>
       <div style={{ maxWidth: 1280, margin: '0 auto' }}>
         
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '200px 1fr 1fr 1fr 1fr',
-          gap: 32,
-          marginBottom: 40,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+          gap: 24,
+          marginBottom: 32,
         }}>
           
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
               <div style={{
-                width: 28, height: 28, borderRadius: 8,
+                width: 24, height: 24, borderRadius: 6,
                 background: '#6366f1',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
-                fontSize: 14,
+                fontSize: 12, flexShrink: 0,
               }}>✨</div>
-              <span style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>
+              <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                 Creatify AI
               </span>
             </div>
-            <p style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.6 }}>
-              Free open-source AI studio. Generate images, videos, audio, and more using 200+ models.
+            <p style={{ fontSize: 11, color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+              Free open-source AI studio. 200+ models.
             </p>
-            <p style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 8 }}>
+            <p style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 6 }}>
               Powered by Muapi.ai
             </p>
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', 
-              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', 
+              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
               Create
             </div>
             {[
@@ -87,9 +89,9 @@ export default function StudioFooter() {
               ['Marketing Studio', '/studio/marketing/ugc'],
             ].map(([label, href]) => (
               <Link key={label} href={href} style={{
-                display: 'block', fontSize: 13,
+                display: 'block', fontSize: 12,
                 color: 'var(--text-secondary)',
-                textDecoration: 'none', marginBottom: 8,
+                textDecoration: 'none', marginBottom: 6,
               }}
               onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
               onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
@@ -98,8 +100,8 @@ export default function StudioFooter() {
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
-              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
+              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
               Tools
             </div>
             {[
@@ -111,9 +113,9 @@ export default function StudioFooter() {
               ['Explore Apps', '/studio/apps'],
             ].map(([label, href]) => (
               <Link key={label} href={href} style={{
-                display: 'block', fontSize: 13,
+                display: 'block', fontSize: 12,
                 color: 'var(--text-secondary)',
-                textDecoration: 'none', marginBottom: 8,
+                textDecoration: 'none', marginBottom: 6,
               }}
               onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
               onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
@@ -122,8 +124,8 @@ export default function StudioFooter() {
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
-              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
+              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
               Manage
             </div>
             {[
@@ -135,9 +137,9 @@ export default function StudioFooter() {
               ['MCP Server', '/studio/agents/mcp'],
             ].map(([label, href]) => (
               <Link key={label} href={href} style={{
-                display: 'block', fontSize: 13,
+                display: 'block', fontSize: 12,
                 color: 'var(--text-secondary)',
-                textDecoration: 'none', marginBottom: 8,
+                textDecoration: 'none', marginBottom: 6,
               }}
               onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
               onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
@@ -146,8 +148,8 @@ export default function StudioFooter() {
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)',
-              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 12 }}>
+            <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)',
+              textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 10 }}>
               Company
             </div>
             {[
@@ -159,9 +161,9 @@ export default function StudioFooter() {
               ['Terms of Service', '/terms'],
             ].map(([label, href]) => (
               <Link key={label} href={href} style={{
-                display: 'block', fontSize: 13,
+                display: 'block', fontSize: 12,
                 color: 'var(--text-secondary)',
-                textDecoration: 'none', marginBottom: 8,
+                textDecoration: 'none', marginBottom: 6,
               }}
               onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
               onMouseLeave={e => e.target.style.color = 'var(--text-secondary)'}
@@ -174,22 +176,22 @@ export default function StudioFooter() {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          paddingTop: 20,
+          paddingTop: 16,
           borderTop: '1px solid var(--border-medium)',
           flexWrap: 'wrap',
-          gap: 12,
+          gap: 8,
         }}>
-          <p style={{ fontSize: 12, color: 'var(--text-muted)' }}>
-            &copy; 2025 Creatify AI. Free and open-source. Powered by Muapi.ai
+          <p style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+            &copy; 2025 Creatify AI. Free and open-source.
           </p>
-          <div style={{ display: 'flex', gap: 16 }}>
+          <div style={{ display: 'flex', gap: 12 }}>
             {[
               ['Twitter/X', 'https://x.com'],
               ['GitHub', 'https://github.com'],
               ['Discord', 'https://discord.com'],
             ].map(([label, href]) => (
               <a key={label} href={href} target="_blank" rel="noopener noreferrer"
-                style={{ fontSize: 12, color: 'var(--text-muted)', textDecoration: 'none' }}
+                style={{ fontSize: 11, color: 'var(--text-muted)', textDecoration: 'none' }}
                 onMouseEnter={e => e.target.style.color = 'var(--text-primary)'}
                 onMouseLeave={e => e.target.style.color = 'var(--text-muted)'}
               >{label}</a>

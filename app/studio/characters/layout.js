@@ -2,11 +2,9 @@ import { CharactersSidebar } from '@/components/sidebars/CharactersSidebar'
 
 export default function CharactersLayout({ children }) {
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden', background: 'var(--bg-page)' }}>
-      <CharactersSidebar />
-      <main style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', background: 'var(--bg-page)' }}>
-        {children}
-      </main>
+    <div className="section-layout">
+      <div className="section-sidebar-wrapper"><CharactersSidebar /></div>
+      <main>{children}</main>
     </div>
   )
 }

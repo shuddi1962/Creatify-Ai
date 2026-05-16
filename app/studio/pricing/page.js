@@ -284,9 +284,9 @@ export default function PricingPage() {
       <div style={{
         background: 'linear-gradient(135deg, #1a0030 0%, #2d0050 40%, #1a0030 100%)',
         border: '1px solid rgba(168,85,247,0.3)', borderRadius: 16,
-        padding: '20px 28px', margin: '24px 24px 0', position: 'relative',
-        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      }}>
+        padding: '16px', margin: '16px 16px 0', position: 'relative',
+        overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12,
+      }} className="sm:p-5 sm:mx-6">
         <div style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: '40%', background: 'radial-gradient(ellipse at right, rgba(168,85,247,0.15) 0%, transparent 70%)', pointerEvents: 'none' }} />
         <div>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, background: 'rgba(168,85,247,0.2)', border: '1px solid rgba(168,85,247,0.4)', borderRadius: 100, padding: '3px 10px', fontSize: 10, fontWeight: 700, color: '#c084fc', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 10 }}>
@@ -330,17 +330,17 @@ export default function PricingPage() {
       </div>
 
       {/* SECTION 4 — Pricing Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, padding: '0 24px', maxWidth: 1400, margin: '0 auto' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, padding: '0 16px sm:0 24px', maxWidth: 1400, margin: '0 auto' }}>
         {PLANS.map(plan => <PricingCard key={plan.name} plan={plan} annual={annual} onClick={() => router.push(PLAN_HREF[plan.name])} />)}
       </div>
-      <p style={{ textAlign: 'center', fontSize: 11, color: 'var(--text-muted)', marginTop: 16, padding: '0 24px' }}>
+      <p style={{ textAlign: 'center', fontSize: 10, color: 'var(--text-muted)', marginTop: 16, padding: '0 16px' }}>
         Prices exclude VAT and local taxes. All plans are billed in USD. Unlimited usage is subject to our fair use policy. Unused credits expire at end of billing period. Early access features may change before general availability.
       </p>
 
       {/* SECTION 5 — Enterprise Block */}
-      <div style={{ maxWidth: 1400, margin: '32px auto', padding: '0 24px' }}>
-        <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, overflow: 'hidden', display: 'grid', gridTemplateColumns: '1fr 1fr' }}>
-          <div style={{ padding: '32px' }}>
+      <div style={{ maxWidth: 1400, margin: '32px auto', padding: '0 16px' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, overflow: 'hidden' }}>
+          <div style={{ padding: '24px' }} className="sm:p-8">
             <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: 12 }}>
               Everything on Business Plan plus...
             </div>
@@ -350,7 +350,7 @@ export default function PricingPage() {
             <p style={{ fontSize: 13, color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: 28 }}>
               Custom workflows, dedicated support, seamless onboarding, full control at scale, and no trading on your data.
             </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 20 }}>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {[
                 { icon: '\uD83D\uDEE1\uFE0F', title: 'Security & Compliance', desc: 'SOC 2 Type II compliance, GDPR, CCPA, and custom data retention policies.' },
                 { icon: '\uD83D\uDCCA', title: 'Data & usage rights', desc: 'Full ownership of outputs. We guarantee no training on your generations without explicit consent.' },
@@ -382,7 +382,7 @@ export default function PricingPage() {
       </div>
 
       {/* SECTION 6 — Compare Plans Table */}
-      <div style={{ maxWidth: 1400, margin: '40px auto 24px', padding: '0 24px' }}>
+      <div style={{ maxWidth: 1400, margin: '40px auto 24px', padding: '0 16px' }}>
         <h2 style={{ textAlign: 'center', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, color: 'var(--text-primary)', textTransform: 'uppercase', marginBottom: 32 }}>
           COMPARE PLANS
         </h2>
@@ -441,7 +441,7 @@ export default function PricingPage() {
       </div>
 
       {/* SECTION 7 — FAQ */}
-      <div style={{ maxWidth: 720, margin: '40px auto', padding: '0 24px' }}>
+      <div style={{ maxWidth: 720, margin: '40px auto', padding: '0 16px' }}>
         <h2 style={{ textAlign: 'center', fontSize: 'clamp(22px, 2.5vw, 32px)', fontWeight: 800, color: 'var(--text-primary)', marginBottom: 32 }}>
           FREQUENTLY ASKED QUESTIONS
         </h2>

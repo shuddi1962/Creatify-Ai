@@ -493,7 +493,7 @@ export default function StandaloneShell() {
 
   return (
     <div className="flex flex-col relative overflow-y-auto no-scrollbar"
-      style={{ minHeight: '100vh', background: 'var(--bg-body)', color: 'var(--text-primary)' }}
+      style={{ minHeight: '100vh', background: 'var(--bg-body)', color: 'var(--text-primary)', overflowX: 'hidden', maxWidth: '100vw', width: '100%' }}
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
@@ -520,19 +520,28 @@ export default function StandaloneShell() {
         background: 'var(--bg-card)',
         borderBottom: '1px solid var(--border-medium)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px', zIndex: 100, position: 'sticky', top: 0
+        padding: '0 8px', zIndex: 100, position: 'sticky', top: 0,
+        width: '100%', maxWidth: '100vw',
       }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 0, minWidth: 0, flexShrink: 0 }}>
+            <button onClick={() => setMobileDrawerOpen(true)}
+              className="flex lg:hidden"
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+              title="Open menu"
+            >
+              <Icons.Menu size={20} />
+            </button>
             <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+              className="hidden lg:flex"
+              style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             >
               <Icons.PanelLeft size={20} />
             </button>
-            <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
-              <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', marginRight: 8, flexShrink: 0 }}>
+              <div style={{ width: 28, height: 28, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
               </div>
-              <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary-soft)' }}>Creatify AI</span>
+              <span className="hidden sm:block" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary-soft)', whiteSpace: 'nowrap' }}>Creatify AI</span>
             </div>
 
             <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -540,11 +549,11 @@ export default function StandaloneShell() {
             </nav>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexShrink: 0 }}>
             <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
               style={{
-                width: 40, height: 22,
+                width: 36, height: 20,
                 borderRadius: 100,
                 border: `1px solid ${theme === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)'}`,
                 background: theme === 'dark' ? '#1a1a1a' : '#e5e7eb',
@@ -556,8 +565,8 @@ export default function StandaloneShell() {
             >
               <div style={{
                 position: 'absolute',
-                top: 2,
-                left: theme === 'dark' ? 2 : 18,
+                top: 1,
+                left: theme === 'dark' ? 1 : 17,
                 width: 16, height: 16,
                 borderRadius: '50%',
                 background: theme === 'dark' ? '#6366f1' : '#ffffff',
@@ -568,12 +577,12 @@ export default function StandaloneShell() {
                 justifyContent: 'center',
                 fontSize: 9,
               }}>
-                {theme === 'dark' ? '🌙' : '☀️'}
+                {theme === 'dark' ? <Icons.Moon size={9} color="#fff" /> : <Icons.Sun size={9} color="#000" />}
               </div>
             </button>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--glass-bg)', padding: '4px 12px', borderRadius: 20, border: '1px solid var(--border-color)' }}>
-              <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#22c55e' }} />
-              <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary-soft)' }}>${balance !== null ? `${balance}` : '---'}</span>
+            <div className="hidden sm:flex" style={{ display: 'flex', alignItems: 'center', gap: 4, background: 'var(--glass-bg)', padding: '3px 8px', borderRadius: 20, border: '1px solid var(--border-color)' }}>
+              <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e' }} />
+              <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--text-primary-soft)' }}>${balance !== null ? `${balance}` : '---'}</span>
             </div>
 
             {user ? (
@@ -582,9 +591,9 @@ export default function StandaloneShell() {
                 onMouseLeave={() => setShowAccountMenu(false)}
               >
                 <button
-                  style={{ width: 32, height: 32, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms' }}
+                  style={{ width: 30, height: 30, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms', flexShrink: 0 }}
                 >
-                  <span style={{ fontSize: 12, fontWeight: 700, color: showAccountMenu ? '#fff' : 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: showAccountMenu ? '#fff' : 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                 </button>
                 {showAccountMenu && (
                   <div style={{ position: 'absolute', top: '100%', right: 0, marginTop: 8, minWidth: 200, background: 'var(--bg-card)', border: '1px solid var(--border-strong)', borderRadius: 12, padding: 6, zIndex: 9999, boxShadow: '0 16px 48px rgba(0,0,0,0.5)' }}>
@@ -642,17 +651,18 @@ export default function StandaloneShell() {
           </div>
         </header>
 
-      <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
+      <div style={{ flex: 1, minHeight: 0, display: 'flex', width: '100%', maxWidth: '100%', overflowX: 'hidden' }}>
         <aside className="hidden lg:flex"
           style={{
             width: sidebarCollapsed ? 60 : 160, flexShrink: 0,
             background: 'var(--bg-card)',
             borderRight: '1px solid var(--border-medium)',
-            display: 'flex', flexDirection: 'column',
+            flexDirection: 'column',
             gap: 4,
             paddingTop: 8, paddingBottom: 8,
             overflow: 'visible', zIndex: 50,
-            transition: 'width 200ms ease'
+            transition: 'width 200ms ease',
+            minWidth: 0,
           }}
         >
           {SIDEBAR_ITEMS.map((item, idx) => {
@@ -796,7 +806,7 @@ export default function StandaloneShell() {
           </div>
         )}
 
-        <main className="flex-1" style={{ background: 'var(--bg-app)' }}>
+        <main className="flex-1 min-w-0" style={{ background: 'var(--bg-app)', overflowX: 'hidden', width: '100%', maxWidth: '100%' }}>
           {renderContent()}
         </main>
       </div>

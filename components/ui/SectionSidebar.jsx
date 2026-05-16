@@ -44,7 +44,7 @@ export function SectionSidebar({
 
         {!collapsed && (
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)' }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text-primary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               {sectionName}
             </div>
             {toolCount && (

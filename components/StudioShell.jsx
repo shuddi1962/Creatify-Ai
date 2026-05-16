@@ -270,7 +270,7 @@ export default function StudioShell({ children }) {
 
   return (
     <div className="flex flex-col relative"
-      style={{ minHeight: '100vh', background: 'var(--bg-page)', color: 'var(--text-primary)' }}
+      style={{ minHeight: '100vh', background: 'var(--bg-page)', color: 'var(--text-primary)', overflowX: 'hidden', maxWidth: '100vw', width: '100%' }}
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
@@ -297,20 +297,29 @@ export default function StudioShell({ children }) {
         background: 'var(--bg-topbar)',
         borderBottom: '1px solid var(--border-subtle)',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        padding: '0 16px', zIndex: 99999, position: 'sticky', top: 0
+        padding: '0 8px', zIndex: 99999, position: 'sticky', top: 0,
+        width: '100%', maxWidth: '100vw',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 0, minWidth: 0, flexShrink: 0 }}>
+          <button onClick={() => setMobileDrawerOpen(true)}
+            className="flex lg:hidden"
+            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
+            title="Open menu"
+          >
+            <Icons.Menu size={20} />
+          </button>
           <button onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+            className="hidden lg:flex"
+            style={{ width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'transparent', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}
             title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <Icons.PanelLeft size={20} />
           </button>
-          <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10, cursor: 'pointer', marginRight: 16 }}>
-            <div style={{ width: 32, height: 32, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+          <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', marginRight: 8, flexShrink: 0 }}>
+            <div style={{ width: 28, height: 28, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
             </div>
-            <span className="hidden sm:block" style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Creatify AI</span>
+            <span className="hidden sm:block" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>Creatify AI</span>
           </Link>
 
           <nav className="hidden lg:flex" style={{ display: 'flex', alignItems: 'center', gap: 2 }}>
@@ -318,136 +327,138 @@ export default function StudioShell({ children }) {
           </nav>
         </div>
 
-        <div style={{ flex: 1, maxWidth: 360, margin: '0 16px' }}>
+        <div style={{ flex: '1 1 auto', maxWidth: 320, margin: '0 6px', minWidth: 40 }}>
           <div
             onClick={() => setShowSearch(true)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 8,
+              display: 'flex', alignItems: 'center', gap: 6,
               background: 'var(--bg-input)',
               border: '1px solid var(--border-default)',
-              borderRadius: 8, padding: '6px 12px',
-              color: 'var(--text-muted)', fontSize: 13,
-              cursor: 'pointer', width: 200,
+              borderRadius: 8, padding: '5px 8px',
+              color: 'var(--text-muted)', fontSize: 12,
+              cursor: 'pointer', width: '100%', maxWidth: 180,
               transition: 'border-color 150ms',
             }}
             onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--border-strong)'}
             onMouseLeave={e => e.currentTarget.style.borderColor = 'var(--border-default)'}
           >
-            <Icons.Search size={14} />
-            <span>Search...</span>
+            <Icons.Search size={13} />
+            <span style={{ flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>Search...</span>
             <kbd style={{
-              marginLeft: 'auto',
+              marginLeft: 'auto', flexShrink: 0,
               background: 'var(--bg-card)', border: '1px solid var(--border-default)',
-              borderRadius: 4, padding: '1px 5px', fontSize: 10,
+              borderRadius: 4, padding: '1px 4px', fontSize: 9,
               color: 'var(--text-muted)',
             }}>⌘K</kbd>
           </div>
         </div>
 
-        {user && <div style={{
-          display: 'flex', alignItems: 'center', gap: 6,
-          background: 'var(--bg-input)', border: '1px solid var(--border-default)',
-          borderRadius: 8, padding: '6px 12px', fontSize: 12,
-          color: credits < 100 ? '#ef4444' : 'var(--text-secondary)',
-          marginRight: 8,
-        }}>
-          <Icons.Zap size={12} />
-          {credits} credits
-        </div>}
-
-        {user && <div style={{ position: 'relative', marginRight: 4 }}>
-          <button onClick={() => setShowNotifications(!showNotifications)}
-            style={{
-              width: 36, height: 36, borderRadius: 8, border: 'none', cursor: 'pointer',
-              background: 'transparent', color: 'var(--text-secondary)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              position: 'relative',
-            }}
-            onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
-            onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-          >
-            <Icons.Bell size={18} />
-            <div style={{
-              position: 'absolute', top: 4, right: 4,
-              width: 8, height: 8, borderRadius: '50%',
-              background: '#ef4444',
-            }} />
-          </button>
-          {showNotifications && (
-            <div style={{
-              position: 'absolute', right: 0, top: 'calc(100% + 4px)',
-              zIndex: 200,
-            }}>
-              <NotificationsPanel onClose={() => setShowNotifications(false)} />
-            </div>
-          )}
-        </div>}
-
-        <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{
-            width: 40, height: 22,
-            borderRadius: 100,
-            border: `1px solid var(--border-default)`,
-            background: 'var(--bg-input)',
-            position: 'relative',
-            cursor: 'pointer',
-            transition: 'background 200ms',
-            flexShrink: 0,
-            marginRight: 4,
-          }}
-        >
-          <div style={{
-            position: 'absolute',
-            top: 2,
-            left: theme === 'dark' ? 2 : 18,
-            width: 16, height: 16,
-            borderRadius: '50%',
-            background: theme === 'dark' ? 'var(--accent-primary)' : '#fbbf24',
-            boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
-            transition: 'left 200ms ease',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 9,
+        <div style={{ display: 'flex', alignItems: 'center', gap: 1, flexShrink: 0, minWidth: 0 }}>
+          {user && <div className="hidden md:flex" style={{
+            display: 'flex', alignItems: 'center', gap: 4,
+            background: 'var(--bg-input)', border: '1px solid var(--border-default)',
+            borderRadius: 8, padding: '4px 8px', fontSize: 11,
+            color: credits < 100 ? '#ef4444' : 'var(--text-secondary)',
+            marginRight: 2,
           }}>
-            {theme === 'dark' ? <Icons.Moon size={10} color="#fff" /> : <Icons.Sun size={10} color="#000" />}
-          </div>
-        </button>
+            <Icons.Zap size={11} />
+            <span>{credits}</span>
+          </div>}
 
-        <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-          <Link href="/studio/pricing"
-            style={{
-              display: 'flex', alignItems: 'center', gap: 5,
-              padding: '6px 12px', borderRadius: 6,
-              cursor: 'pointer',
-              color: 'var(--text-secondary)', fontSize: 12, fontWeight: 600,
-              textDecoration: 'none',
-              transition: 'all 150ms ease',
-            }}
-            onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--bg-hover)'; }}
-            onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
-          >
-            <Icons.CreditCard size={14} />
-            Pricing
-          </Link>
-
-          <div ref={accountMenuRef} style={{ position: 'relative' }}
-            onMouseEnter={() => setShowAccountMenu(true)}
-            onMouseLeave={() => setShowAccountMenu(false)}
-          >
-            <button style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '6px 14px', borderRadius: 6,
-              border: 'none', cursor: 'pointer',
-              background: showAccountMenu ? 'var(--btn-generate-hover)' : 'var(--btn-generate-bg)',
-              color: 'var(--btn-generate-text)',
-              fontSize: 12, fontWeight: 700,
-              transition: 'background 150ms ease',
-            }}>
-              <Icons.User size={14} />
-              Dashboard
+          {user && <div style={{ position: 'relative', marginRight: 1 }}>
+            <button onClick={() => setShowNotifications(!showNotifications)}
+              style={{
+                width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer',
+                background: 'transparent', color: 'var(--text-secondary)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                position: 'relative',
+              }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
+            >
+              <Icons.Bell size={16} />
+              <div style={{
+                position: 'absolute', top: 3, right: 3,
+                width: 6, height: 6, borderRadius: '50%',
+                background: '#ef4444',
+              }} />
             </button>
+            {showNotifications && (
+              <div style={{
+                position: 'fixed', right: 8, top: 60, left: 8,
+                zIndex: 200, maxWidth: 400, margin: '0 auto',
+              }}>
+                <NotificationsPanel onClose={() => setShowNotifications(false)} />
+              </div>
+            )}
+          </div>}
+
+          <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+            style={{
+              width: 36, height: 20,
+              borderRadius: 100,
+              border: `1px solid var(--border-default)`,
+              background: 'var(--bg-input)',
+              position: 'relative',
+              cursor: 'pointer',
+              transition: 'background 200ms',
+              flexShrink: 0,
+              marginRight: 1,
+            }}
+          >
+            <div style={{
+              position: 'absolute',
+              top: 1,
+              left: theme === 'dark' ? 1 : 17,
+              width: 16, height: 16,
+              borderRadius: '50%',
+              background: theme === 'dark' ? 'var(--accent-primary)' : '#fbbf24',
+              boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+              transition: 'left 200ms ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: 9,
+            }}>
+              {theme === 'dark' ? <Icons.Moon size={9} color="#fff" /> : <Icons.Sun size={9} color="#000" />}
+            </div>
+          </button>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+            <Link href="/studio/pricing"
+              className="hidden sm:flex"
+              style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '5px 8px', borderRadius: 6,
+                cursor: 'pointer',
+                color: 'var(--text-secondary)', fontSize: 11, fontWeight: 600,
+                textDecoration: 'none',
+                transition: 'all 150ms ease',
+              }}
+              onMouseEnter={e => { e.currentTarget.style.color = 'var(--text-primary)'; e.currentTarget.style.background = 'var(--bg-hover)'; }}
+              onMouseLeave={e => { e.currentTarget.style.color = 'var(--text-secondary)'; e.currentTarget.style.background = 'transparent'; }}
+            >
+              <Icons.CreditCard size={13} />
+              <span>Pricing</span>
+            </Link>
+
+            <div ref={accountMenuRef} style={{ position: 'relative' }}
+              onMouseEnter={() => setShowAccountMenu(true)}
+              onMouseLeave={() => setShowAccountMenu(false)}
+            >
+              <button style={{
+                display: 'flex', alignItems: 'center', gap: 4,
+                padding: '5px 10px', borderRadius: 6,
+                border: 'none', cursor: 'pointer',
+                background: showAccountMenu ? 'var(--btn-generate-hover)' : 'var(--btn-generate-bg)',
+                color: 'var(--btn-generate-text)',
+                fontSize: 11, fontWeight: 700,
+                transition: 'background 150ms ease',
+              }}>
+                <Icons.User size={13} />
+                <span className="hidden sm:inline">Dashboard</span>
+              </button>
 
             {showAccountMenu && (
               <div style={{
@@ -535,6 +546,7 @@ export default function StudioShell({ children }) {
             )}
           </div>
         </div>
+        </div>
       </header>
 
       <div style={{ flex: 1, minHeight: 0, display: 'flex' }}>
@@ -548,7 +560,7 @@ export default function StudioShell({ children }) {
           gap: 2,
           paddingTop: 12, paddingBottom: 12,
           overflowY: 'auto', overflowX: 'hidden', zIndex: 50,
-          transition: 'all 250ms ease',
+          transition: 'width 250ms cubic-bezier(0.4, 0, 0.2, 1)',
           display: sidebarCollapsed ? 'none' : 'flex',
           position: 'sticky', top: 56, alignSelf: 'flex-start',
           height: 'calc(100vh - 56px)',
@@ -662,47 +674,50 @@ export default function StudioShell({ children }) {
           <div className="fixed inset-0 z-50 lg:hidden">
             <div className="absolute inset-0" style={{ background: 'var(--bg-overlay)' }} onClick={() => setMobileDrawerOpen(false)} />
             <div style={{
-              position: 'absolute', left: 0, top: 0, bottom: 0, width: '85vw', maxWidth: 320,
+              position: 'absolute', left: 0, top: 0, bottom: 0, width: '80vw', maxWidth: 300,
               background: 'var(--bg-card)', borderRight: '1px solid var(--border-subtle)',
-              overflowY: 'auto', padding: 16
+              overflowY: 'auto', overflowX: 'hidden', padding: '12px 8px',
             }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
-                <Link href="/studio/home" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16, padding: '0 4px' }}>
+                <Link href="/studio/home" onClick={() => setMobileDrawerOpen(false)} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ width: 28, height: 28, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   </div>
-                  <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Creatify AI</span>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)' }}>Creatify AI</span>
                 </Link>
-                <button onClick={() => setMobileDrawerOpen(false)} style={{ width: 32, height: 32, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--bg-hover)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Icons.X size={18} />
+                <button onClick={() => setMobileDrawerOpen(false)} style={{ width: 30, height: 30, borderRadius: 8, border: 'none', cursor: 'pointer', background: 'var(--bg-hover)', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <Icons.X size={16} />
                 </button>
               </div>
 
-              <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Studios</div>
+              <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: 6 }}>Studios</div>
               {TOP_NAV.map(item => {
                 const id = topNavId(item.label);
                 const iconMap = { image: Icons.Image, video: Icons.Video, lipsync: Icons.Mic, audio: Icons.Music, cinema: Icons.Film, marketing: Icons.Briefcase };
                 const IconComp = iconMap[id] || Icons.HelpCircle;
                 const isActive = pathname.startsWith(`/studio/${id}`);
                 return (
-                  <Link key={id} href={`/studio/${id}`} onClick={() => setMobileDrawerOpen(false)}
-                    style={{
-                      width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                      padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                      background: isActive ? 'var(--accent-bg)' : 'transparent',
-                      color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
-                      fontSize: 13, fontWeight: 500, textDecoration: 'none',
-                      transition: 'all 150ms ease', marginBottom: 2
-                    }}
-                  >
-                    <IconComp size={18} />
-                    <span>{item.label}</span>
-                  </Link>
+                  <div key={id}>
+                    <Link href={`/studio/${id}`} onClick={() => setMobileDrawerOpen(false)}
+                      style={{
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 10px', borderRadius: 6,
+                        background: isActive ? 'var(--accent-bg)' : 'transparent',
+                        color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
+                        fontSize: 12, fontWeight: 500, textDecoration: 'none',
+                        transition: 'all 150ms ease', marginBottom: 1,
+                      }}
+                    >
+                      <IconComp size={16} />
+                      <span style={{ flex: 1 }}>{item.label.split(' ')[0]}</span>
+                      <Icons.ChevronRight size={12} style={{ color: 'var(--text-muted)', opacity: 0.5 }} />
+                    </Link>
+                  </div>
                 );
               })}
 
-              <div style={{ borderTop: '1px solid var(--border-subtle)', margin: '12px 0', paddingTop: 12 }}>
-                <div style={{ fontSize: 10, color: 'var(--text-muted)', fontWeight: 500, textTransform: 'uppercase', letterSpacing: '0.07em', padding: '0 8px', marginBottom: 8 }}>Tools</div>
+              <div style={{ borderTop: '1px solid var(--border-subtle)', margin: '10px 0', paddingTop: 10 }}>
+                <div style={{ fontSize: 9, color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', padding: '0 8px', marginBottom: 6 }}>Tools</div>
                 {SIDEBAR_ITEMS.map(item => {
                   const id = getSidebarId(item);
                   const IconComp = item.icon;
@@ -711,15 +726,15 @@ export default function StudioShell({ children }) {
                   return (
                     <Link key={id} href={item.href} onClick={() => setMobileDrawerOpen(false)}
                       style={{
-                        width: '100%', display: 'flex', alignItems: 'center', gap: 10,
-                        padding: '10px 12px', borderRadius: 8, border: 'none', cursor: 'pointer',
-                      background: isActive ? 'var(--accent-bg)' : 'transparent',
-                      color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
-                      fontSize: 13, fontWeight: 500, textDecoration: 'none',
-                      transition: 'all 150ms ease', marginBottom: 2
-                    }}
+                        width: '100%', display: 'flex', alignItems: 'center', gap: 8,
+                        padding: '8px 10px', borderRadius: 6,
+                        background: isActive ? 'var(--accent-bg)' : 'transparent',
+                        color: isActive ? 'var(--accent-text)' : 'var(--text-secondary)',
+                        fontSize: 12, fontWeight: 500, textDecoration: 'none',
+                        transition: 'all 150ms ease', marginBottom: 1,
+                      }}
                     >
-                      <IconComp size={18} />
+                      <IconComp size={16} />
                       <span>{displayLabel}</span>
                       </Link>
                     );
@@ -729,7 +744,7 @@ export default function StudioShell({ children }) {
           </div>
         )}
 
-        <main className="flex-1" style={{ background: 'var(--bg-page)', overflowY: 'auto', overflowX: 'hidden' }}>
+        <main className="flex-1 min-w-0" style={{ background: 'var(--bg-page)', overflowY: 'auto', overflowX: 'hidden', width: '100%', maxWidth: '100%' }}>
           {children}
         </main>
       </div>

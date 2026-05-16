@@ -156,7 +156,7 @@ export default function AdminShell({ children }) {
             </button>
           </div>
         </header>
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 overflow-y-auto p-3 sm:p-4 md:p-6" style={{ width: '100%', maxWidth: '100%' }}>
           {children}
         </div>
       </main>
@@ -171,7 +171,7 @@ function SidebarContent({ currentSection, adminRole, collapsed, onNav, onToggle,
         <div className="w-8 h-8 bg-[#7C3AED] rounded-lg flex items-center justify-center flex-shrink-0">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
         </div>
-        {!collapsed && <span className="text-sm font-bold text-[#F9FAFB]">Admin Panel</span>}
+        {!collapsed && <span className="text-sm font-bold text-[#F9FAFB] whitespace-nowrap">Admin Panel</span>}
       </div>
       <nav className="flex-1 overflow-y-auto p-3 space-y-1">
         {ADMIN_NAV.map((item) => (

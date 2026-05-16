@@ -2,11 +2,9 @@ import IdeasSidebar from '@/components/ideas/IdeasSidebar'
 
 export default function IdeasLayout({ children }) {
   return (
-    <div style={{ display: 'flex', height: '100%', overflow: 'hidden' }}>
-      <IdeasSidebar />
-      <div style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-page)' }}>
-        {children}
-      </div>
+    <div className="section-layout">
+      <div className="section-sidebar-wrapper"><IdeasSidebar /></div>
+      <main>{children}</main>
     </div>
   )
 }
