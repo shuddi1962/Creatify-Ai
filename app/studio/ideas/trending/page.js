@@ -86,7 +86,7 @@ export default function TrendingPage() {
   const loadTrends = useCallback(async () => {
     setLoading(true)
     try {
-      const params = new URLSearchParams({ niche, platform, region, limit: '15' })
+      const params = new URLSearchParams({ niche, platform, region, timeframe, limit: '15' })
       const res = await fetch(`/api/v1/ideas/trends?${params}`)
       if (res.ok) {
         const data = await res.json()

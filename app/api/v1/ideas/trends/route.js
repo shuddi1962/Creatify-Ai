@@ -12,6 +12,18 @@ const PLATFORM_LABELS = {
   facebook: 'Facebook',
 };
 
+const TIMEFRAME_SUFFIX = {
+  'Today': ' today past 24 hours',
+  'This Week': ' this week',
+  'This Month': ' this month',
+};
+
+const TIMEFRAME_SERPAPI_DATE = {
+  'Today': 'now 1-d',
+  'This Week': 'now 7-d',
+  'This Month': 'today 1-m',
+};
+
 const DEFAULT_QUERIES = [
   'viral content ideas trending',
   'social media trends',
@@ -40,10 +52,13 @@ export async function GET(request) {
   const rawNiche = searchParams.get('niche') || '';
   const rawPlatform = searchParams.get('platform') || '';
   const region = searchParams.get('region') || '';
+  const timeframe = searchParams.get('timeframe') || '';
   const limit = parseInt(searchParams.get('limit') || '15');
 
   const niche = rawNiche === 'All Niches' ? '' : rawNiche;
   const platform = rawPlatform === 'all' ? '' : rawPlatform;
+  const tfs = TIMEFRAME_SUFFIX[timeframe] || '';
+  const serpDate = TIMEFRAME_SERPAPI_DATE[timeframe] || '';
 
   const dbKeys = await fetchKeysFromDB();
   const tavilyKey = process.env.TAVILY_API_KEY || dbKeys.tavily || '';
@@ -54,13 +69,13 @@ export async function GET(request) {
   if (tavilyKey) {
     try {
       const searchQueries = niche
-        ? [`${niche} trending ${platform ? PLATFORM_LABELS[platform] || platform : 'social media'} ${region}`,
-           `${niche} viral content ideas`,
-           `${niche} trends`]
+        ? [`${niche} trending${tfs} ${platform ? PLATFORM_LABELS[platform] || platform : 'social media'} ${region}`,
+           `${niche} viral content ideas${tfs}`,
+           `${niche} trends${tfs}`]
         : platform
-          ? [`${PLATFORM_LABELS[platform] || platform} trending ${region}`,
-             `${PLATFORM_LABELS[platform] || platform} viral trends`]
-          : DEFAULT_QUERIES;
+          ? [`${PLATFORM_LABELS[platform] || platform} trending${tfs} ${region}`,
+             `${PLATFORM_LABELS[platform] || platform} viral trends${tfs}`]
+          : DEFAULT_QUERIES.map(q => q + tfs);
 
       for (const query of searchQueries) {
         if (trends.length >= limit) break;
@@ -107,8 +122,9 @@ export async function GET(request) {
   if (serpKey) {
     try {
       const serpQuery = niche || 'trending';
-      const serpRes = await fetch(
-        `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(serpQuery)}&api_key=${serpKey}&data_type=TIMESERIES`,
+      let serpUrl = `https://serpapi.com/search.json?engine=google_trends&q=${encodeURIComponent(serpQuery)}&api_key=${serpKey}`;
+      if (serpDate) serpUrl += `&date=${encodeURIComponent(serpDate)}`;
+      const serpRes = await fetch(serpUrl,
         { signal: AbortSignal.timeout(10000) }
       );
 
