@@ -598,7 +598,8 @@ export default function LipSyncStudio({
 
   const downloadFile = async (url, filename) => {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { mode: 'cors' });
+      if (!response.ok) throw new Error('fetch failed');
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -609,7 +610,18 @@ export default function LipSyncStudio({
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(url, "_blank");
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch {
+        window.open(url, "_blank");
+      }
     }
   };
 
@@ -727,9 +739,9 @@ export default function LipSyncStudio({
     <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-48 lg:pb-40 px-2">
         {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full pt-2 animate-fade-in-up">
             {history.map((entry, idx) => (
               <div
                 key={entry.id || idx}
@@ -826,7 +838,7 @@ export default function LipSyncStudio({
 
       {/* ── BOTTOM PROMPT BAR ── */}
       <div className="absolute bottom-4 w-full max-w-[95%] lg:max-w-4xl z-40 animate-fade-in-up" style={{ animationDelay: "0.2s" }}>
-        <div className="w-full bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-md border border-white/10 p-4 flex flex-col gap-2 shadow-2xl">
+        <div className="w-full bg-[#0a0a0a]/80 backdrop-blur-3xl rounded-md border border-white/10 p-4 flex flex-col gap-3 shadow-2xl">
           {/* Mode toggle row */}
           <div className="flex items-center gap-2 px-3">
             <button
@@ -943,7 +955,7 @@ export default function LipSyncStudio({
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Describe speech style..."
-                  className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/10 focus:outline-none resize-none pt-1 leading-relaxed min-h-[40px] max-h-[150px] md:max-h-[250px] overflow-y-auto custom-scrollbar disabled:opacity-40"
+                  className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/10 focus:outline-none resize-none pt-1 leading-relaxed min-h-[80px] max-h-[300px] overflow-y-auto custom-scrollbar disabled:opacity-40"
                   rows={1}
                 />
               </div>

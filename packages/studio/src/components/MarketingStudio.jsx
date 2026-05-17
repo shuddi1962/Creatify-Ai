@@ -284,7 +284,8 @@ export default function MarketingStudio({ apiKey, droppedFiles, onFilesHandled }
 
   const downloadFile = async (url, filename) => {
     try {
-      const response = await fetch(url);
+      const response = await fetch(url, { mode: 'cors' });
+      if (!response.ok) throw new Error('fetch failed');
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -295,7 +296,18 @@ export default function MarketingStudio({ apiKey, droppedFiles, onFilesHandled }
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(url, "_blank");
+      try {
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = filename;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch {
+        window.open(url, "_blank");
+      }
     }
   };
 
@@ -369,9 +381,9 @@ export default function MarketingStudio({ apiKey, droppedFiles, onFilesHandled }
       <style>{SCROLLBAR_STYLE}</style>
       
       {/* ── MAIN CONTENT AREA ── */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pb-40">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pb-48">
         {history.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in-up">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up">
             {history.map(entry => (
               <div key={entry.id} className="relative group rounded-lg overflow-hidden border border-white/10 bg-[#0a0a0a] shadow-xl hover:border-primary/50 transition-all duration-300 flex flex-col">
                 <video 

@@ -2,6 +2,35 @@
 
 import { useState } from 'react';
 
+async function downloadFile(url, filename) {
+  try {
+    const response = await fetch(url, { mode: 'cors' });
+    if (!response.ok) throw new Error('fetch failed');
+    const blob = await response.blob();
+    const blobUrl = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = blobUrl;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(blobUrl);
+  } catch {
+    try {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      window.open(url, '_blank');
+    }
+  }
+}
+
 export default function ResultsGrid({ results, columns = 2 }) {
   const [fullView, setFullView] = useState(null);
 
@@ -32,7 +61,7 @@ export default function ResultsGrid({ results, columns = 2 }) {
                   className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center backdrop-blur-sm">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
                 </button>
-                <button onClick={(e) => { e.stopPropagation(); if (result.url) { const a = document.createElement('a'); a.href = result.url; a.download = `creatify-${result.id || i}.${result.type === 'video' ? 'mp4' : 'png'}`; a.click(); } }}
+                <button onClick={async (e) => { e.stopPropagation(); await downloadFile(result.url, `creatify-${result.id || i}.${result.type === 'video' ? 'mp4' : 'png'}`); }}
                   className="w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center backdrop-blur-sm">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
                 </button>
@@ -57,7 +86,7 @@ export default function ResultsGrid({ results, columns = 2 }) {
             style={{ maxWidth: '95vw', maxHeight: '95vh' }}
             onClick={e => e.stopPropagation()}>
             <div className="flex gap-3 self-end">
-              <button onClick={() => { if (fullView.url) { const a = document.createElement('a'); a.href = fullView.url; a.download = `creatify-${fullView.id || fullView.index}.${fullView.type === 'video' ? 'mp4' : 'png'}`; a.click(); } }}
+              <button onClick={async () => { await downloadFile(fullView.url, `creatify-${fullView.id || fullView.index}.${fullView.type === 'video' ? 'mp4' : 'png'}`); }}
                 className="px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 text-white text-sm font-medium backdrop-blur-sm transition-all">
                 Download
               </button>

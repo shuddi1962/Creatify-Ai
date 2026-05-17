@@ -656,7 +656,8 @@ export default function CinemaStudio({
   const handleDownload = useCallback(async () => {
     if (!canvasUrl) return;
     try {
-      const response = await fetch(canvasUrl);
+      const response = await fetch(canvasUrl, { mode: 'cors' });
+      if (!response.ok) throw new Error('fetch failed');
       const blob = await response.blob();
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -667,7 +668,18 @@ export default function CinemaStudio({
       document.body.removeChild(a);
       URL.revokeObjectURL(blobUrl);
     } catch {
-      window.open(canvasUrl, "_blank");
+      try {
+        const a = document.createElement("a");
+        a.href = canvasUrl;
+        a.download = `cinema-shot-${Date.now()}.jpg`;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+      } catch {
+        window.open(canvasUrl, "_blank");
+      }
     }
   }, [canvasUrl]);
 
@@ -711,7 +723,7 @@ export default function CinemaStudio({
     <div className="w-full h-full flex flex-col items-center justify-center bg-black relative overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-40 lg:pb-32 px-2">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-48 lg:pb-40 px-2">
         {history.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 w-full pt-4 animate-fade-in-up">
             {history.map((entry, idx) => (
@@ -750,7 +762,8 @@ export default function CinemaStudio({
                     onClick={async (e) => {
                       e.stopPropagation();
                       try {
-                        const response = await fetch(entry.url);
+                        const response = await fetch(entry.url, { mode: 'cors' });
+                        if (!response.ok) throw new Error('fetch failed');
                         const blob = await response.blob();
                         const blobUrl = URL.createObjectURL(blob);
                         const a = document.createElement("a");
@@ -761,7 +774,18 @@ export default function CinemaStudio({
                         document.body.removeChild(a);
                         URL.revokeObjectURL(blobUrl);
                       } catch {
-                        window.open(entry.url, "_blank");
+                        try {
+                          const a = document.createElement("a");
+                          a.href = entry.url;
+                          a.download = `cinema-shot-${entry.id || idx}.jpg`;
+                          a.target = "_blank";
+                          a.rel = "noopener noreferrer";
+                          document.body.appendChild(a);
+                          a.click();
+                          document.body.removeChild(a);
+                        } catch {
+                          window.open(entry.url, "_blank");
+                        }
                       }
                     }}
                     className="p-2 bg-black/60 backdrop-blur-md rounded-full text-white hover:bg-[#d9ff00] hover:text-black transition-all border border-white/10"
