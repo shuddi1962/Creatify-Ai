@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { UserCircle } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -22,7 +23,7 @@ const ITEMS = [
 export function CharactersSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Characters & Worlds" toolCount={8}>
+    <SectionSidebar sectionName="Characters & Worlds" sectionIcon={UserCircle} toolCount={8}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

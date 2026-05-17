@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { Mic } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -19,7 +20,7 @@ const ITEMS = [
 export function LipsyncSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Lip Sync" toolCount={5}>
+    <SectionSidebar sectionName="Lip Sync" sectionIcon={Mic} toolCount={5}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

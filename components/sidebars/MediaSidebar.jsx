@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { Folder } from 'lucide-react'
 
 function StorageBar({ used = 18.4, total = 50 }) {
   const pct = Math.round((used / total) * 100)
@@ -44,7 +45,7 @@ const ITEMS = [
 export function MediaSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Media Library" toolCount={9} bottomContent={<StorageBar />}>
+    <SectionSidebar sectionName="Media Library" sectionIcon={Folder} toolCount={9} bottomContent={<StorageBar />}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { Film } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -21,7 +22,7 @@ const ITEMS = [
 export function CinemaSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Cinema Studio" toolCount={7}>
+    <SectionSidebar sectionName="Cinema Studio" sectionIcon={Film} toolCount={7}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

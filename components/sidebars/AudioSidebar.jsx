@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { Music } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -21,7 +22,7 @@ const ITEMS = [
 export function AudioSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Audio Studio" toolCount={7}>
+    <SectionSidebar sectionName="Audio Studio" sectionIcon={Music} toolCount={7}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

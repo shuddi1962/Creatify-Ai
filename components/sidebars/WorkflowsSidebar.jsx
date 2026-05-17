@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { GitMerge } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -22,7 +23,7 @@ const ITEMS = [
 export function WorkflowsSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Workflows" toolCount={8}>
+    <SectionSidebar sectionName="Workflows" sectionIcon={GitMerge} toolCount={8}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

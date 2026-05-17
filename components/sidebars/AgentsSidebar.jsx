@@ -2,6 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
+import { Bot } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -22,7 +23,7 @@ const ITEMS = [
 export function AgentsSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="AI Agents" toolCount={8}>
+    <SectionSidebar sectionName="AI Agents" sectionIcon={Bot} toolCount={8}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />
