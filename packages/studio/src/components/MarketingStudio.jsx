@@ -381,7 +381,7 @@ export default function MarketingStudio({ apiKey, droppedFiles, onFilesHandled }
       <style>{SCROLLBAR_STYLE}</style>
       
       {/* ── MAIN CONTENT AREA ── */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pb-48">
+      <div className="flex-1 overflow-y-auto custom-scrollbar p-6 pb-32">
         {history.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 animate-fade-in-up">
             {history.map(entry => (
@@ -471,7 +471,7 @@ export default function MarketingStudio({ apiKey, droppedFiles, onFilesHandled }
               onInput={handleTextareaInput}
               placeholder="Describe your ad script... Use @image1 for product, @image2 for avatar."
               rows={1}
-              className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/20 focus:outline-none resize-none pt-1 leading-relaxed min-h-[44px] max-h-[300px] custom-scrollbar font-medium"
+              className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/20 focus:outline-none resize-none pt-1 leading-relaxed min-h-[120px] max-h-[400px] custom-scrollbar font-medium"
             />
           </div>
 

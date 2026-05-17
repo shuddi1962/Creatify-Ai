@@ -739,7 +739,7 @@ export default function LipSyncStudio({
     <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-48 lg:pb-40 px-2">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-32 lg:pb-24 px-2">
         {history.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full pt-2 animate-fade-in-up">
             {history.map((entry, idx) => (
@@ -955,7 +955,7 @@ export default function LipSyncStudio({
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   placeholder="Describe speech style..."
-                  className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/10 focus:outline-none resize-none pt-1 leading-relaxed min-h-[80px] max-h-[300px] overflow-y-auto custom-scrollbar disabled:opacity-40"
+                  className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/10 focus:outline-none resize-none pt-1 leading-relaxed min-h-[120px] max-h-[400px] overflow-y-auto custom-scrollbar disabled:opacity-40"
                   rows={1}
                 />
               </div>

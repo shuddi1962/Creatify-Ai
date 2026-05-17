@@ -1106,7 +1106,7 @@ export default function ImageStudio({
     <div className="w-full h-full flex flex-col items-center justify-center bg-app-bg relative p-4 md:p-6 overflow-hidden">
       
       {/* ── CENTRAL GALLERY AREA ── */}
-      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-48 lg:pb-40 px-2">
+      <div className="flex-1 w-full max-w-7xl mx-auto overflow-y-auto custom-scrollbar pb-32 lg:pb-24 px-2">
         {history.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full pt-2 animate-fade-in-up">
             {history.map((entry, idx) => (
@@ -1229,7 +1229,7 @@ export default function ImageStudio({
                 onInput={handleTextareaInput}
                 placeholder={placeholderText}
                 rows={1}
-                className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/20 focus:outline-none resize-none pt-1 leading-relaxed min-h-[80px] max-h-[300px] overflow-y-auto custom-scrollbar"
+                className="w-full bg-transparent border-none text-white text-sm placeholder:text-white/20 focus:outline-none resize-none pt-1 leading-relaxed min-h-[120px] max-h-[400px] overflow-y-auto custom-scrollbar"
               />
             </div>
           </div>
