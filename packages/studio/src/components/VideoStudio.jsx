@@ -22,6 +22,12 @@ function getQualitiesForModel(modelList, modelId) {
   return model?.inputs?.quality?.enum || [];
 }
 
+function normalizeQuality(value) {
+  if (!value) return value;
+  const map = { '720p': 'medium', '1080p': 'high', '480p': 'low', '360p': 'low', '2k': 'high', '4k': 'high', '1k': 'medium' };
+  return map[value.toLowerCase()] || value;
+}
+
 async function downloadFile(url, filename) {
   try {
     const response = await fetch(url);
@@ -913,7 +919,7 @@ export default function VideoStudio({
         if (durations.length > 0) i2vParams.duration = selectedDuration;
         const resolutions = getResolutionsForI2VModel(selectedModel);
         if (resolutions.length > 0) i2vParams.resolution = selectedResolution;
-        if (selectedQuality) i2vParams.quality = selectedQuality;
+        if (selectedQuality) i2vParams.quality = normalizeQuality(selectedQuality);
         if (selectedMode) i2vParams.mode = selectedMode;
 
         res = await generateI2V(apiKey, i2vParams);
@@ -960,7 +966,7 @@ export default function VideoStudio({
         if (durations.length > 0) params.duration = selectedDuration;
         const resolutions = getResolutionsForVideoModel(selectedModel);
         if (resolutions.length > 0) params.resolution = selectedResolution;
-        if (selectedQuality) params.quality = selectedQuality;
+        if (selectedQuality) params.quality = normalizeQuality(selectedQuality);
         if (selectedMode) params.mode = selectedMode;
 
         res = await generateVideo(apiKey, params);
