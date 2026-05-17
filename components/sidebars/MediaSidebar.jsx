@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
-import { Folder } from 'lucide-react'
+import { LayoutGrid, Image, Video, Mic, Folder, HardDrive, Cloud, Download } from 'lucide-react'
 
 function StorageBar({ used = 18.4, total = 50 }) {
   const pct = Math.round((used / total) * 100)
@@ -29,15 +29,15 @@ const ITEMS = [
   {
     section: 'Browse',
     items: [
-      { href: '/studio/media/all', label: 'All Assets', desc: 'Search everything' },
-      { href: '/studio/media/images', label: 'Images', desc: 'Generated images' },
-      { href: '/studio/media/videos', label: 'Videos', desc: 'Generated videos' },
-      { href: '/studio/media/audio', label: 'Audio', desc: 'Voiceovers & music' },
-      { href: '/studio/media/projects', label: 'Projects', desc: 'Organized folders' },
-      { href: '/studio/media/storage', label: 'Storage Quota', desc: 'Manage usage' },
-      { href: '/studio/media/drive', label: 'Google Drive', desc: 'Connect & auto-sync' },
-      { href: '/studio/media/dropbox', label: 'Dropbox', desc: 'Connect & auto-sync' },
-      { href: '/studio/media/bulk-download', label: 'Bulk Download', desc: 'Download as ZIP' },
+      { href: '/studio/media/all', icon: LayoutGrid, label: 'All Assets', desc: 'Search everything' },
+      { href: '/studio/media/images', icon: Image, label: 'Images', desc: 'Generated images' },
+      { href: '/studio/media/videos', icon: Video, label: 'Videos', desc: 'Generated videos' },
+      { href: '/studio/media/audio', icon: Mic, label: 'Audio', desc: 'Voiceovers & music' },
+      { href: '/studio/media/projects', icon: Folder, label: 'Projects', desc: 'Organized folders' },
+      { href: '/studio/media/storage', icon: HardDrive, label: 'Storage Quota', desc: 'Manage usage' },
+      { href: '/studio/media/drive', icon: Cloud, label: 'Google Drive', desc: 'Connect & auto-sync' },
+      { href: '/studio/media/dropbox', icon: Cloud, label: 'Dropbox', desc: 'Connect & auto-sync' },
+      { href: '/studio/media/bulk-download', icon: Download, label: 'Bulk Download', desc: 'Download as ZIP' },
     ]
   },
 ]
