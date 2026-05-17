@@ -108,7 +108,7 @@ export async function generateImageV2({
 
 export async function generateVideo(apiKey, params) {
   if (!apiKey) throw new Error('API key required.')
-  if (!params?.prompt?.trim()) throw new Error('Please enter a prompt.')
+  if (!params?.prompt?.trim() && !params?.request_id) throw new Error('Please enter a prompt.')
 
   const payload = {
     prompt: params.prompt.trim(),
@@ -122,6 +122,7 @@ export async function generateVideo(apiKey, params) {
   if (params.mode) payload.mode = params.mode
   if (params.motion && params.motion !== 'Medium') payload.motion = params.motion
   if (params.camera && params.camera !== 'Static') payload.camera_movement = params.camera
+  if (params.request_id) payload.request_id = params.request_id
 
   const modelDef = getModelById(params.model)
   const endpoint = modelDef?.endpoint || params.model || '/seedance-v2.0-t2v'
