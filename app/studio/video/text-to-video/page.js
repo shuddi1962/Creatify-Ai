@@ -20,7 +20,7 @@ const ASPECT_PRESETS = [
   { id: '4:3', label: '4:3', desc: 'Standard' },
   { id: '21:9', label: '21:9', desc: 'Cinematic' },
 ]
-const DURATIONS = ['6', '8', '10', '12', '14', '16', '18', '20']
+const DURATIONS = ['5', '6', '8', '10', '12', '14', '16', '18', '20']
 const QUALITIES = [{ label: '480p', desc: 'Fast' }, { label: '720p', desc: 'HD' }, { label: '1080p', desc: 'Full HD' }]
 
 export default function TextToVideoPage() {

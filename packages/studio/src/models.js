@@ -760,13 +760,15 @@ export function getAspectRatiosForI2VModel(modelId) { return getModelInputs(mode
 export function getResolutionsForI2VModel(modelId) { return getModelInputs(modelId, i2vModels).resolutions }
 export function getDurationsForI2VModel(modelId) {
   const model = i2vModels.find(m => m.id === modelId)
-  return model?.maxDuration ? [3, 5, model.maxDuration] : [3, 5, 10]
+  const base = [3, 5, 6, 7, 8]
+  return model?.maxDuration && model.maxDuration > 8 ? [...base, Math.min(model.maxDuration, 30)] : base
 }
 export function getAspectRatiosForVideoModel(modelId) { return getModelInputs(modelId, t2vModels).aspectRatios }
 export function getResolutionsForVideoModel(modelId) { return getModelInputs(modelId, t2vModels).resolutions }
 export function getDurationsForModel(modelId) {
   const model = t2vModels.find(m => m.id === modelId)
-  return model?.maxDuration ? [3, 5, model.maxDuration] : [3, 5, 10]
+  const base = [3, 5, 6, 7, 8]
+  return model?.maxDuration && model.maxDuration > 8 ? [...base, Math.min(model.maxDuration, 30)] : base
 }
 export function getModesForModel(modelId) { return ['standard', 'pro'] }
 export function getResolutionsForLipSyncModel(modelId) {
