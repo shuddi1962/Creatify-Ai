@@ -1,6 +1,12 @@
 import { getModelById, getVideoModelById, getI2IModelById, getI2VModelById, getV2VModelById, getLipSyncModelById } from './models.js';
 import { getAPIKey as getStorageKey } from './storage.js';
 
+function normalizeQuality(value) {
+  if (!value) return value;
+  const map = { '720p': 'medium', '1080p': 'high', '480p': 'low', '360p': 'low', '2k': 'high', '4k': 'high', '1k': 'medium' };
+  return map[value.toLowerCase()] || value;
+}
+
 export class MuapiClient {
     constructor() {
         let isDev = false
@@ -55,7 +61,7 @@ export class MuapiClient {
 
         // Quality (used by seedream and similar models)
         if (params.quality) {
-            finalPayload.quality = params.quality;
+            finalPayload.quality = normalizeQuality(params.quality);
         }
 
         // Image-to-Image
@@ -188,7 +194,7 @@ export class MuapiClient {
         if (params.aspect_ratio) finalPayload.aspect_ratio = params.aspect_ratio;
         if (params.duration) finalPayload.duration = params.duration;
         if (params.resolution) finalPayload.resolution = params.resolution;
-        if (params.quality) finalPayload.quality = params.quality;
+        if (params.quality) finalPayload.quality = normalizeQuality(params.quality);
         if (params.mode) finalPayload.mode = params.mode;
         if (params.image_url) finalPayload.image_url = params.image_url;
 
@@ -266,7 +272,7 @@ export class MuapiClient {
 
         if (params.aspect_ratio) finalPayload.aspect_ratio = params.aspect_ratio;
         if (params.resolution) finalPayload.resolution = params.resolution;
-        if (params.quality) finalPayload.quality = params.quality;
+        if (params.quality) finalPayload.quality = normalizeQuality(params.quality);
 
         console.log('[Muapi] I2I Request:', url);
         console.log('[Muapi] I2I Payload:', finalPayload);
@@ -342,7 +348,7 @@ export class MuapiClient {
         if (params.aspect_ratio) finalPayload.aspect_ratio = params.aspect_ratio;
         if (params.duration) finalPayload.duration = params.duration;
         if (params.resolution) finalPayload.resolution = params.resolution;
-        if (params.quality) finalPayload.quality = params.quality;
+        if (params.quality) finalPayload.quality = normalizeQuality(params.quality);
         if (params.mode) finalPayload.mode = params.mode;
         if (params.name) finalPayload.name = params.name;
 
