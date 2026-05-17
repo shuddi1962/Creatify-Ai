@@ -45,6 +45,12 @@ async function downloadImage(url, filename) {
   }
 }
 
+function normalizeQuality(value) {
+  if (!value) return value;
+  const map = { '720p': 'medium', '1080p': 'high', '480p': 'low', '360p': 'low', '2k': 'high', '4k': 'high', '1k': 'medium' };
+  return map[value.toLowerCase()] || value;
+}
+
 // ─── UploadButton (inline picker) ───────────────────────────────────────────
 
 function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [] }) {
@@ -1049,7 +1055,7 @@ export default function ImageStudio({
             };
             if (prompt.trim()) genParams.prompt = prompt.trim();
             if (currentQualityField && selectedQuality) {
-              genParams[currentQualityField] = selectedQuality;
+              genParams[currentQualityField] = currentQualityField === 'quality' ? normalizeQuality(selectedQuality) : selectedQuality;
             }
             return await generateI2I(apiKey, genParams);
           } else {
@@ -1059,7 +1065,7 @@ export default function ImageStudio({
               aspect_ratio: selectedAr,
             };
             if (currentQualityField && selectedQuality) {
-              genParams[currentQualityField] = selectedQuality;
+              genParams[currentQualityField] = currentQualityField === 'quality' ? normalizeQuality(selectedQuality) : selectedQuality;
             }
             return await generateImage(apiKey, genParams);
           }
