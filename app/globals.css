@@ -276,6 +276,9 @@ body {
 [data-theme="light"] .bg-\[\#1A1A1A\] {
   background-color: var(--bg-input) !important;
 }
+[data-theme="light"] .bg-\[\#1a1a2e\] {
+  background-color: var(--bg-card) !important;
+}
 [data-theme="light"] .bg-\[\#222\] {
   background-color: var(--bg-input) !important;
 }
@@ -478,6 +481,12 @@ body {
 }
 
 /* Border Tailwind class overrides */
+[data-theme="light"] .border-white\/\[0\.12\],
+[data-theme="light"] .border-white\/\[\.12\],
+[data-theme="light"] .border-white\/\[0\.1\],
+[data-theme="light"] .border-white\/\[\.1\] {
+  border-color: var(--border-strong) !important;
+}
 [data-theme="light"] .border-white\/\[0\.08\],
 [data-theme="light"] .border-white\/\[\.08\] {
   border-color: var(--border-strong) !important;

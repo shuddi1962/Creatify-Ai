@@ -102,7 +102,7 @@ export function StudioCanvas({ children, overlay }) {
   return (
     <div style={{
       flex: 1, minWidth: 0,
-      background: '#000000',
+      background: 'var(--bg-page)',
       display: 'flex', flexDirection: 'column',
       alignItems: 'center', justifyContent: 'center',
       position: 'relative', overflow: 'hidden',
@@ -111,10 +111,11 @@ export function StudioCanvas({ children, overlay }) {
       <div style={{
         position: 'absolute', inset: 0,
         backgroundImage: `
-          linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-          linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)
+          linear-gradient(var(--border-subtle) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px)
         `,
         backgroundSize: '60px 60px',
+        opacity: 0.3,
       }} />
       {overlay}
       <div style={{ position: 'relative', zIndex: 1, width: '100%', maxWidth: '100%', overflow: 'hidden' }}>
@@ -235,10 +236,10 @@ export function CornerMarkers() {
         <div key={i} style={{
           position: 'absolute', ...pos,
           width: 10, height: 10,
-          borderTop: i < 2 ? '2px solid rgba(255,255,255,0.15)' : 'none',
-          borderBottom: i >= 2 ? '2px solid rgba(255,255,255,0.15)' : 'none',
-          borderLeft: i % 2 === 0 ? '2px solid rgba(255,255,255,0.15)' : 'none',
-          borderRight: i % 2 === 1 ? '2px solid rgba(255,255,255,0.15)' : 'none',
+          borderTop: i < 2 ? '2px solid var(--border-default)' : 'none',
+          borderBottom: i >= 2 ? '2px solid var(--border-default)' : 'none',
+          borderLeft: i % 2 === 0 ? '2px solid var(--border-default)' : 'none',
+          borderRight: i % 2 === 1 ? '2px solid var(--border-default)' : 'none',
         }} />
       ))}
     </>
