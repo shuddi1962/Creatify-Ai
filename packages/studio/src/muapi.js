@@ -2,6 +2,12 @@ import { getModelById, getVideoModelById, getI2IModelById, getI2VModelById, getV
 
 const MUAPI_BASE = 'https://api.muapi.ai';
 
+function normalizeQuality(value) {
+  if (!value) return value;
+  const map = { '720p': 'medium', '1080p': 'high', '480p': 'low', '360p': 'low', '2k': 'high', '4k': 'high', '1k': 'medium' };
+  return map[value.toLowerCase()] || value;
+}
+
 async function pollForResult(requestId, apiKey, maxAttempts = 120, interval = 2000) {
   const pollUrl = `${MUAPI_BASE}/api/v1/predictions/${requestId}/result`;
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
@@ -56,7 +62,7 @@ export async function generateImage(apiKey, params) {
 
   // ONLY pass fields the user explicitly specified — strict prompt adherence
   if (params.aspect_ratio) payload.aspect_ratio = params.aspect_ratio
-  if (params.quality) payload.quality = params.quality
+  if (params.quality) payload.quality = normalizeQuality(params.quality)
   if (params.num_images) payload.num_images = params.num_images
   if (params.negative_prompt?.trim()) payload.negative_prompt = params.negative_prompt.trim()
   if (params.style && params.style !== 'None') payload.style = params.style
@@ -110,7 +116,7 @@ export async function generateVideo(apiKey, params) {
 
   if (params.aspect_ratio) payload.aspect_ratio = params.aspect_ratio
   if (params.duration) payload.duration = params.duration
-  if (params.quality) payload.quality = params.quality
+  if (params.quality) payload.quality = normalizeQuality(params.quality)
   if (params.resolution) payload.resolution = params.resolution
   if (params.image_url) payload.image_url = params.image_url
   if (params.mode) payload.mode = params.mode
@@ -146,7 +152,7 @@ export async function generateI2I(apiKey, params) {
   }
   if (params.aspect_ratio) payload.aspect_ratio = params.aspect_ratio;
   if (params.resolution) payload.resolution = params.resolution;
-  if (params.quality) payload.quality = params.quality;
+  if (params.quality) payload.quality = normalizeQuality(params.quality);
   return submitAndPoll(endpoint, payload, apiKey, null, 60);
 }
 
@@ -167,7 +173,7 @@ export async function generateI2V(apiKey, params) {
   if (params.aspect_ratio) payload.aspect_ratio = params.aspect_ratio;
   if (params.duration) payload.duration = params.duration;
   if (params.resolution) payload.resolution = params.resolution;
-  if (params.quality) payload.quality = params.quality;
+  if (params.quality) payload.quality = normalizeQuality(params.quality);
   if (params.mode) payload.mode = params.mode;
   return submitAndPoll(endpoint, payload, apiKey, null, 900);
 }
@@ -569,7 +575,7 @@ export async function applyVFX(apiKey, { effectName, imageUrl, prompt, aspectRat
     name: effectName,
     aspect_ratio: aspectRatio || '16:9',
     duration: duration || 5,
-    quality: quality || 'medium',
+    quality: normalizeQuality(quality) || 'medium',
   }
   const res = await fetch(`${MUAPI_BASE}/api/v1/vfx`, {
     method: 'POST',
@@ -584,7 +590,7 @@ export async function applyVFX(apiKey, { effectName, imageUrl, prompt, aspectRat
 }
 
 export async function generateVideoAd(apiKey, { modelId, prompt, aspectRatio, duration, quality }) {
-  const body = { prompt, aspect_ratio: aspectRatio, duration, quality: quality || 'high' }
+  const body = { prompt, aspect_ratio: aspectRatio, duration, quality: normalizeQuality(quality) || 'high' }
   const res = await fetch(`${MUAPI_BASE}/api/v1/${modelId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
