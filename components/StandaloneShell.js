@@ -492,19 +492,19 @@ export default function StandaloneShell() {
   };
 
   return (
-    <div className="flex flex-col relative overflow-y-auto no-scrollbar"
+    <div className="standalone-shell flex flex-col relative overflow-y-auto no-scrollbar"
       style={{ minHeight: '100vh', background: 'var(--bg-body)', color: 'var(--text-primary)', overflowX: 'hidden', maxWidth: '100vw', width: '100%' }}
       onDragOver={handleDragOver} onDragEnter={handleDragEnter} onDragLeave={handleDragLeave} onDrop={handleDrop}
     >
       <Toaster position="top-center" toastOptions={{
         style: { background: 'var(--toast-bg, rgba(17, 24, 39, 0.95))', color: 'var(--text-primary)', border: '1px solid var(--border-strong, rgba(255,255,255,0.08))', backdropFilter: 'blur(10px)', fontSize: '13px' },
-        success: { iconTheme: { primary: '#7C3AED', secondary: '#fff' } },
+        success: { iconTheme: { primary: '#CCFF00', secondary: '#000' } },
       }} />
 
       {isDragging && (
-        <div className="fixed inset-0 z-[100] bg-[#7C3AED]/10 backdrop-blur-md border-4 border-dashed border-[#7C3AED]/50 flex items-center justify-center pointer-events-none">
+        <div className="fixed inset-0 z-[100] bg-[#CCFF00]/10 backdrop-blur-md border-4 border-dashed border-[#CCFF00]/50 flex items-center justify-center pointer-events-none">
           <div style={{ background: 'var(--toast-bg, rgba(17,24,39,0.95))', border: '1px solid var(--border-strong)' }} className="p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 scale-110 animate-pulse">
-            <div className="w-20 h-20 bg-[#7C3AED] rounded-2xl flex items-center justify-center">
+            <div className="w-20 h-20 bg-[#CCFF00] rounded-2xl flex items-center justify-center">
               <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
             </div>
             <div className="flex flex-col items-center">
@@ -538,7 +538,7 @@ export default function StandaloneShell() {
               <Icons.PanelLeft size={20} />
             </button>
             <div onClick={() => handleTabChange('home')} style={{ display: 'flex', alignItems: 'center', gap: 6, cursor: 'pointer', marginRight: 8, flexShrink: 0 }}>
-              <div style={{ width: 28, height: 28, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+              <div style={{ width: 28, height: 28, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
               </div>
               <span className="hidden sm:block" style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary-soft)', whiteSpace: 'nowrap' }}>Creatify AI</span>
@@ -591,7 +591,7 @@ export default function StandaloneShell() {
                 onMouseLeave={() => setShowAccountMenu(false)}
               >
                 <button
-                  style={{ width: 30, height: 30, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'rgba(99,102,241,0.2)', border: '2px solid rgba(99,102,241,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms', flexShrink: 0 }}
+                  style={{ width: 30, height: 30, borderRadius: '50%', background: showAccountMenu ? 'var(--color-accent)' : 'var(--accent-bg)', border: '2px solid var(--accent-border)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all 150ms', flexShrink: 0 }}
                 >
                   <span style={{ fontSize: 11, fontWeight: 700, color: showAccountMenu ? '#fff' : 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                 </button>
@@ -710,7 +710,7 @@ export default function StandaloneShell() {
                   }}>{item.label}</span>
                 </button>
                 {isActive && (
-                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: '#6366f1', borderRadius: '0 3px 3px 0' }} />
+                  <div style={{ position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)', width: 3, height: 32, background: 'var(--sidebar-indicator)', borderRadius: '0 3px 3px 0' }} />
                 )}
 
                 {showFlyout && (
@@ -747,7 +747,7 @@ export default function StandaloneShell() {
             }}>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 20 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                  <div style={{ width: 32, height: 32, background: '#7C3AED', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <div style={{ width: 32, height: 32, background: 'var(--accent-primary)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="black" strokeWidth="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
                   </div>
                   <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary-soft)' }}>Creatify AI</span>
@@ -828,7 +828,7 @@ export default function StandaloneShell() {
                 <label className="block text-xs font-bold mb-2" style={{ color: 'var(--text-secondary)' }}>Account</label>
                 {user ? (
                   <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'rgba(99,102,241,0.2)', border: '1px solid rgba(99,102,241,0.3)' }}>
+                    <div className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'var(--accent-bg)', border: '1px solid var(--accent-border)' }}>
                       <span className="text-xs font-bold" style={{ color: 'var(--color-accent)' }}>{user.email?.charAt(0).toUpperCase() || 'U'}</span>
                     </div>
                     <div className="flex-1 min-w-0">

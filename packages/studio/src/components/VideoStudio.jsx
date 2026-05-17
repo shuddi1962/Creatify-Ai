@@ -115,10 +115,10 @@ function ModelDropdown({ imageMode, selectedModel, onSelect, onClose }) {
   );
 
   const getIconColor = (m, isV2V) => {
-    if (isV2V) return "bg-orange-500/10 text-orange-400";
-    if (m.id.includes("kling")) return "bg-blue-500/10 text-blue-400";
-    if (m.id.includes("veo")) return "bg-purple-500/10 text-purple-400";
-    if (m.id.includes("sora")) return "bg-rose-500/10 text-rose-400";
+    if (isV2V) return "bg-[#CCFF00]/10 text-[#CCFF00]";
+    if (m.id.includes("kling")) return "bg-[#CCFF00]/10 text-[#CCFF00]";
+    if (m.id.includes("veo")) return "bg-[#CCFF00]/10 text-[#CCFF00]";
+    if (m.id.includes("sora")) return "bg-[#CCFF00]/10 text-[#CCFF00]";
     return "bg-primary/10 text-primary";
   };
 

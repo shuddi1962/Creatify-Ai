@@ -659,9 +659,9 @@ function ModelDropdown({ models, selectedModel, onSelect, onClose }) {
               <div
                 className={`w-10 h-10 ${
                   m.family === "kontext"
-                    ? "bg-blue-500/10 text-blue-400"
+                    ? "bg-[#CCFF00]/10 text-[#CCFF00]"
                     : m.family === "effects"
-                      ? "bg-purple-500/10 text-purple-400"
+                      ? "bg-[#CCFF00]/10 text-[#CCFF00]"
                       : "bg-primary/10 text-primary"
                 } border border-white/5 rounded-full flex items-center justify-center font-bold text-xs shadow-inner uppercase`}
               >

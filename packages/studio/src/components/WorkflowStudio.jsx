@@ -45,7 +45,7 @@ function WorkflowCard({ workflow, onClick, activeTab, onRename, onDelete }) {
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
       ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#CCFF00]/5 to-[#00C2FF]/5 flex items-center justify-center">
           <svg
             width="40"
             height="40"
