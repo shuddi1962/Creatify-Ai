@@ -9,15 +9,13 @@ const STEPS = ['Name & Purpose', 'Trigger', 'Actions', 'Output', 'Review'];
 const TRIGGERS = ['Manual', 'Webhook', 'Schedule', 'Event'];
 const ACTIONS = ['Generate Image', 'Generate Video', 'Generate Script', 'Create Caption', 'Analyze Content', 'Schedule Post', 'Send Email', 'Update DB'];
 const OUTPUTS = ['Media Library', 'Email', 'Webhook', 'Slack', 'Discord'];
-const EMOJIS = ['🤖', '🎨', '📹', '✨', '🚀', '⚡', '🎯', '💡'];
 const OPTIONS = STEPS;
 
 export default function CreateAgentPage() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
   const [desc, setDesc] = useState('');
-  const [emoji, setEmoji] = useState('🤖');
-  const [triggers, setTriggers] = useState(['Manual']);
+const [triggers, setTriggers] = useState(['Manual']);
   const [actions, setActions] = useState([]);
   const [outputs, setOutputs] = useState(['Media Library']);
   const [loading, setLoading] = useState(false);
@@ -88,18 +86,6 @@ export default function CreateAgentPage() {
                         <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Description</label>
                         <textarea value={desc} onChange={e => setDesc(e.target.value)} placeholder="What does this agent do?" style={{ width: '100%', height: 80, background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 12, padding: '12px 16px', color: 'var(--text-primary)', resize: 'none', outline: 'none' }} />
                       </div>
-                      <div>
-                        <label style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8, display: 'block' }}>Icon</label>
-                        <div style={{ display: 'flex', gap: 12 }}>
-                          {EMOJIS.map(e => (
-                            <button key={e} onClick={() => setEmoji(e)} style={{
-                              width: 40, height: 40, borderRadius: 12, display: 'flex', alignItems: 'center', justifyContent: 'center',
-                              fontSize: 20, background: emoji === e ? '#7C3AED' : 'var(--bg-input)',
-                              border: emoji === e ? '2px solid #7C3AED' : 'none', cursor: 'pointer',
-                            }}>{e}</button>
-                          ))}
-                        </div>
-                      </div>
                     </div>
                   )}
 
@@ -162,7 +148,7 @@ export default function CreateAgentPage() {
                       <h3 style={{ color: 'var(--text-primary)', fontWeight: 700, fontSize: 18 }}>Step 5: Review & Create</h3>
                       <div style={{ background: '#0a0a0a', borderRadius: 12, padding: 16 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 12 }}>
-                          <span style={{ fontSize: 24 }}>{emoji}</span>
+                          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontSize: 16, fontWeight: 700 }}>{(name || 'A')[0]}</div>
                           <div><p style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{name || 'Agent Name'}</p><p style={{ color: 'var(--text-muted)', fontSize: 12 }}>{desc || 'No description'}</p></div>
                         </div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>

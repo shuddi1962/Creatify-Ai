@@ -135,7 +135,7 @@ export default function UGCGeneratorPage() {
               {HOOK_STYLES.map(h => (
                 <div key={h.value} onClick={() => setHookStyle(h.value)} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 14px', borderRadius: 10, cursor: 'pointer', background: hookStyle === h.value ? 'var(--bg-active)' : 'var(--bg-elevated)', border: `1px solid ${hookStyle === h.value ? 'var(--border-active)' : 'transparent'}`, transition: 'all 150ms' }}>
                   <div><div style={{ fontSize: 13, fontWeight: 500, color: hookStyle === h.value ? 'var(--text-active)' : 'var(--text-primary)' }}>{h.label}</div><div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{h.desc}</div></div>
-                  {hookStyle === h.value && <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 9, color: '#000', fontWeight: 700 }}>✓</div>}
+                  {hookStyle === h.value && <div style={{ width: 16, height: 16, borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000' }}><svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></div>}
                 </div>
               ))}
             </div>
@@ -160,7 +160,7 @@ export default function UGCGeneratorPage() {
           </div>
           {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '10px 14px', fontSize: 12, color: '#fca5a5' }}>{error}</div>}
           <button onClick={handleGenerate} disabled={loading} style={{ width: '100%', padding: '14px 0', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {loading ? <><div style={{ width:14,height:14,borderRadius:'50%',border:'2px solid #000',borderTopColor:'transparent',animation:'spin 600ms linear infinite' }} /> Generating {variants} variant{parseInt(variants)>1?'s':''}...</> : `✦ Generate ${variants} UGC Ad${parseInt(variants)>1?'s':''} · ${selectedModel.creditCost * parseInt(variants)} credits`}
+            {loading ? <><div style={{ width:14,height:14,borderRadius:'50%',border:'2px solid #000',borderTopColor:'transparent',animation:'spin 600ms linear infinite' }} /> Generating {variants} variant{parseInt(variants)>1?'s':''}...</> : `Generate ${variants} UGC Ad${parseInt(variants)>1?'s':''} · ${selectedModel.creditCost * parseInt(variants)} credits`}
           </button>
         </div>
         <div>
@@ -179,7 +179,7 @@ export default function UGCGeneratorPage() {
             </div>
           ) : (
             <div style={{ background: 'var(--bg-card)', border: '2px dashed var(--border-default)', borderRadius: 20, padding: '60px 32px', textAlign: 'center' }}>
-              <div style={{ fontSize: 40, marginBottom: 16 }}>🎬</div>
+              <div style={{ fontSize: 40, marginBottom: 16, color: 'var(--text-muted)' }}>&#9733;</div>
               <div style={{ fontSize: 16, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 8 }}>Your UGC ads appear here</div>
               <div style={{ fontSize: 13, color: 'var(--text-secondary)' }}>Fill in your product details and hit Generate</div>
             </div>

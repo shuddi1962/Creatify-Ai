@@ -4,14 +4,14 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const WORKFLOW_TABS = [
-  { id: 'canvas', label: 'Canvas', desc: 'Infinite visual canvas for building AI workflow chains', icon: '🎨' },
-  { id: 'builder', label: 'Node Builder', desc: 'Drag-and-drop node-based AI pipeline builder', icon: '🔧' },
-  { id: 'mine', label: 'My Workflows', desc: 'All your saved, pinned, and recent workflow pipelines', icon: '📁' },
-  { id: 'templates', label: 'Templates', desc: 'Start instantly from pre-built workflow templates', icon: '📋' },
-  { id: 'community', label: 'Community', desc: 'Browse and run workflows published by other creators', icon: '🌍' },
-  { id: 'playground', label: 'Playground', desc: 'Run any workflow interactively with a live form UI', icon: '🎮' },
-  { id: 'scheduled', label: 'Scheduled Runs', desc: 'Set any workflow to run automatically on a schedule', icon: '⏰' },
-  { id: 'share', label: 'Share Workflow', desc: 'Publish your workflow pipeline for others to use', icon: '📤' },
+  { id: 'canvas', label: 'Canvas', desc: 'Infinite visual canvas for building AI workflow chains' },
+  { id: 'builder', label: 'Node Builder', desc: 'Drag-and-drop node-based AI pipeline builder' },
+  { id: 'mine', label: 'My Workflows', desc: 'All your saved, pinned, and recent workflow pipelines' },
+  { id: 'templates', label: 'Templates', desc: 'Start instantly from pre-built workflow templates' },
+  { id: 'community', label: 'Community', desc: 'Browse and run workflows published by other creators' },
+  { id: 'playground', label: 'Playground', desc: 'Run any workflow interactively with a live form UI' },
+  { id: 'scheduled', label: 'Scheduled Runs', desc: 'Set any workflow to run automatically on a schedule' },
+  { id: 'share', label: 'Share Workflow', desc: 'Publish your workflow pipeline for others to use' },
 ];
 
 const TEMPLATES = [

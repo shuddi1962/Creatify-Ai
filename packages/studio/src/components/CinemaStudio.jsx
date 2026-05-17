@@ -979,7 +979,7 @@ export default function CinemaStudio({
                 >
                   {isGenerating ? (
                     <>
-                      <span className="animate-spin inline-block text-black">◌</span> SHOOTING...
+                      <span className="animate-spin inline-block text-black">*</span> SHOOTING...
                     </>
                   ) : (
                     <>

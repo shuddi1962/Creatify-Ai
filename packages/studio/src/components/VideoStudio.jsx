@@ -1198,7 +1198,7 @@ export default function VideoStudio({
                     <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
                   </svg>
                 </div>
-                <div className="absolute top-4 right-4 text-[10px] text-primary/40 animate-pulse">✨</div>
+                <div className="absolute top-4 right-4 text-[10px] text-primary/40 animate-pulse">*</div>
               </div>
             </div>
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-4 text-center px-4">
@@ -1690,7 +1690,7 @@ export default function VideoStudio({
               {generating ? (
                 <>
                   <span className="animate-spin inline-block text-black">
-                    ◌
+                    *
                   </span>{" "}
                   Generating...
                 </>

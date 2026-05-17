@@ -11,7 +11,7 @@ const BADGE_STYLES = {
 }
 
 export function SidebarNavItem({
-  href, icon: Icon, emoji, label, desc,
+  href, icon: Icon, label, desc,
   badge, isActive, onClick
 }) {
   const collapsed = useCollapsed()
@@ -44,7 +44,7 @@ export function SidebarNavItem({
         fontSize: 13,
         color: isActive ? 'var(--accent-primary)' : 'var(--icon-default)',
       }}>
-        {Icon ? <Icon size={15} /> : emoji}
+        {Icon && <Icon size={15} />}
       </div>
 
       {!collapsed && (

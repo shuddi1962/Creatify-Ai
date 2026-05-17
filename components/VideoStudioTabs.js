@@ -4,18 +4,18 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const VIDEO_TABS = [
-  { id: 'text-to-video', label: 'Text to Video', desc: 'Generate high-quality video clips from any text prompt', icon: '🎬' },
-  { id: 'image-to-video', label: 'Image to Video', desc: 'Animate any still image into a smooth, cinematic video', icon: '🖼️' },
-  { id: 'smart-shot', label: 'Smart Shot', desc: 'Prompt → storyboard plan → full cinematic video automatically', icon: '⚡' },
-  { id: 'motion-sync', label: 'Motion Sync', desc: 'Sync motion patterns from a reference video to your subject', icon: '🔄' },
-  { id: 'edit', label: 'Edit Video', desc: 'Inpaint and redo specific regions of any video with AI', icon: '✏️' },
-  { id: 'extend', label: 'Extend Video', desc: 'Seamlessly add more seconds to the end of any video', icon: '↗️' },
-  { id: 'restyle', label: 'Restyle Video', desc: 'Apply a completely new visual style to any existing video', icon: '🎨' },
-  { id: 'replace-character', label: 'Replace Character', desc: 'Swap out and replace characters inside any video clip', icon: '👤' },
-  { id: 'upscale', label: 'Video Upscale', desc: 'Enhance any video to HD or 4K resolution with AI', icon: '📈' },
-  { id: 'sound-effects', label: 'Add Sound Effects', desc: 'Layer AI-generated sound effects onto any video automatically', icon: '🔊' },
-  { id: 'mixed-media', label: 'Mixed Media', desc: 'Blend real footage with AI-generated visuals seamlessly', icon: '🎭' },
-  { id: 'camera-motion', label: 'Camera Motion', desc: 'Apply zoom, pan, orbit, and dolly presets to your video', icon: '📷' },
+  { id: 'text-to-video', label: 'Text to Video', desc: 'Generate high-quality video clips from any text prompt' },
+  { id: 'image-to-video', label: 'Image to Video', desc: 'Animate any still image into a smooth, cinematic video' },
+  { id: 'smart-shot', label: 'Smart Shot', desc: 'Prompt to storyboard plan to full cinematic video automatically' },
+  { id: 'motion-sync', label: 'Motion Sync', desc: 'Sync motion patterns from a reference video to your subject' },
+  { id: 'edit', label: 'Edit Video', desc: 'Inpaint and redo specific regions of any video with AI' },
+  { id: 'extend', label: 'Extend Video', desc: 'Seamlessly add more seconds to the end of any video' },
+  { id: 'restyle', label: 'Restyle Video', desc: 'Apply a completely new visual style to any existing video' },
+  { id: 'replace-character', label: 'Replace Character', desc: 'Swap out and replace characters inside any video clip' },
+  { id: 'upscale', label: 'Video Upscale', desc: 'Enhance any video to HD or 4K resolution with AI' },
+  { id: 'sound-effects', label: 'Add Sound Effects', desc: 'Layer AI-generated sound effects onto any video automatically' },
+  { id: 'mixed-media', label: 'Mixed Media', desc: 'Blend real footage with AI-generated visuals seamlessly' },
+  { id: 'camera-motion', label: 'Camera Motion', desc: 'Apply zoom, pan, orbit, and dolly presets to your video' },
 ];
 
 const MODELS = [

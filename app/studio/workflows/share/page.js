@@ -135,7 +135,7 @@ export default function SharePage() {
                             <h4 style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{wf.name}</h4>
                             <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>
                               <span style={{ fontSize: 10, color: 'var(--text-muted)' }}>{wf.forks} forks</span>
-                              <span style={{ fontSize: 10, color: '#F59E0B' }}>★ {wf.rating}</span>
+                              <span style={{ fontSize: 10, color: '#F59E0B' }}>* {wf.rating}</span>
                               <span style={{ fontSize: 10, padding: '2px 8px', background: 'var(--bg-input)', color: 'var(--text-muted)', borderRadius: 4 }}>{wf.visibility}</span>
                             </div>
                           </div>

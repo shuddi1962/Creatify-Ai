@@ -92,7 +92,7 @@ export default function ProductUrlPage() {
           </div>
           {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fca5a5' }}>{error}</div>}
           <button onClick={handleGenerate} disabled={loading} style={{ padding: '12px 0', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer' }}>
-            {loading ? 'Generating ad...' : `✦ Generate Ad · ${model.creditCost} credits`}
+            {loading ? 'Generating ad...' : `Generate Ad · ${model.creditCost} credits`}
           </button>
           {result && (
             <div><div style={{ fontSize: 11, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Result</div>

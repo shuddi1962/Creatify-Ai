@@ -28,20 +28,15 @@ const ITEMS = [
   {
     section: 'Browse',
     items: [
-      { href: '/studio/media/all', emoji: '\u229E', label: 'All Assets', desc: 'Search everything' },
-      { href: '/studio/media/images', emoji: '\uD83D\uDDBC\uFE0F', label: 'Images', desc: 'Generated images' },
-      { href: '/studio/media/videos', emoji: '\uD83C\uDFAC', label: 'Videos', desc: 'Generated videos' },
-      { href: '/studio/media/audio', emoji: '\uD83C\uDFB5', label: 'Audio', desc: 'Voiceovers & music' },
-      { href: '/studio/media/projects', emoji: '\uD83D\uDCC2', label: 'Projects', desc: 'Organized folders' },
-    ]
-  },
-  {
-    section: 'Storage',
-    items: [
-      { href: '/studio/media/storage', emoji: '\uD83D\uDCBE', label: 'Storage Quota', desc: 'Manage usage' },
-      { href: '/studio/media/drive', emoji: '\u2601\uFE0F', label: 'Google Drive', desc: 'Connect & auto-sync' },
-      { href: '/studio/media/dropbox', emoji: '\uD83D\uDCE6', label: 'Dropbox', desc: 'Connect & auto-sync' },
-      { href: '/studio/media/bulk-download', emoji: '\u2B07\uFE0F', label: 'Bulk Download', desc: 'Download as ZIP' },
+      { href: '/studio/media/all', label: 'All Assets', desc: 'Search everything' },
+      { href: '/studio/media/images', label: 'Images', desc: 'Generated images' },
+      { href: '/studio/media/videos', label: 'Videos', desc: 'Generated videos' },
+      { href: '/studio/media/audio', label: 'Audio', desc: 'Voiceovers & music' },
+      { href: '/studio/media/projects', label: 'Projects', desc: 'Organized folders' },
+      { href: '/studio/media/storage', label: 'Storage Quota', desc: 'Manage usage' },
+      { href: '/studio/media/drive', label: 'Google Drive', desc: 'Connect & auto-sync' },
+      { href: '/studio/media/dropbox', label: 'Dropbox', desc: 'Connect & auto-sync' },
+      { href: '/studio/media/bulk-download', label: 'Bulk Download', desc: 'Download as ZIP' },
     ]
   },
 ]
@@ -49,7 +44,7 @@ const ITEMS = [
 export function MediaSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Media Library" sectionEmoji="\uD83D\uDCC1" toolCount={9} bottomContent={<StorageBar />}>
+    <SectionSidebar sectionName="Media Library" toolCount={9} bottomContent={<StorageBar />}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

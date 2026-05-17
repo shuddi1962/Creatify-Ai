@@ -155,14 +155,14 @@ export default function CinemaGeneratePage() {
             <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, cursor: 'pointer' }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}>
-              <div style={{ width: 26, height: 26, borderRadius: 6, fontSize: 14, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎬</div>
+              <div style={{ width: 26, height: 26, borderRadius: 6, fontSize: 14, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>&#9733;</div>
               <span style={{ fontSize: 12, color: 'var(--text-secondary)' }}>My Generations</span>
             </div>
             {projects.map((p, i) => (
               <div key={i} onClick={() => setActiveProject(p)} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '7px 12px', borderRadius: 8, cursor: 'pointer', background: activeProject === p && i === 0 ? 'var(--bg-hover)' : 'none' }}
                 onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
                 onMouseLeave={e => e.currentTarget.style.background = activeProject === p && i === 0 ? 'var(--bg-hover)' : 'none'}>
-                <div style={{ width: 26, height: 26, borderRadius: 6, fontSize: 14, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎭</div>
+                <div style={{ width: 26, height: 26, borderRadius: 6, fontSize: 14, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>&#9733;</div>
                 <span style={{ fontSize: 12, color: 'var(--text-primary)' }}>{p}</span>
               </div>
             ))}
@@ -207,14 +207,14 @@ export default function CinemaGeneratePage() {
           <div style={{ position: 'absolute', bottom: 16, left: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <input ref={fileInputRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleFileUpload} />
             <button onClick={() => fileInputRef.current?.click()} style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '7px 12px', fontSize: 12, color: uploadedImageUrl ? 'var(--accent-primary)' : 'var(--text-secondary)', cursor: 'pointer' }}>
-              <ImageIcon size={13} /> {uploadedImageUrl ? 'Image ✓' : 'Image'}
+              <ImageIcon size={13} /> {uploadedImageUrl ? 'Image' : 'Image'}
             </button>
             <button style={{ display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 8, padding: '7px 12px', fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>
               <VideoIcon size={13} /> Video
             </button>
           </div>
           <button style={{ position: 'absolute', bottom: 16, right: 16, display: 'flex', alignItems: 'center', gap: 6, background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 100, padding: '8px 14px', fontSize: 13, fontWeight: 500, color: 'var(--text-primary)', cursor: 'pointer' }}>
-            💬 AI Director
+            AI Director
           </button>
         </div>
         <div style={{ background: 'var(--bg-card)', borderTop: '1px solid var(--border-subtle)' }}>
@@ -292,7 +292,7 @@ export default function CinemaGeneratePage() {
               <button onClick={handleGenerate} disabled={loading} style={{ background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 10, padding: '10px 18px', fontSize: 13, fontWeight: 800, cursor: loading ? 'not-allowed' : 'pointer', whiteSpace: 'nowrap', minWidth: 130, display: 'flex', alignItems: 'center', gap: 6 }}>
                 {loading ? (
                   <><div style={{ width: 12, height: 12, borderRadius: '50%', border: '2px solid #000', borderTopColor: 'transparent', animation: 'spin 600ms linear infinite' }} /> Generating...</>
-                ) : `GENERATE ✦ ${selectedModel.creditCost}`}
+                ) : `GENERATE ${selectedModel.creditCost}`}
               </button>
             </div>
           </div>

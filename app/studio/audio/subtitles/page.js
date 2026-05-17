@@ -109,7 +109,7 @@ export default function SubtitlesPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Speaker ID {speakerId ? '✓' : '○'}</button>
+          >Speaker ID {speakerId ? 'ON' : 'OFF'}</button>
           <button onClick={() => setBurnSubtitles(!burnSubtitles)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -117,7 +117,7 @@ export default function SubtitlesPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Burn into video {burnSubtitles ? '✓' : '○'}</button>
+          >Burn into video {burnSubtitles ? 'ON' : 'OFF'}</button>
           {burnSubtitles && (
             <div style={{ padding: '8px 12px' }}>
               <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Font Size</div>

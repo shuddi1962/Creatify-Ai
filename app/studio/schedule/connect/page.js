@@ -45,7 +45,7 @@ export default function ConnectPage() {
                 }}
               >
                 {Icon ? <Icon width={16} height={16} /> : <span style={{ color: p.color, fontSize: 16 }}>{p.name[0]}</span>}
-                {p.name} {p.connected ? ' ✓' : ''}
+                {p.name} {p.connected ? ' [connected]' : ''}
               </button>
             );
           })}

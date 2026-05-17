@@ -230,9 +230,9 @@ export default function HomeContent({ onTabChange }) {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-6">
             {[
-              { niche: 'Fitness', hook: 'Try this 5-min morning routine that changed everything 🔥', score: 92 },
+              { niche: 'Fitness', hook: 'Try this 5-min morning routine that changed everything [fire]', score: 92 },
               { niche: 'Finance', hook: 'I asked AI to invest $1000 — heres what it picked', score: 88 },
-              { niche: 'Fashion', hook: '3 outfits under $50 that look like designer 💸', score: 95 },
+              { niche: 'Fashion', hook: '3 outfits under $50 that look like designer [money]', score: 95 },
               { niche: 'Food', hook: 'This pasta hack will ruin restaurant pasta for you', score: 91 },
             ].map((idea, i) => (
               <div key={i} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.05] transition-all cursor-pointer">

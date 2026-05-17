@@ -6,11 +6,11 @@ import { Toaster, toast } from 'react-hot-toast';
 import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButton, ControlButton, PromptInput, CornerMarkers } from '@/components/studio/StudioEditorLayout';
 
 const INTEGRATIONS = [
-  { name: 'Claude', icon: '🤖', desc: 'Anthropic Claude for reasoning and content generation', connected: false },
-  { name: 'Cursor', icon: '✏️', desc: 'AI-powered code editor integration', connected: false },
-  { name: 'OpenAI Codex', icon: '💻', desc: 'OpenAI Codex for developer workflows', connected: false },
-  { name: 'Windsurf', icon: '🌊', desc: 'Windsurf AI IDE integration', connected: false },
-  { name: 'Roo Cline', icon: '🔌', desc: 'VS Code extension for AI agents', connected: false },
+  { name: 'Claude', desc: 'Anthropic Claude for reasoning and content generation', connected: false },
+  { name: 'Cursor', desc: 'AI-powered code editor integration', connected: false },
+  { name: 'OpenAI Codex', desc: 'OpenAI Codex for developer workflows', connected: false },
+  { name: 'Windsurf', desc: 'Windsurf AI IDE integration', connected: false },
+  { name: 'Roo Cline', desc: 'VS Code extension for AI agents', connected: false },
 ];
 const OPTIONS = INTEGRATIONS.map(i => i.name);
 
@@ -98,7 +98,7 @@ export default function MCPPage() {
                     {integrations.map(int => (
                       <div key={int.name} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', padding: 20 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-                          <span style={{ fontSize: 24 }}>{int.icon}</span>
+                          <div style={{ width: 40, height: 40, borderRadius: 10, background: 'var(--accent-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, color: 'var(--accent-primary)', flexShrink: 0 }}>{int.name[0]}</div>
                           <div>
                             <h4 style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{int.name}</h4>
                             <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>{int.desc}</p>

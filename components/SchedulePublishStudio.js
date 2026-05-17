@@ -107,10 +107,10 @@ export default function SchedulePublishStudio({ initialTab }) {
         <label className="block text-xs font-medium text-[#9CA3AF] mb-2">Output Formats</label>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { format: '9:16', label: 'TikTok / Reels', icon: '📱' },
-            { format: '16:9', label: 'YouTube', icon: '🖥️' },
-            { format: '1:1', label: 'Instagram Feed', icon: '📐' },
-            { format: '4:5', label: 'Instagram Portrait', icon: '📲' },
+            { format: '9:16', label: 'TikTok / Reels' },
+            { format: '16:9', label: 'YouTube' },
+            { format: '1:1', label: 'Instagram Feed' },
+            { format: '4:5', label: 'Instagram Portrait' },
           ].map((f, i) => (
             <label key={i} className="flex items-center gap-3 p-3 rounded-lg bg-white/[0.03] border border-white/5 cursor-pointer hover:bg-white/[0.05] transition-all">
               <input type="checkbox" defaultChecked className="w-4 h-4 rounded border-white/20 bg-white/5 text-[#7C3AED] focus:ring-[#7C3AED]" />

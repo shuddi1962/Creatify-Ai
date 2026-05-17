@@ -3,14 +3,14 @@ import { useState, useRef } from 'react'
 import { Upload, X, Download } from 'lucide-react'
 
 const GRADE_STYLES = [
-  { id: 'warm', name: 'Warm Golden', emoji: '🌅', preset: { exposure: 0.2, contrast: 0.1, saturation: 0.3, temperature: 15, tint: 0 } },
-  { id: 'cool', name: 'Cool Blue', emoji: '❄️', preset: { exposure: 0, contrast: 0.2, saturation: -0.1, temperature: -20, tint: 5 } },
-  { id: 'teal-orange', name: 'Teal & Orange', emoji: '🎬', preset: { exposure: 0.1, contrast: 0.3, saturation: 0.2, temperature: -10, tint: 15 } },
-  { id: 'vintage', name: 'Vintage Film', emoji: '📽️', preset: { exposure: -0.1, contrast: 0.4, saturation: -0.2, temperature: 10, tint: -5 } },
-  { id: 'bw', name: 'Black & White', emoji: '⚫', preset: { exposure: 0, contrast: 0.5, saturation: -1, temperature: 0, tint: 0 } },
-  { id: 'neon', name: 'Neon Cyber', emoji: '💜', preset: { exposure: 0.2, contrast: 0.3, saturation: 0.5, temperature: -15, tint: 20 } },
-  { id: 'muted', name: 'Muted Film', emoji: '🎞️', preset: { exposure: -0.1, contrast: 0.1, saturation: -0.4, temperature: 5, tint: 0 } },
-  { id: 'hdr', name: 'HDR Punch', emoji: '✨', preset: { exposure: 0.3, contrast: 0.5, saturation: 0.3, temperature: 0, tint: 0 } },
+  { id: 'warm', name: 'Warm Golden', preset: { exposure: 0.2, contrast: 0.1, saturation: 0.3, temperature: 15, tint: 0 } },
+  { id: 'cool', name: 'Cool Blue', preset: { exposure: 0, contrast: 0.2, saturation: -0.1, temperature: -20, tint: 5 } },
+  { id: 'teal-orange', name: 'Teal & Orange', preset: { exposure: 0.1, contrast: 0.3, saturation: 0.2, temperature: -10, tint: 15 } },
+  { id: 'vintage', name: 'Vintage Film', preset: { exposure: -0.1, contrast: 0.4, saturation: -0.2, temperature: 10, tint: -5 } },
+  { id: 'bw', name: 'Black & White', preset: { exposure: 0, contrast: 0.5, saturation: -1, temperature: 0, tint: 0 } },
+  { id: 'neon', name: 'Neon Cyber', preset: { exposure: 0.2, contrast: 0.3, saturation: 0.5, temperature: -15, tint: 20 } },
+  { id: 'muted', name: 'Muted Film', preset: { exposure: -0.1, contrast: 0.1, saturation: -0.4, temperature: 5, tint: 0 } },
+  { id: 'hdr', name: 'HDR Punch', preset: { exposure: 0.3, contrast: 0.5, saturation: 0.3, temperature: 0, tint: 0 } },
 ]
 
 export default function ColorGradingPage() {
@@ -86,7 +86,6 @@ export default function ColorGradingPage() {
               <div key={g.id} onClick={() => applyPreset(g)} style={{ background: 'var(--bg-card)', border: selectedGrade.id === g.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)', borderRadius: 14, padding: '16px', cursor: 'pointer', textAlign: 'center', transition: 'all 150ms' }}
                 onMouseEnter={e => { if (selectedGrade.id !== g.id) e.currentTarget.style.borderColor = 'var(--border-default)' }}
                 onMouseLeave={e => { if (selectedGrade.id !== g.id) e.currentTarget.style.borderColor = 'var(--border-subtle)' }}>
-                <div style={{ fontSize: 28, marginBottom: 8 }}>{g.emoji}</div>
                 <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text-primary)' }}>{g.name}</div>
               </div>
             ))}
@@ -128,7 +127,7 @@ export default function ColorGradingPage() {
           )}
           {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fca5a5', marginBottom: 12 }}>{error}</div>}
           <button onClick={handleApply} disabled={loading || !uploadedVideo} style={{ width: '100%', padding: '12px 0', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: loading || !uploadedVideo ? 'not-allowed' : 'pointer' }}>
-            {loading ? 'Applying grade...' : `✦ Apply ${selectedGrade.name}`}
+            {loading ? 'Applying grade...' : `Apply ${selectedGrade.name}`}
           </button>
           {result && (
             <div style={{ marginTop: 16 }}>

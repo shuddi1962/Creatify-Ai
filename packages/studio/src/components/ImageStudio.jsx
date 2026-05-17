@@ -447,7 +447,7 @@ function UploadButton({ apiKey, maxImages, onSelect, onClear, initialUrls = [] }
                   onClick={handleDone}
                   className="flex items-center gap-1 px-3 py-1.5 bg-primary text-black rounded-xl text-xs font-black transition-all hover:scale-105"
                 >
-                  ✓ Done ({count})
+                  OK Done ({count})
                 </button>
               )}
               <button
@@ -1178,7 +1178,7 @@ export default function ImageStudio({
                   </svg>
                 </div>
                 <div className="absolute top-4 right-4 text-[10px] text-primary/40 animate-pulse">
-                  ✨
+                  *
                 </div>
               </div>
             </div>
@@ -1369,7 +1369,7 @@ export default function ImageStudio({
             >
               {generating ? (
                 <>
-                  <span className="animate-spin inline-block text-black">◌</span>
+                  <span className="animate-spin inline-block text-black">*</span>
                   Generating...
                 </>
               ) : generateError ? (

@@ -81,7 +81,7 @@ export default function GenerationPanel({ children, prompt, onPromptChange, plac
             onMouseEnter={e => !loading && (e.currentTarget.style.transform = 'translateY(-1px)')}
             onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
           >
-            {loading ? 'Generating...' : `✦ ${generateLabel}`}
+            {loading ? 'Generating...' : `${generateLabel}`}
           </button>
         </div>
       </div>
@@ -172,7 +172,7 @@ export function GenerateSection({ onClick, loading, label = 'Generate' }) {
         onMouseEnter={e => !loading && (e.currentTarget.style.transform = 'translateY(-1px)')}
         onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}
       >
-        {loading ? 'Generating...' : `✦ ${label}`}
+        {loading ? 'Generating...' : `${label}`}
       </button>
     </div>
   )

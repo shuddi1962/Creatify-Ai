@@ -62,7 +62,7 @@ export default function StudioFooter() {
                 background: '#6366f1',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: 12, flexShrink: 0,
-              }}>✨</div>
+              }}>&#9733;</div>
               <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--text-primary)', whiteSpace: 'nowrap' }}>
                 Creatify AI
               </span>

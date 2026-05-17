@@ -4,21 +4,21 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const IMAGE_TABS = [
-  { id: 'text-to-image', label: 'Text to Image', desc: 'Generate stunning AI images from any text prompt', icon: '🖼️' },
-  { id: 'image-to-image', label: 'Image to Image', desc: 'Transform images with AI-powered style transfer', icon: '🔄' },
-  { id: 'inpaint', label: 'Inpaint & Edit', desc: 'Brush to edit any region of your image using AI', icon: '✏️' },
-  { id: 'outpaint', label: 'Outpaint / Expand', desc: 'Expand image borders in any direction seamlessly', icon: '↔️' },
-  { id: 'upscale', label: 'Upscale Image', desc: 'Enhance resolution to 2x, 4x, or 8x crystal clarity', icon: '📈' },
-  { id: 'remove-bg', label: 'Remove Background', desc: 'Clean, instant AI background removal in one click', icon: '✂️' },
-  { id: 'multi-view', label: 'Multi-View', desc: 'Generate 9 different camera angles from one single image', icon: '🎬' },
-  { id: 'camera-angle', label: 'Cinematic Cameras', desc: 'Pro camera controls and depth of field', icon: '📷' },
-  { id: 'product-placement', label: 'Product Placement', desc: 'Place your product into any scene or environment', icon: '📦' },
-  { id: 'fashion', label: 'Fashion Generator', desc: 'Place any outfit on a model in any style instantly', icon: '👗' },
-  { id: 'headshot', label: 'AI Headshot', desc: 'Professional studio-quality headshots generated in seconds', icon: '👤' },
-  { id: 'meme', label: 'Meme Generator', desc: 'Create viral AI memes from a simple text prompt', icon: '😂' },
-  { id: 'style-transfer', label: 'Style Transfer', desc: 'Apply the style of any artwork to your own images', icon: '🎨' },
-  { id: 'image-to-3d', label: 'Image to 3D', desc: 'Convert any flat image into a 3D model or render', icon: '🎮' },
-  { id: 'relight', label: 'Relight', desc: 'Adjust lighting position, color, and brightness on photos', icon: '💡' },
+  { id: 'text-to-image', label: 'Text to Image', desc: 'Generate stunning AI images from any text prompt' },
+  { id: 'image-to-image', label: 'Image to Image', desc: 'Transform images with AI-powered style transfer' },
+  { id: 'inpaint', label: 'Inpaint & Edit', desc: 'Brush to edit any region of your image using AI' },
+  { id: 'outpaint', label: 'Outpaint / Expand', desc: 'Expand image borders in any direction seamlessly' },
+  { id: 'upscale', label: 'Upscale Image', desc: 'Enhance resolution to 2x, 4x, or 8x crystal clarity' },
+  { id: 'remove-bg', label: 'Remove Background', desc: 'Clean, instant AI background removal in one click' },
+  { id: 'multi-view', label: 'Multi-View', desc: 'Generate 9 different camera angles from one single image' },
+  { id: 'camera-angle', label: 'Cinematic Cameras', desc: 'Pro camera controls and depth of field' },
+  { id: 'product-placement', label: 'Product Placement', desc: 'Place your product into any scene or environment' },
+  { id: 'fashion', label: 'Fashion Generator', desc: 'Place any outfit on a model in any style instantly' },
+  { id: 'headshot', label: 'AI Headshot', desc: 'Professional studio-quality headshots generated in seconds' },
+  { id: 'meme', label: 'Meme Generator', desc: 'Create viral AI memes from a simple text prompt' },
+  { id: 'style-transfer', label: 'Style Transfer', desc: 'Apply the style of any artwork to your own images' },
+  { id: 'image-to-3d', label: 'Image to 3D', desc: 'Convert any flat image into a 3D model or render' },
+  { id: 'relight', label: 'Relight', desc: 'Adjust lighting position, color, and brightness on photos' },
 ];
 
 const MODELS = [
@@ -31,11 +31,11 @@ const MODELS = [
 ];
 
 const ASPECT_RATIOS = [
-  { id: '1:1', label: 'Square 1:1', icon: '⬜' },
-  { id: '16:9', label: 'Landscape 16:9', icon: '▬' },
-  { id: '9:16', label: 'Portrait 9:16', icon: '▮' },
-  { id: '4:3', label: 'Standard 4:3', icon: '▭' },
-  { id: '3:2', label: 'Photo 3:2', icon: '▯' },
+  { id: '1:1', label: 'Square 1:1' },
+  { id: '16:9', label: 'Landscape 16:9' },
+  { id: '9:16', label: 'Portrait 9:16' },
+  { id: '4:3', label: 'Standard 4:3' },
+  { id: '3:2', label: 'Photo 3:2' },
 ];
 
 export default function ImageStudioTabs({ initialTab, apiKey, droppedFiles, onFilesHandled }) {

@@ -4,11 +4,11 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const LIPSYNC_TABS = [
-  { id: 'portrait', label: 'Portrait + Audio', desc: 'Animate any portrait photo with any audio file instantly', icon: '👤' },
-  { id: 'video', label: 'Video + Audio', desc: 'Sync lips perfectly on any existing video with new audio', icon: '🎬' },
-  { id: 'bulk', label: 'Bulk Lip Sync', desc: 'One character combined with 100 audio files = 100 videos', icon: '📚' },
-  { id: 'avatar', label: 'Talking Avatar', desc: 'Build and save a persistent reusable talking avatar', icon: '🎭' },
-  { id: 'dubbing', label: 'Multi-language Dub', desc: 'Dub any video into any language with AI voice sync', icon: '🌍' },
+  { id: 'portrait', label: 'Portrait + Audio', desc: 'Animate any portrait photo with any audio file instantly' },
+  { id: 'video', label: 'Video + Audio', desc: 'Sync lips perfectly on any existing video with new audio' },
+  { id: 'bulk', label: 'Bulk Lip Sync', desc: 'One character combined with 100 audio files = 100 videos' },
+  { id: 'avatar', label: 'Talking Avatar', desc: 'Build and save a persistent reusable talking avatar' },
+  { id: 'dubbing', label: 'Multi-language Dub', desc: 'Dub any video into any language with AI voice sync' },
 ];
 
 const MODELS = [
@@ -78,7 +78,7 @@ export default function LipSyncStudioTabs({ initialTab, apiKey, droppedFiles, on
             {uploadedImage ? (
               <div className="relative">
                 <img src={uploadedImage} alt="Portrait" className="max-h-48 mx-auto rounded-lg" />
-                <button onClick={(e) => { e.stopPropagation(); setUploadedImage(null); }} className="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white">✕</button>
+                <button onClick={(e) => { e.stopPropagation(); setUploadedImage(null); }} className="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white">X</button>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2">
@@ -94,9 +94,11 @@ export default function LipSyncStudioTabs({ initialTab, apiKey, droppedFiles, on
           <div className="border-2 border-dashed border-white/20 rounded-xl p-6 text-center hover:border-[#EC4899]/50 transition-colors cursor-pointer" onClick={() => document.getElementById('portrait-audio')?.click()}>
             {uploadedAudio ? (
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-[#EC4899]/20 flex items-center justify-center">🎵</div>
+                <div className="w-10 h-10 rounded-full bg-[#EC4899]/20 flex items-center justify-center">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#EC4899" strokeWidth="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+                </div>
                 <span className="text-white text-sm">audio.mp3</span>
-                <button onClick={(e) => { e.stopPropagation(); setUploadedAudio(null); }} className="text-red-400">✕</button>
+                <button onClick={(e) => { e.stopPropagation(); setUploadedAudio(null); }} className="text-red-400">X</button>
               </div>
             ) : (
               <div className="flex flex-col items-center gap-2">
@@ -136,7 +138,9 @@ export default function LipSyncStudioTabs({ initialTab, apiKey, droppedFiles, on
             {uploadedVideo ? (
               <div className="relative">
                 <video src={uploadedVideo} className="max-h-48 mx-auto rounded-lg" />
-                <button onClick={() => setUploadedVideo(null)} className="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white">✕</button>
+                <button onClick={() => setUploadedVideo(null)} className="absolute top-2 right-2 p-1 rounded-full bg-red-500/80 text-white">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
               </div>
             ) : (
               <span className="text-[#9CA3AF]">Upload video to lip sync</span>
@@ -184,7 +188,7 @@ export default function LipSyncStudioTabs({ initialTab, apiKey, droppedFiles, on
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {AVATARS.map((avatar) => (
             <button key={avatar.id} onClick={() => setSelectedAvatar(avatar.id)} className={`p-4 rounded-xl border text-center transition-all ${selectedAvatar === avatar.id ? 'bg-[#EC4899]/20 border-[#EC4899]/50' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#EC4899]/30 to-[#EC4899]/10 mx-auto mb-2 flex items-center justify-center text-2xl">👤</div>
+              <div className="w-16 h-16 rounded-full bg-gradient-to-br from-[#EC4899]/30 to-[#EC4899]/10 mx-auto mb-2 flex items-center justify-center text-lg font-bold text-[#EC4899]">A</div>
               <div className="text-sm font-medium text-white">{avatar.name}</div>
               <div className="text-[10px] text-[#9CA3AF]">{avatar.gender} • {avatar.style}</div>
             </button>

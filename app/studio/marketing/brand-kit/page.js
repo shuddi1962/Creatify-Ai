@@ -31,7 +31,7 @@ export default function BrandKitPage() {
       <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, padding: '24px', display: 'flex', flexDirection: 'column', gap: 20 }}>
         <div style={{ display: 'flex', gap: 20, alignItems: 'center' }}>
           <div style={{ width: 80, height: 80, borderRadius: 16, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid var(--border-default)' }}>
-            {logo ? <img src={logo} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <span style={{ fontSize: 24, color: 'var(--text-muted)' }}>📎</span>}
+            {logo ? <img src={logo} style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <span style={{ fontSize: 20, color: 'var(--text-muted)' }}>&#43;</span>}
           </div>
           <div><label htmlFor="logo-upload" style={{ display: 'inline-block', padding: '7px 16px', background: 'var(--bg-input)', border: '1px solid var(--border-default)', borderRadius: 8, fontSize: 12, color: 'var(--text-secondary)', cursor: 'pointer' }}>Upload Logo</label>
             <input id="logo-upload" type="file" accept="image/*" style={{ display: 'none' }} onChange={handleLogoUpload} /></div>
@@ -60,7 +60,7 @@ export default function BrandKitPage() {
             ))}
           </div>
         </div>
-        <button onClick={handleSave} style={{ padding: '12px 0', background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>✦ Save Brand Kit</button>
+        <button onClick={handleSave} style={{ padding: '12px 0', background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>Save Brand Kit</button>
       </div>
     </div>
   )

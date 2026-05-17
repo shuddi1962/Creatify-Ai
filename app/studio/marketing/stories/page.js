@@ -55,7 +55,7 @@ export default function StoriesPage() {
               <span style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{s.label}</span>
             </div>
             <div style={{ height: 200, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
-              {s.result ? <video src={s.result.url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : s.loading ? <div style={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid var(--accent-primary)', borderTopColor: 'transparent', animation: 'spin 600ms linear infinite' }} /> : <span style={{ fontSize: 28, color: 'var(--text-muted)' }}>{idx === 0 ? '🎣' : idx === 1 ? '💡' : '🎯'}</span>}
+              {s.result ? <video src={s.result.url} controls style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : s.loading ? <div style={{ width: 24, height: 24, borderRadius: '50%', border: '2px solid var(--accent-primary)', borderTopColor: 'transparent', animation: 'spin 600ms linear infinite' }} /> : <span style={{ fontSize: 28, color: 'var(--text-muted)' }}>{idx === 0 ? '1' : idx === 1 ? '2' : '3'}</span>}
             </div>
             <div style={{ padding: '12px 14px' }}>
               <textarea value={s.prompt} onChange={e => updateSection(s.id, e.target.value)} placeholder={`Describe the ${s.label.toLowerCase()} section...`} rows={2} style={{ width: '100%', background: 'var(--bg-input)', border: '1px solid var(--border-subtle)', borderRadius: 8, padding: '8px 10px', color: 'var(--text-primary)', fontSize: 12, resize: 'none', outline: 'none', fontFamily: 'inherit', marginBottom: 8 }} />

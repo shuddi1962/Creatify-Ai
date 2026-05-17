@@ -2,7 +2,7 @@
 import { usePathname } from 'next/navigation'
 import { SectionSidebar } from '@/components/ui/SectionSidebar'
 import { SidebarNavItem, SidebarSectionLabel } from '@/components/ui/SidebarNavItem'
-import { Copy, Image, Video, Mic2, Mic, List, Download, Bell, Cloud } from 'lucide-react'
+import { Copy, Image, Video, Mic2, Mic, List, Download, Bell, Cloud, Package } from 'lucide-react'
 
 const ITEMS = [
   {
@@ -28,7 +28,7 @@ const ITEMS = [
 export function BulkSidebar() {
   const pathname = usePathname()
   return (
-    <SectionSidebar sectionName="Bulk Generate" sectionEmoji="\uD83D\uDCE6" toolCount={8}>
+    <SectionSidebar sectionName="Bulk Generate" sectionIcon={Package} toolCount={8}>
       {ITEMS.map(group => (
         <div key={group.section}>
           <SidebarSectionLabel label={group.section} />

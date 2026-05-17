@@ -155,7 +155,7 @@ export default function MultiViewPage() {
                     color: selectedAngles.includes(angle) ? 'var(--accent-text)' : 'var(--text-secondary)',
                     border: selectedAngles.includes(angle) ? '1px solid var(--accent-primary)' : '1px solid var(--border-default)',
                   }}>
-                  {selectedAngles.includes(angle) && '✓ '}{angle}
+                  {selectedAngles.includes(angle) && '[x] '}{angle}
                 </ControlButton>
               ))}
             </div>

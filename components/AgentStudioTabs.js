@@ -4,23 +4,23 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const AGENT_TABS = [
-  { id: 'create', label: 'Create Agent', desc: 'Build a custom AI agent for automated content generation', icon: '➕' },
-  { id: 'mine', label: 'My Agents', desc: 'View and manage all your active and saved AI agents', icon: '🤖' },
-  { id: 'templates', label: 'Agent Templates', desc: 'Start from a pre-built agent template for common tasks', icon: '📋' },
-  { id: 'logs', label: 'Agent Logs', desc: 'View complete run history, errors, and output logs', icon: '📜' },
-  { id: 'mcp', label: 'MCP Server', desc: 'Connect to Claude, OpenAI Codex, and other AI agent systems', icon: '🔗' },
-  { id: 'cli', label: 'CLI Tool', desc: 'Terminal-based batch generation for developers and power users', icon: '💻' },
-  { id: 'api', label: 'API Access', desc: 'REST API endpoints for all generation features with full docs', icon: '🌐' },
-  { id: 'webhooks', label: 'Webhooks', desc: 'Trigger agent runs from any external system or event', icon: '🪝' },
+  { id: 'create', label: 'Create Agent', desc: 'Build a custom AI agent for automated content generation' },
+  { id: 'mine', label: 'My Agents', desc: 'View and manage all your active and saved AI agents' },
+  { id: 'templates', label: 'Agent Templates', desc: 'Start from a pre-built agent template for common tasks' },
+  { id: 'logs', label: 'Agent Logs', desc: 'View complete run history, errors, and output logs' },
+  { id: 'mcp', label: 'MCP Server', desc: 'Connect to Claude, OpenAI Codex, and other AI agent systems' },
+  { id: 'cli', label: 'CLI Tool', desc: 'Terminal-based batch generation for developers and power users' },
+  { id: 'api', label: 'API Access', desc: 'REST API endpoints for all generation features with full docs' },
+  { id: 'webhooks', label: 'Webhooks', desc: 'Trigger agent runs from any external system or event' },
 ];
 
 const AGENT_TEMPLATES = [
-  { id: 't1', name: 'Content Writer', description: 'Generates blog posts, articles, and social content', icon: '✍️' },
-  { id: 't2', name: 'Video Script Writer', description: 'Creates video scripts with hooks and CTAs', icon: '🎬' },
-  { id: 't3', name: 'Image Prompt Engineer', description: 'Optimizes prompts for better AI image generation', icon: '🖼️' },
-  { id: 't4', name: 'SEO Analyzer', description: 'Analyzes content and suggests SEO improvements', icon: '📈' },
-  { id: 't5', name: 'Social Media Manager', description: 'Creates and schedules social media posts', icon: '📱' },
-  { id: 't6', name: 'Translation Agent', description: 'Translates content between multiple languages', icon: '🌍' },
+  { id: 't1', name: 'Content Writer', description: 'Generates blog posts, articles, and social content' },
+  { id: 't2', name: 'Video Script Writer', description: 'Creates video scripts with hooks and CTAs' },
+  { id: 't3', name: 'Image Prompt Engineer', description: 'Optimizes prompts for better AI image generation' },
+  { id: 't4', name: 'SEO Analyzer', description: 'Analyzes content and suggests SEO improvements' },
+  { id: 't5', name: 'Social Media Manager', description: 'Creates and schedules social media posts' },
+  { id: 't6', name: 'Translation Agent', description: 'Translates content between multiple languages' },
 ];
 
 const MY_AGENTS = [
@@ -102,7 +102,9 @@ export default function AgentStudioTabs({ initialTab, apiKey, isHeaderVisible, o
               </div>
               <div className="flex items-center gap-2">
                 <span className={`px-2 py-1 rounded text-xs ${agent.status === 'active' ? 'bg-green-500/20 text-green-400' : 'bg-yellow-500/20 text-yellow-400'}`}>{agent.status}</span>
-                <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white">▶</button>
+                <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </button>
               </div>
             </div>
           </div>
@@ -118,7 +120,9 @@ export default function AgentStudioTabs({ initialTab, apiKey, isHeaderVisible, o
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {AGENT_TEMPLATES.map((t) => (
           <div key={t.id} className="p-4 rounded-xl bg-white/5 border border-white/10 hover:border-[#A855F7]/50 cursor-pointer">
-            <div className="text-3xl mb-3">{t.icon}</div>
+            <div className="w-10 h-10 rounded-xl bg-[#A855F7]/20 flex items-center justify-center mb-3">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#A855F7" strokeWidth="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+            </div>
             <div className="text-sm font-medium text-white">{t.name}</div>
             <div className="text-xs text-[#9CA3AF] mt-1">{t.description}</div>
             <button className="mt-3 px-4 py-2 rounded-lg bg-[#A855F7]/20 text-[#A855F7] text-xs font-medium hover:bg-[#A855F7]/30">

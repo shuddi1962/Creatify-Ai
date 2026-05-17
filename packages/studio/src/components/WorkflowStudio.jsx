@@ -425,7 +425,7 @@ export default function WorkflowStudio({ apiKey, isHeaderVisible = true, onToggl
   if (loading && !selectedWorkflow) {
     return (
       <div className="h-full flex items-center justify-center">
-        <div className="animate-spin text-[#d9ff00] text-3xl">◌</div>
+        <div className="animate-spin text-[#d9ff00] text-3xl">*</div>
       </div>
     );
   }

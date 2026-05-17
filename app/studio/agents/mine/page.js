@@ -7,9 +7,9 @@ import StudioEditorLayout, { LeftPanel, StudioCanvas, DirectorBar, GenerateButto
 import Link from 'next/link';
 
 const SAMPLE_AGENTS = [
-  { id: 1, name: 'Daily Content Bot', emoji: '🤖', trigger: 'Schedule', lastRun: '2 hours ago', status: 'active', runs: 45 },
-  { id: 2, name: 'Hook Generator', emoji: '🎯', trigger: 'Manual', lastRun: '1 day ago', status: 'active', runs: 23 },
-  { id: 3, name: 'Product Showcase', emoji: '🎨', trigger: 'Webhook', lastRun: '3 days ago', status: 'paused', runs: 12 },
+  { id: 1, name: 'Daily Content Bot', trigger: 'Schedule', lastRun: '2 hours ago', status: 'active', runs: 45 },
+  { id: 2, name: 'Hook Generator', trigger: 'Manual', lastRun: '1 day ago', status: 'active', runs: 23 },
+  { id: 3, name: 'Product Showcase', trigger: 'Webhook', lastRun: '3 days ago', status: 'paused', runs: 12 },
 ];
 const OPTIONS = SAMPLE_AGENTS.map(a => a.name);
 
@@ -85,7 +85,7 @@ export default function MyAgentsPage() {
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 700, margin: '0 auto' }}>
                   {filtered.map(agent => (
                     <div key={agent.id} style={{ background: 'var(--bg-card)', borderRadius: 12, border: '1px solid var(--border-subtle)', padding: 20, display: 'flex', alignItems: 'center', gap: 16 }}>
-                      <span style={{ fontSize: 32 }}>{agent.emoji}</span>
+                      <div style={{ width: 36, height: 36, borderRadius: 10, background: 'var(--bg-input)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent-primary)', fontSize: 16, fontWeight: 700, flexShrink: 0 }}>{agent.name[0]}</div>
                       <div style={{ flex: 1 }}>
                         <h3 style={{ color: 'var(--text-primary)', fontWeight: 700 }}>{agent.name}</h3>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 4 }}>

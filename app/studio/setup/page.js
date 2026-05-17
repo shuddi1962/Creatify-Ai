@@ -95,7 +95,7 @@ export default function SetupPage() {
             <div className="bg-[#0A0F1E] rounded-xl p-4 border border-white/5 mb-6 text-left text-xs text-[#9CA3AF]">
               {result?.results?.map((r, i) => (
                 <div key={i} className={`flex items-center gap-2 py-1 ${r.status === 'success' ? 'text-green-400' : 'text-red-400'}`}>
-                  <span>{r.status === 'success' ? '✓' : '✗'}</span>
+                  <span>{r.status === 'success' ? 'OK' : 'X'}</span>
                   <span>{r.file}</span>
                 </div>
               ))}

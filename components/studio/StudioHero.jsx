@@ -34,7 +34,7 @@ export default function StudioHero({ icon: Icon, featureName, subtitle }) {
             background: 'var(--accent-primary)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
             fontSize: 8, color: '#000',
-          }}>✦</div>
+          }}>&#9733;</div>
         </div>
       )}
 

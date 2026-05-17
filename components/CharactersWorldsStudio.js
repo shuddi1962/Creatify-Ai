@@ -100,17 +100,16 @@ export default function CharactersWorldsStudio({ initialTab }) {
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
-          { name: 'Golden Hour', icon: '🌅', temp: 'Warm' },
-          { name: 'Studio Soft', icon: '💡', temp: 'Neutral' },
-          { name: 'Night Scene', icon: '🌙', temp: 'Cool' },
-          { name: 'Dramatic', icon: '🎭', temp: 'High Contrast' },
-          { name: 'Neon City', icon: '🌆', temp: 'Colorful' },
-          { name: 'Candlelight', icon: '🕯️', temp: 'Very Warm' },
-          { name: 'Overcast', icon: '☁️', temp: 'Soft' },
-          { name: 'Backlit', icon: '✨', temp: 'Silhouette' },
+          { name: 'Golden Hour', temp: 'Warm' },
+          { name: 'Studio Soft', temp: 'Neutral' },
+          { name: 'Night Scene', temp: 'Cool' },
+          { name: 'Dramatic', temp: 'High Contrast' },
+          { name: 'Neon City', temp: 'Colorful' },
+          { name: 'Candlelight', temp: 'Very Warm' },
+          { name: 'Overcast', temp: 'Soft' },
+          { name: 'Backlit', temp: 'Silhouette' },
         ].map((p, i) => (
           <div key={i} className="p-4 rounded-xl bg-white/[0.03] border border-white/5 text-center hover:bg-white/[0.06] hover:border-[#7C3AED]/30 transition-all cursor-pointer">
-            <div className="text-2xl mb-2">{p.icon}</div>
             <div className="text-sm font-medium text-[#F9FAFB]">{p.name}</div>
             <div className="text-xs text-[#9CA3AF]">{p.temp}</div>
           </div>

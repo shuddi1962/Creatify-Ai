@@ -4,24 +4,24 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const CINEMA_TABS = [
-  { id: 'generate', label: 'Cinematic Generator', desc: 'Full cinematic video generation with Hollywood-level quality', icon: '🎬' },
-  { id: 'vfx', label: 'VFX Presets', desc: '200+ one-click visual effects — explosion, fire, raven and more', icon: '💥' },
-  { id: 'color-grading', label: 'Color Grading', desc: 'Apply professional color grading presets to any video instantly', icon: '🎨' },
-  { id: 'storyboard', label: 'Storyboard Builder', desc: 'Plan and visualize your scenes before generating any video', icon: '📋' },
-  { id: 'scene', label: 'Scene Composition', desc: 'Director-level control over every element in your scene', icon: '🎭' },
-  { id: 'genres', label: 'Genre Presets', desc: 'One-click style presets for action, horror, romance, sci-fi', icon: '🎞️' },
-  { id: 'camera', label: 'Camera Controls', desc: 'Lens, focal length, aperture, and depth of field controls', icon: '📷' },
+  { id: 'generate', label: 'Cinematic Generator', desc: 'Full cinematic video generation with Hollywood-level quality' },
+  { id: 'vfx', label: 'VFX Presets', desc: '200+ one-click visual effects — explosion, fire, raven and more' },
+  { id: 'color-grading', label: 'Color Grading', desc: 'Apply professional color grading presets to any video instantly' },
+  { id: 'storyboard', label: 'Storyboard Builder', desc: 'Plan and visualize your scenes before generating any video' },
+  { id: 'scene', label: 'Scene Composition', desc: 'Director-level control over every element in your scene' },
+  { id: 'genres', label: 'Genre Presets', desc: 'One-click style presets for action, horror, romance, sci-fi' },
+  { id: 'camera', label: 'Camera Controls', desc: 'Lens, focal length, aperture, and depth of field controls' },
 ];
 
 const VFX_PRESETS = [
-  { id: 'explosion', name: 'Explosion', category: 'Action', icon: '💥' },
-  { id: 'fire', name: 'Fire', category: 'Nature', icon: '🔥' },
-  { id: 'raven', name: 'Raven', category: 'Creature', icon: '🐦' },
-  { id: 'werewolf', name: 'Werewolf', category: 'Creature', icon: '🐺' },
-  { id: 'lightning', name: 'Lightning', category: 'Nature', icon: '⚡' },
-  { id: 'smoke', name: 'Smoke', category: 'Atmosphere', icon: '☁️' },
-  { id: 'water-splash', name: 'Water Splash', category: 'Nature', icon: '💦' },
-  { id: 'sparks', name: 'Sparks', category: 'Action', icon: '✨' },
+  { id: 'explosion', name: 'Explosion', category: 'Action' },
+  { id: 'fire', name: 'Fire', category: 'Nature' },
+  { id: 'raven', name: 'Raven', category: 'Creature' },
+  { id: 'werewolf', name: 'Werewolf', category: 'Creature' },
+  { id: 'lightning', name: 'Lightning', category: 'Nature' },
+  { id: 'smoke', name: 'Smoke', category: 'Atmosphere' },
+  { id: 'water-splash', name: 'Water Splash', category: 'Nature' },
+  { id: 'sparks', name: 'Sparks', category: 'Action' },
 ];
 
 const COLOR_GRADES = [
@@ -119,7 +119,9 @@ export default function CinemaStudioTabs({ initialTab, apiKey }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {VFX_PRESETS.map((vfx) => (
             <button key={vfx.id} onClick={() => setSelectedVFX(vfx.id)} className={`p-4 rounded-xl border text-center transition-all ${selectedVFX === vfx.id ? 'bg-[#EF4444]/20 border-[#EF4444]/50' : 'bg-white/5 border-white/10 hover:bg-white/10'}`}>
-              <div className="text-3xl mb-2">{vfx.icon}</div>
+              <div className="w-10 h-10 rounded-xl bg-[#EF4444]/20 flex items-center justify-center mb-2">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#EF4444" strokeWidth="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              </div>
               <div className="text-sm font-medium text-white">{vfx.name}</div>
               <div className="text-[10px] text-[#9CA3AF]">{vfx.category}</div>
             </button>

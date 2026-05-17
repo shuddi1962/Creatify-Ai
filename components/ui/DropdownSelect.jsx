@@ -98,7 +98,7 @@ export default function DropdownSelect({ value, onChange, options = [], placehol
                 onMouseLeave={e => e.currentTarget.style.background = opt.id === value ? 'rgba(0,200,150,0.15)' : 'transparent'}
               >
                 <span>{opt.label}</span>
-                {opt.id === value && <span style={{ color: '#00C896', fontSize: 11 }}>✓</span>}
+                {opt.id === value && <span style={{ color: '#00C896', fontSize: 11 }}>&#10003;</span>}
               </button>
             ))}
           </div>

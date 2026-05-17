@@ -4,22 +4,22 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 const MARKETING_TABS = [
-  { id: 'ugc', label: 'UGC Ad Generator', desc: 'Create scroll-stopping UGC-style video ads that convert', icon: '📱' },
-  { id: 'product-url', label: 'Product URL to Ad', desc: 'Paste any product URL and get auto-generated video ads', icon: '🔗' },
-  { id: 'brand-kit', label: 'Brand Kit', desc: 'Upload logo, colors, and fonts once — applied to all outputs', icon: '🎨' },
-  { id: 'formatter', label: 'Platform Formatter', desc: 'Auto-resize content to 9:16, 1:1, 16:9, and 4:5 formats', icon: '📐' },
-  { id: 'hooks', label: 'Hook Generator', desc: 'Generate 20 proven viral opening hooks for any niche or product', icon: '🪝' },
-  { id: 'batch', label: 'Batch Ad Generator', desc: 'Create 10 different ad variants from one product in one click', icon: '📚' },
-  { id: 'stories', label: 'Story Ad Builder', desc: 'Build high-converting short-form story ads for any platform', icon: '📖' },
-  { id: 'demo', label: 'Product Demo', desc: 'Showcase your product in motion with stunning AI video demos', icon: '🎬' },
+  { id: 'ugc', label: 'UGC Ad Generator', desc: 'Create scroll-stopping UGC-style video ads that convert' },
+  { id: 'product-url', label: 'Product URL to Ad', desc: 'Paste any product URL and get auto-generated video ads' },
+  { id: 'brand-kit', label: 'Brand Kit', desc: 'Upload logo, colors, and fonts once — applied to all outputs' },
+  { id: 'formatter', label: 'Platform Formatter', desc: 'Auto-resize content to 9:16, 1:1, 16:9, and 4:5 formats' },
+  { id: 'hooks', label: 'Hook Generator', desc: 'Generate 20 proven viral opening hooks for any niche or product' },
+  { id: 'batch', label: 'Batch Ad Generator', desc: 'Create 10 different ad variants from one product in one click' },
+  { id: 'stories', label: 'Story Ad Builder', desc: 'Build high-converting short-form story ads for any platform' },
+  { id: 'demo', label: 'Product Demo', desc: 'Showcase your product in motion with stunning AI video demos' },
 ];
 
 const PLATFORMS = ['TikTok', 'Instagram', 'YouTube', 'LinkedIn', 'Twitter', 'Facebook'];
 const ASPECTS = [
-  { id: '9:16', label: 'Stories/Reels', icon: '📱' },
-  { id: '1:1', label: 'Square', icon: '⬜' },
-  { id: '16:9', label: 'Landscape', icon: '▬' },
-  { id: '4:5', label: 'Portrait', icon: '▮' },
+  { id: '9:16', label: 'Stories/Reels' },
+  { id: '1:1', label: 'Square' },
+  { id: '16:9', label: 'Landscape' },
+  { id: '4:5', label: 'Portrait' },
 ];
 
 const HOOK_EXAMPLES = [
@@ -191,7 +191,9 @@ export default function MarketingStudioTabs({ initialTab, apiKey, droppedFiles, 
         <div className="grid grid-cols-4 gap-2">
           {ASPECTS.map((a) => (
             <button key={a.id} onClick={() => toggleAspect(a.id)} className={`p-4 rounded-xl border text-center transition-all ${selectedAspects.includes(a.id) ? 'bg-[#10B981]/20 border-[#10B981]/50' : 'bg-white/5 border-white/10'}`}>
-              <div className="text-2xl mb-1">{a.icon}</div>
+              <div className="w-8 h-8 rounded-lg bg-[#10B981]/20 flex items-center justify-center mx-auto mb-1">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
+              </div>
               <div className="text-xs text-white">{a.label}</div>
               <div className="text-[10px] text-[#9CA3AF]">{a.id}</div>
             </button>

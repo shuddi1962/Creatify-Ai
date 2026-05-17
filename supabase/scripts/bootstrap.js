@@ -11,7 +11,7 @@ const POOLER_HOST = 'aws-1-eu-central-1.pooler.supabase.com';
 async function bootstrap() {
   const dbPassword = process.env.SUPABASE_DB_PASSWORD || process.argv[2];
   if (!dbPassword) {
-    console.log('\n❌ Database password required.');
+    console.log('\n[ERROR] Database password required.');
     console.log('   Get it from: Supabase Dashboard > Project Settings > Database');
     console.log('\n   Run with: node supabase/scripts/bootstrap.js YOUR_DB_PASSWORD');
     console.log('   Or set:    $env:SUPABASE_DB_PASSWORD = "your-password"; node supabase/scripts/bootstrap.js\n');
@@ -30,7 +30,7 @@ async function bootstrap() {
 
   try {
     const test = await pool.query('SELECT 1 AS connected');
-    console.log('✅ Connected to database');
+    console.log('[OK] Connected to database');
 
     const migrations = [
       { file: '007_new_tables.sql', name: 'New tables (content_ideas, bulk_jobs, characters, etc.)' },
@@ -40,19 +40,19 @@ async function bootstrap() {
     for (const m of migrations) {
       const filePath = path.join(__dirname, '..', 'migrations', m.file);
       if (!fs.existsSync(filePath)) {
-        console.log(`⚠️  ${m.file} not found, skipping`);
+        console.log(`[WARN] ${m.file} not found, skipping`);
         continue;
       }
       const sql = fs.readFileSync(filePath, 'utf8');
-      console.log(`📦 Running: ${m.name}...`);
+      console.log(`[RUN] Running: ${m.name}...`);
       await pool.query(sql);
-      console.log(`✅ ${m.name} applied`);
+      console.log(`[OK] ${m.name} applied`);
     }
 
-    console.log('\n🎉 All migrations applied successfully!\n');
+    console.log('\n[DONE] All migrations applied successfully!\n');
     await pool.end();
   } catch (err) {
-    console.error(`\n❌ Error: ${err.message}\n`);
+    console.error(`\n[ERROR] ${err.message}\n`);
     await pool.end();
     process.exit(1);
   }

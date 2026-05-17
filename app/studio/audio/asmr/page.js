@@ -101,7 +101,7 @@ export default function AsmrPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Binaural {binaural ? '✓' : '○'}</button>
+          >Binaural {binaural ? 'ON' : 'OFF'}</button>
         </LeftPanel>
       }
       canvas={

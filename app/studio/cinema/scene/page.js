@@ -74,7 +74,7 @@ export default function ScenePage() {
           <div style={{ fontSize: 12, color: 'var(--text-secondary)', lineHeight: 1.5 }}>{buildPrompt()}</div>
         </div>
         <button onClick={handleGenerate} style={{ padding: '14px 0', background: 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 15, fontWeight: 800, cursor: 'pointer' }}>
-          ✦ Open in Cinema Generator
+          Open in Cinema Generator
         </button>
       </div>
     </div>

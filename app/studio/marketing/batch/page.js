@@ -71,14 +71,14 @@ export default function BatchPage() {
         </div>
         {error && <div style={{ background: 'rgba(239,68,68,0.1)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fca5a5' }}>{error}</div>}
         <button onClick={handleBatch} disabled={loading} style={{ padding: '12px 0', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
-          {loading ? `Generating ${count} ads...` : `✦ Generate ${count} Ad Variants`}
+          {loading ? `Generating ${count} ads...` : `Generate ${count} Ad Variants`}
         </button>
         {progress.length > 0 && (
           <div><div style={{ fontSize: 10, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 8 }}>PROGRESS</div>
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {progress.map((p, i) => (
                 <div key={i} style={{ padding: '4px 10px', borderRadius: 6, fontSize: 10, fontWeight: 600, background: p === 'done' ? 'rgba(0,255,148,0.2)' : p === 'failed' ? 'rgba(239,68,68,0.2)' : p === 'generating' ? 'rgba(0,194,255,0.2)' : 'var(--bg-input)', color: p === 'done' ? '#00FF94' : p === 'failed' ? '#fca5a5' : p === 'generating' ? 'var(--accent-primary)' : 'var(--text-muted)' }}>
-                  #{i + 1} {p === 'done' ? '✓' : p === 'failed' ? '✗' : p === 'generating' ? '◌' : '○'}
+                  #{i + 1} {p === 'done' ? 'OK' : p === 'failed' ? 'X' : p === 'generating' ? '..' : '..'}
                 </div>
               ))}
             </div>

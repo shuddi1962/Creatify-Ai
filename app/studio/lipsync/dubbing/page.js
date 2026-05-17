@@ -109,7 +109,7 @@ export default function DubbingPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Generate {generateSubtitles ? '✓' : '○'} subtitles</button>
+          >Generate {generateSubtitles ? 'ON' : 'OFF'} subtitles</button>
           <button onClick={() => setBurnSubtitles(!burnSubtitles)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -117,7 +117,7 @@ export default function DubbingPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Burn {burnSubtitles ? '✓' : '○'} into video</button>
+          >Burn {burnSubtitles ? 'ON' : 'OFF'} into video</button>
         </LeftPanel>
       }
       canvas={

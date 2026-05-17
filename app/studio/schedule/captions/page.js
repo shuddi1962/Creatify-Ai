@@ -29,9 +29,9 @@ export default function CaptionsPage() {
     setLoading(true);
     setTimeout(() => {
       setCaptions([
-        { text: '🚀 Just dropped something you need to see. Tap the link and don\'t sleep on this! #trending #fyp #viral #foryou', platform: 'TikTok' },
-        { text: '✨ Big things coming. This is just the beginning — stay tuned for more. #newrelease #behindthescenes #sneakpeek', platform: 'TikTok' },
-        { text: '💡 Problem solved. Here\'s what nobody tells you about getting results faster. Save this for later! #tips #productivity #growth', platform: 'TikTok' },
+        { text: 'Just dropped something you need to see. Tap the link and don\'t sleep on this! #trending #fyp #viral #foryou', platform: 'TikTok' },
+        { text: 'Big things coming. This is just the beginning — stay tuned for more. #newrelease #behindthescenes #sneakpeek', platform: 'TikTok' },
+        { text: 'Problem solved. Here\'s what nobody tells you about getting results faster. Save this for later! #tips #productivity #growth', platform: 'TikTok' },
       ]);
       setLoading(false);
     }, 2500);

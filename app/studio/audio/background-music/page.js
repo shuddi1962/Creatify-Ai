@@ -114,7 +114,7 @@ export default function BackgroundMusicPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Auto-score {autoScore ? '✓' : '○'}</button>
+          >Auto-score {autoScore ? 'ON' : 'OFF'}</button>
           <button onClick={() => setFadeIn(!fadeIn)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -122,7 +122,7 @@ export default function BackgroundMusicPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Fade In {fadeIn ? '✓' : '○'}</button>
+          >Fade In {fadeIn ? 'ON' : 'OFF'}</button>
           <button onClick={() => setFadeOut(!fadeOut)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -130,7 +130,7 @@ export default function BackgroundMusicPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Fade Out {fadeOut ? '✓' : '○'}</button>
+          >Fade Out {fadeOut ? 'ON' : 'OFF'}</button>
           <button onClick={() => setLoop(!loop)}
             style={{
               display: 'flex', alignItems: 'center', gap: 8,
@@ -138,7 +138,7 @@ export default function BackgroundMusicPage() {
               background: 'none', border: 'none', cursor: 'pointer', borderRadius: 8,
               color: 'var(--text-secondary)', fontSize: 13, textAlign: 'left',
             }}
-          >Loop {loop ? '✓' : '○'}</button>
+          >Loop {loop ? 'ON' : 'OFF'}</button>
           <div style={{ padding: '10px 12px' }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', marginBottom: 4 }}>Volume: {volume}%</div>
             <input type="range" min="0" max="100" value={volume} onChange={e => setVolume(parseInt(e.target.value))}

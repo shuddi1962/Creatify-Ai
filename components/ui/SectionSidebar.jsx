@@ -6,7 +6,7 @@ export const CollapsedContext = createContext(false)
 export const useCollapsed = () => useContext(CollapsedContext)
 
 export function SectionSidebar({
-  sectionName, sectionIcon: SectionIcon, sectionEmoji,
+  sectionName, sectionIcon: SectionIcon,
   toolCount, children, bottomContent
 }) {
   const [collapsed, setCollapsed] = useState(false)
@@ -39,7 +39,7 @@ export function SectionSidebar({
           flexShrink: 0, fontSize: 15,
           color: 'var(--accent-primary)',
         }}>
-          {SectionIcon ? <SectionIcon size={16} /> : sectionEmoji}
+          {SectionIcon && <SectionIcon size={16} />}
         </div>
 
         {!collapsed && (

@@ -3,43 +3,43 @@ import { useState, useRef } from 'react'
 import { Upload, X, Download } from 'lucide-react'
 
 const VFX_EFFECTS = [
-  { id: 'explosion', name: 'Explosion', category: 'Fire & Explosion', credits: 50, emoji: '💥', muapiName: 'Explosion', desc: 'Massive explosion engulfs the scene' },
-  { id: 'nuclear-blast', name: 'Nuclear Blast', category: 'Fire & Explosion', credits: 80, emoji: '☢️', muapiName: 'Nuclear Blast', desc: 'Enormous shockwave mushroom cloud' },
-  { id: 'car-explosion', name: 'Car Explosion', category: 'Fire & Explosion', credits: 45, emoji: '🚗', muapiName: 'Car Explosion', desc: 'Vehicle explodes in a ball of fire' },
-  { id: 'building-collapse', name: 'Building Collapse', category: 'Fire & Explosion', credits: 60, emoji: '🏚️', muapiName: 'Building Collapse', desc: 'Structure crumbles dramatically' },
-  { id: 'fire-engulf', name: 'Fire Engulf', category: 'Fire & Explosion', credits: 40, emoji: '🔥', muapiName: 'Fire Engulf', desc: 'Scene consumed by roaring flames' },
-  { id: 'fire-tornado', name: 'Fire Tornado', category: 'Fire & Explosion', credits: 55, emoji: '🌪️', muapiName: 'Fire Tornado', desc: 'Spinning column of fire' },
-  { id: 'lightning-strike', name: 'Lightning Strike', category: 'Weather', credits: 30, emoji: '⚡', muapiName: 'Lightning Strike', desc: 'Powerful lightning bolt hits' },
-  { id: 'thunder-storm', name: 'Thunder Storm', category: 'Weather', credits: 35, emoji: '⛈️', muapiName: 'Thunder Storm', desc: 'Dark stormy skies with thunder' },
-  { id: 'heavy-rain', name: 'Heavy Rain', category: 'Weather', credits: 25, emoji: '🌧️', muapiName: 'Heavy Rain', desc: 'Torrential downpour' },
-  { id: 'blizzard', name: 'Blizzard', category: 'Weather', credits: 30, emoji: '❄️', muapiName: 'Blizzard', desc: 'Whiteout snowstorm' },
-  { id: 'tornado', name: 'Tornado', category: 'Weather', credits: 45, emoji: '🌪️', muapiName: 'Tornado', desc: 'Destructive twister tears through' },
-  { id: 'raven-transition', name: 'Raven Transition', category: 'Magic', credits: 40, emoji: '🐦‍⬛', muapiName: 'Raven Transition', desc: 'Transform into a flock of ravens' },
-  { id: 'air-bending', name: 'Air Bending', category: 'Magic', credits: 35, emoji: '💨', muapiName: 'Air Bending', desc: 'Powerful air currents swirl' },
-  { id: 'phoenix-rise', name: 'Phoenix Rise', category: 'Magic', credits: 60, emoji: '🦅', muapiName: 'Phoenix Rise', desc: 'Majestic phoenix emerges from flames' },
-  { id: 'portal-open', name: 'Portal Open', category: 'Magic', credits: 50, emoji: '🌀', muapiName: 'Portal Open', desc: 'Glowing dimensional portal appears' },
-  { id: 'shadow-smoke', name: 'Shadow Smoke', category: 'Magic', credits: 30, emoji: '🌫️', muapiName: 'Shadow Smoke', desc: 'Mysterious dark smoke tendrils' },
-  { id: 'werewolf', name: 'Werewolf Transform', category: 'Creatures', credits: 65, emoji: '🐺', muapiName: 'Werewolf', desc: 'Terrifying werewolf transformation' },
-  { id: 'dragon-wings', name: 'Dragon Wings', category: 'Creatures', credits: 70, emoji: '🐉', muapiName: 'Dragon Wings', desc: 'Dragon wings spread dramatically' },
-  { id: 'animalization', name: 'Animalization', category: 'Creatures', credits: 55, emoji: '🦁', muapiName: 'Animalization', desc: 'Transform into an animal form' },
-  { id: 'matrix-rain', name: 'Matrix Rain', category: 'Technology', credits: 30, emoji: '💻', muapiName: 'Matrix Rain', desc: 'Green code rain falls' },
-  { id: 'glitch-effect', name: 'Glitch Effect', category: 'Technology', credits: 25, emoji: '📺', muapiName: 'Glitch Effect', desc: 'Digital glitch distortion' },
-  { id: 'hologram', name: 'Hologram', category: 'Technology', credits: 35, emoji: '📡', muapiName: 'Hologram', desc: 'Holographic projection flickers' },
-  { id: 'laser-beams', name: 'Laser Beams', category: 'Technology', credits: 30, emoji: '🔴', muapiName: 'Laser Beams', desc: 'Intense laser beams shoot out' },
-  { id: 'galaxy-zoom', name: 'Galaxy Zoom', category: 'Space', credits: 55, emoji: '🌌', muapiName: 'Galaxy Zoom Out', desc: 'Zoom out into the galaxy' },
-  { id: 'solar-flare', name: 'Solar Flare', category: 'Space', credits: 50, emoji: '☀️', muapiName: 'Solar Flare', desc: 'Massive solar flare erupts' },
-  { id: 'black-hole', name: 'Black Hole', category: 'Space', credits: 60, emoji: '⚫', muapiName: 'Black Hole', desc: 'Gravitational singularity appears' },
-  { id: 'northern-lights', name: 'Northern Lights', category: 'Light & Color', credits: 35, emoji: '🌈', muapiName: 'Northern Lights', desc: 'Aurora borealis shimmers' },
-  { id: 'lens-flare', name: 'Lens Flare', category: 'Light & Color', credits: 20, emoji: '✨', muapiName: 'Lens Flare', desc: 'Cinematic lens flare burst' },
-  { id: 'bloom-light', name: 'Bloom Light', category: 'Light & Color', credits: 25, emoji: '💡', muapiName: 'Bloom Light', desc: 'Dreamy light bloom diffusion' },
-  { id: 'match-cut', name: 'Match Cut', category: 'Transition', credits: 30, emoji: '✂️', muapiName: 'Match Cut', desc: 'Viral match cut transition' },
-  { id: 'whip-pan', name: 'Whip Pan', category: 'Transition', credits: 25, emoji: '📷', muapiName: 'Whip Pan', desc: 'Fast horizontal pan transition' },
-  { id: 'melt-transition', name: 'Melt Transition', category: 'Transition', credits: 35, emoji: '🫧', muapiName: 'Melt Transition', desc: 'Scene melts into the next' },
-  { id: 'tidal-wave', name: 'Tidal Wave', category: 'Destruction', credits: 60, emoji: '🌊', muapiName: 'Tidal Wave', desc: 'Massive tsunami wave crashes' },
-  { id: 'earthquake', name: 'Earthquake', category: 'Destruction', credits: 50, emoji: '🏔️', muapiName: 'Earthquake', desc: 'Ground splits and trembles' },
-  { id: 'volcanic-eruption', name: 'Volcanic Eruption', category: 'Destruction', credits: 65, emoji: '🌋', muapiName: 'Volcanic Eruption', desc: 'Volcano explodes with lava' },
-  { id: 'dust-particles', name: 'Dust Particles', category: 'Nature', credits: 20, emoji: '🌬️', muapiName: 'Dust Particles', desc: 'Golden dust particles float' },
-  { id: 'point-cloud', name: 'Point Cloud', category: 'Nature', credits: 40, emoji: '✨', muapiName: 'Point Cloud', desc: 'Subject dissolves into particles' },
+  { id: 'explosion', name: 'Explosion', category: 'Fire & Explosion', credits: 50, muapiName: 'Explosion', desc: 'Massive explosion engulfs the scene' },
+  { id: 'nuclear-blast', name: 'Nuclear Blast', category: 'Fire & Explosion', credits: 80, muapiName: 'Nuclear Blast', desc: 'Enormous shockwave mushroom cloud' },
+  { id: 'car-explosion', name: 'Car Explosion', category: 'Fire & Explosion', credits: 45, muapiName: 'Car Explosion', desc: 'Vehicle explodes in a ball of fire' },
+  { id: 'building-collapse', name: 'Building Collapse', category: 'Fire & Explosion', credits: 60, muapiName: 'Building Collapse', desc: 'Structure crumbles dramatically' },
+  { id: 'fire-engulf', name: 'Fire Engulf', category: 'Fire & Explosion', credits: 40, muapiName: 'Fire Engulf', desc: 'Scene consumed by roaring flames' },
+  { id: 'fire-tornado', name: 'Fire Tornado', category: 'Fire & Explosion', credits: 55, muapiName: 'Fire Tornado', desc: 'Spinning column of fire' },
+  { id: 'lightning-strike', name: 'Lightning Strike', category: 'Weather', credits: 30, muapiName: 'Lightning Strike', desc: 'Powerful lightning bolt hits' },
+  { id: 'thunder-storm', name: 'Thunder Storm', category: 'Weather', credits: 35, muapiName: 'Thunder Storm', desc: 'Dark stormy skies with thunder' },
+  { id: 'heavy-rain', name: 'Heavy Rain', category: 'Weather', credits: 25, muapiName: 'Heavy Rain', desc: 'Torrential downpour' },
+  { id: 'blizzard', name: 'Blizzard', category: 'Weather', credits: 30, muapiName: 'Blizzard', desc: 'Whiteout snowstorm' },
+  { id: 'tornado', name: 'Tornado', category: 'Weather', credits: 45, muapiName: 'Tornado', desc: 'Destructive twister tears through' },
+  { id: 'raven-transition', name: 'Raven Transition', category: 'Magic', credits: 40, muapiName: 'Raven Transition', desc: 'Transform into a flock of ravens' },
+  { id: 'air-bending', name: 'Air Bending', category: 'Magic', credits: 35, muapiName: 'Air Bending', desc: 'Powerful air currents swirl' },
+  { id: 'phoenix-rise', name: 'Phoenix Rise', category: 'Magic', credits: 60, muapiName: 'Phoenix Rise', desc: 'Majestic phoenix emerges from flames' },
+  { id: 'portal-open', name: 'Portal Open', category: 'Magic', credits: 50, muapiName: 'Portal Open', desc: 'Glowing dimensional portal appears' },
+  { id: 'shadow-smoke', name: 'Shadow Smoke', category: 'Magic', credits: 30, muapiName: 'Shadow Smoke', desc: 'Mysterious dark smoke tendrils' },
+  { id: 'werewolf', name: 'Werewolf Transform', category: 'Creatures', credits: 65, muapiName: 'Werewolf', desc: 'Terrifying werewolf transformation' },
+  { id: 'dragon-wings', name: 'Dragon Wings', category: 'Creatures', credits: 70, muapiName: 'Dragon Wings', desc: 'Dragon wings spread dramatically' },
+  { id: 'animalization', name: 'Animalization', category: 'Creatures', credits: 55, muapiName: 'Animalization', desc: 'Transform into an animal form' },
+  { id: 'matrix-rain', name: 'Matrix Rain', category: 'Technology', credits: 30, muapiName: 'Matrix Rain', desc: 'Green code rain falls' },
+  { id: 'glitch-effect', name: 'Glitch Effect', category: 'Technology', credits: 25, muapiName: 'Glitch Effect', desc: 'Digital glitch distortion' },
+  { id: 'hologram', name: 'Hologram', category: 'Technology', credits: 35, muapiName: 'Hologram', desc: 'Holographic projection flickers' },
+  { id: 'laser-beams', name: 'Laser Beams', category: 'Technology', credits: 30, muapiName: 'Laser Beams', desc: 'Intense laser beams shoot out' },
+  { id: 'galaxy-zoom', name: 'Galaxy Zoom', category: 'Space', credits: 55, muapiName: 'Galaxy Zoom Out', desc: 'Zoom out into the galaxy' },
+  { id: 'solar-flare', name: 'Solar Flare', category: 'Space', credits: 50, muapiName: 'Solar Flare', desc: 'Massive solar flare erupts' },
+  { id: 'black-hole', name: 'Black Hole', category: 'Space', credits: 60, muapiName: 'Black Hole', desc: 'Gravitational singularity appears' },
+  { id: 'northern-lights', name: 'Northern Lights', category: 'Light & Color', credits: 35, muapiName: 'Northern Lights', desc: 'Aurora borealis shimmers' },
+  { id: 'lens-flare', name: 'Lens Flare', category: 'Light & Color', credits: 20, muapiName: 'Lens Flare', desc: 'Cinematic lens flare burst' },
+  { id: 'bloom-light', name: 'Bloom Light', category: 'Light & Color', credits: 25, muapiName: 'Bloom Light', desc: 'Dreamy light bloom diffusion' },
+  { id: 'match-cut', name: 'Match Cut', category: 'Transition', credits: 30, muapiName: 'Match Cut', desc: 'Viral match cut transition' },
+  { id: 'whip-pan', name: 'Whip Pan', category: 'Transition', credits: 25, muapiName: 'Whip Pan', desc: 'Fast horizontal pan transition' },
+  { id: 'melt-transition', name: 'Melt Transition', category: 'Transition', credits: 35, muapiName: 'Melt Transition', desc: 'Scene melts into the next' },
+  { id: 'tidal-wave', name: 'Tidal Wave', category: 'Destruction', credits: 60, muapiName: 'Tidal Wave', desc: 'Massive tsunami wave crashes' },
+  { id: 'earthquake', name: 'Earthquake', category: 'Destruction', credits: 50, muapiName: 'Earthquake', desc: 'Ground splits and trembles' },
+  { id: 'volcanic-eruption', name: 'Volcanic Eruption', category: 'Destruction', credits: 65, muapiName: 'Volcanic Eruption', desc: 'Volcano explodes with lava' },
+  { id: 'dust-particles', name: 'Dust Particles', category: 'Nature', credits: 20, muapiName: 'Dust Particles', desc: 'Golden dust particles float' },
+  { id: 'point-cloud', name: 'Point Cloud', category: 'Nature', credits: 40, muapiName: 'Point Cloud', desc: 'Subject dissolves into particles' },
 ]
 
 const CATEGORIES = ['All', 'Fire & Explosion', 'Weather', 'Magic', 'Creatures', 'Technology', 'Space', 'Light & Color', 'Transition', 'Destruction', 'Nature']
@@ -126,8 +126,7 @@ export default function VFXPresetsPage() {
             <div key={effect.id} onClick={() => { setSelectedEffect(effect); setResult(null); setError('') }} style={{ background: 'var(--bg-card)', border: selectedEffect?.id === effect.id ? '2px solid var(--accent-primary)' : '1px solid var(--border-subtle)', borderRadius: 14, padding: '16px 14px', cursor: 'pointer', transition: 'all 150ms', position: 'relative' }}
               onMouseEnter={e => { if (selectedEffect?.id !== effect.id) e.currentTarget.style.borderColor = 'var(--border-default)' }}
               onMouseLeave={e => { if (selectedEffect?.id !== effect.id) e.currentTarget.style.borderColor = 'var(--border-subtle)' }}>
-              {selectedEffect?.id === effect.id && <div style={{ position: 'absolute', top: 8, right: 8, width: 20, height: 20, borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 10, color: '#000', fontWeight: 700 }}>✓</div>}
-              <div style={{ fontSize: 28, marginBottom: 10 }}>{effect.emoji}</div>
+              {selectedEffect?.id === effect.id && <div style={{ position: 'absolute', top: 8, right: 8, width: 20, height: 20, borderRadius: '50%', background: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#000' }}><svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2.5 6L5 8.5L9.5 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg></div>}
               <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)', marginBottom: 4 }}>{effect.name}</div>
               <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 8 }}>{effect.desc}</div>
               <div style={{ fontSize: 10, fontWeight: 600, color: 'var(--accent-primary)' }}>{effect.credits} credits</div>
@@ -135,7 +134,7 @@ export default function VFXPresetsPage() {
           ))}
         </div>
         <div style={{ background: 'var(--bg-card)', border: '1px solid var(--border-default)', borderRadius: 20, padding: '20px', position: 'sticky', top: 24 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>{selectedEffect ? `Apply: ${selectedEffect.emoji} ${selectedEffect.name}` : 'Select an effect →'}</h3>
+          <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', marginBottom: 16 }}>{selectedEffect ? `Apply: ${selectedEffect.name}` : 'Select an effect to start'}</h3>
           <div style={{ marginBottom: 16 }}>
             <div style={{ fontSize: 11, fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 8 }}>Your image</div>
             <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={handleUpload} />
@@ -167,7 +166,7 @@ export default function VFXPresetsPage() {
           </div>
           {error && <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 8, padding: '8px 12px', fontSize: 12, color: '#fca5a5', marginBottom: 12 }}>{error}</div>}
           <button onClick={handleApplyVFX} disabled={loading || !selectedEffect} style={{ width: '100%', padding: '12px 0', background: !selectedEffect ? 'var(--bg-input)' : loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: !selectedEffect ? 'var(--text-muted)' : 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: !selectedEffect ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-            {loading ? <><div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #000', borderTopColor: 'transparent', animation: 'spin 600ms linear infinite' }} /> Applying VFX...</> : selectedEffect ? `✦ Apply ${selectedEffect.name} · ${selectedEffect.credits} credits` : 'Select an effect first'}
+            {loading ? <><div style={{ width: 14, height: 14, borderRadius: '50%', border: '2px solid #000', borderTopColor: 'transparent', animation: 'spin 600ms linear infinite' }} /> Applying VFX...</> : selectedEffect ? `Apply ${selectedEffect.name} · ${selectedEffect.credits} credits` : 'Select an effect first'}
           </button>
           {result && (
             <div style={{ marginTop: 16 }}>

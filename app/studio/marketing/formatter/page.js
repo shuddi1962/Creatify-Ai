@@ -67,7 +67,7 @@ export default function FormatterPage() {
           </div>
         </div>
         <button onClick={handleFormat} disabled={loading || !uploadedFile || selectedPlatforms.length === 0} style={{ padding: '12px 24px', background: loading ? 'rgba(0,255,148,0.5)' : 'var(--btn-generate-bg)', color: 'var(--btn-generate-text)', border: 'none', borderRadius: 12, fontSize: 14, fontWeight: 800, cursor: 'pointer' }}>
-          {loading ? 'Processing...' : `✦ Generate ${selectedPlatforms.length} Format${selectedPlatforms.length > 1 ? 's' : ''}`}
+          {loading ? 'Processing...' : `Generate ${selectedPlatforms.length} Format${selectedPlatforms.length > 1 ? 's' : ''}`}
         </button>
         {results.length > 0 && (
           <div style={{ marginTop: 20 }}>

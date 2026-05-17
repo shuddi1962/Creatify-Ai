@@ -698,10 +698,10 @@ export default function LipSyncStudio({
   const mediaStatusText =
     inputMode === "image"
       ? imageState === UPLOAD_STATE.READY
-        ? `✓ ${imageName}`
+        ? `OK ${imageName}`
         : "No image"
       : videoState === UPLOAD_STATE.READY
-        ? `✓ ${videoName}`
+        ? `OK ${videoName}`
         : "No video";
   const mediaStatusClass =
     (inputMode === "image" ? imageState : videoState) === UPLOAD_STATE.READY
@@ -709,7 +709,7 @@ export default function LipSyncStudio({
       : "text-muted";
 
   const audioStatusText =
-    audioState === UPLOAD_STATE.READY ? `✓ ${audioName}` : "No audio";
+    audioState === UPLOAD_STATE.READY ? `OK ${audioName}` : "No audio";
   const audioStatusClass =
     audioState === UPLOAD_STATE.READY ? "text-primary" : "text-muted";
 
@@ -810,7 +810,7 @@ export default function LipSyncStudio({
                     <line x1="8" y1="23" x2="16" y2="23" />
                   </svg>
                 </div>
-                <div className="absolute top-4 right-4 text-[10px] text-primary/40 animate-pulse">🎙</div>
+                <div className="absolute top-4 right-4 text-[10px] text-primary/40 animate-pulse">*</div>
               </div>
             </div>
             <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold text-white tracking-tight mb-4 text-center px-4">
@@ -838,7 +838,7 @@ export default function LipSyncStudio({
                   : "border-white/[0.03] bg-white/[0.03] text-white/40 hover:border-white/20 hover:text-white"
               }`}
             >
-              🖼 Portrait Image
+              [img] Portrait Image
             </button>
             <button
               type="button"
@@ -849,7 +849,7 @@ export default function LipSyncStudio({
                   : "border-white/[0.03] bg-white/[0.03] text-white/40 hover:border-white/20 hover:text-white"
               }`}
             >
-              🎬 Video
+              [video] Video
             </button>
           </div>
 
@@ -1036,7 +1036,7 @@ export default function LipSyncStudio({
               {isGenerating ? (
                 <>
                   <span className="animate-spin inline-block text-black">
-                    ◌
+                    *
                   </span>{" "}
                   Generating...
                 </>
