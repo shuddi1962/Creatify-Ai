@@ -204,6 +204,7 @@ export async function processV2V(apiKey, params) {
   if (modelInfo?.hasPrompt && params.prompt) {
     payload.prompt = params.prompt;
   }
+  if (params.request_id) payload.request_id = params.request_id;
   return submitAndPoll(endpoint, payload, apiKey, null, 900);
 }
 

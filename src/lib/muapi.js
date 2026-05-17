@@ -443,6 +443,7 @@ export class MuapiClient {
         if (modelInfo?.hasPrompt && params.prompt) {
             finalPayload.prompt = params.prompt;
         }
+        if (params.request_id) finalPayload.request_id = params.request_id;
 
         console.log('[Muapi] V2V Request:', url);
         console.log('[Muapi] V2V Payload:', finalPayload);
