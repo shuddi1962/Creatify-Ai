@@ -307,6 +307,9 @@ body {
 [data-theme="light"] .bg-\[\#0f172a\] {
   background-color: var(--bg-card) !important;
 }
+[data-theme="light"] .bg-\[\#111827\] {
+  background-color: var(--bg-card) !important;
+}
 
 /* Glass/overlay backgrounds */
 [data-theme="light"] .bg-white\/5 {
@@ -342,6 +345,15 @@ body {
 }
 [data-theme="light"] .bg-black\/40 {
   background-color: rgba(0,0,0,0.06) !important;
+}
+[data-theme="light"] .bg-black\/95 {
+  background-color: var(--bg-modal) !important;
+}
+[data-theme="light"] .bg-white\/20 {
+  background-color: var(--bg-active) !important;
+}
+[data-theme="light"] .bg-white\/30 {
+  background-color: var(--bg-active) !important;
 }
 
 /* Text color overrides - Tailwind classes */
@@ -412,6 +424,42 @@ body {
 }
 [data-theme="light"] .text-\[\#818cf8\] {
   color: var(--accent-text) !important;
+}
+[data-theme="light"] .text-orange-400 {
+  color: var(--text-secondary) !important;
+}
+[data-theme="light"] .text-orange-400\/70 {
+  color: var(--text-muted) !important;
+}
+[data-theme="light"] .text-cyan-400 {
+  color: var(--accent-text) !important;
+}
+[data-theme="light"] .text-green-400 {
+  color: #22c55e !important;
+}
+[data-theme="light"] .text-yellow-400 {
+  color: #eab308 !important;
+}
+[data-theme="light"] .text-red-400 {
+  color: #f87171 !important;
+}
+[data-theme="light"] .text-rose-400 {
+  color: #fb7185 !important;
+}
+[data-theme="light"] .text-\[\#A855F7\] {
+  color: var(--accent-text) !important;
+}
+[data-theme="light"] .text-\[\#EF4444\] {
+  color: #ef4444 !important;
+}
+[data-theme="light"] .text-\[\#06B6D4\] {
+  color: var(--accent-text) !important;
+}
+[data-theme="light"] .placeholder-\[\#6B7280\]::placeholder {
+  color: var(--text-placeholder) !important;
+}
+[data-theme="light"] .placeholder\:text-white\/10::placeholder {
+  color: var(--text-placeholder) !important;
 }
 
 /* Inline text color overrides */
@@ -514,6 +562,9 @@ body {
 [data-theme="light"] .border-white\/10 {
   border-color: var(--border-default) !important;
 }
+[data-theme="light"] .border-white\/20 {
+  border-color: var(--border-strong) !important;
+}
 [data-theme="light"] .border-white\/5 {
   border-color: var(--border-subtle) !important;
 }
@@ -526,6 +577,56 @@ body {
 }
 [data-theme="light"] .border-\[\#1C1C1C\] {
   border-color: var(--border-default) !important;
+}
+
+/* Button color overrides for light mode */
+[data-theme="light"] .bg-app-bg {
+  background-color: var(--bg-page) !important;
+}
+[data-theme="light"] .bg-\[\#A855F7\],
+[data-theme="light"] .bg-\[\#a855f7\] {
+  background-color: var(--accent-primary) !important;
+}
+[data-theme="light"] .bg-\[\#A855F7\]\/20,
+[data-theme="light"] .bg-\[\#a855f7\]\/20 {
+  background-color: var(--accent-bg) !important;
+}
+[data-theme="light"] .bg-\[\#A855F7\]\/30 {
+  background-color: var(--accent-bg) !important;
+}
+[data-theme="light"] .bg-\[\#EF4444\] {
+  background-color: #ef4444 !important;
+}
+[data-theme="light"] .bg-\[\#EF4444\]\/20 {
+  background-color: rgba(239,68,68,0.10) !important;
+}
+[data-theme="light"] .bg-\[\#06B6D4\] {
+  background-color: var(--accent-primary) !important;
+}
+[data-theme="light"] .bg-\[\#06B6D4\]\/20 {
+  background-color: var(--accent-bg) !important;
+}
+[data-theme="light"] .bg-cyan-500\/20 {
+  background-color: var(--accent-bg) !important;
+}
+[data-theme="light"] .bg-red-500\/80 {
+  background-color: rgba(239,68,68,0.80) !important;
+}
+[data-theme="light"] .hover\:bg-red-500:hover {
+  background-color: #ef4444 !important;
+}
+[data-theme="light"] .bg-gradient-to-b {
+  background: none !important;
+}
+[data-theme="light"] .from-white\/\[0\.02\],
+[data-theme="light"] .from-white\/\[\.02\] {
+  --tw-gradient-from: transparent !important;
+}
+[data-theme="light"] .from-\[\#0a0a0a\] {
+  --tw-gradient-from: transparent !important;
+}
+[data-theme="light"] .to-transparent {
+  --tw-gradient-to: transparent !important;
 }
 
 /* Inline background overrides */
@@ -854,75 +955,4 @@ input:focus,
 select:focus {
   outline: none !important;
   box-shadow: none !important;
-}
-
-/* Editor areas stay dark/premium in light mode */
-[data-theme="light"] .standalone-shell {
-  --bg-page: #0a0a0a;
-  --bg-card: #111111;
-  --bg-elevated: #161616;
-  --bg-input: #1a1a1a;
-  --bg-topbar: #0a0a0a;
-  --bg-sidebar: #0a0a0a;
-  --bg-dropdown: #1a1a1a;
-  --bg-body: #050505;
-  --bg-app: #0a0a0a;
-  --bg-modal: rgba(0,0,0,0.85);
-  --bg-overlay: rgba(0,0,0,0.6);
-  --bg-badge: rgba(255,255,255,0.08);
-  --bg-hover: rgba(204,255,0,0.06);
-  --bg-active: rgba(204,255,0,0.10);
-  --border-subtle: rgba(255,255,255,0.06);
-  --border-default: rgba(255,255,255,0.10);
-  --border-strong: rgba(255,255,255,0.18);
-  --border-active: rgba(204,255,0,0.40);
-  --border-focus: rgba(204,255,0,0.60);
-  --text-primary: #E8EDF2;
-  --text-secondary: #7A8899;
-  --text-muted: #3D4F62;
-  --text-placeholder: #2E3E50;
-  --text-active: #CCFF00;
-  --text-link: #CCFF00;
-  --text-inverted: #000000;
-  --icon-default: #4A6070;
-  --icon-hover: #A0B4C0;
-  --icon-active: #CCFF00;
-  --accent-primary: #CCFF00;
-  --accent-secondary: #B8E600;
-  --accent-bg: rgba(204,255,0,0.10);
-  --accent-border: rgba(204,255,0,0.40);
-  --accent-text: #CCFF00;
-  --sidebar-icon: #4A6070;
-  --sidebar-label: #4A6070;
-  --sidebar-icon-active: #CCFF00;
-  --sidebar-label-active: #CCFF00;
-  --sidebar-indicator: #CCFF00;
-  --sidebar-active-bg: rgba(204,255,0,0.10);
-  --btn-generate-bg: #CCFF00;
-  --btn-generate-text: #000000;
-  --btn-generate-hover: #B8E600;
-  --badge-new-bg: #B8E600;
-  --badge-new-text: #000000;
-  --badge-top-bg: #FF6B35;
-  --badge-top-text: #FFFFFF;
-  --shadow-card: 0 1px 3px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.2);
-  --shadow-dropdown: 0 16px 48px rgba(0,0,0,0.7), 0 2px 8px rgba(0,0,0,0.4);
-  --shadow-modal: 0 24px 80px rgba(0,0,0,0.9);
-  --scrollbar-track: #080C10;
-  --scrollbar-thumb: #1A2230;
-  --toast-bg: rgba(13,17,23,0.95);
-  --glass-bg: rgba(204,255,0,0.06);
-  --bg-flyout: #1a1a1a;
-  --bg-icon-box: #1a1a1a;
-  --text-menu-muted: #3D4F62;
-  --text-menu: #7A8899;
-  --text-icon: #4A6070;
-  --color-accent: #CCFF00;
-  --color-accent-hover: #B8E600;
-  --text-primary-soft: #E8EDF2;
-  --border-medium: rgba(255,255,255,0.10);
-  --text-input: #E8EDF2;
-  --text-tertiary: #3D4F62;
-  --text-quaternary: #3D4F62;
-  color-scheme: dark;
 }
